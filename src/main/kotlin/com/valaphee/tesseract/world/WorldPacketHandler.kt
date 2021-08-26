@@ -7,7 +7,7 @@ package com.valaphee.tesseract.world
 
 import com.valaphee.foundry.math.Double3
 import com.valaphee.foundry.math.Float2
-import com.valaphee.tesseract.actor.Location
+import com.valaphee.tesseract.actor.location.Location
 import com.valaphee.tesseract.actor.player.AuthExtra
 import com.valaphee.tesseract.actor.player.Player
 import com.valaphee.tesseract.actor.player.PlayerType

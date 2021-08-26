@@ -7,8 +7,6 @@
 
 package com.valaphee.tesseract
 
-import DisconnectPacketReader
-import StatusPacketReader
 import TextPacketReader
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
@@ -30,6 +28,8 @@ import com.valaphee.tesseract.ecs.EntityFactory
 import com.valaphee.tesseract.ecs.EntitySerializer
 import com.valaphee.tesseract.net.PacketDecoder
 import com.valaphee.tesseract.net.PacketReader
+import com.valaphee.tesseract.net.base.DisconnectPacketReader
+import com.valaphee.tesseract.net.base.StatusPacketReader
 import com.valaphee.tesseract.net.init.ClientToServerHandshakePacketReader
 import com.valaphee.tesseract.net.init.LoginPacketReader
 import com.valaphee.tesseract.net.init.PacksPacketReader

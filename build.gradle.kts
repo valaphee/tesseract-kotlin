@@ -16,7 +16,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("com.palantir.git-version") version "0.12.3"
     id("edu.sc.seis.launch4j") version "2.5.0"
-    kotlin("jvm") version "1.5.30-M1"
+    kotlin("jvm") version "1.5.30"
     `maven-publish`
     id("net.linguica.maven-settings") version "0.5"
     id("org.hibernate.build.maven-repo-auth") version "3.0.4"
@@ -41,10 +41,13 @@ dependencies {
     api("com.aayushatharva.brotli4j:native-linux-aarch64:1.6.0")
     api("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.4")
     api("com.fasterxml.jackson.dataformat:jackson-dataformat-smile:2.12.4")
-    api("com.google.code.gson:gson:2.8.7")
+    api("com.google.code.gson:gson:2.8.8")
     api("com.google.inject:guice:5.0.1")
     api("com.valaphee:foundry-databind:1.3.0.0")
     api("com.valaphee:foundry-math:1.3.0.0")
+    api("io.grpc:grpc-netty:1.40.1")
+    api("io.opentelemetry:opentelemetry-api:1.5.0")
+    api("io.opentelemetry:opentelemetry-exporter-jaeger:1.5.0")
     api("io.netty:netty-buffer:4.1.67.Final")
     api("io.netty:netty-transport-native-epoll:4.1.67.Final:linux-x86_64")
     api("io.netty:netty-transport-native-kqueue:4.1.67.Final:osx-x86_64")
@@ -56,7 +59,7 @@ dependencies {
     api("org.apache.logging.log4j:log4j-core:2.14.1")
     api("org.apache.logging.log4j:log4j-iostreams:2.14.1")
     api("org.apache.logging.log4j:log4j-jul:2.14.1")
-    api("org.bitbucket.b_c:jose4j:0.7.8")
+    api("org.bitbucket.b_c:jose4j:0.7.9")
     api("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
     api("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.4")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.5.1-native-mt")

@@ -5,15 +5,15 @@
 
 package com.valaphee.tesseract.net
 
+import TextPacket
+import com.valaphee.tesseract.net.base.DisconnectPacket
+import com.valaphee.tesseract.net.base.StatusPacket
 import com.valaphee.tesseract.net.init.ClientToServerHandshakePacket
 import com.valaphee.tesseract.net.init.LoginPacket
 import com.valaphee.tesseract.net.init.PacksPacket
 import com.valaphee.tesseract.net.init.PacksResponsePacket
 import com.valaphee.tesseract.net.init.PacksStackPacket
 import com.valaphee.tesseract.net.init.ServerToClientHandshakePacket
-import DisconnectPacket
-import StatusPacket
-import TextPacket
 import com.valaphee.tesseract.world.WorldPacket
 
 /**
