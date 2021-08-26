@@ -36,7 +36,7 @@ data class StatusPacket(
         buffer.writeInt(status.ordinal)
     }
 
-    override fun handle(handler: PacketHandler) = Unit
+    override fun handle(handler: PacketHandler) = handler.status(this)
 }
 
 /**

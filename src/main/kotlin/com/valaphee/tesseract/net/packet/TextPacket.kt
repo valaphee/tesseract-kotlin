@@ -49,7 +49,7 @@ data class TextPacket(
         buffer.writeString(platformChatId)
     }
 
-    override fun handle(handler: PacketHandler) = Unit
+    override fun handle(handler: PacketHandler) = handler.text(this)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -87,7 +87,7 @@ data class TextPacket(
  * @author Kevin Ludwig
  */
 class TextPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int): Packet {
+    override fun read(buffer: PacketBuffer, version: Int): TextPacket {
         val type = TextPacket.Type.values()[buffer.readUnsignedByte().toInt()]
         val needsTranslation = buffer.readBoolean()
         var sourceName: String? = null

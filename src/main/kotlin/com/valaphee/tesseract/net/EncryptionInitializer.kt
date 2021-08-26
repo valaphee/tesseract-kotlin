@@ -5,6 +5,7 @@
 
 package com.valaphee.tesseract.net
 
+import com.valaphee.tesseract.init.ServerToClientHandshakePacket
 import com.valaphee.tesseract.util.MbedTlsAesCipher
 import com.valaphee.tesseract.util.aesCipher
 import com.valaphee.tesseract.util.generateSecret
@@ -29,8 +30,10 @@ import java.security.SecureRandom
  */
 class EncryptionInitializer(
     serverKeyPair: KeyPair,
-    clientPublicKey: Key
+    clientPublicKey: Key,
+    val gcm: Boolean
 ) : ChannelInitializer<Channel>() {
+    val serverToClientHandshakePacket: ServerToClientHandshakePacket
     private val key: ByteArray
     private val iv: ByteArray
     private lateinit var keyBuffer: ByteBuf
@@ -48,9 +51,16 @@ class EncryptionInitializer(
         } finally {
             buffer.release()
         }
+        serverToClientHandshakePacket = ServerToClientHandshakePacket(serverKeyPair.public, serverKeyPair.private, clientSalt)
         key = hasher.digest()
-        iv = ByteArray(16)
-        System.arraycopy(key, 0, iv, 0, iv.size)
+        if (gcm) {
+            iv = ByteArray(16);
+            System.arraycopy(key, 0, iv, 0, 12);
+            iv[15] = 2;
+        } else {
+            iv = ByteArray(16)
+            System.arraycopy(key, 0, iv, 0, iv.size)
+        }
     }
 
     override fun initChannel(channel: Channel) {
@@ -61,7 +71,7 @@ class EncryptionInitializer(
     }
 
     private inner class Encryptor : ChannelOutboundHandlerAdapter() {
-        private val cipher = aesCipher(true, key, iv)
+        private val cipher = aesCipher(true, key, iv, gcm)
         private var counter = 0L
 
         override fun handlerRemoved(context: ChannelHandlerContext) {
@@ -76,7 +86,7 @@ class EncryptionInitializer(
                     val hasher = hasherLocal.get()
                     val hash = context.alloc().directBuffer()
                     try {
-                        hash.writeLong(counter++)
+                        hash.writeLongLE(counter++)
                         hash.writeBytes(message)
                         keyBuffer.markReaderIndex()
                         hash.writeBytes(keyBuffer)
@@ -107,7 +117,7 @@ class EncryptionInitializer(
     }
 
     private inner class Decryptor : ChannelInboundHandlerAdapter() {
-        private val cipher = aesCipher(false, key, iv)
+        private val cipher = aesCipher(false, key, iv, gcm)
         private var count = 0L
 
         override fun handlerRemoved(context: ChannelHandlerContext) {
@@ -140,7 +150,7 @@ class EncryptionInitializer(
                     val hasher = hasherLocal.get()
                     val hash = context.alloc().directBuffer()
                     try {
-                        hash.writeLong(count++)
+                        hash.writeLongLE(count++)
                         hash.writeBytes(`in`.readerIndex(inReaderIndex).writerIndex(inWriterIndex - 8))
                         keyBuffer.markReaderIndex()
                         hash.writeBytes(keyBuffer)

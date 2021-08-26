@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package com.valaphee.tesseract.net.packet
+package com.valaphee.tesseract.init
 
 import com.google.gson.JsonObject
 import com.google.gson.internal.Streams
@@ -43,14 +43,14 @@ data class LoginPacket(
 
     override fun write(buffer: PacketBuffer, version: Int) {}
 
-    override fun handle(handler: PacketHandler) = Unit
+    override fun handle(handler: PacketHandler) = handler.login(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
 class LoginPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int): Packet {
+    override fun read(buffer: PacketBuffer, version: Int): LoginPacket {
         val readerIndex = buffer.readerIndex()
         var protocolVersion = buffer.readInt()
         if (protocolVersion == 0) {

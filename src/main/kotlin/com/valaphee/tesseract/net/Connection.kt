@@ -73,6 +73,14 @@ class Connection : SimpleChannelInboundHandler<Packet>() {
         } else this.handler = handler
     }
 
+    var protocolVersion: Int = -1
+        set(value) {
+            val channelPipeline = context.pipeline()
+            channelPipeline[PacketEncoder::class.java].version = value
+            channelPipeline[PacketDecoder::class.java].version = value
+            field = value
+        }
+
     fun write(packet: Packet) {
         if (notClosed) {
             log.debug("Out: {}", lazyToString(packet::toString))

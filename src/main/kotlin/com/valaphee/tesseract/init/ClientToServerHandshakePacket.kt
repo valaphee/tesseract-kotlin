@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package com.valaphee.tesseract.net.packet
+package com.valaphee.tesseract.init
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -21,7 +21,7 @@ object ClientToServerHandshakePacket : Packet {
 
     override fun write(buffer: PacketBuffer, version: Int) = Unit
 
-    override fun handle(handler: PacketHandler) = Unit
+    override fun handle(handler: PacketHandler) = handler.clientToServerHandshake(this)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

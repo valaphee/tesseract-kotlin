@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package com.valaphee.tesseract.net.packet
+package com.valaphee.tesseract.world
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -16,24 +16,21 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.Clientbound)
-data class DisconnectPacket(
-    var message: String?
+data class TimeUpdatePacket(
+    var time: Int = 0
 ) : Packet {
-    override val id get() = 0x05
+    override val id get() = 0x0A
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        message?.let {
-            buffer.writeBoolean(false)
-            buffer.writeString(it)
-        } ?: buffer.writeBoolean(true)
+        buffer.writeVarInt(time)
     }
 
-    override fun handle(handler: PacketHandler) = handler.disconnect(this)
+    override fun handle(handler: PacketHandler) = handler.timeUpdate(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-class DisconnectPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = DisconnectPacket(if (!buffer.readBoolean()) buffer.readString() else null)
+class TimeUpdatePacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = TimeUpdatePacket(buffer.readVarInt())
 }

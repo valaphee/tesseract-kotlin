@@ -3,12 +3,11 @@
  * All rights reserved.
  */
 
-package com.valaphee.tesseract.net.packet
+package com.valaphee.tesseract.init
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
-import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 import org.jose4j.jws.JsonWebSignature
@@ -38,7 +37,7 @@ data class ServerToClientHandshakePacket(
         buffer.writeString(jws.compactSerialization)
     }
 
-    override fun handle(handler: PacketHandler) = Unit
+    override fun handle(handler: PacketHandler) = handler.serverToClientHandshake(this)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -59,14 +58,8 @@ data class ServerToClientHandshakePacket(
         result = 31 * result + clientSalt.contentHashCode()
         return result
     }
-}
 
-/**
- * @author Kevin Ludwig
- */
-class ServerToClientHandshakePacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = TODO()
+    companion object {
+        private val base64Encoder: Base64.Encoder = Base64.getEncoder()
+    }
 }
-
-private val base64Decoder: Base64.Decoder = Base64.getDecoder()
-private val base64Encoder: Base64.Encoder = Base64.getEncoder()

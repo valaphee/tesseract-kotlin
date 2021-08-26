@@ -18,7 +18,7 @@ interface Cipher : Closeable {
     fun cipher(`in`: ByteBuf, out: ByteBuf)
 }
 
-fun aesCipher(encrypt: Boolean, key: ByteArray, iv: ByteArray): Cipher = JavaAesCipher(encrypt, key, iv)
+fun aesCipher(encrypt: Boolean, key: ByteArray, iv: ByteArray, gcm: Boolean): Cipher = JavaAesCipher(encrypt, key, iv, gcm)
 
 /**
  * @author Kevin Ludwig
@@ -26,9 +26,10 @@ fun aesCipher(encrypt: Boolean, key: ByteArray, iv: ByteArray): Cipher = JavaAes
 private class JavaAesCipher(
     encrypt: Boolean,
     key: ByteArray,
-    iv: ByteArray
+    iv: ByteArray,
+    gcm: Boolean
 ) : Cipher {
-    private var cipher = javax.crypto.Cipher.getInstance("AES/CFB8/NoPadding").apply { init(if (encrypt) javax.crypto.Cipher.ENCRYPT_MODE else javax.crypto.Cipher.DECRYPT_MODE, SecretKeySpec(key, "AES"), IvParameterSpec(iv)) }
+    private var cipher = javax.crypto.Cipher.getInstance(if (gcm) "AES/CTR/NoPadding" else "AES/CFB8/NoPadding").apply { init(if (encrypt) javax.crypto.Cipher.ENCRYPT_MODE else javax.crypto.Cipher.DECRYPT_MODE, SecretKeySpec(key, "AES"), IvParameterSpec(iv)) }
 
     @Throws(ShortBufferException::class)
     override fun cipher(`in`: ByteBuf, out: ByteBuf) {

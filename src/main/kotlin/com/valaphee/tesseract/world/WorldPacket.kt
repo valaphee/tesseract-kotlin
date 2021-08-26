@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package com.valaphee.tesseract.net.packet
+package com.valaphee.tesseract.world
 
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
@@ -17,22 +17,17 @@ import com.valaphee.tesseract.net.GamePublishMode
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
-import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 import com.valaphee.tesseract.util.LittleEndianVarIntByteBufOutputStream
-import com.valaphee.tesseract.world.Difficulty
-import com.valaphee.tesseract.world.Dimension
-import com.valaphee.tesseract.world.GameRule
-import com.valaphee.tesseract.world.writeGameRule
-import com.valaphee.tesseract.world.writeGameRulePre440
+import com.valaphee.tesseract.world.chunk.block.Block
 import com.valaphee.tesseract.writeExperiment
 
 /**
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.Clientbound)
-data class JoinPacket(
+data class WorldPacket(
     var uniqueEntityId: Long,
     var runtimeEntityId: Long,
     var gameMode: GameMode,
@@ -92,7 +87,7 @@ data class JoinPacket(
     private val blocksComponentData: ByteArray?,
     var blocksComponent: Array<Block>?,
     private val itemsData: ByteArray?,
-    var items: Array<Item>?,
+    /*var items: Array<Item>?,*/
     var multiplayerCorrelationId: String,
     var inventoriesServerAuthoritative: Boolean,
     var movementRewindHistory: Int,
@@ -203,7 +198,7 @@ data class JoinPacket(
                 }
             }
         } else blocksData?.let { buffer.writeBytes(it) } ?: NbtOutputStream(LittleEndianVarIntByteBufOutputStream(buffer)).use { it.writeTag(blocksTag) }
-        itemsData?.let { buffer.writeBytes(it) } ?: run {
+        /*itemsData?.let { buffer.writeBytes(it) } ?: run {
             items!!.let {
                 buffer.writeVarUInt(it.size)
                 it.forEach {
@@ -212,19 +207,19 @@ data class JoinPacket(
                     if (version >= 419) buffer.writeBoolean(it.component != null)
                 }
             }
-        }
+        }*/
         buffer.writeString(multiplayerCorrelationId)
         if (version >= 407) buffer.writeBoolean(inventoriesServerAuthoritative)
         if (version >= 440) buffer.writeString(engine)
     }
 
-    override fun handle(handler: PacketHandler) = Unit
+    override fun handle(handler: PacketHandler) = handler.world(this)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as JoinPacket
+        other as WorldPacket
 
         if (uniqueEntityId != other.uniqueEntityId) return false
         if (runtimeEntityId != other.runtimeEntityId) return false
@@ -297,10 +292,10 @@ data class JoinPacket(
             if (other.itemsData == null) return false
             if (!itemsData.contentEquals(other.itemsData)) return false
         } else if (other.itemsData != null) return false
-        if (items != null) {
+        /*if (items != null) {
             if (other.items == null) return false
             if (!items.contentEquals(other.items)) return false
-        } else if (other.items != null) return false
+        } else if (other.items != null) return false*/
         if (multiplayerCorrelationId != other.multiplayerCorrelationId) return false
         if (inventoriesServerAuthoritative != other.inventoriesServerAuthoritative) return false
         if (movementRewindHistory != other.movementRewindHistory) return false
@@ -370,7 +365,7 @@ data class JoinPacket(
         result = 31 * result + (blocksComponentData?.contentHashCode() ?: 0)
         result = 31 * result + (blocksComponent?.contentHashCode() ?: 0)
         result = 31 * result + (itemsData?.contentHashCode() ?: 0)
-        result = 31 * result + (items?.contentHashCode() ?: 0)
+        /*result = 31 * result + (items?.contentHashCode() ?: 0)*/
         result = 31 * result + multiplayerCorrelationId.hashCode()
         result = 31 * result + inventoriesServerAuthoritative.hashCode()
         result = 31 * result + movementRewindHistory
@@ -378,11 +373,4 @@ data class JoinPacket(
         result = 31 * result + engine.hashCode()
         return result
     }
-}
-
-/**
- * @author Kevin Ludwig
- */
-class JoinPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = TODO()
 }

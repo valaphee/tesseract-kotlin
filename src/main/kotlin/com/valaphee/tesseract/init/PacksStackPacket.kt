@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package com.valaphee.tesseract.net.packet
+package com.valaphee.tesseract.init
 
 import com.valaphee.tesseract.Experiment
 import com.valaphee.tesseract.net.Packet
@@ -60,7 +60,7 @@ data class PacksStackPacket(
         }
     }
 
-    override fun handle(handler: PacketHandler) = Unit
+    override fun handle(handler: PacketHandler) = handler.packsStack(this)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

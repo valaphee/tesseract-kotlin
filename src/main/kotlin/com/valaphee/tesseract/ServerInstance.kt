@@ -6,15 +6,17 @@
 package com.valaphee.tesseract
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder
+import com.google.inject.AbstractModule
 import com.google.inject.Inject
 import com.google.inject.Injector
+import com.valaphee.tesseract.init.InitPacketHandler
 import com.valaphee.tesseract.net.Compressor
 import com.valaphee.tesseract.net.Connection
-import com.valaphee.tesseract.net.ConnectionPool
 import com.valaphee.tesseract.net.Decompressor
 import com.valaphee.tesseract.net.PacketDecoder
 import com.valaphee.tesseract.net.PacketEncoder
 import com.valaphee.tesseract.net.UnconnectedPingHandler
+import com.valaphee.tesseract.util.generateKeyPair
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.buffer.PooledByteBufAllocator
 import io.netty.channel.AdaptiveRecvByteBufAllocator
@@ -33,24 +35,27 @@ import network.ycc.raknet.pipeline.UserDataCodec
 import network.ycc.raknet.server.channel.RakNetServerChannel
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.security.KeyPair
 import java.util.concurrent.TimeUnit
 
 class ServerInstance(
     injector: Injector
 ) : Instance(injector) {
-    private var parentGroup = underlyingNetworking.groupFactory(0, ThreadFactoryBuilder().setNameFormat("server-%d").build())
-    private var childGroup = underlyingNetworking.groupFactory(0, ThreadFactoryBuilder().setNameFormat("server-c-%d").build())
+    @Inject lateinit var config: Config
 
-    @Inject
-    private lateinit var config: Config
-
-    @Inject
-    private lateinit var connectionPool: ConnectionPool
+    private val parentGroup = underlyingNetworking.groupFactory(0, ThreadFactoryBuilder().setNameFormat("server-%d").build())
+    private val childGroup = underlyingNetworking.groupFactory(0, ThreadFactoryBuilder().setNameFormat("server-c-%d").build())
 
     lateinit var channel: Channel
 
     init {
-        injector.injectMembers(this)
+        this.injector.injectMembers(this)
+    }
+
+    override fun getModule() = object : AbstractModule() {
+        override fun configure() {
+            bind(KeyPair::class.java).toInstance(generateKeyPair())
+        }
     }
 
     fun bind() {
@@ -77,6 +82,7 @@ class ServerInstance(
                     (config as RakNet.Config).maxQueuedBytes = 8 * 1024 * 1024
 
                     val connection = Connection()
+                    connection.setHandler(InitPacketHandler(connection).apply { injector.injectMembers(this) })
                     channel.pipeline()
                         .addFirst("ta-timeout", ReadTimeoutHandler(this@ServerInstance.config.timeout))
                         .addLast(UserDataCodec.NAME, userDataCodec)

@@ -3,6 +3,8 @@
  * All rights reserved.
  */
 
+@file:Suppress("LeakingThis")
+
 package com.valaphee.tesseract
 
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -12,6 +14,7 @@ import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.google.inject.AbstractModule
 import com.google.inject.Injector
+import com.google.inject.Module
 import com.valaphee.foundry.ecs.entity.Entity
 import com.valaphee.foundry.math.Double3
 import com.valaphee.foundry.math.Double3Deserializer
@@ -22,20 +25,22 @@ import com.valaphee.foundry.math.Float2Serializer
 import com.valaphee.tesseract.ecs.EntityDeserializer
 import com.valaphee.tesseract.ecs.EntityFactory
 import com.valaphee.tesseract.ecs.EntitySerializer
+import com.valaphee.tesseract.init.ClientToServerHandshakePacketReader
+import com.valaphee.tesseract.init.LoginPacketReader
+import com.valaphee.tesseract.init.PacksPacketReader
+import com.valaphee.tesseract.init.PacksResponsePacketReader
+import com.valaphee.tesseract.init.PacksStackPacketReader
 import com.valaphee.tesseract.net.PacketDecoder
 import com.valaphee.tesseract.net.PacketReader
-import com.valaphee.tesseract.net.packet.ClientToServerHandshakePacketReader
 import com.valaphee.tesseract.net.packet.DisconnectPacketReader
-import com.valaphee.tesseract.net.packet.LoginPacketReader
-import com.valaphee.tesseract.net.packet.PacksPacketReader
-import com.valaphee.tesseract.net.packet.PacksResponsePacketReader
-import com.valaphee.tesseract.net.packet.PacksStackPacketReader
-import com.valaphee.tesseract.net.packet.ServerToClientHandshakePacketReader
 import com.valaphee.tesseract.net.packet.StatusPacketReader
 import com.valaphee.tesseract.net.packet.TextPacketReader
-import com.valaphee.tesseract.net.packet.TimePacketReader
+import com.valaphee.tesseract.world.TimeUpdatePacketReader
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.WorldEngine
+import com.valaphee.tesseract.world.chunk.ChunkCacheBlobStatusPacketReader
+import com.valaphee.tesseract.world.chunk.ChunkCacheBlobsPacketReader
+import com.valaphee.tesseract.world.chunk.ChunkCacheStatusPacketReader
 import com.valaphee.tesseract.world.persistence.InMemoryBackend
 import io.netty.channel.EventLoopGroup
 import io.netty.channel.epoll.Epoll
@@ -64,6 +69,7 @@ abstract class Instance(
     injector: Injector
 ) {
     private val entityDeserializer = EntityDeserializer()
+    @Suppress("LeakingThis")
     val injector: Injector = injector.createChildInjector(object : AbstractModule() {
         override fun configure() {
             bind(ObjectMapper::class.java).toInstance(ObjectMapper(SmileFactory()).apply {
@@ -80,7 +86,7 @@ abstract class Instance(
             })
             bind(this@Instance.javaClass).toInstance(this@Instance)
         }
-    })
+    }, getModule())
 
     private val executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), ThreadFactoryBuilder().setNameFormat("world-%d").build())
     private val coroutineScope = CoroutineScope(executor.asCoroutineDispatcher() + SupervisorJob() + CoroutineExceptionHandler { context, throwable -> log.error("Unhandled exception caught in $context", throwable) })
@@ -92,15 +98,22 @@ abstract class Instance(
     protected val packetDecoder = PacketDecoder(Int2ObjectOpenHashMap<PacketReader>().apply {
         this[0x01] = LoginPacketReader()
         this[0x02] = StatusPacketReader()
-        this[0x03] = ServerToClientHandshakePacketReader()
+
         this[0x04] = ClientToServerHandshakePacketReader()
         this[0x05] = DisconnectPacketReader()
         this[0x06] = PacksPacketReader()
         this[0x07] = PacksStackPacketReader()
         this[0x08] = PacksResponsePacketReader()
         this[0x09] = TextPacketReader()
-        this[0x0A] = TimePacketReader()
+        this[0x0A] = TimeUpdatePacketReader()
+
+        this[0x81] = ChunkCacheStatusPacketReader()
+
+        this[0x87] = ChunkCacheBlobStatusPacketReader()
+        this[0x88] = ChunkCacheBlobsPacketReader()
     })
+
+    abstract fun getModule(): Module
 
     open fun createEntityFactory() = EntityFactory<WorldContext>(this.injector)
 
