@@ -5,7 +5,7 @@
 
 package com.valaphee.tesseract.net
 
-import com.valaphee.tesseract.init.ServerToClientHandshakePacket
+import com.valaphee.tesseract.net.init.ServerToClientHandshakePacket
 import com.valaphee.tesseract.util.MbedTlsAesCipher
 import com.valaphee.tesseract.util.aesCipher
 import com.valaphee.tesseract.util.generateSecret
@@ -54,9 +54,9 @@ class EncryptionInitializer(
         serverToClientHandshakePacket = ServerToClientHandshakePacket(serverKeyPair.public, serverKeyPair.private, clientSalt)
         key = hasher.digest()
         if (gcm) {
-            iv = ByteArray(16);
-            System.arraycopy(key, 0, iv, 0, 12);
-            iv[15] = 2;
+            iv = ByteArray(16)
+            System.arraycopy(key, 0, iv, 0, 12)
+            iv[15] = 2
         } else {
             iv = ByteArray(16)
             System.arraycopy(key, 0, iv, 0, iv.size)

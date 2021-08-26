@@ -17,7 +17,7 @@ enum class GameMode(
     SurvivalViewer,
     CreativeViewer,
     Default("Default"),
-    LevelDefault;
+    WorldDefault;
 
     companion object {
         @JvmStatic

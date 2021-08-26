@@ -25,7 +25,7 @@ class WorldContext(
     val entityFactory: EntityFactory<WorldContext>,
     val backend: Backend
 ) : Context {
-    val world: World = backend.loadWorld() ?: entityFactory(WorldType, setOf()).also(engine::addEntity)
+    val world = backend.loadWorld() ?: entityFactory(WorldType, setOf()).also(engine::addEntity)
 
     var cycleDelta = 0.0f
 }

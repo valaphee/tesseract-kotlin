@@ -9,13 +9,13 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.google.inject.AbstractModule
 import com.google.inject.Inject
 import com.google.inject.Injector
-import com.valaphee.tesseract.init.InitPacketHandler
 import com.valaphee.tesseract.net.Compressor
 import com.valaphee.tesseract.net.Connection
 import com.valaphee.tesseract.net.Decompressor
 import com.valaphee.tesseract.net.PacketDecoder
 import com.valaphee.tesseract.net.PacketEncoder
 import com.valaphee.tesseract.net.UnconnectedPingHandler
+import com.valaphee.tesseract.net.init.InitPacketHandler
 import com.valaphee.tesseract.util.generateKeyPair
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.buffer.PooledByteBufAllocator
@@ -82,7 +82,7 @@ class ServerInstance(
                     (config as RakNet.Config).maxQueuedBytes = 8 * 1024 * 1024
 
                     val connection = Connection()
-                    connection.setHandler(InitPacketHandler(connection).apply { injector.injectMembers(this) })
+                    connection.setHandler(InitPacketHandler(worldContext, connection).apply { injector.injectMembers(this) })
                     channel.pipeline()
                         .addFirst("ta-timeout", ReadTimeoutHandler(this@ServerInstance.config.timeout))
                         .addLast(UserDataCodec.NAME, userDataCodec)

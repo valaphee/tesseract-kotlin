@@ -5,12 +5,13 @@
 
 package com.valaphee.tesseract.world
 
+import Experiment
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
-import com.valaphee.tesseract.Experiment
 import com.valaphee.tesseract.actor.player.GameMode
 import com.valaphee.tesseract.actor.player.Rank
+import com.valaphee.tesseract.item.Item
 import com.valaphee.tesseract.nbt.ListTag
 import com.valaphee.tesseract.nbt.NbtOutputStream
 import com.valaphee.tesseract.net.GamePublishMode
@@ -20,8 +21,8 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 import com.valaphee.tesseract.util.LittleEndianVarIntByteBufOutputStream
-import com.valaphee.tesseract.world.chunk.block.Block
-import com.valaphee.tesseract.writeExperiment
+import com.valaphee.tesseract.world.terrain.block.Block
+import writeExperiment
 
 /**
  * @author Kevin Ludwig
@@ -87,7 +88,7 @@ data class WorldPacket(
     private val blocksComponentData: ByteArray?,
     var blocksComponent: Array<Block>?,
     private val itemsData: ByteArray?,
-    /*var items: Array<Item>?,*/
+    var items: Array<Item<*>>?,
     var multiplayerCorrelationId: String,
     var inventoriesServerAuthoritative: Boolean,
     var movementRewindHistory: Int,
@@ -198,7 +199,7 @@ data class WorldPacket(
                 }
             }
         } else blocksData?.let { buffer.writeBytes(it) } ?: NbtOutputStream(LittleEndianVarIntByteBufOutputStream(buffer)).use { it.writeTag(blocksTag) }
-        /*itemsData?.let { buffer.writeBytes(it) } ?: run {
+        itemsData?.let { buffer.writeBytes(it) } ?: run {
             items!!.let {
                 buffer.writeVarUInt(it.size)
                 it.forEach {
@@ -207,7 +208,7 @@ data class WorldPacket(
                     if (version >= 419) buffer.writeBoolean(it.component != null)
                 }
             }
-        }*/
+        }
         buffer.writeString(multiplayerCorrelationId)
         if (version >= 407) buffer.writeBoolean(inventoriesServerAuthoritative)
         if (version >= 440) buffer.writeString(engine)
@@ -292,10 +293,10 @@ data class WorldPacket(
             if (other.itemsData == null) return false
             if (!itemsData.contentEquals(other.itemsData)) return false
         } else if (other.itemsData != null) return false
-        /*if (items != null) {
+        if (items != null) {
             if (other.items == null) return false
             if (!items.contentEquals(other.items)) return false
-        } else if (other.items != null) return false*/
+        } else if (other.items != null) return false
         if (multiplayerCorrelationId != other.multiplayerCorrelationId) return false
         if (inventoriesServerAuthoritative != other.inventoriesServerAuthoritative) return false
         if (movementRewindHistory != other.movementRewindHistory) return false
@@ -365,7 +366,7 @@ data class WorldPacket(
         result = 31 * result + (blocksComponentData?.contentHashCode() ?: 0)
         result = 31 * result + (blocksComponent?.contentHashCode() ?: 0)
         result = 31 * result + (itemsData?.contentHashCode() ?: 0)
-        /*result = 31 * result + (items?.contentHashCode() ?: 0)*/
+        result = 31 * result + (items?.contentHashCode() ?: 0)
         result = 31 * result + multiplayerCorrelationId.hashCode()
         result = 31 * result + inventoriesServerAuthoritative.hashCode()
         result = 31 * result + movementRewindHistory

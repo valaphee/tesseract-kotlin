@@ -7,6 +7,9 @@
 
 package com.valaphee.tesseract
 
+import DisconnectPacketReader
+import StatusPacketReader
+import TextPacketReader
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.dataformat.smile.SmileFactory
@@ -25,22 +28,15 @@ import com.valaphee.foundry.math.Float2Serializer
 import com.valaphee.tesseract.ecs.EntityDeserializer
 import com.valaphee.tesseract.ecs.EntityFactory
 import com.valaphee.tesseract.ecs.EntitySerializer
-import com.valaphee.tesseract.init.ClientToServerHandshakePacketReader
-import com.valaphee.tesseract.init.LoginPacketReader
-import com.valaphee.tesseract.init.PacksPacketReader
-import com.valaphee.tesseract.init.PacksResponsePacketReader
-import com.valaphee.tesseract.init.PacksStackPacketReader
 import com.valaphee.tesseract.net.PacketDecoder
 import com.valaphee.tesseract.net.PacketReader
-import com.valaphee.tesseract.net.packet.DisconnectPacketReader
-import com.valaphee.tesseract.net.packet.StatusPacketReader
-import com.valaphee.tesseract.net.packet.TextPacketReader
-import com.valaphee.tesseract.world.TimeUpdatePacketReader
+import com.valaphee.tesseract.net.init.ClientToServerHandshakePacketReader
+import com.valaphee.tesseract.net.init.LoginPacketReader
+import com.valaphee.tesseract.net.init.PacksPacketReader
+import com.valaphee.tesseract.net.init.PacksResponsePacketReader
+import com.valaphee.tesseract.net.init.PacksStackPacketReader
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.WorldEngine
-import com.valaphee.tesseract.world.chunk.ChunkCacheBlobStatusPacketReader
-import com.valaphee.tesseract.world.chunk.ChunkCacheBlobsPacketReader
-import com.valaphee.tesseract.world.chunk.ChunkCacheStatusPacketReader
 import com.valaphee.tesseract.world.persistence.InMemoryBackend
 import io.netty.channel.EventLoopGroup
 import io.netty.channel.epoll.Epoll
@@ -105,12 +101,6 @@ abstract class Instance(
         this[0x07] = PacksStackPacketReader()
         this[0x08] = PacksResponsePacketReader()
         this[0x09] = TextPacketReader()
-        this[0x0A] = TimeUpdatePacketReader()
-
-        this[0x81] = ChunkCacheStatusPacketReader()
-
-        this[0x87] = ChunkCacheBlobStatusPacketReader()
-        this[0x88] = ChunkCacheBlobsPacketReader()
     })
 
     abstract fun getModule(): Module
