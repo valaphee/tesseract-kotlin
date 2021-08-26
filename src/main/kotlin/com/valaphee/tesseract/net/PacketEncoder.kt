@@ -23,7 +23,7 @@ class PacketEncoder(
     override fun encode(context: ChannelHandlerContext, message: Packet, out: ByteBuf) {
         val packetBuffer = PacketBuffer(out)
         packetBuffer.writeVarUInt(message.id)
-        message.write(packetBuffer)
+        message.write(packetBuffer, 448)
     }
 
     companion object {

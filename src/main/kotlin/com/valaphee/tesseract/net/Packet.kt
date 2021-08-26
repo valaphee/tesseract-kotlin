@@ -11,7 +11,7 @@ package com.valaphee.tesseract.net
 interface Packet {
     val id: Int
 
-    fun write(buffer: PacketBuffer)
+    fun write(buffer: PacketBuffer, version: Int)
 
     fun handle(handler: PacketHandler)
 }

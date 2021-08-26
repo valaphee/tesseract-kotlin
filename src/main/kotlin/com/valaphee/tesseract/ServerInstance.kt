@@ -78,7 +78,7 @@ class ServerInstance(
 
                     val connection = Connection()
                     channel.pipeline()
-                        .addFirst("va-timeout", ReadTimeoutHandler(this@ServerInstance.config.timeout))
+                        .addFirst("ta-timeout", ReadTimeoutHandler(this@ServerInstance.config.timeout))
                         .addLast(UserDataCodec.NAME, userDataCodec)
                         .addLast(Compressor.NAME, Compressor())
                         .addLast(Decompressor.NAME, Decompressor())

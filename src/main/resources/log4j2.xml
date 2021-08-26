@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2021, Valaphee.
+  ~ All rights reserved.
+  -->
+
+<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" packages="com.valaphee.tesseract.log"
+               status="WARN"
+               xmlns="http://logging.apache.org/log4j/2.0/config"
+               xsi:noNamespaceSchemaLocation="https://git-wip-us.apache.org/repos/asf?p=logging-log4j2.git;a=blob_plain;f=log4j-core/src/main/resources/Log4j-config.xsd">
+    <Appenders>
+        <RollingRandomAccessFile name="File" append="true"
+                                 fileName="logs/latest.log" filePattern="logs/%d{yyyyMMdd}.%i.log">
+            <PatternLayout pattern="%d{yyyy-mm-dd HH:mm:ss.SSS} %5.-5p %5.5pid --- [%15.-15t] %-40.-40c{1} : %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <OnStartupTriggeringPolicy/>
+            </Policies>
+        </RollingRandomAccessFile>
+        <Queue name="Console">
+            <PatternLayout pattern="%d{yyyy-mm-dd HH:mm:ss.SSS} %5.-5p %5.5pid --- [%15.-15t] %-40.-40c{1} : %m%n"/>
+        </Queue>
+    </Appenders>
+    <Loggers>
+        <Root level="debug">
+            <AppenderRef ref="File"/>
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>

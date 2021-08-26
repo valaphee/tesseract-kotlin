@@ -8,6 +8,6 @@ package com.valaphee.tesseract.net
 /**
  * @author Kevin Ludwig
  */
-interface PacketReader {
-    fun read(buffer: PacketBuffer, version: Int): Packet
+enum class GamePublishMode {
+    Local, InviteOnly, FriendsOnly, FriendsOfFriends, Public
 }

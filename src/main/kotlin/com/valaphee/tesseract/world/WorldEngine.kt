@@ -46,7 +46,6 @@ class WorldEngine(
                 running = true
 
                 while (running) {
-                    println("hewwo")
                     lastSleep = sleep - (timer.realDelta - lastSleep)
                     @Suppress("BlockingMethodInNonBlockingContext")
                     if (lastSleep > 0L) try {

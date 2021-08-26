@@ -20,7 +20,7 @@ class PacketDecoder(
 ) : MessageToMessageDecoder<ByteBuf>() {
     override fun decode(context: ChannelHandlerContext, `in`: ByteBuf, out: MutableList<Any>) {
         val packetBuffer = PacketBuffer(`in`)
-        out.add(readers[packetBuffer.readVarUInt()].read(packetBuffer))
+        out.add(readers[packetBuffer.readVarUInt()].read(packetBuffer, 448))
     }
 
     companion object {

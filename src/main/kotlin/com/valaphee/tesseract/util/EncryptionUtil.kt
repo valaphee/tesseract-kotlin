@@ -17,6 +17,7 @@ import javax.crypto.KeyAgreement
 
 private val keyFactory = KeyFactory.getInstance("EC")
 private val base64Decoder = Base64.getDecoder()
+val MojangRootKey = generatePublicKey("MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAE8ELkixyLcwlZryUQcu1TvPOmI2B7vX83ndnWRUaXm74wFfa5f/lwQNTfrLVHa2PmenpGI6JhIMUJaWZrjmMj90NoKNFSNBuKdm8rYiXsfaz3K36x/1U26HpG0ZxK/V1V")
 private val keyPairGenerator = KeyPairGenerator.getInstance("EC")
 
 fun generatePublicKey(base64: String?) = keyFactory.generatePublic(X509EncodedKeySpec(base64Decoder.decode(base64))) as ECPublicKey

@@ -24,6 +24,16 @@ import com.valaphee.tesseract.ecs.EntityFactory
 import com.valaphee.tesseract.ecs.EntitySerializer
 import com.valaphee.tesseract.net.PacketDecoder
 import com.valaphee.tesseract.net.PacketReader
+import com.valaphee.tesseract.net.packet.ClientToServerHandshakePacketReader
+import com.valaphee.tesseract.net.packet.DisconnectPacketReader
+import com.valaphee.tesseract.net.packet.LoginPacketReader
+import com.valaphee.tesseract.net.packet.PacksPacketReader
+import com.valaphee.tesseract.net.packet.PacksResponsePacketReader
+import com.valaphee.tesseract.net.packet.PacksStackPacketReader
+import com.valaphee.tesseract.net.packet.ServerToClientHandshakePacketReader
+import com.valaphee.tesseract.net.packet.StatusPacketReader
+import com.valaphee.tesseract.net.packet.TextPacketReader
+import com.valaphee.tesseract.net.packet.TimePacketReader
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.WorldEngine
 import com.valaphee.tesseract.world.persistence.InMemoryBackend
@@ -80,6 +90,16 @@ abstract class Instance(
     protected val worldContext = WorldContext(this.injector, coroutineScope, worldEngine, createEntityFactory().also { entityDeserializer.entityFactory = it }, /*BrotliFileStorageBackend(this.injector.getInstance(ObjectMapper::class.java), File("world"))*/InMemoryBackend())
 
     protected val packetDecoder = PacketDecoder(Int2ObjectOpenHashMap<PacketReader>().apply {
+        this[0x01] = LoginPacketReader()
+        this[0x02] = StatusPacketReader()
+        this[0x03] = ServerToClientHandshakePacketReader()
+        this[0x04] = ClientToServerHandshakePacketReader()
+        this[0x05] = DisconnectPacketReader()
+        this[0x06] = PacksPacketReader()
+        this[0x07] = PacksStackPacketReader()
+        this[0x08] = PacksResponsePacketReader()
+        this[0x09] = TextPacketReader()
+        this[0x0A] = TimePacketReader()
     })
 
     open fun createEntityFactory() = EntityFactory<WorldContext>(this.injector)

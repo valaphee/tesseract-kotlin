@@ -5,12 +5,15 @@
 
 package com.valaphee.tesseract.net
 
-import com.valaphee.foundry.math.Double3
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
+import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.util.ByteBufWrapper
 import io.netty.buffer.ByteBuf
+import io.netty.util.AsciiString
 import java.nio.charset.StandardCharsets
+import java.util.EnumSet
+import java.util.UUID
 
 /**
  * @author Kevin Ludwig
@@ -18,6 +21,55 @@ import java.nio.charset.StandardCharsets
 class PacketBuffer(
     buffer: ByteBuf
 ) : ByteBufWrapper(buffer) {
+    inline fun <reified T : Enum<T>> readByteFlags(): Collection<T> {
+        val flagsValue = readByte().toInt()
+        return EnumSet.noneOf(T::class.java).apply { enumValues<T>().filter { (flagsValue and (1 shl it.ordinal)) != 0 }.forEach { add(it) } }
+    }
+
+    fun <T : Enum<T>> writeByteFlags(flags: Collection<T>) = writeByte(flags.map { 1 shl it.ordinal }.fold(0) { flagsValue, flagValue -> flagsValue or flagValue })
+
+    inline fun <reified T : Enum<T>> readShortLEFlags(): Collection<T> {
+        val flagsValue = readUnsignedShortLE()
+        return EnumSet.noneOf(T::class.java).apply { enumValues<T>().filter { (flagsValue and (1 shl it.ordinal)) != 0 }.forEach { add(it) } }
+    }
+
+    fun <T : Enum<T>> writeShortLEFlags(flags: Collection<T>) = writeShortLE(flags.map { 1 shl it.ordinal }.fold(0) { flagsValue, flagValue -> flagsValue or flagValue })
+
+    fun readUuid() = UUID(readLongLE(), readLongLE())
+
+    fun writeUuid(value: UUID) {
+        writeLongLE(value.mostSignificantBits)
+        writeLongLE(value.leastSignificantBits)
+    }
+
+    fun readString16(): String {
+        val length = readUnsignedShortLE()
+        check(length <= Short.MAX_VALUE) { "Maximum length of ${Short.MAX_VALUE} exceeded" }
+        val bytes = ByteArray(length)
+        readBytes(bytes)
+        return String(bytes, StandardCharsets.UTF_8)
+    }
+
+    fun writeString16(value: String) {
+        val bytes = value.toByteArray(StandardCharsets.UTF_8)
+        writeShortLE(bytes.size)
+        writeBytes(bytes)
+    }
+
+    @JvmOverloads
+    fun readAsciiStringLe(maximumLength: Int = Int.MAX_VALUE): AsciiString {
+        val length = readIntLE()
+        check(length <= maximumLength) { "Maximum length of $maximumLength exceeded" }
+        val bytes = ByteArray(length)
+        readBytes(bytes)
+        return AsciiString(bytes)
+    }
+
+    fun writeAsciiStringLe(value: AsciiString) {
+        writeIntLE(value.length)
+        writeBytes(value.toByteArray())
+    }
+
     fun readVarUInt(): Int {
         var value = 0
         var shift = 0
@@ -42,6 +94,25 @@ class PacketBuffer(
             }
         }
     }
+
+    fun setMaximumLengthVarUInt(index: Int, value: Int) {
+        setBytes(
+            index, byteArrayOf(
+                (value and 0x7F or 0x80).toByte(),
+                (value ushr 7 and 0x7F or 0x80).toByte(),
+                (value ushr 14 and 0x7F or 0x80).toByte(),
+                (value ushr 21 and 0x7F or 0x80).toByte(),
+                (value ushr 28 and 0x7F).toByte()
+            )
+        )
+    }
+
+    inline fun <reified T : Enum<T>> readVarUIntFlags(): Collection<T> {
+        val flagsValue = readVarUInt()
+        return EnumSet.noneOf(T::class.java).apply { enumValues<T>().filter { (flagsValue and (1 shl it.ordinal)) != 0 }.forEach { add(it) } }
+    }
+
+    fun <T : Enum<T>> writeVarUIntFlags(flags: Collection<T>) = writeVarUInt(flags.map { 1 shl it.ordinal }.fold(0) { flagsValue, flagValue -> flagsValue or flagValue })
 
     fun readVarInt(): Int {
         val value = readVarUInt()
@@ -77,6 +148,13 @@ class PacketBuffer(
         }
     }
 
+    inline fun <reified T : Enum<T>> readVarULongFlags(): Collection<T> {
+        val flagsValue = readVarULong()
+        return EnumSet.noneOf(T::class.java).apply { enumValues<T>().filter { (flagsValue and (1L shl it.ordinal)) != 0L }.forEach { add(it) } }
+    }
+
+    fun <T : Enum<T>> writeVarULongFlags(flags: Collection<T>) = writeVarULong(flags.map { 1L shl it.ordinal }.fold(0) { flagsValue, flagValue -> flagsValue or flagValue })
+
     fun readVarLong(): Long {
         val value = readVarULong()
         return (value ushr 1) xor -(value and 1)
@@ -86,6 +164,14 @@ class PacketBuffer(
         writeVarULong((value shl 1) xor (value shr 63))
     }
 
+    inline fun <reified T : Enum<T>> readVarLongFlags(): Collection<T> {
+        val flagsValue = readVarLong()
+        return EnumSet.noneOf(T::class.java).apply { enumValues<T>().filter { (flagsValue and (1L shl it.ordinal)) != 0L }.forEach { add(it) } }
+    }
+
+    fun <T : Enum<T>> writeVarLongFlags(flags: Collection<T>) = writeVarLong(flags.map { 1L shl it.ordinal }.fold(0) { flagsValue, flagValue -> flagsValue or flagValue })
+
+    @JvmOverloads
     fun readByteArray(maximumLength: Int = Short.MAX_VALUE.toInt()): ByteArray {
         val length = readVarUInt()
         check(length <= maximumLength) { "Maximum length of $maximumLength exceeded" }
@@ -107,13 +193,30 @@ class PacketBuffer(
         writeBytes(value)
     }
 
+    @JvmOverloads
     fun readString(maximumLength: Int = Int.MAX_VALUE) = String(readByteArray(maximumLength), StandardCharsets.UTF_8)
 
     fun writeString(value: String) {
         writeByteArray(value.toByteArray(StandardCharsets.UTF_8))
     }
 
-    fun readAngle() = readByte().toFloat() * 360 / 256
+    fun readInt3() = Int3(readVarInt(), readVarInt(), readVarInt())
+
+    fun writeInt3(value: Int3) {
+        writeVarInt(value.x)
+        writeVarInt(value.y)
+        writeVarInt(value.z)
+    }
+
+    fun readInt3UnsignedY() = Int3(readVarInt(), readVarUInt(), readVarInt())
+
+    fun writeInt3UnsignedY(value: Int3) {
+        writeVarInt(value.x)
+        writeVarUInt(value.y)
+        writeVarInt(value.z)
+    }
+
+    fun readAngle() = readByte() * 360 / 256f
 
     fun writeAngle(value: Float) {
         writeByte((value * 256 / 360).toInt())
@@ -126,19 +229,22 @@ class PacketBuffer(
         writeAngle(value.y)
     }
 
-    fun readFloat3() = Float3(readFloat(), readFloat(), readFloat())
+    fun readFloat2() = Float2(readFloatLE(), readFloatLE())
 
-    fun writeFloat3(value: Float3) {
-        writeFloat(value.x)
-        writeFloat(value.y)
-        writeFloat(value.z)
+    fun writeFloat2(value: Float2) {
+        writeFloatLE(value.x)
+        writeFloatLE(value.y)
     }
 
-    fun readDouble3() = Double3(readDouble(), readDouble(), readDouble())
+    fun readFloat3() = Float3(readFloatLE(), readFloatLE(), readFloatLE())
 
-    fun writeDouble3(value: Double3) {
-        writeDouble(value.x)
-        writeDouble(value.y)
-        writeDouble(value.z)
+    fun writeFloat3(value: Float3) {
+        writeFloatLE(value.x)
+        writeFloatLE(value.y)
+        writeFloatLE(value.z)
+    }
+
+    companion object {
+        const val MaximumVarUIntLength = 5
     }
 }
