@@ -9,6 +9,10 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.google.inject.AbstractModule
 import com.google.inject.Inject
 import com.google.inject.Injector
+import com.valaphee.tesseract.actor.location.LocationManager
+import com.valaphee.tesseract.actor.player.PlayerLocationPacketizer
+import com.valaphee.tesseract.actor.player.PlayerType
+import com.valaphee.tesseract.actor.player.View
 import com.valaphee.tesseract.net.Compressor
 import com.valaphee.tesseract.net.Connection
 import com.valaphee.tesseract.net.Decompressor
@@ -17,6 +21,13 @@ import com.valaphee.tesseract.net.PacketEncoder
 import com.valaphee.tesseract.net.UnconnectedPingHandler
 import com.valaphee.tesseract.net.init.InitPacketHandler
 import com.valaphee.tesseract.util.generateKeyPair
+import com.valaphee.tesseract.world.WorldType
+import com.valaphee.tesseract.world.chunk.ChunkManager
+import com.valaphee.tesseract.world.chunk.ChunkType
+import com.valaphee.tesseract.world.chunk.terrain.CartesianDeltaMergePacketizer
+import com.valaphee.tesseract.world.chunk.terrain.CartesianDeltaMerger
+import com.valaphee.tesseract.world.chunk.terrain.TerrainManager
+import com.valaphee.tesseract.world.entity.EntityManager
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.buffer.PooledByteBufAllocator
 import io.netty.channel.AdaptiveRecvByteBufAllocator
@@ -30,6 +41,7 @@ import io.netty.channel.WriteBufferWaterMark
 import io.netty.channel.epoll.EpollChannelOption
 import io.netty.channel.unix.UnixChannelOption
 import io.netty.handler.timeout.ReadTimeoutHandler
+import io.opentelemetry.api.OpenTelemetry
 import network.ycc.raknet.RakNet
 import network.ycc.raknet.pipeline.UserDataCodec
 import network.ycc.raknet.server.channel.RakNetServerChannel
@@ -39,9 +51,11 @@ import java.security.KeyPair
 import java.util.concurrent.TimeUnit
 
 class ServerInstance(
-    injector: Injector
-) : Instance(injector) {
-    @Inject lateinit var config: Config
+    injector: Injector,
+    telemetry: OpenTelemetry,
+) : Instance(injector, telemetry) {
+    @Inject
+    lateinit var config: Config
 
     private val parentGroup = underlyingNetworking.groupFactory(0, ThreadFactoryBuilder().setNameFormat("server-%d").build())
     private val childGroup = underlyingNetworking.groupFactory(0, ThreadFactoryBuilder().setNameFormat("server-c-%d").build())
@@ -55,6 +69,35 @@ class ServerInstance(
     override fun getModule() = object : AbstractModule() {
         override fun configure() {
             bind(KeyPair::class.java).toInstance(generateKeyPair())
+        }
+    }
+
+    override fun createEntityFactory() = super.createEntityFactory().apply {
+        register(WorldType) {
+            facets(
+                EntityManager::class.java,
+                ChunkManager::class.java
+            )
+        }
+        register(ChunkType) {
+            behaviors(
+                CartesianDeltaMerger::class.java
+            )
+            facets(
+                TerrainManager::class.java,
+
+                // integration
+                CartesianDeltaMergePacketizer::class.java
+            )
+        }
+        register(PlayerType) {
+            facets(
+                LocationManager::class.java,
+                View::class.java,
+
+                // integration
+                PlayerLocationPacketizer::class.java
+            )
         }
     }
 
@@ -89,7 +132,7 @@ class ServerInstance(
                         .addLast(Compressor.NAME, Compressor())
                         .addLast(Decompressor.NAME, Decompressor())
                         .addLast(PacketEncoder.NAME, PacketEncoder(true))
-                        .addLast(PacketDecoder.NAME, packetDecoder)
+                        .addLast(PacketDecoder.NAME, PacketDecoder(readers))
                         .addLast(connection)
                 }
             })

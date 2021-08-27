@@ -5,12 +5,15 @@
 
 package com.valaphee.tesseract.world
 
+import Difficulty
+import Dimension
 import Experiment
+import GameMode
+import GameRule
+import Rank
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
-import com.valaphee.tesseract.actor.player.GameMode
-import com.valaphee.tesseract.actor.player.Rank
 import com.valaphee.tesseract.item.Item
 import com.valaphee.tesseract.nbt.ListTag
 import com.valaphee.tesseract.nbt.NbtOutputStream
@@ -21,8 +24,10 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 import com.valaphee.tesseract.util.LittleEndianVarIntByteBufOutputStream
-import com.valaphee.tesseract.world.terrain.block.Block
+import com.valaphee.tesseract.world.chunk.terrain.block.Block
 import writeExperiment
+import writeGameRule
+import writeGameRulePre440
 
 /**
  * @author Kevin Ludwig
@@ -63,7 +68,7 @@ data class WorldPacket(
     var bonusChestEnabled: Boolean,
     var startingWithMap: Boolean,
     var defaultRank: Rank,
-    var serverChunkTickRange: Int = 0,
+    var serverChunkTickRange: Int,
     var behaviorPackLocked: Boolean,
     var resourcePackLocked: Boolean,
     var fromLockedWorldTemplate: Boolean,

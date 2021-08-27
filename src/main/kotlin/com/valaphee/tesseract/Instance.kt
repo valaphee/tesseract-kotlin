@@ -7,7 +7,6 @@
 
 package com.valaphee.tesseract
 
-import TextPacketReader
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.dataformat.smile.SmileFactory
@@ -23,13 +22,14 @@ import com.valaphee.foundry.math.Double3Serializer
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float2Deserializer
 import com.valaphee.foundry.math.Float2Serializer
+import com.valaphee.tesseract.actor.player.PlayerLocationPacketReader
 import com.valaphee.tesseract.ecs.EntityDeserializer
 import com.valaphee.tesseract.ecs.EntityFactory
 import com.valaphee.tesseract.ecs.EntitySerializer
-import com.valaphee.tesseract.net.PacketDecoder
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.base.DisconnectPacketReader
 import com.valaphee.tesseract.net.base.StatusPacketReader
+import com.valaphee.tesseract.net.base.TextPacketReader
 import com.valaphee.tesseract.net.init.ClientToServerHandshakePacketReader
 import com.valaphee.tesseract.net.init.LoginPacketReader
 import com.valaphee.tesseract.net.init.PacksPacketReader
@@ -37,6 +37,9 @@ import com.valaphee.tesseract.net.init.PacksResponsePacketReader
 import com.valaphee.tesseract.net.init.PacksStackPacketReader
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.WorldEngine
+import com.valaphee.tesseract.world.chunk.ChunkCacheBlobStatusPacketReader
+import com.valaphee.tesseract.world.chunk.ChunkCacheBlobsPacketReader
+import com.valaphee.tesseract.world.chunk.ChunkCacheStatusPacketReader
 import com.valaphee.tesseract.world.persistence.InMemoryBackend
 import io.netty.channel.EventLoopGroup
 import io.netty.channel.epoll.Epoll
@@ -48,6 +51,8 @@ import io.netty.channel.kqueue.KQueueEventLoopGroup
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.DatagramChannel
 import io.netty.channel.socket.nio.NioDatagramChannel
+import io.opentelemetry.api.OpenTelemetry
+import io.opentelemetry.api.trace.Tracer
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -62,9 +67,11 @@ import java.util.concurrent.ThreadFactory
  * @author Kevin Ludwig
  */
 abstract class Instance(
-    injector: Injector
+    injector: Injector,
+    val telemetry: OpenTelemetry,
 ) {
     private val entityDeserializer = EntityDeserializer()
+
     @Suppress("LeakingThis")
     val injector: Injector = injector.createChildInjector(object : AbstractModule() {
         override fun configure() {
@@ -84,14 +91,16 @@ abstract class Instance(
         }
     }, getModule())
 
+    val tracer: Tracer = telemetry.getTracer("tesseract")
+
     private val executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), ThreadFactoryBuilder().setNameFormat("world-%d").build())
     private val coroutineScope = CoroutineScope(executor.asCoroutineDispatcher() + SupervisorJob() + CoroutineExceptionHandler { context, throwable -> log.error("Unhandled exception caught in $context", throwable) })
-    private val worldEngine = WorldEngine(20.0f, coroutineScope.coroutineContext)
+    private val worldEngine = WorldEngine(20.0f, coroutineScope.coroutineContext, tracer)
 
     @Suppress("LeakingThis")
     protected val worldContext = WorldContext(this.injector, coroutineScope, worldEngine, createEntityFactory().also { entityDeserializer.entityFactory = it }, /*BrotliFileStorageBackend(this.injector.getInstance(ObjectMapper::class.java), File("world"))*/InMemoryBackend())
 
-    protected val packetDecoder = PacketDecoder(Int2ObjectOpenHashMap<PacketReader>().apply {
+    protected val readers = Int2ObjectOpenHashMap<PacketReader>().apply {
         this[0x01] = LoginPacketReader()
         this[0x02] = StatusPacketReader()
 
@@ -101,7 +110,14 @@ abstract class Instance(
         this[0x07] = PacksStackPacketReader()
         this[0x08] = PacksResponsePacketReader()
         this[0x09] = TextPacketReader()
-    })
+
+        this[0x13] = PlayerLocationPacketReader(worldContext)
+
+        this[0x81] = ChunkCacheStatusPacketReader()
+
+        this[0x87] = ChunkCacheBlobStatusPacketReader()
+        this[0x88] = ChunkCacheBlobsPacketReader()
+    }
 
     abstract fun getModule(): Module
 

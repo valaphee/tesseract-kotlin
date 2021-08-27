@@ -16,4 +16,6 @@ class Move(
     context: WorldContext,
     override val source: AnyActorOfWorld,
     val move: Float3
-) : LocationManagerMessage(context)
+) : LocationManagerMessage(context) {
+    override val entity get() = source
+}

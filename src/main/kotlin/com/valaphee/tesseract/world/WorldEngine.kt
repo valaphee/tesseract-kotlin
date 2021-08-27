@@ -6,6 +6,9 @@
 package com.valaphee.tesseract.world
 
 import com.valaphee.foundry.ecs.Engine
+import io.opentelemetry.api.common.AttributeKey
+import io.opentelemetry.api.trace.SpanKind
+import io.opentelemetry.api.trace.Tracer
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
@@ -18,7 +21,8 @@ import kotlin.coroutines.CoroutineContext
  */
 class WorldEngine(
     cyclesPerSecond: Float = 50.0f,
-    override val coroutineContext: CoroutineContext
+    override val coroutineContext: CoroutineContext,
+    val tracer: Tracer
 ) : Engine<WorldContext>, CoroutineScope {
     var running = false
     var stopped = false
@@ -55,11 +59,17 @@ class WorldEngine(
                     val cycles = timer.run()
                     while (cycles.hasNext()) {
                         context.cycleDelta = cycles.next()
-                        entityById.values.filter { it.needsUpdate }.map { async { it.update(context) } }.awaitAll()
+                        val span = tracer.spanBuilder("cycle ${timer.simulationTime}").setSpanKind(SpanKind.INTERNAL).startSpan()
+                        entityById.values.filter { it.needsUpdate }.map { async { it.update(context) } }.also { span.setAttribute(updates, it.size.toLong()) }.awaitAll()
+                        span.end()
                     }
                 }
             }
             if (!stopped) stopped = true
         }
+    }
+
+    companion object {
+        private val updates: AttributeKey<Long> = AttributeKey.longKey("updates")
     }
 }

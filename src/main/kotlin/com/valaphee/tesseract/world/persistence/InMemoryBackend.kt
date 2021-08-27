@@ -5,9 +5,9 @@
 package com.valaphee.tesseract.world.persistence
 
 import com.valaphee.tesseract.world.World
-import com.valaphee.tesseract.world.sector.Sector
-import com.valaphee.tesseract.world.sector.encodePosition
-import com.valaphee.tesseract.world.sector.position
+import com.valaphee.tesseract.world.chunk.Chunk
+import com.valaphee.tesseract.world.chunk.encodePosition
+import com.valaphee.tesseract.world.chunk.position
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 
 /**
@@ -15,7 +15,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
  */
 class InMemoryBackend : Backend {
     private var world: World? = null
-    private var sectors = Long2ObjectOpenHashMap<Sector>()
+    private var chunks = Long2ObjectOpenHashMap<Chunk>()
 
     override fun loadWorld(): World? = world
 
@@ -23,10 +23,10 @@ class InMemoryBackend : Backend {
         this.world = world
     }
 
-    override fun loadSector(sectorPosition: Long): Sector? = sectors[sectorPosition]
+    override fun loadChunk(chunkPosition: Long): Chunk? = chunks[chunkPosition]
 
-    override fun saveSector(sector: Sector) {
-        val (x, y) = sector.position
-        sectors[encodePosition(x, y)] = sector
+    override fun saveChunk(chunk: Chunk) {
+        val (x, y) = chunk.position
+        chunks[encodePosition(x, y)] = chunk
     }
 }

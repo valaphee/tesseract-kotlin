@@ -6,15 +6,15 @@
 package com.valaphee.tesseract.actor.location
 
 import com.valaphee.foundry.ecs.BaseAttribute
-import com.valaphee.foundry.math.Double3
 import com.valaphee.foundry.math.Float2
+import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.actor.Actor
 
 /**
  * @author Kevin Ludwig
  */
 class Location(
-    var position: Double3,
+    var position: Float3,
     var rotation: Float2
 ) : BaseAttribute()
 

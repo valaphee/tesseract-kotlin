@@ -6,7 +6,7 @@
 package com.valaphee.tesseract.world.persistence
 
 import com.valaphee.tesseract.world.World
-import com.valaphee.tesseract.world.sector.Sector
+import com.valaphee.tesseract.world.chunk.Chunk
 
 /**
  * @author Kevin Ludwig
@@ -16,7 +16,7 @@ object NullBackend : Backend {
 
     override fun saveWorld(world: World) = Unit
 
-    override fun loadSector(sectorPosition: Long): Sector? = null
+    override fun loadChunk(chunkPosition: Long): Chunk? = null
 
-    override fun saveSector(sector: Sector) = Unit
+    override fun saveChunk(chunk: Chunk) = Unit
 }

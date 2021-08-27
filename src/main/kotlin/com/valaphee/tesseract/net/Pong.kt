@@ -5,7 +5,7 @@
 
 package com.valaphee.tesseract.net
 
-import com.valaphee.tesseract.actor.player.GameMode
+import GameMode
 import java.util.StringJoiner
 
 /**

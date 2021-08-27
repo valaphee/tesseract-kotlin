@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, GrieferGames, Valaphee.
+ * Copyright (c) 2021, Valaphee.
  * All rights reserved.
  */
 
@@ -47,7 +47,7 @@ class Item<T : Meta> constructor(
         }
 
         fun register(key: String, id: Int) {
-            byId[id] = byKey[key]?.apply { this.id = id }
+            byId[id] = byKey.getOrPut(key) { Item(key, null, ::Meta) }.apply { this.id = id }
         }
 
         fun byId(id: Int): Item<*>? = byId[id]

@@ -14,4 +14,5 @@ import com.valaphee.foundry.ecs.entity.EntityType
 interface Message<C : Context> {
     val context: C
     val source: Entity<out EntityType, C>?
+    val entity: Entity<out EntityType, C>?
 }

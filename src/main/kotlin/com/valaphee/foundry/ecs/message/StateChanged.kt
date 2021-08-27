@@ -19,4 +19,6 @@ data class StateChanged<C : Context>(
     override val source: Entity<out EntityType, C>?,
     val oldState: Facet<C, out Message<C>>,
     val newState: Facet<C, out Message<C>>
-) : Message<C>
+) : Message<C> {
+    override val entity: Entity<out EntityType, C>? = null
+}

@@ -6,7 +6,7 @@
 package com.valaphee.tesseract.world.persistence
 
 import com.valaphee.tesseract.world.World
-import com.valaphee.tesseract.world.sector.Sector
+import com.valaphee.tesseract.world.chunk.Chunk
 
 /**
  * @author Kevin Ludwig
@@ -16,7 +16,7 @@ interface Backend {
 
     fun saveWorld(world: World)
 
-    fun loadSector(sectorPosition: Long): Sector?
+    fun loadChunk(chunkPosition: Long): Chunk?
 
-    fun saveSector(sector: Sector)
+    fun saveChunk(chunk: Chunk)
 }

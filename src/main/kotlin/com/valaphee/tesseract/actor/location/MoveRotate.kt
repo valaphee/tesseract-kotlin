@@ -18,4 +18,6 @@ class MoveRotate(
     override val source: AnyActorOfWorld,
     val move: Float3,
     val rotation: Float2
-) : LocationManagerMessage(context)
+) : LocationManagerMessage(context) {
+    override val entity get() = source
+}

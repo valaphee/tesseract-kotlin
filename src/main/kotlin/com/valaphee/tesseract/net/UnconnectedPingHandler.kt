@@ -5,7 +5,7 @@
 
 package com.valaphee.tesseract.net
 
-import com.valaphee.tesseract.actor.player.GameMode
+import GameMode
 import io.netty.channel.ChannelFutureListener
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.socket.DatagramPacket

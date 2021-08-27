@@ -5,8 +5,8 @@
 
 package com.valaphee.tesseract.actor.location
 
-import com.valaphee.foundry.math.Double3
 import com.valaphee.foundry.math.Float2
+import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.actor.AnyActorOfWorld
 import com.valaphee.tesseract.world.WorldContext
 
@@ -15,7 +15,8 @@ import com.valaphee.tesseract.world.WorldContext
  */
 class Teleport(
     context: WorldContext,
-    override val source: AnyActorOfWorld,
-    val position: Double3,
+    override val source: AnyActorOfWorld?,
+    override val entity: AnyActorOfWorld,
+    val position: Float3,
     val rotation: Float2,
 ) : LocationManagerMessage(context)

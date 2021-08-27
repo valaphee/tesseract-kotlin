@@ -16,7 +16,9 @@ class EntityRemove(
     override val context: WorldContext,
     override val source: AnyEntityOfWorld?,
     val entityIds: LongArray,
-) : EntityManagerMessage
+) : EntityManagerMessage {
+    override val entity: AnyEntityOfWorld? get() = null
+}
 
 fun World.removeEntities(context: WorldContext, vararg entityId: Long) {
     sendMessage(EntityRemove(context, null, entityId))
