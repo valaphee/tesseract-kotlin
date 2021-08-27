@@ -3,6 +3,8 @@
  * All rights reserved.
  */
 
+package com.valaphee.tesseract.net.base
+
 import com.valaphee.tesseract.nbt.CompoundTag
 import com.valaphee.tesseract.nbt.NbtOutputStream
 import com.valaphee.tesseract.net.Packet
@@ -16,23 +18,23 @@ import com.valaphee.tesseract.util.LittleEndianVarIntByteBufOutputStream
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.Clientbound)
-data class EntityIdentifiersPacket(
+data class BiomeDefinitionsPacket(
     val data: ByteArray?,
     var tag: CompoundTag? = null
 ) : Packet {
-    override val id get() = 0x77
+    override val id get() = 0x7A
 
     override fun write(buffer: PacketBuffer, version: Int) {
         data?.let { buffer.writeBytes(it) } ?: NbtOutputStream(LittleEndianVarIntByteBufOutputStream(buffer)).use { it.writeTag(tag) }
     }
 
-    override fun handle(handler: PacketHandler) = handler.entityIdentifiers(this)
+    override fun handle(handler: PacketHandler) = handler.biomeDefinitions(this)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as EntityIdentifiersPacket
+        other as BiomeDefinitionsPacket
 
         if (data != null) {
             if (other.data == null) return false

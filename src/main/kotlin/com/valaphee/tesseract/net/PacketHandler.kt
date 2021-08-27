@@ -5,17 +5,17 @@
 
 package com.valaphee.tesseract.net
 
-import BehaviorTreePacket
-import BiomeDefinitionsPacket
-import CreativeInventoryPacket
-import EntityIdentifiersPacket
 import RecipesPacket
 import com.valaphee.tesseract.actor.location.MoveRotatePacket
 import com.valaphee.tesseract.actor.location.TeleportPacket
 import com.valaphee.tesseract.actor.player.PlayerLocationPacket
 import com.valaphee.tesseract.actor.player.ViewDistancePacket
 import com.valaphee.tesseract.actor.player.ViewDistanceRequestPacket
+import com.valaphee.tesseract.net.base.BehaviorTreePacket
+import com.valaphee.tesseract.net.base.BiomeDefinitionsPacket
+import com.valaphee.tesseract.net.base.CreativeInventoryPacket
 import com.valaphee.tesseract.net.base.DisconnectPacket
+import com.valaphee.tesseract.net.base.EntityIdentifiersPacket
 import com.valaphee.tesseract.net.base.StatusPacket
 import com.valaphee.tesseract.net.base.TextPacket
 import com.valaphee.tesseract.net.init.ClientToServerHandshakePacket

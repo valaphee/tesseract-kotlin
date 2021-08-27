@@ -3,6 +3,8 @@
  * All rights reserved.
  */
 
+package com.valaphee.tesseract.net.base
+
 import com.valaphee.tesseract.item.stack.Stack
 import com.valaphee.tesseract.item.stack.writeStackInstance
 import com.valaphee.tesseract.item.stack.writeStackWithNetIdPre431

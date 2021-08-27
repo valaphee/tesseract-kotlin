@@ -3,6 +3,8 @@
  * All rights reserved.
  */
 
+package com.valaphee.tesseract.net.base
+
 import com.google.gson.JsonElement
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer

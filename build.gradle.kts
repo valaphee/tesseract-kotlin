@@ -34,11 +34,6 @@ val details = versionDetails()
 version = "${details.lastTag}.${details.commitDistance}${if (details.branchName != "master") "-${details.branchName.split('/').last()}" else ""}"
 
 dependencies {
-    api("com.aayushatharva.brotli4j:brotli4j:1.6.0")
-    api("com.aayushatharva.brotli4j:native-linux-x86_64:1.6.0")
-    api("com.aayushatharva.brotli4j:native-osx-x86_64:1.6.0")
-    api("com.aayushatharva.brotli4j:native-windows-x86_64:1.6.0")
-    api("com.aayushatharva.brotli4j:native-linux-aarch64:1.6.0")
     api("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.4")
     api("com.fasterxml.jackson.dataformat:jackson-dataformat-smile:2.12.4")
     api("com.google.code.gson:gson:2.8.8")
@@ -60,6 +55,7 @@ dependencies {
     api("org.apache.logging.log4j:log4j-iostreams:2.14.1")
     api("org.apache.logging.log4j:log4j-jul:2.14.1")
     api("org.bitbucket.b_c:jose4j:0.7.9")
+    api("org.fusesource.leveldbjni:leveldbjni-all:1.8")
     api("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
     api("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.4")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.5.1-native-mt")
@@ -114,7 +110,7 @@ launch4j {
     icon = "${projectDir}/app.ico"
     copyright = "Copyright (c) 2021, Valaphee"
     companyName = "Valaphee"
-    fileDescription = "Tesseract"
+    fileDescription = "Experience Minecraft in a different way"
     productName = "Tesseract"
     jvmOptions = setOf("--add-opens java.base/jdk.internal.misc=ALL-UNNAMED", "--add-opens=java.base/java.nio=ALL-UNNAMED", "-Dio.netty.tryReflectionSetAccessible=true", "-Dio.netty.noPreferDirect=true")
     copyConfigurable = emptyArray<Any>()

@@ -36,7 +36,7 @@ import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.WorldEngine
 import com.valaphee.tesseract.world.chunk.ChunkCacheBlobStatusPacketReader
 import com.valaphee.tesseract.world.chunk.ChunkCacheStatusPacketReader
-import com.valaphee.tesseract.world.persistence.InMemoryBackend
+import com.valaphee.tesseract.world.persistence.AxolotlBackend
 import io.netty.channel.EventLoopGroup
 import io.netty.channel.epoll.Epoll
 import io.netty.channel.epoll.EpollDatagramChannel
@@ -56,6 +56,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asCoroutineDispatcher
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.io.File
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadFactory
 
@@ -94,7 +95,7 @@ abstract class Instance(
     private val worldEngine = WorldEngine(20.0f, coroutineScope.coroutineContext, tracer)
 
     @Suppress("LeakingThis")
-    protected val worldContext = WorldContext(this.injector, coroutineScope, worldEngine, createEntityFactory().also { entityDeserializer.entityFactory = it }, /*BrotliFileStorageBackend(this.injector.getInstance(ObjectMapper::class.java), File("world"))*/InMemoryBackend())
+    protected val worldContext = WorldContext(this.injector, coroutineScope, worldEngine, createEntityFactory().also { entityDeserializer.entityFactory = it }, AxolotlBackend(this.injector.getInstance(ObjectMapper::class.java), File("world")))
 
     protected val readers = Int2ObjectOpenHashMap<PacketReader>().apply {
         this[0x01] = LoginPacketReader

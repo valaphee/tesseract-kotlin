@@ -5,13 +5,24 @@
 
 package com.valaphee.tesseract.world.chunk.terrain.blocks
 
+import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.JsonDeserializer
+import com.fasterxml.jackson.databind.JsonSerializer
+import com.fasterxml.jackson.databind.SerializerProvider
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.util.NibbleArray
 import com.valaphee.tesseract.util.nibbleArray
+import io.netty.buffer.Unpooled
 
 /**
  * @author Kevin Ludwig
  */
+@JsonSerialize(using = SectionSerializer::class)
+@JsonDeserialize(using = SectionDeserializer::class)
 interface Section {
     val empty: Boolean
 
@@ -118,4 +129,35 @@ fun PacketBuffer.readSection() = when (readUnsignedByte().toInt()) {
     }
     8 -> SectionV8(Array(readUnsignedByte().toInt()) { readLayer() })
     else -> TODO()
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object SectionSerializer : JsonSerializer<Section>() {
+    override fun serialize(value: Section, generator: JsonGenerator, provider: SerializerProvider) {
+        var buffer: PacketBuffer? = null
+        try {
+            buffer = PacketBuffer(Unpooled.buffer())
+            value.writeToBuffer(buffer)
+            generator.writeBinary(buffer.array())
+        } finally {
+            buffer?.release()
+        }
+    }
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+class SectionDeserializer : JsonDeserializer<Section>() {
+    override fun deserialize(parser: JsonParser, context: DeserializationContext): Section {
+        var buffer: PacketBuffer? = null
+        try {
+            buffer = PacketBuffer(Unpooled.wrappedBuffer(parser.binaryValue))
+            return buffer.readSection()
+        } finally {
+            buffer?.release()
+        }
+    }
 }

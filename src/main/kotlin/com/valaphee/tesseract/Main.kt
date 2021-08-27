@@ -5,9 +5,6 @@
 
 package com.valaphee.tesseract
 
-import BiomeDefinitionsPacket
-import CreativeInventoryPacket
-import EntityIdentifiersPacket
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
@@ -16,6 +13,9 @@ import com.valaphee.tesseract.item.Item
 import com.valaphee.tesseract.item.stack.Stack
 import com.valaphee.tesseract.nbt.NbtInputStream
 import com.valaphee.tesseract.nbt.TagType
+import com.valaphee.tesseract.net.base.BiomeDefinitionsPacket
+import com.valaphee.tesseract.net.base.CreativeInventoryPacket
+import com.valaphee.tesseract.net.base.EntityIdentifiersPacket
 import com.valaphee.tesseract.util.LittleEndianByteBufInputStream
 import com.valaphee.tesseract.util.getCompoundTag
 import com.valaphee.tesseract.util.getInt
@@ -32,6 +32,8 @@ import io.opentelemetry.exporter.jaeger.JaegerGrpcSpanExporter
 import io.opentelemetry.sdk.OpenTelemetrySdk
 import io.opentelemetry.sdk.trace.SdkTracerProvider
 import io.opentelemetry.sdk.trace.export.BatchSpanProcessor
+import org.mozilla.javascript.Context
+import java.io.IOException
 import java.io.InputStreamReader
 import java.lang.invoke.MethodHandles
 import java.util.Base64
@@ -121,6 +123,30 @@ fun main() {
             .buildAndRegisterGlobal()
     )
     instance.bind()
+
+    reader.prompt = "js> "
+    thread(isDaemon = true, name = "console-reader") {
+        val context = Context.enter()
+        try {
+            val scope = context.initStandardObjects()
+            while (true) {
+                try {
+                    val message = reader.readLine(null, null, null)
+                    if (message.trim { it <= ' ' }.isNotEmpty()) {
+                        try {
+                            context.evaluateString(scope, message, "<console>", 1, null)
+                        } catch (ex: Throwable) {
+                            println(ex.message)
+                        }
+                    }
+                } catch (_: IOException) {
+                } catch (_: IndexOutOfBoundsException) {
+                }
+            }
+        } finally {
+            Context.exit()
+        }
+    }
 
     thread(name = "infinisleeper") { Thread.sleep(Long.MAX_VALUE) }
 }

@@ -21,6 +21,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.PrintStream
 import java.io.PrintWriter
+import kotlin.concurrent.thread
 
 val defaultSystemIn: InputStream = System.`in`
 val defaultSystemOut: PrintStream = System.out
@@ -61,7 +62,7 @@ fun initializeLogging() {
     val logger = LogManager.getRootLogger() as Logger
     logger.appenders.values.forEach { if (it is ConsoleAppender) logger.removeAppender(it) }
 
-    Thread({
+    thread(isDaemon = true, name = "console-writer") {
         while (true) {
             val message = QueueAppender.getMessage()
             if (ansi) {
@@ -82,9 +83,7 @@ fun initializeLogging() {
                 writer.flush()
             }
         }
-    }, "console-writer").apply {
-        isDaemon = true
-    }.start()
+    }
 
     System.setIn(null)
     System.setOut(IoBuilder.forLogger(logger).setLevel(Level.INFO).buildPrintStream())
