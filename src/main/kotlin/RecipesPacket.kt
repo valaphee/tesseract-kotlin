@@ -3,8 +3,6 @@
  * All rights reserved.
  */
 
-package com.valaphee.tesseract.inventory.recipe
-
 import com.valaphee.tesseract.item.stack.writeIngredient
 import com.valaphee.tesseract.item.stack.writeStackInstance
 import com.valaphee.tesseract.item.stack.writeStackPre431

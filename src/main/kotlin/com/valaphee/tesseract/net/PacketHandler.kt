@@ -12,7 +12,7 @@ import EntityIdentifiersPacket
 import com.valaphee.tesseract.actor.location.MoveRotatePacket
 import com.valaphee.tesseract.actor.location.TeleportPacket
 import com.valaphee.tesseract.actor.player.PlayerLocationPacket
-import com.valaphee.tesseract.inventory.recipe.RecipesPacket
+import RecipesPacket
 import com.valaphee.tesseract.net.base.DisconnectPacket
 import com.valaphee.tesseract.net.base.StatusPacket
 import com.valaphee.tesseract.net.base.TextPacket

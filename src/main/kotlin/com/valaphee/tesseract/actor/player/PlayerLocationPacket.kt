@@ -24,7 +24,7 @@ data class PlayerLocationPacket(
     var headRotationYaw: Float,
     var mode: Mode,
     var onGround: Boolean,
-    var drivingEntity: AnyActorOfWorld?,
+    var drivingActor: AnyActorOfWorld?,
     var teleportationCause: TeleportationCause?,
     var tick: Long
 ) : Packet {
@@ -45,10 +45,10 @@ data class PlayerLocationPacket(
         buffer.writeFloatLE(headRotationYaw)
         buffer.writeByte(mode.ordinal)
         buffer.writeBoolean(onGround)
-        buffer.writeVarULong(drivingEntity?.id ?: 0)
+        buffer.writeVarULong(drivingActor?.id ?: 0)
         if (mode == Mode.Teleport) {
             buffer.writeIntLE(teleportationCause!!.ordinal)
-            /*buffer.writeIntLE(entityType!!.id)*/
+            /*buffer.writeIntLE(actorType!!.id)*/
         }
         if (version >= 419) buffer.writeVarULong(tick)
     }
@@ -71,16 +71,16 @@ class PlayerLocationPacketReader(
         val onGround = buffer.readBoolean()
         val drivingEntityId = buffer.readVarULong()
         val teleportationCause: PlayerLocationPacket.TeleportationCause?
-        /*val entityType: EntityType?*/
+        /*val actorType: ActorType?*/
         if (mode == PlayerLocationPacket.Mode.Teleport) {
             teleportationCause = PlayerLocationPacket.TeleportationCause.values()[buffer.readIntLE()]
-            /*entityType = EntityType.byId(buffer.readIntLE())*/
+            /*actorType = ActorType.byId(buffer.readIntLE())*/
         } else {
             teleportationCause = null
-            /*entityType = null*/
+            /*actorType = null*/
         }
         val tick = if (version >= 419) buffer.readVarULong() else 0
         @Suppress("UNCHECKED_CAST")
-        return PlayerLocationPacket(context.engine.findEntityOrNull(entityId) as Player, position, rotation, headRotationYaw, mode, onGround, context.engine.findEntityOrNull(drivingEntityId) as AnyActorOfWorld, teleportationCause, tick)
+        return PlayerLocationPacket(context.engine.findEntityOrNull(entityId) as Player, position, rotation, headRotationYaw, mode, onGround, context.engine.findEntityOrNull(drivingEntityId) as? AnyActorOfWorld, teleportationCause, tick)
     }
 }

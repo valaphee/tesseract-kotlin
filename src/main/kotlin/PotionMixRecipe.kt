@@ -3,8 +3,6 @@
  * All rights reserved.
  */
 
-package com.valaphee.tesseract.inventory.recipe
-
 /**
  * @author Kevin Ludwig
  */

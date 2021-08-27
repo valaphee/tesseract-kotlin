@@ -14,6 +14,9 @@ import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.actor.Actor
 import com.valaphee.tesseract.actor.location.Location
+import com.valaphee.tesseract.actor.location.Move
+import com.valaphee.tesseract.actor.location.MoveRotate
+import com.valaphee.tesseract.actor.location.Rotate
 import com.valaphee.tesseract.actor.location.position
 import com.valaphee.tesseract.actor.location.rotation
 import com.valaphee.tesseract.actor.player.AuthExtra
@@ -21,9 +24,10 @@ import com.valaphee.tesseract.actor.player.Player
 import com.valaphee.tesseract.actor.player.PlayerLocationPacket
 import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.actor.player.User
+import com.valaphee.tesseract.biomeDefinitionsPacket
 import com.valaphee.tesseract.creativeInventoryPacket
 import com.valaphee.tesseract.entityIdentifiersPacket
-import com.valaphee.tesseract.inventory.recipe.RecipesPacket
+import RecipesPacket
 import com.valaphee.tesseract.item.Item
 import com.valaphee.tesseract.net.Connection
 import com.valaphee.tesseract.net.GamePublishMode
@@ -47,15 +51,16 @@ class WorldPacketHandler(
 
     override fun initialize() {
         player = context.entityFactory(PlayerType, setOf(Location(Float3.Zero, Float2.Zero)))
-        context.world.addEntities(context, player)
+        context.world.addEntities(context, null, player)
 
+        @Suppress("UNCHECKED_CAST") val actor = player as Actor
         connection.write(
             WorldPacket(
                 player.id,
                 player.id,
                 GameMode.Default,
-                (player as Actor).position,
-                (player as Actor).rotation,
+                actor.position,
+                actor.rotation,
                 0,
                 WorldPacket.BiomeType.Default,
                 "",
@@ -118,7 +123,7 @@ class WorldPacketHandler(
                 "Tesseract"
             )
         )
-        /*connection.write(biomeDefinitionsPacket)*/
+        connection.write(biomeDefinitionsPacket)
         connection.write(entityIdentifiersPacket)
         connection.write(creativeInventoryPacket)
         connection.write(RecipesPacket(emptyArray(), emptyArray(), emptyArray(), true))
@@ -126,12 +131,20 @@ class WorldPacketHandler(
     }
 
     override fun destroy() {
-        context.world.removeEntities(context, player.id)
+        context.world.removeEntities(context, null, player.id)
     }
 
     override fun other(packet: Packet) = Unit
 
     override fun playerLocation(packet: PlayerLocationPacket) {
-        packet.player
+        @Suppress("UNCHECKED_CAST") val actor = player as Actor
+        val position = actor.position
+        val newPosition = packet.position
+        val positionalMovement = position != newPosition
+        val newRotation = packet.rotation
+        val rotationalMovement = actor.rotation != newRotation
+        if (positionalMovement && rotationalMovement) player.sendMessage(MoveRotate(context, player, newPosition.toMutableFloat3().sub(position), newRotation))
+        else if (positionalMovement) player.sendMessage(Move(context, player, newPosition.toMutableFloat3().sub(position)))
+        else if (rotationalMovement) player.sendMessage(Rotate(context, player, newRotation))
     }
 }

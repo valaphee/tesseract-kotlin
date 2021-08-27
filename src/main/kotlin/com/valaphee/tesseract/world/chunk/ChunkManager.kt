@@ -24,8 +24,8 @@ class ChunkManager : BaseFacet<WorldContext, ChunkManagerMessage>(ChunkManagerMe
     override suspend fun receive(message: ChunkManagerMessage): Response {
         val context = message.context
         when (message) {
-            is ChunkAcquire -> context.world.addEntities(context, *message.sectorPositions.filterNot(chunks::containsKey).map { context.backend.loadChunk(it) ?: context.entityFactory(ChunkType, setOf(Location(decodePosition(it)), Terrain(Blocks()))).apply { chunks[it] = this } }.toTypedArray())
-            is ChunkRelease -> context.world.removeEntities(context, *message.sectorPositions.map { chunks.remove(it)?.also { context.backend.saveChunk(it) }?.id }.filterNotNull().toLongArray())
+            is ChunkAcquire -> context.world.addEntities(context, message.source, *message.sectorPositions.filterNot(chunks::containsKey).map { context.backend.loadChunk(it) ?: context.entityFactory(ChunkType, setOf(Location(decodePosition(it)), Terrain(Blocks()))).apply { chunks[it] = this } }.toTypedArray())
+            is ChunkRelease -> context.world.removeEntities(context, message.source, *message.sectorPositions.map { chunks.remove(it)?.also { context.backend.saveChunk(it) }?.id }.filterNotNull().toLongArray())
         }
 
         return Pass

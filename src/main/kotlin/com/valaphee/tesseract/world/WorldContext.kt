@@ -35,6 +35,9 @@ typealias EntityOfWorld<T> = Entity<T, WorldContext>
 typealias AnyEntityOfWorld = EntityOfWorld<out EntityType>
 
 @Suppress("UNCHECKED_CAST")
+inline fun <reified T : EntityType> Array<AnyEntityOfWorld>.filterType() = filter { T::class.isSuperclassOf(it.type::class) }.toList() as List<Entity<T, WorldContext>>
+
+@Suppress("UNCHECKED_CAST")
 inline fun <reified T : EntityType> Iterable<AnyEntityOfWorld>.filterType() = filter { T::class.isSuperclassOf(it.type::class) }.toList() as List<Entity<T, WorldContext>>
 
 inline fun <reified T : EntityType> AnyEntityOfWorld.whenTypeIs(`do`: (Entity<T, WorldContext>) -> Unit) {

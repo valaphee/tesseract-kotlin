@@ -69,11 +69,19 @@ class InitPacketHandler(
         connection.protocolVersion = packet.protocolVersion
         authExtra = packet.authExtra
         user = packet.user
-        if (!packet.verified) {
+        if (config.verification && !packet.verified) {
             state = State.Finished
 
             log.warn("{}: Could not be verified", this)
             connection.close(DisconnectPacket("disconnectionScreen.notAuthenticated"))
+
+            return
+        }
+        if (!config.userNamePattern.matcher(authExtra.name).matches()) {
+            state = State.Finished
+
+            log.warn("{}: Has an invalid name", this)
+            connection.close(DisconnectPacket("disconnectionScreen.invalidName"))
 
             return
         }

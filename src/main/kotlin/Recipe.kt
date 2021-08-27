@@ -3,8 +3,6 @@
  * All rights reserved.
  */
 
-package com.valaphee.tesseract.inventory.recipe
-
 import com.valaphee.tesseract.item.stack.Stack
 import java.util.UUID
 

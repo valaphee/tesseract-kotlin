@@ -17,7 +17,7 @@ import com.valaphee.tesseract.net.PacketHandler
  * @author Kevin Ludwig
  */
 data class MoveRotatePacket(
-    var entity: AnyActorOfWorld,
+    var actor: AnyActorOfWorld,
     var positionDelta: Int3,
     var position: Float3,
     var rotation: Float2,
@@ -29,7 +29,7 @@ data class MoveRotatePacket(
     override val id get() = 0x6F
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarULong(entity.id)
+        buffer.writeVarULong(actor.id)
         val flagsIndex = buffer.writerIndex()
         buffer.writeZero(Short.SIZE_BYTES)
         var flagsValue = 0

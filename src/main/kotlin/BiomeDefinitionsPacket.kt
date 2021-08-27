@@ -20,7 +20,7 @@ data class BiomeDefinitionsPacket(
     val data: ByteArray?,
     var tag: CompoundTag? = null
 ) : Packet {
-    override val id get() = 0x77
+    override val id get() = 0x7A
 
     override fun write(buffer: PacketBuffer, version: Int) {
         data?.let { buffer.writeBytes(it) } ?: NbtOutputStream(LittleEndianVarIntByteBufOutputStream(buffer)).use { it.writeTag(tag) }

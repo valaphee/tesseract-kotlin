@@ -20,7 +20,7 @@ data class EntityIdentifiersPacket(
     val data: ByteArray?,
     var tag: CompoundTag? = null
 ) : Packet {
-    override val id get() = 0x7A
+    override val id get() = 0x77
 
     override fun write(buffer: PacketBuffer, version: Int) {
         data?.let { buffer.writeBytes(it) } ?: NbtOutputStream(LittleEndianVarIntByteBufOutputStream(buffer)).use { it.writeTag(tag) }

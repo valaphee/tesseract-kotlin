@@ -23,6 +23,7 @@ import com.valaphee.tesseract.net.init.InitPacketHandler
 import com.valaphee.tesseract.util.generateKeyPair
 import com.valaphee.tesseract.world.WorldType
 import com.valaphee.tesseract.world.chunk.ChunkManager
+import com.valaphee.tesseract.world.chunk.ChunkPacketizer
 import com.valaphee.tesseract.world.chunk.ChunkType
 import com.valaphee.tesseract.world.chunk.terrain.CartesianDeltaMergePacketizer
 import com.valaphee.tesseract.world.chunk.terrain.CartesianDeltaMerger
@@ -76,7 +77,10 @@ class ServerInstance(
         register(WorldType) {
             facets(
                 EntityManager::class.java,
-                ChunkManager::class.java
+                ChunkManager::class.java,
+
+                // integration
+                ChunkPacketizer::class.java,
             )
         }
         register(ChunkType) {

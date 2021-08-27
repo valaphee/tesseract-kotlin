@@ -20,7 +20,7 @@ class EntityAdd(
     override val entity: AnyEntityOfWorld? get() = null
 }
 
-fun World.addEntities(context: WorldContext, vararg entity: AnyEntityOfWorld) {
+fun World.addEntities(context: WorldContext, source: AnyEntityOfWorld?, vararg entity: AnyEntityOfWorld) {
     @Suppress("UNCHECKED_CAST")
-    sendMessage(EntityAdd(context, null, entity as Array<AnyEntityOfWorld>))
+    sendMessage(EntityAdd(context, source, entity as Array<AnyEntityOfWorld>))
 }

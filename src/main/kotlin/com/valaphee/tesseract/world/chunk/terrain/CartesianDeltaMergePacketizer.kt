@@ -11,7 +11,6 @@ import com.valaphee.foundry.ecs.system.BaseFacet
 import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.position
-import com.valaphee.tesseract.world.chunk.terrain.blocks.Blocks
 
 /**
  * @author Kevin Ludwig
@@ -21,7 +20,7 @@ class CartesianDeltaMergePacketizer : BaseFacet<WorldContext, CartesianDeltaMerg
         val (chunkX, chunkZ) = message.entity.position
         message.changes.forEach { (position, value) ->
             val (x, y, z) = decodePosition(position)
-            BlockUpdatePacket(Int3(chunkX * Blocks.XZSize + x, y, chunkZ * Blocks.XZSize + z), value, BlockUpdatePacket.Flag.All, 0)
+            BlockUpdatePacket(Int3((chunkX shr 4) + x, y, (chunkZ shr 4) + z), value, BlockUpdatePacket.Flag.All, 0)
         }
 
         return Pass

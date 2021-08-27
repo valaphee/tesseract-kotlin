@@ -16,7 +16,7 @@ import com.valaphee.tesseract.net.PacketHandler
  * @author Kevin Ludwig
  */
 data class TeleportPacket(
-    var entity: AnyActorOfWorld,
+    var actor: AnyActorOfWorld,
     var position: Float3,
     var rotation: Float2,
     var headRotationYaw: Float,
@@ -26,7 +26,7 @@ data class TeleportPacket(
     override val id get() = 0x12
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarULong(entity.id)
+        buffer.writeVarULong(actor.id)
         var flagsValue = if (onGround) flagOnGround else 0
         if (immediate) flagsValue = flagsValue or flagImmediate
         buffer.writeByte(flagsValue)

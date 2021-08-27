@@ -35,6 +35,7 @@ import io.opentelemetry.sdk.trace.export.BatchSpanProcessor
 import java.io.InputStreamReader
 import java.lang.invoke.MethodHandles
 import java.util.Base64
+import kotlin.concurrent.thread
 
 lateinit var biomeDefinitionsPacket: BiomeDefinitionsPacket
 lateinit var entityIdentifiersPacket: EntityIdentifiersPacket
@@ -72,20 +73,24 @@ fun main() {
         }
         Block.finish()
     }
+
     run {
         @Suppress("BlockingMethodInNonBlockingContext")
         gson.newJsonReader(InputStreamReader(clazz.getResourceAsStream("/runtime_item_states.json")!!)).use { (gson.fromJson(it, JsonArray::class.java) as JsonArray).map { it.asJsonObject }.forEach { Item.register(it.getString("name"), it.getInt("id")) } }
     }
+
     run {
         val data = clazz.getResourceAsStream("/biome_definitions.dat")!!.readBytes()
         @Suppress("BlockingMethodInNonBlockingContext")
         biomeDefinitionsPacket = BiomeDefinitionsPacket(data)
     }
+
     run {
         val data = clazz.getResourceAsStream("/entity_identifiers.dat")!!.readBytes()
         @Suppress("BlockingMethodInNonBlockingContext")
         entityIdentifiersPacket = EntityIdentifiersPacket(data)
     }
+
     run {
         @Suppress("BlockingMethodInNonBlockingContext")
         gson.newJsonReader(InputStreamReader(clazz.getResourceAsStream("/creative_items.json")!!)).use {
@@ -116,8 +121,5 @@ fun main() {
     )
     instance.bind()
 
-    Thread({ Thread.sleep(0x7FFFFFFFFFFFFFFFL) }, "infinisleeper").apply {
-        isDaemon = false
-        start()
-    }
+    thread(name = "infinisleeper") { Thread.sleep(Long.MAX_VALUE) }
 }
