@@ -17,13 +17,13 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.Clientbound)
 data class ChunkPublishPacket(
-    var position: Int3? = null,
-    var radius: Int = 0
+    var position: Int3,
+    var radius: Int
 ) : Packet {
     override val id get() = 0x79
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeInt3(position!!)
+        buffer.writeInt3(position)
         buffer.writeVarUInt(radius)
     }
 

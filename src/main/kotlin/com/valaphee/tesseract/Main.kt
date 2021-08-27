@@ -71,6 +71,7 @@ fun main() {
         } finally {
             buffer.release()
         }
+        BlockState.finish()
         Block.finish()
     }
 

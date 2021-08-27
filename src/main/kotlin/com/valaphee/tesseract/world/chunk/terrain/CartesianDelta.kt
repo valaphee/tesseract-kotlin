@@ -8,6 +8,7 @@ package com.valaphee.tesseract.world.chunk.terrain
 import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.Chunk
+import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
 import com.valaphee.tesseract.world.chunk.terrain.blocks.Blocks
 import com.valaphee.tesseract.world.chunk.terrain.blocks.Section
 import it.unimi.dsi.fastutil.shorts.Short2IntOpenHashMap
@@ -23,7 +24,7 @@ class CartesianDelta(
     override fun get(x: Int, y: Int, z: Int) = if (x in 0 until Blocks.XZSize && y in 0 until Blocks.SectionCount * Section.YSize && z in 0 until Blocks.XZSize) {
         val key = encodePosition(x, y, z)
         if (changes.containsKey(key)) changes.get(key) else cartesian[x, y, z]
-    } else 0
+    } else airId
 
     override fun set(x: Int, y: Int, z: Int, value: Int) {
         if (!(x in 0 until Blocks.XZSize && y in 0 until Blocks.SectionCount * Section.YSize && z in 0 until Blocks.XZSize)) return
@@ -32,10 +33,10 @@ class CartesianDelta(
     }
 
     override fun setIfEmpty(x: Int, y: Int, z: Int, value: Int): Int {
-        if (!(x in 0 until Blocks.XZSize && y in 0 until Blocks.SectionCount * Section.YSize && z in 0 until Blocks.XZSize)) return 0
+        if (!(x in 0 until Blocks.XZSize && y in 0 until Blocks.SectionCount * Section.YSize && z in 0 until Blocks.XZSize)) return airId
 
         val oldValue = get(x, y, z)
-        if (oldValue == 0) {
+        if (oldValue == airId) {
             set(x, y, z, value)
 
             return oldValue
@@ -49,6 +50,10 @@ class CartesianDelta(
             sector.sendMessage(CartesianDeltaMerge(context, sector, changes.clone()))
             changes.clear()
         }
+    }
+
+    companion object {
+        private val airId = BlockState.byKeyWithStates("minecraft:air")?.runtimeId ?: error("Missing minecraft:air")
     }
 }
 

@@ -49,7 +49,7 @@ data class LoginPacket(
 /**
  * @author Kevin Ludwig
  */
-class LoginPacketReader : PacketReader {
+object LoginPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int): LoginPacket {
         val readerIndex = buffer.readerIndex()
         var protocolVersion = buffer.readInt()

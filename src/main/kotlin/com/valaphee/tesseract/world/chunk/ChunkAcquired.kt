@@ -12,8 +12,10 @@ import com.valaphee.tesseract.world.WorldContext
 /**
  * @author Kevin Ludwig
  */
-sealed class ChunkManagerMessage(
+class ChunkAcquired(
     override val context: WorldContext,
     override val source: AnyEntityOfWorld?,
-    val chunkPositions: LongArray
-) : Message<WorldContext>
+    val chunks: Array<Chunk>
+) : Message<WorldContext> {
+    override val entity: AnyEntityOfWorld? = null
+}

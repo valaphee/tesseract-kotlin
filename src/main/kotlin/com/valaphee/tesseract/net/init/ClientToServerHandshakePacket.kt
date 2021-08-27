@@ -37,6 +37,6 @@ object ClientToServerHandshakePacket : Packet {
 /**
  * @author Kevin Ludwig
  */
-class ClientToServerHandshakePacketReader : PacketReader {
+object ClientToServerHandshakePacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int) = ClientToServerHandshakePacket
 }

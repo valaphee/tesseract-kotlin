@@ -37,6 +37,6 @@ data class ChunkCacheBlobsPacket(
 /**
  * @author Kevin Ludwig
  */
-class ChunkCacheBlobsPacketReader : PacketReader {
+object ChunkCacheBlobsPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int) = ChunkCacheBlobsPacket().apply { repeat(buffer.readVarUInt()) { blobs[buffer.readLongLE()] = buffer.readByteArray() } }
 }

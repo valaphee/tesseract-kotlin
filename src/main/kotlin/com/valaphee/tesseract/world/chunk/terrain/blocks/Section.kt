@@ -17,11 +17,11 @@ interface Section {
 
     fun get(x: Int, y: Int, z: Int): Int
 
-    fun get(x: Int, y: Int, z: Int, layer: Int = 0) = get(x, y, z)
+    fun get(x: Int, y: Int, z: Int, layer: Int) = get(x, y, z)
 
-    fun set(x: Int, y: Int, z: Int, id: Int)
+    fun set(x: Int, y: Int, z: Int, value: Int)
 
-    fun set(x: Int, y: Int, z: Int, id: Int, layer: Int = 0) = set(x, y, z, id)
+    fun set(x: Int, y: Int, z: Int, value: Int, layer: Int) = set(x, y, z, value)
 
     fun writeToBuffer(buffer: PacketBuffer)
 
@@ -44,10 +44,10 @@ class SectionV0(
         return (blockIds[index].toInt() and (blockIdMask shl blockIdShift)) or blockSubIds[index]
     }
 
-    override fun set(x: Int, y: Int, z: Int, id: Int) {
+    override fun set(x: Int, y: Int, z: Int, value: Int) {
         val index = (x shl Section.XShift) or (z shl Section.ZShift) or y
-        blockIds[index] = ((id shr blockIdShift) and blockIdMask).toByte()
-        blockSubIds[index] = (id and blockSubIdMask)
+        blockIds[index] = ((value shr blockIdShift) and blockIdMask).toByte()
+        blockSubIds[index] = (value and blockSubIdMask)
     }
 
     override val empty get() = blockIds.all { it.toInt() == 0 }
@@ -91,13 +91,13 @@ class SectionV8(
 ) : Section {
     constructor(version: BitArray.Version, runtime: Boolean = true) : this(arrayOf(Layer(version, runtime), Layer(version, runtime)))
 
-    override fun get(x: Int, y: Int, z: Int) = get(0, x, y, z)
+    override fun get(x: Int, y: Int, z: Int) = get(x, y, z, 0)
 
     override fun get(x: Int, y: Int, z: Int, layer: Int) = layers[layer].get((x shl Section.XShift) or (z shl Section.ZShift) or y)
 
-    override fun set(x: Int, y: Int, z: Int, id: Int) = set(0, x, y, z, id)
+    override fun set(x: Int, y: Int, z: Int, value: Int) = set(x, y, z, value, 0)
 
-    override fun set(x: Int, y: Int, z: Int, id: Int, layer: Int) = layers[layer].set((x shl Section.XShift) or (z shl Section.ZShift) or y, id)
+    override fun set(x: Int, y: Int, z: Int, value: Int, layer: Int) = layers[layer].set((x shl Section.XShift) or (z shl Section.ZShift) or y, value)
 
     override val empty get() = layers.all { it.empty }
 

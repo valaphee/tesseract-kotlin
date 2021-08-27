@@ -42,6 +42,6 @@ data class StatusPacket(
 /**
  * @author Kevin Ludwig
  */
-class StatusPacketReader : PacketReader {
+object StatusPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int) = StatusPacket(StatusPacket.Status.values()[buffer.readInt()])
 }

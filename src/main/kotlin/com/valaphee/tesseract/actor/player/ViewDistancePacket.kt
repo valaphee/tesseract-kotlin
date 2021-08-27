@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package com.valaphee.tesseract.world.chunk
+package com.valaphee.tesseract.actor.player
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -15,22 +15,22 @@ import com.valaphee.tesseract.net.Restriction
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Serverbound)
-data class ChunkCacheStatusPacket(
-    var supported: Boolean = false
+@Restrict(Restriction.Clientbound)
+data class ViewDistancePacket(
+    var distance: Int
 ) : Packet {
-    override val id get() = 0x81
+    override val id get() = 0x46
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeBoolean(supported)
+        buffer.writeVarInt(distance)
     }
 
-    override fun handle(handler: PacketHandler) = handler.chunkCacheStatus(this)
+    override fun handle(handler: PacketHandler) = handler.viewDistance(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object ChunkCacheStatusPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = ChunkCacheStatusPacket(buffer.readBoolean())
+object ViewDistancePacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = ViewDistancePacket(buffer.readVarInt())
 }

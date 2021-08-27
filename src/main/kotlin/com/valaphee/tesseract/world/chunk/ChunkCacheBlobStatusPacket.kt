@@ -53,7 +53,7 @@ data class ChunkCacheBlobStatusPacket(
 /**
  * @author Kevin Ludwig
  */
-class ChunkCacheBlobStatusPacketReader : PacketReader {
+object ChunkCacheBlobStatusPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int): ChunkCacheBlobStatusPacket {
         val negativeAcknowledgeCount = buffer.readVarUInt()
         val acknowledgeCount = buffer.readVarUInt()

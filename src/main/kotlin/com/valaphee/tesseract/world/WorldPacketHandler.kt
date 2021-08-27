@@ -5,18 +5,18 @@
 
 package com.valaphee.tesseract.world
 
+import ConnectionAttribute
 import Difficulty
 import Dimension
 import GameMode
 import Rank
+import RecipesPacket
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.actor.Actor
 import com.valaphee.tesseract.actor.location.Location
-import com.valaphee.tesseract.actor.location.Move
-import com.valaphee.tesseract.actor.location.MoveRotate
-import com.valaphee.tesseract.actor.location.Rotate
+import com.valaphee.tesseract.actor.location.Teleport
 import com.valaphee.tesseract.actor.location.position
 import com.valaphee.tesseract.actor.location.rotation
 import com.valaphee.tesseract.actor.player.AuthExtra
@@ -24,10 +24,12 @@ import com.valaphee.tesseract.actor.player.Player
 import com.valaphee.tesseract.actor.player.PlayerLocationPacket
 import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.actor.player.User
+import com.valaphee.tesseract.actor.player.View
+import com.valaphee.tesseract.actor.player.ViewDistancePacket
+import com.valaphee.tesseract.actor.player.ViewDistanceRequestPacket
 import com.valaphee.tesseract.biomeDefinitionsPacket
 import com.valaphee.tesseract.creativeInventoryPacket
 import com.valaphee.tesseract.entityIdentifiersPacket
-import RecipesPacket
 import com.valaphee.tesseract.item.Item
 import com.valaphee.tesseract.net.Connection
 import com.valaphee.tesseract.net.GamePublishMode
@@ -50,7 +52,7 @@ class WorldPacketHandler(
     lateinit var player: Player
 
     override fun initialize() {
-        player = context.entityFactory(PlayerType, setOf(Location(Float3.Zero, Float2.Zero)))
+        player = context.entityFactory(PlayerType, setOf(Location(Float3(0.0f, 200.0f, 0.0f), Float2.Zero), ConnectionAttribute(connection)))
         context.world.addEntities(context, null, player)
 
         @Suppress("UNCHECKED_CAST") val actor = player as Actor
@@ -137,7 +139,7 @@ class WorldPacketHandler(
     override fun other(packet: Packet) = Unit
 
     override fun playerLocation(packet: PlayerLocationPacket) {
-        @Suppress("UNCHECKED_CAST") val actor = player as Actor
+        /*@Suppress("UNCHECKED_CAST") val actor = player as Actor
         val position = actor.position
         val newPosition = packet.position
         val positionalMovement = position != newPosition
@@ -145,6 +147,12 @@ class WorldPacketHandler(
         val rotationalMovement = actor.rotation != newRotation
         if (positionalMovement && rotationalMovement) player.sendMessage(MoveRotate(context, player, newPosition.toMutableFloat3().sub(position), newRotation))
         else if (positionalMovement) player.sendMessage(Move(context, player, newPosition.toMutableFloat3().sub(position)))
-        else if (rotationalMovement) player.sendMessage(Rotate(context, player, newRotation))
+        else if (rotationalMovement) player.sendMessage(Rotate(context, player, newRotation))*/
+        player.sendMessage(Teleport(context, player, player, packet.position, packet.rotation))
+    }
+
+    override fun viewDistanceRequest(packet: ViewDistanceRequestPacket) {
+        player.findFacet(View::class).distance = packet.distance
+        connection.write(ViewDistancePacket(packet.distance))
     }
 }

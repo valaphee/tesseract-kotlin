@@ -57,7 +57,7 @@ data class PacksResponsePacket(
 /**
  * @author Kevin Ludwig
  */
-class PacksResponsePacketReader : PacketReader {
+object PacksResponsePacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int) = PacksResponsePacket(
         PacksResponsePacket.Status.values()[buffer.readUnsignedByte().toInt()],
         Array(buffer.readUnsignedShortLE()) { UUID.fromString(buffer.readString().split("_".toRegex(), 2).toTypedArray()[0]) }

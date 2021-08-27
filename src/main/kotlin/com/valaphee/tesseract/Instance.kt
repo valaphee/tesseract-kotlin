@@ -23,22 +23,18 @@ import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float2Deserializer
 import com.valaphee.foundry.math.Float2Serializer
 import com.valaphee.tesseract.actor.player.PlayerLocationPacketReader
+import com.valaphee.tesseract.actor.player.ViewDistanceRequestPacketReader
 import com.valaphee.tesseract.ecs.EntityDeserializer
 import com.valaphee.tesseract.ecs.EntityFactory
 import com.valaphee.tesseract.ecs.EntitySerializer
 import com.valaphee.tesseract.net.PacketReader
-import com.valaphee.tesseract.net.base.DisconnectPacketReader
-import com.valaphee.tesseract.net.base.StatusPacketReader
 import com.valaphee.tesseract.net.base.TextPacketReader
 import com.valaphee.tesseract.net.init.ClientToServerHandshakePacketReader
 import com.valaphee.tesseract.net.init.LoginPacketReader
-import com.valaphee.tesseract.net.init.PacksPacketReader
 import com.valaphee.tesseract.net.init.PacksResponsePacketReader
-import com.valaphee.tesseract.net.init.PacksStackPacketReader
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.WorldEngine
 import com.valaphee.tesseract.world.chunk.ChunkCacheBlobStatusPacketReader
-import com.valaphee.tesseract.world.chunk.ChunkCacheBlobsPacketReader
 import com.valaphee.tesseract.world.chunk.ChunkCacheStatusPacketReader
 import com.valaphee.tesseract.world.persistence.InMemoryBackend
 import io.netty.channel.EventLoopGroup
@@ -101,22 +97,25 @@ abstract class Instance(
     protected val worldContext = WorldContext(this.injector, coroutineScope, worldEngine, createEntityFactory().also { entityDeserializer.entityFactory = it }, /*BrotliFileStorageBackend(this.injector.getInstance(ObjectMapper::class.java), File("world"))*/InMemoryBackend())
 
     protected val readers = Int2ObjectOpenHashMap<PacketReader>().apply {
-        this[0x01] = LoginPacketReader()
-        this[0x02] = StatusPacketReader()
+        this[0x01] = LoginPacketReader
+        /*this[0x02] = StatusPacketReader*/
 
-        this[0x04] = ClientToServerHandshakePacketReader()
-        this[0x05] = DisconnectPacketReader()
-        this[0x06] = PacksPacketReader()
-        this[0x07] = PacksStackPacketReader()
-        this[0x08] = PacksResponsePacketReader()
-        this[0x09] = TextPacketReader()
+        this[0x04] = ClientToServerHandshakePacketReader
+        /*this[0x05] = DisconnectPacketReader
+        this[0x06] = PacksPacketReader
+        this[0x07] = PacksStackPacketReader*/
+        this[0x08] = PacksResponsePacketReader
+        this[0x09] = TextPacketReader
 
         this[0x13] = PlayerLocationPacketReader(worldContext)
 
-        this[0x81] = ChunkCacheStatusPacketReader()
+        this[0x45] = ViewDistanceRequestPacketReader
+        /*this[0x46] = ViewDistancePacketReader*/
 
-        this[0x87] = ChunkCacheBlobStatusPacketReader()
-        this[0x88] = ChunkCacheBlobsPacketReader()
+        this[0x81] = ChunkCacheStatusPacketReader
+
+        this[0x87] = ChunkCacheBlobStatusPacketReader
+        /*this[0x88] = ChunkCacheBlobsPacketReader*/
     }
 
     abstract fun getModule(): Module

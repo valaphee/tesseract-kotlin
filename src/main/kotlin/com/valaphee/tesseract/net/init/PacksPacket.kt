@@ -94,7 +94,7 @@ data class PacksPacket(
 /**
  * @author Kevin Ludwig
  */
-class PacksPacketReader : PacketReader {
+object PacksPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int) = PacksPacket(
         buffer.readBoolean(),
         buffer.readBoolean(),

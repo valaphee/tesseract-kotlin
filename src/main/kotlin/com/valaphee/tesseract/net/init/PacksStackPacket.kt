@@ -94,7 +94,7 @@ data class PacksStackPacket(
 /**
  * @author Kevin Ludwig
  */
-class PacksStackPacketReader : PacketReader {
+object PacksStackPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int) = PacksStackPacket(
         buffer.readBoolean(),
         Array(buffer.readVarUInt()) { PacksStackPacket.Pack(UUID.fromString(buffer.readString()), buffer.readString(), buffer.readString()) },

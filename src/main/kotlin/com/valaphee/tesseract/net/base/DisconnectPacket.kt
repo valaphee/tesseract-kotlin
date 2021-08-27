@@ -34,6 +34,6 @@ data class DisconnectPacket(
 /**
  * @author Kevin Ludwig
  */
-class DisconnectPacketReader : PacketReader {
+object DisconnectPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int) = DisconnectPacket(if (!buffer.readBoolean()) buffer.readString() else null)
 }

@@ -86,7 +86,7 @@ data class TextPacket(
 /**
  * @author Kevin Ludwig
  */
-class TextPacketReader : PacketReader {
+object TextPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int): TextPacket {
         val type = TextPacket.Type.values()[buffer.readUnsignedByte().toInt()]
         val needsTranslation = buffer.readBoolean()
