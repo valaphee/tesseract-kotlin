@@ -21,6 +21,6 @@ enum class GameMode(
         @JvmStatic
         fun byKey(key: String) = byKey[key]
 
-        private val byKey = HashMap<String, GameMode>(values().size).apply { values().forEach { this[it.key] = it } }
+        private val byKey = values().associateBy { it.key }
     }
 }

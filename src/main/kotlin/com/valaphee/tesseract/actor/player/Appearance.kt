@@ -221,7 +221,7 @@ fun PacketBuffer.readAppearancePre390(): Appearance {
     val capeOnClassicSkin = readBoolean()
     val capeId = readString()
     val id = readString()
-    return Appearance(id, skinId, HashMap<String, Any>().apply { skinResourcePatch.entrySet().forEach { this[it.key] = gson.fromJson(it.value, Any::class.java) } }, skinImage, skinGeometryData, skinAnimationData, capeId, capeImage, capeOnClassicSkin, animations, premiumSkin, personaSkin, "", "", emptyList(), emptyList(), false, "")
+    return Appearance(id, skinId, mutableMapOf<String, Any>().apply { skinResourcePatch.entrySet().forEach { this[it.key] = gson.fromJson(it.value, Any::class.java) } }, skinImage, skinGeometryData, skinAnimationData, capeId, capeImage, capeOnClassicSkin, animations, premiumSkin, personaSkin, "", "", emptyList(), emptyList(), false, "")
 }
 
 fun PacketBuffer.readAppearancePre419(): Appearance {
@@ -242,7 +242,7 @@ fun PacketBuffer.readAppearancePre419(): Appearance {
     val skinColor = readString()
     val personaPieces = ArrayList<Appearance.PersonaPiece>().apply { repeat(readIntLE()) { add(Appearance.PersonaPiece(readString(), readString(), readString(), readBoolean(), readString())) } }
     val personaPieceTints = ArrayList<Appearance.PersonaPieceTint>().apply { repeat(readIntLE()) { add(Appearance.PersonaPieceTint(readString(), Array(readIntLE()) { readString() })) } }
-    return Appearance(id, skinId, HashMap<String, Any>().apply { skinResourcePatch.entrySet().forEach { this[it.key] = gson.fromJson(it.value, Any::class.java) } }, skinImage, skinGeometryData, skinAnimationData, capeId, capeImage, capeOnClassicSkin, animations, premiumSkin, personaSkin, armSize, skinColor, personaPieces, personaPieceTints, false, "")
+    return Appearance(id, skinId, mutableMapOf<String, Any>().apply { skinResourcePatch.entrySet().forEach { this[it.key] = gson.fromJson(it.value, Any::class.java) } }, skinImage, skinGeometryData, skinAnimationData, capeId, capeImage, capeOnClassicSkin, animations, premiumSkin, personaSkin, armSize, skinColor, personaPieces, personaPieceTints, false, "")
 }
 
 fun PacketBuffer.readAppearancePre428(): Appearance {
@@ -263,7 +263,7 @@ fun PacketBuffer.readAppearancePre428(): Appearance {
     val skinColor = readString()
     val personaPieces = ArrayList<Appearance.PersonaPiece>().apply { repeat(readIntLE()) { add(Appearance.PersonaPiece(readString(), readString(), readString(), readBoolean(), readString())) } }
     val personaPieceTints = ArrayList<Appearance.PersonaPieceTint>().apply { repeat(readIntLE()) { add(Appearance.PersonaPieceTint(readString(), Array(readIntLE()) { readString() })) } }
-    return Appearance(id, skinId, HashMap<String, Any>().apply { skinResourcePatch.entrySet().forEach { this[it.key] = gson.fromJson(it.value, Any::class.java) } }, skinImage, skinGeometryData, skinAnimationData, capeId, capeImage, capeOnClassicSkin, animations, premiumSkin, personaSkin, armSize, skinColor, personaPieces, personaPieceTints, false, "")
+    return Appearance(id, skinId, mutableMapOf<String, Any>().apply { skinResourcePatch.entrySet().forEach { this[it.key] = gson.fromJson(it.value, Any::class.java) } }, skinImage, skinGeometryData, skinAnimationData, capeId, capeImage, capeOnClassicSkin, animations, premiumSkin, personaSkin, armSize, skinColor, personaPieces, personaPieceTints, false, "")
 }
 
 fun PacketBuffer.readAppearance(): Appearance {
@@ -285,7 +285,7 @@ fun PacketBuffer.readAppearance(): Appearance {
     val skinColor = readString()
     val personaPieces = ArrayList<Appearance.PersonaPiece>().apply { repeat(readIntLE()) { add(Appearance.PersonaPiece(readString(), readString(), readString(), readBoolean(), readString())) } }
     val personaPieceTints = ArrayList<Appearance.PersonaPieceTint>().apply { repeat(readIntLE()) { add(Appearance.PersonaPieceTint(readString(), Array(readIntLE()) { readString() })) } }
-    return Appearance(id, skinId, HashMap<String, Any>().apply { skinResourcePatch.entrySet().forEach { this[it.key] = gson.fromJson(it.value, Any::class.java) } }, skinImage, skinGeometryData, skinAnimationData, capeId, capeImage, capeOnClassicSkin, animations, premiumSkin, personaSkin, armSize, skinColor, personaPieces, personaPieceTints, false, playFabId)
+    return Appearance(id, skinId, mutableMapOf<String, Any>().apply { skinResourcePatch.entrySet().forEach { this[it.key] = gson.fromJson(it.value, Any::class.java) } }, skinImage, skinGeometryData, skinAnimationData, capeId, capeImage, capeOnClassicSkin, animations, premiumSkin, personaSkin, armSize, skinColor, personaPieces, personaPieceTints, false, playFabId)
 }
 
 fun PacketBuffer.writeAppearancePre390(value: Appearance) {

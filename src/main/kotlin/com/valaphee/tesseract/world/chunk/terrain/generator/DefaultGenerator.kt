@@ -10,7 +10,7 @@ import com.valaphee.foundry.math.noise.FractalNoise
 import com.valaphee.foundry.math.noise.PerlinNoise
 import com.valaphee.tesseract.world.chunk.terrain.Terrain
 import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
-import com.valaphee.tesseract.world.chunk.terrain.blocks.Blocks
+import com.valaphee.tesseract.world.chunk.terrain.blocks.BlockStorage
 import kotlin.math.pow
 
 /**
@@ -19,9 +19,9 @@ import kotlin.math.pow
 class DefaultGenerator : Generator {
     private val heightMapNoise = FractalNoise(PerlinNoise(), octaves = 6)
 
-    override fun generate(position: Int2) = Terrain(Blocks().apply {
-        val x = position.x * Blocks.XZSize
-        val z = position.y * Blocks.XZSize
+    override fun generate(position: Int2) = Terrain(BlockStorage().apply {
+        val x = position.x * BlockStorage.XZSize
+        val z = position.y * BlockStorage.XZSize
 
         repeat(16) { xr ->
             repeat(16) { zr ->

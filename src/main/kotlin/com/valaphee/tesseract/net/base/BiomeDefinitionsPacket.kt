@@ -50,4 +50,6 @@ data class BiomeDefinitionsPacket(
         result = 31 * result + (tag?.hashCode() ?: 0)
         return result
     }
+
+    override fun toString() = "BiomeDefinitionsPacket(tag=$tag)"
 }

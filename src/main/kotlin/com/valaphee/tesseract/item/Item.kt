@@ -40,7 +40,7 @@ class Item<T : Meta> constructor(
 
     companion object {
         private val byId = Int2ObjectOpenHashMap<Item<*>>()
-        private val byKey = HashMap<String, Item<*>>()
+        private val byKey = mutableMapOf<String, Item<*>>()
 
         fun register(value: Item<*>) {
             byKey[value.key] = value

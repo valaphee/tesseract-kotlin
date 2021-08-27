@@ -30,7 +30,7 @@ class Block(
     override fun toString() = key
 
     companion object {
-        private val byKey = HashMap<String, Block>()
+        private val byKey = mutableMapOf<String, Block>()
         private var finished = false
 
         fun finish() {

@@ -9,7 +9,7 @@ import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.Chunk
 import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
-import com.valaphee.tesseract.world.chunk.terrain.blocks.Blocks
+import com.valaphee.tesseract.world.chunk.terrain.blocks.BlockStorage
 import com.valaphee.tesseract.world.chunk.terrain.blocks.Section
 import it.unimi.dsi.fastutil.shorts.Short2IntOpenHashMap
 
@@ -21,19 +21,19 @@ class CartesianDelta(
 ) : ReadWriteCartesian {
     private val changes = Short2IntOpenHashMap()
 
-    override fun get(x: Int, y: Int, z: Int) = if (x in 0 until Blocks.XZSize && y in 0 until Blocks.SectionCount * Section.YSize && z in 0 until Blocks.XZSize) {
+    override fun get(x: Int, y: Int, z: Int) = if (x in 0 until BlockStorage.XZSize && y in 0 until BlockStorage.SectionCount * Section.YSize && z in 0 until BlockStorage.XZSize) {
         val key = encodePosition(x, y, z)
         if (changes.containsKey(key)) changes.get(key) else cartesian[x, y, z]
     } else airId
 
     override fun set(x: Int, y: Int, z: Int, value: Int) {
-        if (!(x in 0 until Blocks.XZSize && y in 0 until Blocks.SectionCount * Section.YSize && z in 0 until Blocks.XZSize)) return
+        if (!(x in 0 until BlockStorage.XZSize && y in 0 until BlockStorage.SectionCount * Section.YSize && z in 0 until BlockStorage.XZSize)) return
 
         changes[encodePosition(x, y, z)] = value
     }
 
     override fun setIfEmpty(x: Int, y: Int, z: Int, value: Int): Int {
-        if (!(x in 0 until Blocks.XZSize && y in 0 until Blocks.SectionCount * Section.YSize && z in 0 until Blocks.XZSize)) return airId
+        if (!(x in 0 until BlockStorage.XZSize && y in 0 until BlockStorage.SectionCount * Section.YSize && z in 0 until BlockStorage.XZSize)) return airId
 
         val oldValue = get(x, y, z)
         if (oldValue == airId) {

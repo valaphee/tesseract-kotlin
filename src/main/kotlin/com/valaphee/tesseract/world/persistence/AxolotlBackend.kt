@@ -24,7 +24,7 @@ class AxolotlBackend(
     private val objectMapper: ObjectMapper,
     path: File
 ): Backend {
-    private val db: DB = JniDBFactory.factory.open(path, Options())
+    private val db: DB = JniDBFactory.factory.open(path, Options().createIfMissing(true))
 
     override fun loadWorld(): World? = null
 

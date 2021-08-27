@@ -8,16 +8,16 @@ package com.valaphee.tesseract.world.chunk.terrain
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.valaphee.foundry.ecs.BaseAttribute
 import com.valaphee.tesseract.world.chunk.Chunk
-import com.valaphee.tesseract.world.chunk.terrain.blocks.Blocks
+import com.valaphee.tesseract.world.chunk.terrain.blocks.BlockStorage
 
 /**
  * @author Kevin Ludwig
  */
 class Terrain(
-    val blocks: Blocks,
+    val blockStorage: BlockStorage,
 ) : BaseAttribute() {
     @JsonIgnore
-    val cartesianDelta = CartesianDelta(blocks)
+    val cartesianDelta = CartesianDelta(blockStorage)
 
     @JsonIgnore
     var lastCartesianDeltaMerge = 0

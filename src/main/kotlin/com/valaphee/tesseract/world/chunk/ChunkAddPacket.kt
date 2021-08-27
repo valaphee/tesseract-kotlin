@@ -10,7 +10,7 @@ import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
-import com.valaphee.tesseract.world.chunk.terrain.blocks.Blocks.Companion.XZSize
+import com.valaphee.tesseract.world.chunk.terrain.blocks.BlockStorage.Companion.XZSize
 import com.valaphee.tesseract.world.chunk.terrain.terrain
 
 /**
@@ -32,7 +32,7 @@ data class ChunkAddPacket(
         val (x, z) = chunk.position
         buffer.writeVarInt(x)
         buffer.writeVarInt(z)
-        val blocks = chunk.terrain.blocks
+        val blocks = chunk.terrain.blockStorage
         var sectionCount = blocks.sections.size - 1
         while (sectionCount >= 0 && blocks.sections[sectionCount].empty) sectionCount--
         buffer.writeVarUInt(++sectionCount)

@@ -50,14 +50,14 @@ internal class StringTagImpl(
 
     companion object {
         private val escapePattern = Pattern.compile("[\\\\\b\t\n\r\"]")
-        private val escapes = HashMap<String, String>().apply {
-            this["\b"] = "\\\\b"
-            this["\t"] = "\\\\t"
-            this["\n"] = "\\\\n"
-            this["\r"] = "\\\\r"
-            this["\""] = "\\\\\""
-            this["'"] = "\\\\'"
-            this["\\"] = "\\\\\\\\"
-        }
+        private val escapes = mutableMapOf<String, String>(
+            "\b" to "\\\\b",
+            "\t" to "\\\\t",
+            "\n" to "\\\\n",
+            "\r" to "\\\\r",
+            "\"" to "\\\\\"",
+            "'" to "\\\\'",
+            "\\" to "\\\\\\\\"
+        )
     }
 }

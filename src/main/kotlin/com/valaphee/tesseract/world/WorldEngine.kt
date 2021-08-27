@@ -32,6 +32,8 @@ class WorldEngine(
     private val sleep = (1_000L / cyclesPerSecond).toLong()
     private var lastSleep = sleep
 
+    var cycle = 0L
+
     private val entityById = Long2ObjectOpenHashMap<AnyEntityOfWorld>()
 
     override fun addEntity(entity: AnyEntityOfWorld) {
@@ -59,7 +61,7 @@ class WorldEngine(
                     val cycles = timer.run()
                     while (cycles.hasNext()) {
                         context.cycleDelta = cycles.next()
-                        val span = tracer.spanBuilder("cycle ${timer.simulationTime}").setSpanKind(SpanKind.INTERNAL).startSpan()
+                        val span = tracer.spanBuilder("cycle ${cycle++}").setSpanKind(SpanKind.INTERNAL).startSpan()
                         entityById.values.filter { it.needsUpdate }.map { async { it.update(context) } }.also { span.setAttribute(updates, it.size.toLong()) }.awaitAll()
                         span.end()
                     }

@@ -15,7 +15,7 @@ import com.valaphee.tesseract.world.WorldContext
  */
 class TerrainManager : BaseFacet<WorldContext, CartesianDeltaMerge>(CartesianDeltaMerge::class) {
     override suspend fun receive(message: CartesianDeltaMerge): Response {
-        val blocks = message.entity.terrain.blocks
+        val blocks = message.entity.terrain.blockStorage
         message.changes.forEach { (position, value) ->
             val (x, y, z) = decodePosition(position)
             blocks[x, y, z] = value

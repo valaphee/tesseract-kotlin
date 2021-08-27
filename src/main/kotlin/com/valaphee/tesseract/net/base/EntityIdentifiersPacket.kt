@@ -50,4 +50,6 @@ data class EntityIdentifiersPacket(
         result = 31 * result + (tag?.hashCode() ?: 0)
         return result
     }
+
+    override fun toString() = "EntityIdentifiersPacket(tag=$tag)"
 }

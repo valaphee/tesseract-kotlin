@@ -11,8 +11,8 @@ import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
 /**
  * @author Kevin Ludwig
  */
-class Blocks : ReadWriteCartesian {
-    var sections: Array<Section> = Array(SectionCount) { SectionV8(BitArray.Version.V1) }
+class BlockStorage : ReadWriteCartesian {
+    var sections: Array<Section> = Array(SectionCount) { SectionV8(BitArray.Version.V1, true) }
 
     override operator fun get(x: Int, y: Int, z: Int) = if (x in 0 until XZSize && y in 0 until SectionCount * Section.YSize && z in 0 until XZSize) sections[y shr YShift].get(x, y and SectionMask, z) else airId
 

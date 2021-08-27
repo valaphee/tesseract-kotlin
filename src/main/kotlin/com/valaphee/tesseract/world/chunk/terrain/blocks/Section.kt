@@ -47,8 +47,8 @@ interface Section {
  * @author Kevin Ludwig
  */
 class SectionV0(
-    var blockIds: ByteArray = ByteArray(Blocks.XZSize * Section.YSize * Blocks.XZSize),
-    var blockSubIds: NibbleArray = nibbleArray(Blocks.XZSize * Section.YSize * Blocks.XZSize)
+    var blockIds: ByteArray = ByteArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize),
+    var blockSubIds: NibbleArray = nibbleArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize)
 ) : Section {
     override fun get(x: Int, y: Int, z: Int): Int {
         val index = (x shl Section.XShift) or (z shl Section.ZShift) or y
@@ -97,10 +97,89 @@ class SectionV0(
 /**
  * @author Kevin Ludwig
  */
+class SectionV1(
+    var layer: Layer
+) : Section {
+    constructor(version: BitArray.Version, runtime: Boolean) : this(Layer(version, runtime))
+
+    override fun get(x: Int, y: Int, z: Int) = layer.get((x shl Section.XShift) or (z shl Section.ZShift) or y)
+
+    override fun set(x: Int, y: Int, z: Int, value: Int) = layer.set((x shl Section.XShift) or (z shl Section.ZShift) or y, value)
+
+    override val empty get() = layer.empty
+
+    override fun writeToBuffer(buffer: PacketBuffer) {
+        buffer.writeByte(1)
+        layer.writeToBuffer(buffer)
+    }
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+class SectionV7(
+    var blockIds: ByteArray = ByteArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize),
+    var blockSubIds: NibbleArray = nibbleArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize),
+    var skyLight: NibbleArray = nibbleArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize),
+    var blockLight: NibbleArray = nibbleArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize)
+) : Section {
+    override fun get(x: Int, y: Int, z: Int): Int {
+        val index = (x shl Section.XShift) or (z shl Section.ZShift) or y
+        return (blockIds[index].toInt() and (blockIdMask shl blockIdShift)) or blockSubIds[index]
+    }
+
+    override fun set(x: Int, y: Int, z: Int, value: Int) {
+        val index = (x shl Section.XShift) or (z shl Section.ZShift) or y
+        blockIds[index] = ((value shr blockIdShift) and blockIdMask).toByte()
+        blockSubIds[index] = (value and blockSubIdMask)
+    }
+
+    override val empty get() = blockIds.all { it.toInt() == 0 }
+
+    override fun writeToBuffer(buffer: PacketBuffer) {
+        buffer.writeByte(7)
+        buffer.writeBytes(blockIds)
+        buffer.writeBytes(blockSubIds.data)
+        buffer.writeBytes(skyLight.data)
+        buffer.writeBytes(blockLight.data)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as SectionV7
+
+        if (!blockIds.contentEquals(other.blockIds)) return false
+        if (blockSubIds != other.blockSubIds) return false
+        if (skyLight != other.skyLight) return false
+        if (blockLight != other.blockLight) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = blockIds.contentHashCode()
+        result = 31 * result + blockSubIds.hashCode()
+        result = 31 * result + skyLight.hashCode()
+        result = 31 * result + blockLight.hashCode()
+        return result
+    }
+
+    companion object {
+        private const val blockIdMask = 255
+        private const val blockIdShift = 4
+        private const val blockSubIdMask = 15
+    }
+}
+
+/**
+ * @author Kevin Ludwig
+ */
 class SectionV8(
     var layers: Array<Layer>
 ) : Section {
-    constructor(version: BitArray.Version, runtime: Boolean = true) : this(arrayOf(Layer(version, runtime), Layer(version, runtime)))
+    constructor(version: BitArray.Version, runtime: Boolean) : this(arrayOf(Layer(version, runtime), Layer(version, runtime)))
 
     override fun get(x: Int, y: Int, z: Int) = get(x, y, z, 0)
 
@@ -120,13 +199,9 @@ class SectionV8(
 }
 
 fun PacketBuffer.readSection() = when (readUnsignedByte().toInt()) {
-    0 -> {
-        val blockIds = ByteArray(Blocks.XZSize * Section.YSize * Blocks.XZSize)
-        readBytes(blockIds)
-        val blockSubIdsData = ByteArray((Blocks.XZSize * Section.YSize * Blocks.XZSize) / 2)
-        readBytes(blockSubIdsData)
-        SectionV0(blockIds, nibbleArray(blockSubIdsData))
-    }
+    0 -> SectionV0(ByteArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize).apply { readBytes(this) }, nibbleArray(ByteArray((BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize) / 2).apply { readBytes(this) }))
+    1 -> SectionV1(readLayer())
+    7 -> SectionV7(ByteArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize).apply { readBytes(this) }, nibbleArray(ByteArray((BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize) / 2).apply { readBytes(this) }), nibbleArray(ByteArray((BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize) / 2).apply { readBytes(this) }), nibbleArray(ByteArray((BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize) / 2).apply { readBytes(this) }))
     8 -> SectionV8(Array(readUnsignedByte().toInt()) { readLayer() })
     else -> TODO()
 }

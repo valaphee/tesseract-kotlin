@@ -17,7 +17,7 @@ interface EntityType : Attribute {
 
     companion object {
         private val byId = Long2ObjectOpenHashMap<EntityType>()
-        private val byKey = HashMap<String, EntityType>()
+        private val byKey = mutableMapOf<String, EntityType>()
 
         fun register(value: EntityType) {
             byId[value.id] = value

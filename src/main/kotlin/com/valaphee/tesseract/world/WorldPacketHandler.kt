@@ -36,6 +36,7 @@ import com.valaphee.tesseract.net.GamePublishMode
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.base.StatusPacket
+import com.valaphee.tesseract.world.chunk.terrain.block.Block
 import com.valaphee.tesseract.world.entity.addEntities
 import com.valaphee.tesseract.world.entity.removeEntities
 
@@ -110,12 +111,12 @@ class WorldPacketHandler(
                 "",
                 false,
                 WorldPacket.AuthoritativeMovement.Client,
-                0L,
+                context.engine.cycle,
                 0,
                 null,
                 null,
                 null,
-                /*Block.all.toTypedArray()*/emptyArray(),
+                Block.all.toTypedArray(),
                 null,
                 Item.all.toTypedArray(),
                 "",

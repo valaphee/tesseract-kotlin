@@ -64,7 +64,7 @@ class BlockState(
             return if (propertiesBegin == -1 && propertiesEnd == -1) {
                 byKey(keyWithProperties).findFirst().orElse(null)
             } else if (propertiesEnd == keyWithProperties.length - 1) {
-                val properties = HashMap<String, Any>()
+                val properties = mutableMapOf<String, Any>()
                 keyWithProperties.substring(propertiesBegin + 1, propertiesEnd).split(',').forEach {
                     val property = it.split('=', limit = 2)
                     properties[property[0]] = when (val propertyValue = property[1]) {
