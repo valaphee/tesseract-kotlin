@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package com.valaphee.tesseract.world.chunk.terrain.blocks
+package com.valaphee.tesseract.world.chunk.terrain
 
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap
 

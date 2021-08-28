@@ -114,11 +114,11 @@ fun main() {
     val instance = ServerInstance(
         Guice.createInjector(),
         OpenTelemetrySdk.builder()
-            .setTracerProvider(
+            /*.setTracerProvider(
                 SdkTracerProvider.builder()
                     .addSpanProcessor(BatchSpanProcessor.builder(JaegerGrpcSpanExporter.builder().build()).build())
                     .build()
-            )
+            )*/
             .buildAndRegisterGlobal()
     )
     instance.bind()

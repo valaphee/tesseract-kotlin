@@ -34,8 +34,8 @@ import com.valaphee.tesseract.net.init.LoginPacketReader
 import com.valaphee.tesseract.net.init.PacksResponsePacketReader
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.WorldEngine
-import com.valaphee.tesseract.world.chunk.ChunkCacheBlobStatusPacketReader
-import com.valaphee.tesseract.world.chunk.ChunkCacheStatusPacketReader
+import com.valaphee.tesseract.net.base.CacheBlobStatusPacketReader
+import com.valaphee.tesseract.net.base.CacheStatusPacketReader
 import com.valaphee.tesseract.world.persistence.AxolotlBackend
 import io.netty.channel.EventLoopGroup
 import io.netty.channel.epoll.Epoll
@@ -113,9 +113,9 @@ abstract class Instance(
         this[0x45] = ViewDistanceRequestPacketReader
         /*this[0x46] = ViewDistancePacketReader*/
 
-        this[0x81] = ChunkCacheStatusPacketReader
+        this[0x81] = CacheStatusPacketReader
 
-        this[0x87] = ChunkCacheBlobStatusPacketReader
+        this[0x87] = CacheBlobStatusPacketReader
         /*this[0x88] = ChunkCacheBlobsPacketReader*/
     }
 

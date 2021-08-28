@@ -21,6 +21,8 @@ import java.util.UUID
 class PacketBuffer(
     buffer: ByteBuf
 ) : ByteBufWrapper(buffer) {
+    var persistent = false
+
     inline fun <reified T : Enum<T>> readByteFlags(): Collection<T> {
         val flagsValue = readByte().toInt()
         return EnumSet.noneOf(T::class.java).apply { enumValues<T>().filter { (flagsValue and (1 shl it.ordinal)) != 0 }.forEach { add(it) } }
@@ -114,13 +116,13 @@ class PacketBuffer(
 
     fun <T : Enum<T>> writeVarUIntFlags(flags: Collection<T>) = writeVarUInt(flags.map { 1 shl it.ordinal }.fold(0) { flagsValue, flagValue -> flagsValue or flagValue })
 
-    fun readVarInt(): Int {
+    fun readVarInt() = if (persistent) readIntLE() else {
         val value = readVarUInt()
-        return (value ushr 1) xor -(value and 1)
+        (value ushr 1) xor -(value and 1)
     }
 
     fun writeVarInt(value: Int) {
-        writeVarUInt((value shl 1) xor (value shr 31))
+        if (persistent) writeIntLE(value) else writeVarUInt((value shl 1) xor (value shr 31))
     }
 
     fun readVarULong(): Long {

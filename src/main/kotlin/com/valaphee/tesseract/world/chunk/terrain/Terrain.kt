@@ -8,7 +8,6 @@ package com.valaphee.tesseract.world.chunk.terrain
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.valaphee.foundry.ecs.BaseAttribute
 import com.valaphee.tesseract.world.chunk.Chunk
-import com.valaphee.tesseract.world.chunk.terrain.blocks.BlockStorage
 
 /**
  * @author Kevin Ludwig

@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package com.valaphee.tesseract.world.chunk
+package com.valaphee.tesseract.net.base
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -16,7 +16,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.Serverbound)
-data class ChunkCacheBlobStatusPacket(
+data class CacheBlobStatusPacket(
     var misses: LongArray,
     var hits: LongArray
 ) : Packet {
@@ -29,13 +29,13 @@ data class ChunkCacheBlobStatusPacket(
         hits.forEach { buffer.writeLongLE(it) }
     }
 
-    override fun handle(handler: PacketHandler) = handler.chunkCacheBlobStatus(this)
+    override fun handle(handler: PacketHandler) = handler.cacheBlobStatus(this)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as ChunkCacheBlobStatusPacket
+        other as CacheBlobStatusPacket
 
         if (!misses.contentEquals(other.misses)) return false
         if (!hits.contentEquals(other.hits)) return false
@@ -53,11 +53,11 @@ data class ChunkCacheBlobStatusPacket(
 /**
  * @author Kevin Ludwig
  */
-object ChunkCacheBlobStatusPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int): ChunkCacheBlobStatusPacket {
+object CacheBlobStatusPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int): CacheBlobStatusPacket {
         val negativeAcknowledgeCount = buffer.readVarUInt()
         val acknowledgeCount = buffer.readVarUInt()
-        return ChunkCacheBlobStatusPacket(
+        return CacheBlobStatusPacket(
             LongArray(negativeAcknowledgeCount) { buffer.readLongLE() },
             LongArray(acknowledgeCount) { buffer.readLongLE() }
         )

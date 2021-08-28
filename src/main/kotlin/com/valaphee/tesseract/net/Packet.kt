@@ -14,4 +14,11 @@ interface Packet {
     fun write(buffer: PacketBuffer, version: Int)
 
     fun handle(handler: PacketHandler)
+
+    companion object {
+        internal const val idMask = 0x3FF
+        internal const val senderIdShift = 10
+        internal const val senderIdClientIdMask = 0x3
+        internal const val clientIdShift = 12
+    }
 }

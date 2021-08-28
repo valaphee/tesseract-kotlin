@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package com.valaphee.tesseract.world.chunk
+package com.valaphee.tesseract.net.base
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -16,7 +16,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.Serverbound)
-data class ChunkCacheStatusPacket(
+data class CacheStatusPacket(
     var supported: Boolean = false
 ) : Packet {
     override val id get() = 0x81
@@ -25,12 +25,12 @@ data class ChunkCacheStatusPacket(
         buffer.writeBoolean(supported)
     }
 
-    override fun handle(handler: PacketHandler) = handler.chunkCacheStatus(this)
+    override fun handle(handler: PacketHandler) = handler.cacheStatus(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object ChunkCacheStatusPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = ChunkCacheStatusPacket(buffer.readBoolean())
+object CacheStatusPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = CacheStatusPacket(buffer.readBoolean())
 }

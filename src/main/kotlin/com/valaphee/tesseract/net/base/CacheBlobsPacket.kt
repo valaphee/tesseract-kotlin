@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package com.valaphee.tesseract.world.chunk
+package com.valaphee.tesseract.net.base
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -18,7 +18,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.Clientbound)
-data class ChunkCacheBlobsPacket(
+data class CacheBlobsPacket(
     val blobs: Long2ObjectMap<ByteArray> = Long2ObjectOpenHashMap()
 ) : Packet {
     override val id get() = 0x88
@@ -31,12 +31,12 @@ data class ChunkCacheBlobsPacket(
         }
     }
 
-    override fun handle(handler: PacketHandler) = handler.chunkCacheBlobs(this)
+    override fun handle(handler: PacketHandler) = handler.cacheBlobs(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object ChunkCacheBlobsPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = ChunkCacheBlobsPacket().apply { repeat(buffer.readVarUInt()) { blobs[buffer.readLongLE()] = buffer.readByteArray() } }
+object CacheBlobsPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = CacheBlobsPacket().apply { repeat(buffer.readVarUInt()) { blobs[buffer.readLongLE()] = buffer.readByteArray() } }
 }

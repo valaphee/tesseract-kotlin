@@ -34,11 +34,20 @@ import com.valaphee.tesseract.item.Item
 import com.valaphee.tesseract.net.Connection
 import com.valaphee.tesseract.net.GamePublishMode
 import com.valaphee.tesseract.net.Packet
+import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.base.StatusPacket
+import com.valaphee.tesseract.world.chunk.Chunk
+import com.valaphee.tesseract.world.chunk.ChunkAddPacket
+import com.valaphee.tesseract.net.base.CacheBlobStatusPacket
+import com.valaphee.tesseract.net.base.CacheBlobsPacket
 import com.valaphee.tesseract.world.chunk.terrain.block.Block
+import com.valaphee.tesseract.world.chunk.terrain.terrain
 import com.valaphee.tesseract.world.entity.addEntities
 import com.valaphee.tesseract.world.entity.removeEntities
+import io.netty.buffer.Unpooled
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
+import net.jpountz.xxhash.XXHashFactory
 
 /**
  * @author Kevin Ludwig
@@ -48,9 +57,11 @@ class WorldPacketHandler(
     private val connection: Connection,
     private val authExtra: AuthExtra,
     private val user: User,
-    private val chunkCacheSupported: Boolean
+    private val caching: Boolean
 ) : PacketHandler {
     lateinit var player: Player
+
+    private val cacheBlobs = mutableMapOf<Long, ByteArray>()
 
     override fun initialize() {
         player = context.entityFactory(PlayerType, setOf(Location(Float3(0.0f, 200.0f, 0.0f), Float2.Zero), ConnectionAttribute(connection)))
@@ -153,7 +164,38 @@ class WorldPacketHandler(
     }
 
     override fun viewDistanceRequest(packet: ViewDistanceRequestPacket) {
-        player.findFacet(View::class).distance = packet.distance
-        connection.write(ViewDistancePacket(packet.distance))
+        connection.write(ViewDistancePacket(player.findFacet(View::class).apply { distance = packet.distance }.distance))
+    }
+
+    override fun cacheBlobStatus(packet: CacheBlobStatusPacket) {
+        val blobs = Long2ObjectOpenHashMap<ByteArray>()
+        packet.misses.forEach { blobId -> this.cacheBlobs.remove(blobId)?.let { blobs[blobId] = it } }
+        packet.hits.forEach { this.cacheBlobs.remove(it) }
+        if (blobs.isNotEmpty()) connection.write(CacheBlobsPacket(blobs))
+    }
+
+    fun cacheChunk(chunk: Chunk) {
+        if (caching) {
+            val blockStorage = chunk.terrain.blockStorage
+            var sectionCount = blockStorage.sections.size - 1
+            while (sectionCount >= 0 && blockStorage.sections[sectionCount].empty) sectionCount--
+            sectionCount++
+            val blobIds = LongArray(sectionCount + 1)
+            PacketBuffer(Unpooled.buffer()).use {
+                repeat(sectionCount) { i ->
+                    blockStorage.sections[i].writeToBuffer(it)
+                    val blob = it.array().clone()
+                    it.clear()
+                    val blobId = xxHash64.hash(blob, 0, blob.size, 0)
+                    cacheBlobs[blobId] = blob
+                    blobIds[i] = blobId
+                }
+            }
+            connection.write(ChunkAddPacket(chunk, blobIds))
+        } else connection.write(ChunkAddPacket(chunk))
+    }
+
+    companion object {
+        private val xxHash64 = XXHashFactory.fastestInstance().hash64()
     }
 }

@@ -9,8 +9,6 @@ import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.Chunk
 import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
-import com.valaphee.tesseract.world.chunk.terrain.blocks.BlockStorage
-import com.valaphee.tesseract.world.chunk.terrain.blocks.Section
 import it.unimi.dsi.fastutil.shorts.Short2IntOpenHashMap
 
 /**

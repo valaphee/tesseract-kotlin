@@ -10,7 +10,7 @@ import com.valaphee.foundry.math.noise.FractalNoise
 import com.valaphee.foundry.math.noise.PerlinNoise
 import com.valaphee.tesseract.world.chunk.terrain.Terrain
 import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
-import com.valaphee.tesseract.world.chunk.terrain.blocks.BlockStorage
+import com.valaphee.tesseract.world.chunk.terrain.BlockStorage
 import kotlin.math.pow
 
 /**

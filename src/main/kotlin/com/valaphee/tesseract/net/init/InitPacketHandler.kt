@@ -17,7 +17,7 @@ import com.valaphee.tesseract.net.base.DisconnectPacket
 import com.valaphee.tesseract.net.base.StatusPacket
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.WorldPacketHandler
-import com.valaphee.tesseract.world.chunk.ChunkCacheStatusPacket
+import com.valaphee.tesseract.net.base.CacheStatusPacket
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.security.KeyPair
@@ -37,7 +37,7 @@ class InitPacketHandler(
     private var state: State? = null
     private lateinit var authExtra: AuthExtra
     private lateinit var user: User
-    private var chunkCacheSupported: Boolean = false
+    private var cacheSupported: Boolean = false
 
     override fun initialize() {
         state = State.Handshake
@@ -119,13 +119,13 @@ class InitPacketHandler(
             PacksResponsePacket.Status.Completed -> {
                 state = State.Finished
 
-                connection.setHandler(WorldPacketHandler(worldContext, connection, authExtra, user, chunkCacheSupported))
+                connection.setHandler(WorldPacketHandler(worldContext, connection, authExtra, user, config.caching && cacheSupported))
             }
         }
     }
 
-    override fun chunkCacheStatus(packet: ChunkCacheStatusPacket) {
-        chunkCacheSupported = packet.supported
+    override fun cacheStatus(packet: CacheStatusPacket) {
+        cacheSupported = packet.supported
     }
 
     override fun toString() = if (this::authExtra.isInitialized) authExtra.name else "${connection.address}"

@@ -5,10 +5,12 @@
 
 package com.valaphee.tesseract.actor.player
 
+import com.google.inject.Inject
 import com.valaphee.foundry.ecs.Pass
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
 import com.valaphee.foundry.math.Int2
+import com.valaphee.tesseract.Config
 import com.valaphee.tesseract.actor.Actor
 import com.valaphee.tesseract.actor.location.LocationManagerMessage
 import com.valaphee.tesseract.actor.location.position
@@ -20,15 +22,21 @@ import com.valaphee.tesseract.world.chunk.encodePosition
 import com.valaphee.tesseract.world.whenTypeIs
 import it.unimi.dsi.fastutil.longs.LongArrayList
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet
+import java.lang.Integer.min
 
 /**
  * @author Kevin Ludwig
  */
-class View : BaseFacet<WorldContext, LocationManagerMessage>(LocationManagerMessage::class) {
+class View @Inject constructor(
+    private val config: Config
+) : BaseFacet<WorldContext, LocationManagerMessage>(LocationManagerMessage::class) {
     private lateinit var lastChunkPosition: Int2
     private val acquiredChunks = LongOpenHashSet()
 
-    var distance = 8
+    var distance = config.maximumViewDistance
+        set(value) {
+            field = min(value, config.maximumViewDistance)
+        }
 
     override suspend fun receive(message: LocationManagerMessage): Response {
         message.entity?.whenTypeIs<PlayerType> {

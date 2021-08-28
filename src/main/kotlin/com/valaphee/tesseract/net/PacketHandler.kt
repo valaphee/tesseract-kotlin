@@ -26,9 +26,9 @@ import com.valaphee.tesseract.net.init.PacksStackPacket
 import com.valaphee.tesseract.net.init.ServerToClientHandshakePacket
 import com.valaphee.tesseract.world.WorldPacket
 import com.valaphee.tesseract.world.chunk.ChunkAddPacket
-import com.valaphee.tesseract.world.chunk.ChunkCacheBlobStatusPacket
-import com.valaphee.tesseract.world.chunk.ChunkCacheBlobsPacket
-import com.valaphee.tesseract.world.chunk.ChunkCacheStatusPacket
+import com.valaphee.tesseract.net.base.CacheBlobStatusPacket
+import com.valaphee.tesseract.net.base.CacheBlobsPacket
+import com.valaphee.tesseract.net.base.CacheStatusPacket
 import com.valaphee.tesseract.world.chunk.ChunkPublishPacket
 import com.valaphee.tesseract.world.chunk.terrain.BlockUpdatePacket
 import com.valaphee.tesseract.world.chunk.terrain.BlockUpdateSyncedPacket
@@ -85,11 +85,11 @@ interface PacketHandler : ProtocolHandler {
 
     fun biomeDefinitions(packet: BiomeDefinitionsPacket) = other(packet)
 
-    fun chunkCacheStatus(packet: ChunkCacheStatusPacket) = other(packet)
+    fun cacheStatus(packet: CacheStatusPacket) = other(packet)
 
-    fun chunkCacheBlobStatus(packet: ChunkCacheBlobStatusPacket) = other(packet)
+    fun cacheBlobStatus(packet: CacheBlobStatusPacket) = other(packet)
 
-    fun chunkCacheBlobs(packet: ChunkCacheBlobsPacket) = other(packet)
+    fun cacheBlobs(packet: CacheBlobsPacket) = other(packet)
 
     fun creativeInventory(packet: CreativeInventoryPacket) = other(packet)
 }

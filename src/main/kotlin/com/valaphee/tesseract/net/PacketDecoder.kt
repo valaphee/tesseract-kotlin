@@ -18,9 +18,10 @@ class PacketDecoder(
     var version: Int = -1
 ) : MessageToMessageDecoder<ByteBuf>() {
     override fun decode(context: ChannelHandlerContext, `in`: ByteBuf, out: MutableList<Any>) {
-        val packetBuffer = PacketBuffer(`in`)
-        val packetId = packetBuffer.readVarUInt()
-        readers[packetId]?.let { out.add(it.read(packetBuffer, version)) } ?: println("Missing 0x${packetId.toString(16).uppercase()}")
+        val buffer = PacketBuffer(`in`)
+        val header = buffer.readVarUInt()
+        val id = header and Packet.idMask
+        readers[id]?.let { out.add(it.read(buffer, version)) } ?: println("Missing 0x${id.toString(16).uppercase()}")
     }
 
     companion object {
