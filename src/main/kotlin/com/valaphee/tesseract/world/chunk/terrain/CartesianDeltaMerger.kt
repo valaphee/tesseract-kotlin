@@ -16,18 +16,8 @@ import com.valaphee.tesseract.world.whenTypeIs
  */
 class CartesianDeltaMerger : BaseBehavior<WorldContext>() {
     override suspend fun update(entity: AnyEntityOfWorld, context: WorldContext): Boolean {
-        entity.whenTypeIs<ChunkType> {
-            val terrain = it.terrain
-            if (terrain.lastCartesianDeltaMerge++ > cartesianDeltaMergeDelay) {
-                terrain.lastCartesianDeltaMerge = 0
-                terrain.cartesianDelta.merge(context, it)
-            }
-        }
+        entity.whenTypeIs<ChunkType> { it.terrain.cartesianDelta.merge(context, it) }
 
         return true
-    }
-
-    companion object {
-        private const val cartesianDeltaMergeDelay = 25
     }
 }

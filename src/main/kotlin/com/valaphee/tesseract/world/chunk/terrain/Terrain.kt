@@ -17,9 +17,6 @@ class Terrain(
 ) : BaseAttribute() {
     @JsonIgnore
     val cartesianDelta = CartesianDelta(blockStorage)
-
-    @JsonIgnore
-    var lastCartesianDeltaMerge = 0
 }
 
 val Chunk.terrain get() = findAttribute(Terrain::class)

@@ -5,7 +5,6 @@
 
 package com.valaphee.tesseract.world
 
-import ConnectionAttribute
 import Difficulty
 import Dimension
 import GameMode
@@ -21,6 +20,7 @@ import com.valaphee.tesseract.actor.location.position
 import com.valaphee.tesseract.actor.location.rotation
 import com.valaphee.tesseract.actor.player.AuthExtra
 import com.valaphee.tesseract.actor.player.Player
+import com.valaphee.tesseract.actor.player.PlayerActionPacket
 import com.valaphee.tesseract.actor.player.PlayerLocationPacket
 import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.actor.player.User
@@ -36,15 +36,18 @@ import com.valaphee.tesseract.net.GamePublishMode
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
-import com.valaphee.tesseract.net.base.StatusPacket
-import com.valaphee.tesseract.world.chunk.Chunk
-import com.valaphee.tesseract.world.chunk.ChunkAddPacket
+import com.valaphee.tesseract.net.Remote
 import com.valaphee.tesseract.net.base.CacheBlobStatusPacket
 import com.valaphee.tesseract.net.base.CacheBlobsPacket
+import com.valaphee.tesseract.net.base.TextPacket
+import com.valaphee.tesseract.net.init.StatusPacket
+import com.valaphee.tesseract.world.chunk.Chunk
+import com.valaphee.tesseract.world.chunk.ChunkAddPacket
 import com.valaphee.tesseract.world.chunk.terrain.block.Block
 import com.valaphee.tesseract.world.chunk.terrain.terrain
 import com.valaphee.tesseract.world.entity.addEntities
 import com.valaphee.tesseract.world.entity.removeEntities
+import com.valaphee.tesseract.world.player.broadcast
 import io.netty.buffer.Unpooled
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import net.jpountz.xxhash.XXHashFactory
@@ -63,8 +66,29 @@ class WorldPacketHandler(
 
     private val cacheBlobs = mutableMapOf<Long, ByteArray>()
 
+    fun cacheChunk(chunk: Chunk) {
+        if (caching) {
+            val blockStorage = chunk.terrain.blockStorage
+            var sectionCount = blockStorage.sections.size - 1
+            while (sectionCount >= 0 && blockStorage.sections[sectionCount].empty) sectionCount--
+            sectionCount++
+            val blobIds = LongArray(sectionCount + 1)
+            PacketBuffer(Unpooled.buffer()).use {
+                repeat(sectionCount) { i ->
+                    blockStorage.sections[i].writeToBuffer(it)
+                    val blob = it.array().clone()
+                    it.clear()
+                    val blobId = xxHash64.hash(blob, 0, blob.size, 0)
+                    cacheBlobs[blobId] = blob
+                    blobIds[i] = blobId
+                }
+            }
+            connection.write(ChunkAddPacket(chunk, blobIds))
+        } else connection.write(ChunkAddPacket(chunk))
+    }
+
     override fun initialize() {
-        player = context.entityFactory(PlayerType, setOf(Location(Float3(0.0f, 200.0f, 0.0f), Float2.Zero), ConnectionAttribute(connection)))
+        player = context.entityFactory(PlayerType, setOf(Remote(connection), authExtra, user, Location(Float3(0.0f, 100.0f, 0.0f), Float2.Zero)))
         context.world.addEntities(context, null, player)
 
         @Suppress("UNCHECKED_CAST") val actor = player as Actor
@@ -150,6 +174,10 @@ class WorldPacketHandler(
 
     override fun other(packet: Packet) = Unit
 
+    override fun text(packet: TextPacket) {
+        context.world.broadcast(packet)
+    }
+
     override fun playerLocation(packet: PlayerLocationPacket) {
         /*@Suppress("UNCHECKED_CAST") val actor = player as Actor
         val position = actor.position
@@ -163,6 +191,10 @@ class WorldPacketHandler(
         player.sendMessage(Teleport(context, player, player, packet.position, packet.rotation))
     }
 
+    override fun playerAction(packet: PlayerActionPacket) {
+        super.playerAction(packet)
+    }
+
     override fun viewDistanceRequest(packet: ViewDistanceRequestPacket) {
         connection.write(ViewDistancePacket(player.findFacet(View::class).apply { distance = packet.distance }.distance))
     }
@@ -172,27 +204,6 @@ class WorldPacketHandler(
         packet.misses.forEach { blobId -> this.cacheBlobs.remove(blobId)?.let { blobs[blobId] = it } }
         packet.hits.forEach { this.cacheBlobs.remove(it) }
         if (blobs.isNotEmpty()) connection.write(CacheBlobsPacket(blobs))
-    }
-
-    fun cacheChunk(chunk: Chunk) {
-        if (caching) {
-            val blockStorage = chunk.terrain.blockStorage
-            var sectionCount = blockStorage.sections.size - 1
-            while (sectionCount >= 0 && blockStorage.sections[sectionCount].empty) sectionCount--
-            sectionCount++
-            val blobIds = LongArray(sectionCount + 1)
-            PacketBuffer(Unpooled.buffer()).use {
-                repeat(sectionCount) { i ->
-                    blockStorage.sections[i].writeToBuffer(it)
-                    val blob = it.array().clone()
-                    it.clear()
-                    val blobId = xxHash64.hash(blob, 0, blob.size, 0)
-                    cacheBlobs[blobId] = blob
-                    blobIds[i] = blobId
-                }
-            }
-            connection.write(ChunkAddPacket(chunk, blobIds))
-        } else connection.write(ChunkAddPacket(chunk))
     }
 
     companion object {

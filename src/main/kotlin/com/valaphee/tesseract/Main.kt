@@ -12,10 +12,9 @@ import com.google.inject.Guice
 import com.valaphee.tesseract.item.Item
 import com.valaphee.tesseract.item.stack.Stack
 import com.valaphee.tesseract.nbt.NbtInputStream
-import com.valaphee.tesseract.nbt.TagType
-import com.valaphee.tesseract.net.base.BiomeDefinitionsPacket
-import com.valaphee.tesseract.net.base.CreativeInventoryPacket
-import com.valaphee.tesseract.net.base.EntityIdentifiersPacket
+import com.valaphee.tesseract.net.init.BiomeDefinitionsPacket
+import com.valaphee.tesseract.net.init.CreativeInventoryPacket
+import com.valaphee.tesseract.net.init.EntityIdentifiersPacket
 import com.valaphee.tesseract.util.LittleEndianByteBufInputStream
 import com.valaphee.tesseract.util.getCompoundTag
 import com.valaphee.tesseract.util.getInt
@@ -28,10 +27,7 @@ import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
 import io.netty.buffer.ByteBufInputStream
 import io.netty.buffer.PooledByteBufAllocator
 import io.netty.buffer.Unpooled
-import io.opentelemetry.exporter.jaeger.JaegerGrpcSpanExporter
 import io.opentelemetry.sdk.OpenTelemetrySdk
-import io.opentelemetry.sdk.trace.SdkTracerProvider
-import io.opentelemetry.sdk.trace.export.BatchSpanProcessor
 import org.mozilla.javascript.Context
 import java.io.IOException
 import java.io.InputStreamReader

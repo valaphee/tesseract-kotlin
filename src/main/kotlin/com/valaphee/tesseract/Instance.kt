@@ -22,21 +22,23 @@ import com.valaphee.foundry.math.Double3Serializer
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float2Deserializer
 import com.valaphee.foundry.math.Float2Serializer
+import com.valaphee.tesseract.actor.player.PlayerActionPacketReader
 import com.valaphee.tesseract.actor.player.PlayerLocationPacketReader
 import com.valaphee.tesseract.actor.player.ViewDistanceRequestPacketReader
+import com.valaphee.tesseract.command.CommandPacketReader
 import com.valaphee.tesseract.ecs.EntityDeserializer
 import com.valaphee.tesseract.ecs.EntityFactory
 import com.valaphee.tesseract.ecs.EntitySerializer
 import com.valaphee.tesseract.net.PacketReader
+import com.valaphee.tesseract.net.base.CacheBlobStatusPacketReader
+import com.valaphee.tesseract.net.base.CacheStatusPacketReader
 import com.valaphee.tesseract.net.base.TextPacketReader
 import com.valaphee.tesseract.net.init.ClientToServerHandshakePacketReader
 import com.valaphee.tesseract.net.init.LoginPacketReader
 import com.valaphee.tesseract.net.init.PacksResponsePacketReader
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.WorldEngine
-import com.valaphee.tesseract.net.base.CacheBlobStatusPacketReader
-import com.valaphee.tesseract.net.base.CacheStatusPacketReader
-import com.valaphee.tesseract.world.persistence.AxolotlBackend
+import com.valaphee.tesseract.world.persistence.InMemoryBackend
 import io.netty.channel.EventLoopGroup
 import io.netty.channel.epoll.Epoll
 import io.netty.channel.epoll.EpollDatagramChannel
@@ -56,7 +58,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asCoroutineDispatcher
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.io.File
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadFactory
 
@@ -95,7 +96,7 @@ abstract class Instance(
     private val worldEngine = WorldEngine(20.0f, coroutineScope.coroutineContext, tracer)
 
     @Suppress("LeakingThis")
-    protected val worldContext = WorldContext(this.injector, coroutineScope, worldEngine, createEntityFactory().also { entityDeserializer.entityFactory = it }, AxolotlBackend(this.injector.getInstance(ObjectMapper::class.java), File("world")))
+    protected val worldContext = WorldContext(this.injector, coroutineScope, worldEngine, createEntityFactory().also { entityDeserializer.entityFactory = it }, /*AxolotlBackend(this.injector.getInstance(ObjectMapper::class.java), File("world"))*/InMemoryBackend())
 
     protected val readers = Int2ObjectOpenHashMap<PacketReader>().apply {
         this[0x01] = LoginPacketReader
@@ -110,8 +111,14 @@ abstract class Instance(
 
         this[0x13] = PlayerLocationPacketReader(worldContext)
 
+        this[0x24] = PlayerActionPacketReader(worldContext)
+
         this[0x45] = ViewDistanceRequestPacketReader
         /*this[0x46] = ViewDistancePacketReader*/
+
+        this[0x4D] = CommandPacketReader
+
+        /*this[0x4F] = CommandResponsePacketReader*/
 
         this[0x81] = CacheStatusPacketReader
 

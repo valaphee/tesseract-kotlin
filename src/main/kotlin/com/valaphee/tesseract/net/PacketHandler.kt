@@ -8,15 +8,21 @@ package com.valaphee.tesseract.net
 import RecipesPacket
 import com.valaphee.tesseract.actor.location.MoveRotatePacket
 import com.valaphee.tesseract.actor.location.TeleportPacket
+import com.valaphee.tesseract.actor.player.PlayerActionPacket
 import com.valaphee.tesseract.actor.player.PlayerLocationPacket
 import com.valaphee.tesseract.actor.player.ViewDistancePacket
 import com.valaphee.tesseract.actor.player.ViewDistanceRequestPacket
-import com.valaphee.tesseract.net.base.BehaviorTreePacket
-import com.valaphee.tesseract.net.base.BiomeDefinitionsPacket
-import com.valaphee.tesseract.net.base.CreativeInventoryPacket
+import com.valaphee.tesseract.command.CommandPacket
+import com.valaphee.tesseract.command.CommandResponsePacket
+import com.valaphee.tesseract.net.init.BehaviorTreePacket
+import com.valaphee.tesseract.net.init.BiomeDefinitionsPacket
+import com.valaphee.tesseract.net.base.CacheBlobStatusPacket
+import com.valaphee.tesseract.net.base.CacheBlobsPacket
+import com.valaphee.tesseract.net.base.CacheStatusPacket
+import com.valaphee.tesseract.net.init.CreativeInventoryPacket
 import com.valaphee.tesseract.net.base.DisconnectPacket
-import com.valaphee.tesseract.net.base.EntityIdentifiersPacket
-import com.valaphee.tesseract.net.base.StatusPacket
+import com.valaphee.tesseract.net.init.EntityIdentifiersPacket
+import com.valaphee.tesseract.net.init.StatusPacket
 import com.valaphee.tesseract.net.base.TextPacket
 import com.valaphee.tesseract.net.init.ClientToServerHandshakePacket
 import com.valaphee.tesseract.net.init.LoginPacket
@@ -26,12 +32,10 @@ import com.valaphee.tesseract.net.init.PacksStackPacket
 import com.valaphee.tesseract.net.init.ServerToClientHandshakePacket
 import com.valaphee.tesseract.world.WorldPacket
 import com.valaphee.tesseract.world.chunk.ChunkAddPacket
-import com.valaphee.tesseract.net.base.CacheBlobStatusPacket
-import com.valaphee.tesseract.net.base.CacheBlobsPacket
-import com.valaphee.tesseract.net.base.CacheStatusPacket
 import com.valaphee.tesseract.world.chunk.ChunkPublishPacket
 import com.valaphee.tesseract.world.chunk.terrain.BlockUpdatePacket
 import com.valaphee.tesseract.world.chunk.terrain.BlockUpdateSyncedPacket
+import com.valaphee.tesseract.world.player.PlayerListPacket
 
 /**
  * @author Kevin Ludwig
@@ -65,13 +69,21 @@ interface PacketHandler : ProtocolHandler {
 
     fun blockUpdate(packet: BlockUpdatePacket) = other(packet)
 
+    fun playerAction(packet: PlayerActionPacket) = other(packet)
+
     fun recipes(packet: RecipesPacket) = other(packet)
 
     fun chunkAdd(packet: ChunkAddPacket) = other(packet)
 
+    fun playerList(packet: PlayerListPacket) = other(packet)
+
     fun viewDistanceRequest(packet: ViewDistanceRequestPacket) = other(packet)
 
     fun viewDistance(packet: ViewDistancePacket) = other(packet)
+
+    fun command(packet: CommandPacket) = other(packet)
+
+    fun commandResponse(packet: CommandResponsePacket) = other(packet)
 
     fun behaviorTree(packet: BehaviorTreePacket) = other(packet)
 

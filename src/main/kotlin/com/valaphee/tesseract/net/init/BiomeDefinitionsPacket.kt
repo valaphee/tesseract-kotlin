@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package com.valaphee.tesseract.net.base
+package com.valaphee.tesseract.net.init
 
 import com.valaphee.tesseract.nbt.CompoundTag
 import com.valaphee.tesseract.nbt.NbtOutputStream

@@ -28,6 +28,6 @@ data class Config(
     @get:JsonProperty("maximum-view-distance") var maximumViewDistance: Int,
 ) {
     class Provider : com.google.inject.Provider<Config> {
-        override fun get() = Config(InetSocketAddress("127.0.0.1", 19132), 20, 5_000, 7, false, Pattern.compile("^[a-zA-Z0-9_-]{3,15}\$"), true, true, 16)
+        override fun get() = Config(InetSocketAddress("127.0.0.1", 19132), 20, 5_000, 7, false, Pattern.compile("^[a-zA-Z0-9_-]{3,15}\$"), true, false, 32)
     }
 }

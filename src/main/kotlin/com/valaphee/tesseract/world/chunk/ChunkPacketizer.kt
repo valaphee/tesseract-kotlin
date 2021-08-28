@@ -12,10 +12,10 @@ import com.valaphee.tesseract.actor.Actor
 import com.valaphee.tesseract.actor.location.position
 import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.actor.player.View
+import com.valaphee.tesseract.net.connection
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.WorldPacketHandler
 import com.valaphee.tesseract.world.whenTypeIs
-import connection
 
 /**
  * @author Kevin Ludwig

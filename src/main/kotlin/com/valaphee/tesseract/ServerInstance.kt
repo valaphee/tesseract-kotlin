@@ -29,6 +29,7 @@ import com.valaphee.tesseract.world.chunk.terrain.CartesianDeltaMergePacketizer
 import com.valaphee.tesseract.world.chunk.terrain.CartesianDeltaMerger
 import com.valaphee.tesseract.world.chunk.terrain.TerrainManager
 import com.valaphee.tesseract.world.entity.EntityManager
+import com.valaphee.tesseract.world.player.PlayerManager
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.buffer.PooledByteBufAllocator
 import io.netty.channel.AdaptiveRecvByteBufAllocator
@@ -78,8 +79,7 @@ class ServerInstance(
             facets(
                 EntityManager::class.java,
                 ChunkManager::class.java,
-
-                // integration
+                PlayerManager::class.java,
                 ChunkPacketizer::class.java,
             )
         }
@@ -89,8 +89,6 @@ class ServerInstance(
             )
             facets(
                 TerrainManager::class.java,
-
-                // integration
                 CartesianDeltaMergePacketizer::class.java
             )
         }
@@ -98,8 +96,6 @@ class ServerInstance(
             facets(
                 LocationManager::class.java,
                 View::class.java,
-
-                // integration
                 PlayerLocationPacketizer::class.java
             )
         }

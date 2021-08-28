@@ -13,11 +13,10 @@ import com.valaphee.tesseract.net.Connection
 import com.valaphee.tesseract.net.EncryptionInitializer
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.base.CacheStatusPacket
 import com.valaphee.tesseract.net.base.DisconnectPacket
-import com.valaphee.tesseract.net.base.StatusPacket
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.WorldPacketHandler
-import com.valaphee.tesseract.net.base.CacheStatusPacket
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.security.KeyPair
@@ -37,7 +36,7 @@ class InitPacketHandler(
     private var state: State? = null
     private lateinit var authExtra: AuthExtra
     private lateinit var user: User
-    private var cacheSupported: Boolean = false
+    private var cacheSupported = false
 
     override fun initialize() {
         state = State.Handshake
@@ -77,7 +76,7 @@ class InitPacketHandler(
 
             return
         }
-        if (!config.userNamePattern.matcher(authExtra.name).matches()) {
+        if (!config.userNamePattern.matcher(authExtra.userName).matches()) {
             state = State.Finished
 
             log.warn("{}: Has an invalid name", this)
@@ -128,7 +127,7 @@ class InitPacketHandler(
         cacheSupported = packet.supported
     }
 
-    override fun toString() = if (this::authExtra.isInitialized) authExtra.name else "${connection.address}"
+    override fun toString() = if (this::authExtra.isInitialized) authExtra.userName else "${connection.address}"
 
     private fun loginSuccess() {
         connection.write(StatusPacket(StatusPacket.Status.LoginSuccess))

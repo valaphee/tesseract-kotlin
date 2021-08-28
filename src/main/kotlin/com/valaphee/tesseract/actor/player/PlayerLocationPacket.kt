@@ -63,7 +63,7 @@ class PlayerLocationPacketReader(
     private val context: WorldContext
 ) : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int): PlayerLocationPacket {
-        val entityId = buffer.readVarULong()
+        val playerId = buffer.readVarULong()
         val position = buffer.readFloat3()
         val rotation = buffer.readFloat2()
         val headRotationYaw = buffer.readFloatLE()
@@ -81,6 +81,6 @@ class PlayerLocationPacketReader(
         }
         val tick = if (version >= 419) buffer.readVarULong() else 0
         @Suppress("UNCHECKED_CAST")
-        return PlayerLocationPacket(context.engine.findEntityOrNull(entityId) as Player, position, rotation, headRotationYaw, mode, onGround, context.engine.findEntityOrNull(drivingEntityId) as? AnyActorOfWorld, teleportationCause, tick)
+        return PlayerLocationPacket(context.engine.findEntityOrNull(playerId) as Player, position, rotation, headRotationYaw, mode, onGround, context.engine.findEntityOrNull(drivingEntityId) as? AnyActorOfWorld, teleportationCause, tick)
     }
 }
