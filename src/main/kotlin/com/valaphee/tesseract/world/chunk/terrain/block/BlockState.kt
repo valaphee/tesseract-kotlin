@@ -5,14 +5,25 @@
 
 package com.valaphee.tesseract.world.chunk.terrain.block
 
+import com.valaphee.tesseract.nbt.CompoundTag
+import com.valaphee.tesseract.nbt.TagType
+
 /**
  * @author Kevin Ludwig
  */
 class BlockState(
     val key: String,
-    val properties: Map<String, Any>,
+    val propertiesNbt: CompoundTag,
     val version: Int
 ) {
+    val properties = propertiesNbt.toMap().mapValues { (_, blockStatePropertyTag) ->
+        when (blockStatePropertyTag.type) {
+            TagType.Byte -> blockStatePropertyTag.asNumberTag()!!.toByte() != 0.toByte()
+            TagType.Int -> blockStatePropertyTag.asNumberTag()!!.toInt()
+            TagType.String -> blockStatePropertyTag.asArrayTag()!!.valueToString()
+            else -> TODO()
+        }
+    }
     var runtimeId = 0
 
     override fun equals(other: Any?): Boolean {

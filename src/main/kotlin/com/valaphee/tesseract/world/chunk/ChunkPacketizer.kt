@@ -23,7 +23,6 @@ import connection
 class ChunkPacketizer : BaseFacet<WorldContext, ChunkAcquired>(ChunkAcquired::class) {
     override suspend fun receive(message: ChunkAcquired): Response {
         message.source?.whenTypeIs<PlayerType> {
-            Thread.sleep(2000L)
             @Suppress("UNCHECKED_CAST")
             it.connection.write(ChunkPublishPacket((it as Actor).position.toInt3(), it.findFacet(View::class).distance shl 4))
             message.chunks.forEach { chunk -> (it.connection.handler as WorldPacketHandler).cacheChunk(chunk) }

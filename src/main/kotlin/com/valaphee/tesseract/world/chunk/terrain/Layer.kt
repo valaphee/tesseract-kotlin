@@ -14,6 +14,7 @@ import com.valaphee.tesseract.util.LittleEndianByteBufInputStream
 import com.valaphee.tesseract.util.LittleEndianByteBufOutputStream
 import com.valaphee.tesseract.util.LittleEndianVarIntByteBufInputStream
 import com.valaphee.tesseract.util.LittleEndianVarIntByteBufOutputStream
+import com.valaphee.tesseract.util.getCompoundTag
 import com.valaphee.tesseract.util.getCompoundTagOrNull
 import com.valaphee.tesseract.util.getString
 import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
@@ -55,12 +56,12 @@ class Layer(
         buffer.writeByte((blocks.version.bitsPerEntry shl 1) or if (runtime) 1 else 0)
         blocks.data.forEach { buffer.writeIntLE(it) }
         buffer.writeVarInt(blockPalette.size)
-        if (runtime) blockPalette.forEach { buffer.writeVarInt(it) } else NbtOutputStream(if (buffer.persistent) LittleEndianByteBufOutputStream(buffer) else LittleEndianVarIntByteBufOutputStream(buffer)).use { stream ->
+        if (runtime) blockPalette.forEach { buffer.writeVarInt(it) } else buffer.toNbtOutputStream().use { stream ->
             blockPalette.forEach {
                 stream.writeTag(compoundTag().apply {
                     val block = BlockState.byId(it)!!
                     setString("name", block.key)
-                    set("states", compoundTag())
+                    set("states", block.propertiesNbt)
                 })
             }
         }
@@ -75,19 +76,11 @@ fun PacketBuffer.readLayer(): Layer {
     val paletteSize = readVarInt()
     return Layer(IntArrayList().apply {
         if (runtime) repeat(paletteSize) { add(readVarInt()) } else {
-            NbtInputStream(if (persistent) LittleEndianByteBufInputStream(buffer) else LittleEndianVarIntByteBufInputStream(buffer)).use { stream ->
+            toNbtInputStream().use { stream ->
                 repeat(paletteSize) {
-                    add(stream.readTag()?.asCompoundTag()?.let {
-                        val properties = mutableMapOf<String, Any>()
-                        it.getCompoundTagOrNull("states")?.toMap()?.forEach { (blockStatePropertyName, blockStatePropertyTag) ->
-                            properties[blockStatePropertyName] = when (blockStatePropertyTag.type) {
-                                TagType.Byte -> blockStatePropertyTag.asNumberTag()!!.toByte() != 0.toByte()
-                                TagType.Int -> blockStatePropertyTag.asNumberTag()!!.toInt()
-                                TagType.String -> blockStatePropertyTag.asArrayTag()!!.valueToString()
-                                else -> TODO()
-                            }
-                        }
-                        BlockState.byKey(it.getString("name")).filter { it.properties == properties }.findAny().orElseGet { air }.runtimeId
+                    add(stream.readTag()?.asCompoundTag()?.let { it ->
+                        val propertiesNbt = it.getCompoundTag("states")
+                        BlockState.byKey(it.getString("name")).filter { it.propertiesNbt == propertiesNbt }.findAny().orElseGet { air }.runtimeId
                     } ?: air.runtimeId)
                 }
             }

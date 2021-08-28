@@ -8,7 +8,13 @@ package com.valaphee.tesseract.net
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
+import com.valaphee.tesseract.nbt.NbtInputStream
+import com.valaphee.tesseract.nbt.NbtOutputStream
 import com.valaphee.tesseract.util.ByteBufWrapper
+import com.valaphee.tesseract.util.LittleEndianByteBufInputStream
+import com.valaphee.tesseract.util.LittleEndianByteBufOutputStream
+import com.valaphee.tesseract.util.LittleEndianVarIntByteBufInputStream
+import com.valaphee.tesseract.util.LittleEndianVarIntByteBufOutputStream
 import io.netty.buffer.ByteBuf
 import io.netty.util.AsciiString
 import java.nio.charset.StandardCharsets
@@ -245,6 +251,10 @@ class PacketBuffer(
         writeFloatLE(value.y)
         writeFloatLE(value.z)
     }
+
+    fun toNbtOutputStream() = NbtOutputStream(if (persistent) LittleEndianByteBufOutputStream(buffer) else LittleEndianVarIntByteBufOutputStream(buffer))
+
+    fun toNbtInputStream() = NbtInputStream(if (persistent) LittleEndianByteBufInputStream(buffer) else LittleEndianVarIntByteBufInputStream(buffer))
 
     companion object {
         const val MaximumVarUIntLength = 5
