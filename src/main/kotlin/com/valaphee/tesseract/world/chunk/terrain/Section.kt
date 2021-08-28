@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.util.NibbleArray
 import com.valaphee.tesseract.util.nibbleArray
+import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
 import io.netty.buffer.Unpooled
 
 /**
@@ -100,7 +101,7 @@ class SectionLegacy(
 class SectionCompact(
     var layers: Array<Layer>
 ) : Section {
-    constructor(version: BitArray.Version, runtime: Boolean) : this(arrayOf(Layer(version, runtime), Layer(version, runtime)))
+    constructor(version: BitArray.Version, runtime: Boolean) : this(arrayOf(Layer(air.runtimeId, version, runtime), Layer(air.runtimeId, version, runtime)))
 
     override fun get(x: Int, y: Int, z: Int) = get(x, y, z, 0)
 
@@ -123,8 +124,8 @@ class SectionCompact(
 
 fun PacketBuffer.readSection() = when (readUnsignedByte().toInt()) {
     0, 2, 3, 4, 5, 6 -> SectionLegacy(ByteArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize).apply { readBytes(this) }, nibbleArray(ByteArray((BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize) / 2).apply { readBytes(this) }))
-    1 -> SectionCompact(arrayOf(readLayer()))
-    8 -> SectionCompact(Array(readUnsignedByte().toInt()) { readLayer() })
+    1 -> SectionCompact(arrayOf(readLayer(air.runtimeId)))
+    8 -> SectionCompact(Array(readUnsignedByte().toInt()) { readLayer(air.runtimeId) })
     else -> TODO()
 }
 
@@ -158,3 +159,5 @@ class SectionDeserializer : JsonDeserializer<Section>() {
         }
     }
 }
+
+private val air = BlockState.byKeyWithStates("minecraft:air") ?: error("Missing minecraft:air")

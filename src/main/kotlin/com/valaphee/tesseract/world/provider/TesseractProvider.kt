@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package com.valaphee.tesseract.world.persistence
+package com.valaphee.tesseract.world.provider
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -20,10 +20,10 @@ import java.nio.ByteBuffer
 /**
  * @author Kevin Ludwig
  */
-class AxolotlBackend(
+class TesseractProvider(
     private val objectMapper: ObjectMapper,
     path: File
-): Backend {
+) : Provider {
     private val db: DB = JniDBFactory.factory.open(path, Options().createIfMissing(true))
 
     override fun loadWorld(): World? = null

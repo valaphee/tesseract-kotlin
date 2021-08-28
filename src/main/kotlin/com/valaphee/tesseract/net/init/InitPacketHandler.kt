@@ -30,6 +30,7 @@ class InitPacketHandler(
 ) : PacketHandler {
     @Inject
     private lateinit var config: Config
+
     @Inject
     private lateinit var keyPair: KeyPair
 

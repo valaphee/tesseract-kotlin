@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package com.valaphee.tesseract.world.player
+package com.valaphee.tesseract.world
 
 import com.valaphee.tesseract.actor.player.Appearance
 import com.valaphee.tesseract.actor.player.User

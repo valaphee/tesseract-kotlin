@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package com.valaphee.tesseract.world.persistence
+package com.valaphee.tesseract.world.provider
 
 import com.valaphee.tesseract.world.World
 import com.valaphee.tesseract.world.chunk.Chunk
@@ -11,7 +11,7 @@ import com.valaphee.tesseract.world.chunk.Chunk
 /**
  * @author Kevin Ludwig
  */
-object NullBackend : Backend {
+object NullProvider : Provider {
     override fun loadWorld(): World? = null
 
     override fun saveWorld(world: World) = Unit

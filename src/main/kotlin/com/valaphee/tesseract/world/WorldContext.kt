@@ -10,7 +10,7 @@ import com.valaphee.foundry.ecs.Context
 import com.valaphee.foundry.ecs.entity.Entity
 import com.valaphee.foundry.ecs.entity.EntityType
 import com.valaphee.tesseract.ecs.EntityFactory
-import com.valaphee.tesseract.world.persistence.Backend
+import com.valaphee.tesseract.world.provider.Provider
 import kotlinx.coroutines.CoroutineScope
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.isSuperclassOf
@@ -23,9 +23,9 @@ class WorldContext(
     val coroutineScope: CoroutineScope,
     val engine: WorldEngine,
     val entityFactory: EntityFactory<WorldContext>,
-    val backend: Backend
+    val provider: Provider
 ) : Context {
-    val world = backend.loadWorld() ?: entityFactory(WorldType, setOf()).also(engine::addEntity)
+    val world = provider.loadWorld() ?: entityFactory(WorldType, setOf()).also(engine::addEntity)
 
     var cycleDelta = 0.0f
 }

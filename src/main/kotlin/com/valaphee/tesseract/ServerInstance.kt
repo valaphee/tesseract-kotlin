@@ -21,6 +21,7 @@ import com.valaphee.tesseract.net.PacketEncoder
 import com.valaphee.tesseract.net.UnconnectedPingHandler
 import com.valaphee.tesseract.net.init.InitPacketHandler
 import com.valaphee.tesseract.util.generateKeyPair
+import com.valaphee.tesseract.world.PlayerList
 import com.valaphee.tesseract.world.WorldType
 import com.valaphee.tesseract.world.chunk.ChunkManager
 import com.valaphee.tesseract.world.chunk.ChunkPacketizer
@@ -29,7 +30,6 @@ import com.valaphee.tesseract.world.chunk.terrain.CartesianDeltaMergePacketizer
 import com.valaphee.tesseract.world.chunk.terrain.CartesianDeltaMerger
 import com.valaphee.tesseract.world.chunk.terrain.TerrainManager
 import com.valaphee.tesseract.world.entity.EntityManager
-import com.valaphee.tesseract.world.player.PlayerManager
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.buffer.PooledByteBufAllocator
 import io.netty.channel.AdaptiveRecvByteBufAllocator
@@ -79,7 +79,7 @@ class ServerInstance(
             facets(
                 EntityManager::class.java,
                 ChunkManager::class.java,
-                PlayerManager::class.java,
+                PlayerList::class.java,
                 ChunkPacketizer::class.java,
             )
         }

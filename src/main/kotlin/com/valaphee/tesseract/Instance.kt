@@ -38,7 +38,7 @@ import com.valaphee.tesseract.net.init.LoginPacketReader
 import com.valaphee.tesseract.net.init.PacksResponsePacketReader
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.WorldEngine
-import com.valaphee.tesseract.world.persistence.InMemoryBackend
+import com.valaphee.tesseract.world.provider.InMemoryProvider
 import io.netty.channel.EventLoopGroup
 import io.netty.channel.epoll.Epoll
 import io.netty.channel.epoll.EpollDatagramChannel
@@ -96,7 +96,7 @@ abstract class Instance(
     private val worldEngine = WorldEngine(20.0f, coroutineScope.coroutineContext, tracer)
 
     @Suppress("LeakingThis")
-    protected val worldContext = WorldContext(this.injector, coroutineScope, worldEngine, createEntityFactory().also { entityDeserializer.entityFactory = it }, /*AxolotlBackend(this.injector.getInstance(ObjectMapper::class.java), File("world"))*/InMemoryBackend())
+    protected val worldContext = WorldContext(this.injector, coroutineScope, worldEngine, createEntityFactory().also { entityDeserializer.entityFactory = it }, /*AxolotlBackend(this.injector.getInstance(ObjectMapper::class.java), File("world"))*/InMemoryProvider())
 
     protected val readers = Int2ObjectOpenHashMap<PacketReader>().apply {
         this[0x01] = LoginPacketReader
@@ -139,7 +139,7 @@ abstract class Instance(
 
         executor.shutdown()
 
-        worldContext.backend.saveWorld(worldContext.world)
+        worldContext.provider.saveWorld(worldContext.world)
     }
 
     companion object {

@@ -47,7 +47,6 @@ import com.valaphee.tesseract.world.chunk.terrain.block.Block
 import com.valaphee.tesseract.world.chunk.terrain.terrain
 import com.valaphee.tesseract.world.entity.addEntities
 import com.valaphee.tesseract.world.entity.removeEntities
-import com.valaphee.tesseract.world.player.broadcast
 import io.netty.buffer.Unpooled
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import net.jpountz.xxhash.XXHashFactory
