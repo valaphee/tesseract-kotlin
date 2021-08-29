@@ -35,18 +35,12 @@ class BlockUpdater : BaseBehavior<WorldContext>() {
                 blockUpdateChanges.clear()
             }
 
-            val blockUpdatePendingIterator = blockUpdates.pending.iterator()
-            blockUpdatePendingIterator.forEach {
-                when (it.value) {
-                    1 -> {
-                        val (x, y, z) = decodePosition(it.key)
-                        val blockState = BlockState.byId(blockStorage[x, y, z])
-                        blockState?.block?.onUpdate?.invoke(blockUpdates, x, y, z, blockState)
-                        blockUpdatePendingIterator.remove()
-                    }
-                    else -> {
-                        it.setValue(it.value - 1)
-                    }
+            blockUpdates.pending.clone().forEach {
+                if (context.engine.cycle.toInt() % it.value == 0) {
+                    val (x, y, z) = decodePosition(it.key)
+                    val blockState = BlockState.byId(blockStorage[x, y, z])
+                    blockState?.block?.onUpdate?.invoke(blockUpdates, x, y, z, blockState)
+                    blockUpdates.pending.remove(it.key)
                 }
             }
         }

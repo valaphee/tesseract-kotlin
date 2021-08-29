@@ -5,7 +5,6 @@
 
 package com.valaphee.tesseract
 
-import Test
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.google.inject.AbstractModule
 import com.google.inject.Inject
@@ -82,7 +81,6 @@ class ServerInstance(
         }
         register(ChunkType) {
             behaviors(
-                Test::class.java,
                 BlockUpdater::class.java
             )
         }

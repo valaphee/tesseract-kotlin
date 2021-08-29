@@ -22,6 +22,8 @@ import com.valaphee.foundry.math.Double3Serializer
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float2Deserializer
 import com.valaphee.foundry.math.Float2Serializer
+import com.valaphee.tesseract.actor.player.InputPacketReader
+import com.valaphee.tesseract.actor.player.InteractPacketReader
 import com.valaphee.tesseract.actor.player.PlayerActionPacketReader
 import com.valaphee.tesseract.actor.player.PlayerLocationPacketReader
 import com.valaphee.tesseract.actor.player.ViewDistanceRequestPacketReader
@@ -29,6 +31,7 @@ import com.valaphee.tesseract.command.CommandPacketReader
 import com.valaphee.tesseract.ecs.EntityDeserializer
 import com.valaphee.tesseract.ecs.EntityFactory
 import com.valaphee.tesseract.ecs.EntitySerializer
+import com.valaphee.tesseract.inventory.InventoryRequestPacketReader
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.base.CacheBlobStatusPacketReader
 import com.valaphee.tesseract.net.base.CacheStatusPacketReader
@@ -111,6 +114,8 @@ abstract class Instance(
 
         this[0x13] = PlayerLocationPacketReader(worldContext)
 
+        this[0x21] = InteractPacketReader(worldContext)
+
         this[0x24] = PlayerActionPacketReader(worldContext)
 
         this[0x45] = ViewDistanceRequestPacketReader
@@ -124,6 +129,10 @@ abstract class Instance(
 
         this[0x87] = CacheBlobStatusPacketReader
         /*this[0x88] = ChunkCacheBlobsPacketReader*/
+
+        this[0x90] = InputPacketReader
+
+        this[0x93] = InventoryRequestPacketReader
     }
 
     abstract fun getModule(): Module

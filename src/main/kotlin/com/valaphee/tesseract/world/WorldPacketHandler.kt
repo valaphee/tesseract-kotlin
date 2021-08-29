@@ -154,7 +154,7 @@ class WorldPacketHandler(
                 null,
                 Item.all.toTypedArray(),
                 "",
-                false,
+                true,
                 0,
                 false,
                 "Tesseract"

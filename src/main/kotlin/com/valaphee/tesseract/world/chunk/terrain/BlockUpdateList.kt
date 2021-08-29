@@ -18,35 +18,20 @@ class BlockUpdateList(
     val changes = Short2IntOpenHashMap()
     val pending = Short2IntOpenHashMap()
 
-    override fun get(x: Int, y: Int, z: Int) = if (x in 0 until BlockStorage.XZSize && y in 0 until BlockStorage.SectionCount * Section.YSize && z in 0 until BlockStorage.XZSize) {
+    override fun get(x: Int, y: Int, z: Int) = if (x < BlockStorage.XZSize && y < BlockStorage.SectionCount * Section.YSize && z < BlockStorage.XZSize) {
         val key = encodePosition(x, y, z)
         if (changes.containsKey(key)) changes.get(key) else cartesian[x, y, z]
     } else airId
 
-    override fun set(x: Int, y: Int, z: Int, value: Int) = set(x, y, z, value, 1)
+    override fun set(x: Int, y: Int, z: Int, value: Int) = set(x, y, z, 1, value)
 
-    fun set(x: Int, y: Int, z: Int, value: Int, updatesIn: Int) {
-        if (!(x in 0 until BlockStorage.XZSize && y in 0 until BlockStorage.SectionCount * Section.YSize && z in 0 until BlockStorage.XZSize)) return
-
+    operator fun set(x: Int, y: Int, z: Int, updatesIn: Int, value: Int) {
+        if (x >= BlockStorage.XZSize || y >= BlockStorage.SectionCount * Section.YSize && z >= BlockStorage.XZSize) return
         if (cartesian[x, y, z] != value) {
             val position = encodePosition(x, y, z)
             changes[position] = value
             if (updatesIn != 0) pending[position] = updatesIn
         }
-    }
-
-    fun setIfEmpty(x: Int, y: Int, z: Int, value: Int, updatesIn: Int = 1): Boolean {
-        if (!(x in 0 until BlockStorage.XZSize && y in 0 until BlockStorage.SectionCount * Section.YSize && z in 0 until BlockStorage.XZSize)) return false
-
-        if (get(x, y, z) == airId) {
-            val position = encodePosition(x, y, z)
-            changes[position] = value
-            if (updatesIn != 0) pending[position] = updatesIn
-
-            return true
-        }
-
-        return false
     }
 
     companion object {

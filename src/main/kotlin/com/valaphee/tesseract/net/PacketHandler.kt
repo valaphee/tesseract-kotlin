@@ -8,12 +8,22 @@ package com.valaphee.tesseract.net
 import RecipesPacket
 import com.valaphee.tesseract.actor.location.MoveRotatePacket
 import com.valaphee.tesseract.actor.location.TeleportPacket
+import com.valaphee.tesseract.actor.player.InputPacket
+import com.valaphee.tesseract.actor.player.InteractPacket
 import com.valaphee.tesseract.actor.player.PlayerActionPacket
 import com.valaphee.tesseract.actor.player.PlayerLocationPacket
 import com.valaphee.tesseract.actor.player.ViewDistancePacket
 import com.valaphee.tesseract.actor.player.ViewDistanceRequestPacket
 import com.valaphee.tesseract.command.CommandPacket
 import com.valaphee.tesseract.command.CommandResponsePacket
+import com.valaphee.tesseract.inventory.CreativeInventoryPacket
+import com.valaphee.tesseract.inventory.InventoryContentPacket
+import com.valaphee.tesseract.inventory.InventoryRequestPacket
+import com.valaphee.tesseract.inventory.InventoryResponsePacket
+import com.valaphee.tesseract.inventory.InventorySlotPacket
+import com.valaphee.tesseract.inventory.WindowClosePacket
+import com.valaphee.tesseract.inventory.WindowOpenPacket
+import com.valaphee.tesseract.inventory.WindowPropertyPacket
 import com.valaphee.tesseract.net.base.CacheBlobStatusPacket
 import com.valaphee.tesseract.net.base.CacheBlobsPacket
 import com.valaphee.tesseract.net.base.CacheStatusPacket
@@ -22,7 +32,6 @@ import com.valaphee.tesseract.net.base.TextPacket
 import com.valaphee.tesseract.net.init.BehaviorTreePacket
 import com.valaphee.tesseract.net.init.BiomeDefinitionsPacket
 import com.valaphee.tesseract.net.init.ClientToServerHandshakePacket
-import com.valaphee.tesseract.net.init.CreativeInventoryPacket
 import com.valaphee.tesseract.net.init.EntityIdentifiersPacket
 import com.valaphee.tesseract.net.init.LoginPacket
 import com.valaphee.tesseract.net.init.PacksPacket
@@ -69,7 +78,19 @@ interface PacketHandler : ProtocolHandler {
 
     fun blockUpdate(packet: BlockUpdatePacket) = other(packet)
 
+    fun interact(packet: InteractPacket) = other(packet)
+
     fun playerAction(packet: PlayerActionPacket) = other(packet)
+
+    fun windowOpen(packet: WindowOpenPacket) = other(packet)
+
+    fun windowClose(packet: WindowClosePacket) = other(packet)
+
+    fun inventoryContent(packet: InventoryContentPacket) = other(packet)
+
+    fun inventorySlot(packet: InventorySlotPacket) = other(packet)
+
+    fun windowProperty(packet: WindowPropertyPacket) = other(packet)
 
     fun recipes(packet: RecipesPacket) = other(packet)
 
@@ -103,5 +124,11 @@ interface PacketHandler : ProtocolHandler {
 
     fun cacheBlobs(packet: CacheBlobsPacket) = other(packet)
 
+    fun input(packet: InputPacket) = other(packet)
+
     fun creativeInventory(packet: CreativeInventoryPacket) = other(packet)
+
+    fun inventoryRequest(packet: InventoryRequestPacket) = other(packet)
+
+    fun inventoryResponse(packet: InventoryResponsePacket) = other(packet)
 }

@@ -67,6 +67,7 @@ class WorldEngine(
                                 try {
                                     it.update(context)
                                 } catch (thrown: Throwable) {
+                                    thrown.printStackTrace()
                                     span.recordException(thrown)
                                 }
                             }

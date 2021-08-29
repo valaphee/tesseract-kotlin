@@ -68,13 +68,13 @@ class BlockState(
 
         fun byId(id: Int) = if (id < values.size) values[id] else null
 
-        fun byKey(key: String) = values.stream().filter { key == it.key }
+        fun byKey(key: String) = values.filter { key == it.key }
 
         fun byKeyWithStates(keyWithProperties: String): BlockState? {
             val propertiesBegin = keyWithProperties.indexOf('[')
             val propertiesEnd = keyWithProperties.indexOf(']')
             return if (propertiesBegin == -1 && propertiesEnd == -1) {
-                byKey(keyWithProperties).findFirst().orElse(null)
+                byKey(keyWithProperties).firstOrNull()
             } else if (propertiesEnd == keyWithProperties.length - 1) {
                 val properties = mutableMapOf<String, Any>()
                 keyWithProperties.substring(propertiesBegin + 1, propertiesEnd).split(',').forEach {
@@ -85,7 +85,7 @@ class BlockState(
                         else -> propertyValue.toIntOrNull() ?: propertyValue
                     }
                 }
-                byKey(keyWithProperties.substring(0, propertiesBegin)).filter { properties == it.properties }.findAny().orElse(null)
+                byKey(keyWithProperties.substring(0, propertiesBegin)).find { properties == it.properties }
             } else null
         }
 

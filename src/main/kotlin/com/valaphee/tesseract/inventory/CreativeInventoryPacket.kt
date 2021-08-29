@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package com.valaphee.tesseract.net.init
+package com.valaphee.tesseract.inventory
 
 import com.valaphee.tesseract.item.stack.Stack
 import com.valaphee.tesseract.item.stack.writeStackInstance

@@ -15,7 +15,7 @@ class Block(
     val key: String,
     val component: CompoundTag? = null
 ) {
-    var onUpdate: ((BlockUpdateList, Int, Int, Int, BlockState) -> Unit)? = null
+    var onUpdate: OnUpdate? = null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -51,3 +51,5 @@ class Block(
         val all get() = byKey.values
     }
 }
+
+typealias OnUpdate = (BlockUpdateList, Int, Int, Int, BlockState) -> Unit

@@ -5,6 +5,7 @@
 
 package com.valaphee.tesseract.net
 
+import com.valaphee.tesseract.util.lazyToString
 import io.netty.channel.ChannelFutureListener
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
@@ -57,7 +58,7 @@ class Connection : SimpleChannelInboundHandler<Packet>() {
 
     override fun channelRead0(context: ChannelHandlerContext, packet: Packet) {
         if (notClosed) {
-            /*log.debug("In: {}", lazyToString(packet::toString))*/
+            log.debug("In: {}", lazyToString(packet::toString))
             packet.handle(handler)
         }
     }
