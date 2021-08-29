@@ -3,8 +3,6 @@
  * All rights reserved.
  */
 
-@file:JvmName("Appearances")
-
 package com.valaphee.tesseract.actor.player
 
 import com.google.gson.Gson
@@ -29,7 +27,7 @@ import java.util.Base64
 /**
  * @author Kevin Ludwig
  */
-data class Appearance @JvmOverloads constructor(
+data class Appearance constructor(
     var id: String? = null,
     val skinId: String,
     val skinResourcePatch: Map<String, Any>,

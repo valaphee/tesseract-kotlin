@@ -15,7 +15,7 @@ import kotlin.random.Random
 
 object Blocks {
     fun populate() {
-        val liquidMoves = intArrayOf(
+        val flowingMoves = intArrayOf(
             -1,  0,  0,
              0,  0, -1,
              1,  0,  0,
@@ -25,7 +25,7 @@ object Blocks {
              1,  0, -1,
              1,  0,  1,
         )
-        fun liquidMovement(masses: Map<Int, Int>, viscosity: Int): OnUpdate {
+        fun flowingMovement(masses: Map<Int, Int>, viscosity: Int): OnUpdate {
             val maximumMass = masses.size
             return { updateList, x, y, z, state ->
                 var mass = masses[state.id]!! + 1
@@ -40,9 +40,9 @@ object Blocks {
                 val flowingMasses = Int2IntOpenHashMap(/*liquidMoves / 3*/8)
                 repeat(/*liquidMoves / 3*/8) {
                     val offset = it * 3
-                    val x = x + liquidMoves[offset]
-                    val y = y + liquidMoves[offset + 1]
-                    val z = z + liquidMoves[offset + 2]
+                    val x = x + flowingMoves[offset]
+                    val y = y + flowingMoves[offset + 1]
+                    val z = z + flowingMoves[offset + 2]
                     if (x < BlockStorage.XZSize && y < BlockStorage.SectionCount * Section.YSize && z < BlockStorage.XZSize) {
                         val flowingState = updateList[x, y, z]
                         if (flowingState == airId) flowingMasses[offset] = 0
@@ -59,7 +59,7 @@ object Blocks {
                         mass--
                         flowingMass.setValue(newMass)
 
-                        updateList[x + liquidMoves[offset], y + liquidMoves[offset + 1], z + liquidMoves[offset + 2], viscosity] = masses.entries.elementAt(maximumMass - newMass).key
+                        updateList[x + flowingMoves[offset], y + flowingMoves[offset + 1], z + flowingMoves[offset + 2], viscosity] = masses.entries.elementAt(maximumMass - newMass).key
                     }
 
                 }
@@ -69,10 +69,10 @@ object Blocks {
             }
         }
         Block.byKey("minecraft:flowing_water")?.apply {
-            onUpdate = liquidMovement(BlockState.byKey(key).associate { it.id to 7 - it.properties["liquid_depth"] as Int }.filterValues { it >= 0 }, 3)
+            onUpdate = flowingMovement(BlockState.byKey(key).associate { it.id to 7 - it.properties["liquid_depth"] as Int }.filterValues { it >= 0 }, 5)
         }
         Block.byKey("minecraft:flowing_lava")?.apply {
-            onUpdate = liquidMovement(BlockState.byKey(key).associate { it.id to 7 - it.properties["liquid_depth"] as Int }.filterValues { it >= 0 }, 10)
+            onUpdate = flowingMovement(BlockState.byKey(key).associate { it.id to 7 - it.properties["liquid_depth"] as Int }.filterValues { it >= 0 }, 10)
         }
 
         val fallingMoves = intArrayOf(

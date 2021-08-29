@@ -88,7 +88,6 @@ class Connection : SimpleChannelInboundHandler<Packet>() {
         }
     }
 
-    @JvmOverloads
     fun close(packet: Packet? = null) {
         if (notClosed) {
             notClosed = false

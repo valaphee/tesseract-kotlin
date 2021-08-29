@@ -28,9 +28,9 @@ import com.valaphee.tesseract.actor.player.PlayerActionPacketReader
 import com.valaphee.tesseract.actor.player.PlayerLocationPacketReader
 import com.valaphee.tesseract.actor.player.ViewDistanceRequestPacketReader
 import com.valaphee.tesseract.command.CommandPacketReader
-import com.valaphee.tesseract.ecs.EntityDeserializer
-import com.valaphee.tesseract.ecs.EntityFactory
-import com.valaphee.tesseract.ecs.EntitySerializer
+import com.valaphee.tesseract.util.ecs.EntityDeserializer
+import com.valaphee.tesseract.util.ecs.EntityFactory
+import com.valaphee.tesseract.util.ecs.EntitySerializer
 import com.valaphee.tesseract.inventory.InventoryRequestPacketReader
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.base.CacheBlobStatusPacketReader

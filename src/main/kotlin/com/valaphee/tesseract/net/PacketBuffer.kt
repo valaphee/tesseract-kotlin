@@ -8,13 +8,13 @@ package com.valaphee.tesseract.net
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
-import com.valaphee.tesseract.nbt.NbtInputStream
-import com.valaphee.tesseract.nbt.NbtOutputStream
 import com.valaphee.tesseract.util.ByteBufWrapper
 import com.valaphee.tesseract.util.LittleEndianByteBufInputStream
 import com.valaphee.tesseract.util.LittleEndianByteBufOutputStream
 import com.valaphee.tesseract.util.LittleEndianVarIntByteBufInputStream
 import com.valaphee.tesseract.util.LittleEndianVarIntByteBufOutputStream
+import com.valaphee.tesseract.util.nbt.NbtInputStream
+import com.valaphee.tesseract.util.nbt.NbtOutputStream
 import io.netty.buffer.ByteBuf
 import io.netty.util.AsciiString
 import java.nio.charset.StandardCharsets
@@ -64,7 +64,6 @@ class PacketBuffer(
         writeBytes(bytes)
     }
 
-    @JvmOverloads
     fun readAsciiStringLe(maximumLength: Int = Int.MAX_VALUE): AsciiString {
         val length = readIntLE()
         check(length <= maximumLength) { "Maximum length of $maximumLength exceeded" }
@@ -179,7 +178,6 @@ class PacketBuffer(
 
     fun <T : Enum<T>> writeVarLongFlags(flags: Collection<T>) = writeVarLong(flags.map { 1L shl it.ordinal }.fold(0) { flagsValue, flagValue -> flagsValue or flagValue })
 
-    @JvmOverloads
     fun readByteArray(maximumLength: Int = Short.MAX_VALUE.toInt()): ByteArray {
         val length = readVarUInt()
         check(length <= maximumLength) { "Maximum length of $maximumLength exceeded" }
@@ -201,7 +199,6 @@ class PacketBuffer(
         writeBytes(value)
     }
 
-    @JvmOverloads
     fun readString(maximumLength: Int = Int.MAX_VALUE) = String(readByteArray(maximumLength), StandardCharsets.UTF_8)
 
     fun writeString(value: String) {

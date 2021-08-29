@@ -18,7 +18,6 @@ enum class GameMode(
     WorldDefault;
 
     companion object {
-        @JvmStatic
         fun byKey(key: String) = byKey[key]
 
         private val byKey = values().associateBy { it.key }

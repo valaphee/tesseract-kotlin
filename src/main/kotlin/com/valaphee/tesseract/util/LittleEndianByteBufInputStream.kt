@@ -15,7 +15,7 @@ import java.nio.charset.StandardCharsets
 /**
  * @author Kevin Ludwig
  */
-open class LittleEndianByteBufInputStream @JvmOverloads constructor(
+open class LittleEndianByteBufInputStream constructor(
     private val buffer: ByteBuf,
     length: Int = buffer.readableBytes(),
     private val releaseOnClose: Boolean = false

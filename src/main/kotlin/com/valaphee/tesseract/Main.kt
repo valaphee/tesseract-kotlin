@@ -12,7 +12,7 @@ import com.google.inject.Guice
 import com.valaphee.tesseract.inventory.CreativeInventoryPacket
 import com.valaphee.tesseract.item.Item
 import com.valaphee.tesseract.item.stack.Stack
-import com.valaphee.tesseract.nbt.NbtInputStream
+import com.valaphee.tesseract.util.nbt.NbtInputStream
 import com.valaphee.tesseract.net.init.BiomeDefinitionsPacket
 import com.valaphee.tesseract.net.init.EntityIdentifiersPacket
 import com.valaphee.tesseract.util.LittleEndianByteBufInputStream

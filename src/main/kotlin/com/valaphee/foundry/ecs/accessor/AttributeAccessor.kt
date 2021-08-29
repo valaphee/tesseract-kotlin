@@ -21,7 +21,6 @@ interface AttributeAccessor {
     fun <T : Attribute> findAttributeOrNull(`class`: KClass<T>): T?
 
     companion object {
-        @JvmStatic
         fun create(attributes: Set<Attribute>): AttributeAccessor = DefaultAttributeMutator(attributes)
     }
 }

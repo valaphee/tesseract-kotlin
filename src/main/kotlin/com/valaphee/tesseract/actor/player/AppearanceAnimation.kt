@@ -8,7 +8,7 @@ package com.valaphee.tesseract.actor.player
 /**
  * @author Kevin Ludwig
  */
-data class AppearanceAnimation @JvmOverloads constructor(
+data class AppearanceAnimation constructor(
     val image: AppearanceImage,
     val type: Type,
     val frames: Float,

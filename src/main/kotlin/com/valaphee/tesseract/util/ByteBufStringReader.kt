@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets
 /**
  * @author Kevin Ludwig
  */
-class ByteBufStringReader @JvmOverloads constructor(
+class ByteBufStringReader constructor(
     private var buffer: ByteBuf,
     length: Int,
     private val releaseOnClose: Boolean = false

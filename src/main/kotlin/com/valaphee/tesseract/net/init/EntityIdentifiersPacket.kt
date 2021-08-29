@@ -5,14 +5,14 @@
 
 package com.valaphee.tesseract.net.init
 
-import com.valaphee.tesseract.nbt.CompoundTag
-import com.valaphee.tesseract.nbt.NbtOutputStream
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 import com.valaphee.tesseract.util.LittleEndianVarIntByteBufOutputStream
+import com.valaphee.tesseract.util.nbt.CompoundTag
+import com.valaphee.tesseract.util.nbt.NbtOutputStream
 
 /**
  * @author Kevin Ludwig

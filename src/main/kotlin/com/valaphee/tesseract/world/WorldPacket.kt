@@ -15,8 +15,8 @@ import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.item.Item
-import com.valaphee.tesseract.nbt.ListTag
-import com.valaphee.tesseract.nbt.NbtOutputStream
+import com.valaphee.tesseract.util.nbt.ListTag
+import com.valaphee.tesseract.util.nbt.NbtOutputStream
 import com.valaphee.tesseract.net.GamePublishMode
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer

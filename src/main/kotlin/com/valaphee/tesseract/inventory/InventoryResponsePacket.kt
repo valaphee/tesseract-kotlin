@@ -18,42 +18,6 @@ import com.valaphee.tesseract.net.Restriction
 data class InventoryResponsePacket(
     var responses: Array<Response>
 ) : Packet {
-    data class ResponseWindowSlot(
-        val slotId: Int,
-        val hotbarSlot: Int,
-        val count: Int,
-        val netId: Int,
-        val name: String,
-        val damage: Int
-    )
-
-    data class ResponseWindow(
-        val windowId: Int,
-        val slots: Array<ResponseWindowSlot>
-    ) {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as ResponseWindow
-
-            if (windowId != other.windowId) return false
-            if (!slots.contentEquals(other.slots)) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            var result = windowId
-            result = 31 * result + slots.contentHashCode()
-            return result
-        }
-    }
-
-    enum class ResponseStatus {
-        Ok, Error
-    }
-
     data class Response(
         val status: ResponseStatus,
         var requestId: Int,
@@ -79,6 +43,42 @@ data class InventoryResponsePacket(
             return result
         }
     }
+
+    enum class ResponseStatus {
+        Ok, Error
+    }
+
+    data class ResponseWindow(
+        val windowId: Int,
+        val slots: Array<ResponseWindowSlot>
+    ) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as ResponseWindow
+
+            if (windowId != other.windowId) return false
+            if (!slots.contentEquals(other.slots)) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = windowId
+            result = 31 * result + slots.contentHashCode()
+            return result
+        }
+    }
+
+    data class ResponseWindowSlot(
+        val slotId: Int,
+        val hotbarSlot: Int,
+        val count: Int,
+        val netId: Int,
+        val name: String,
+        val damage: Int
+    )
 
     override val id get() = 0x94
 

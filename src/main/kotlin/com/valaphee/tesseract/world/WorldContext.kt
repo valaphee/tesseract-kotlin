@@ -9,7 +9,7 @@ import com.google.inject.Injector
 import com.valaphee.foundry.ecs.Context
 import com.valaphee.foundry.ecs.entity.Entity
 import com.valaphee.foundry.ecs.entity.EntityType
-import com.valaphee.tesseract.ecs.EntityFactory
+import com.valaphee.tesseract.util.ecs.EntityFactory
 import com.valaphee.tesseract.world.provider.Provider
 import kotlinx.coroutines.CoroutineScope
 import kotlin.reflect.full.isSubclassOf

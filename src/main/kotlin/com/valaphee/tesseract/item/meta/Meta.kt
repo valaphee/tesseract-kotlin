@@ -5,14 +5,14 @@
 
 package com.valaphee.tesseract.item.meta
 
-import com.valaphee.tesseract.nbt.CompoundTag
-import com.valaphee.tesseract.nbt.compoundTag
-import com.valaphee.tesseract.nbt.listTag
 import com.valaphee.tesseract.util.getCompoundTagOrNull
 import com.valaphee.tesseract.util.getIntOrNull
 import com.valaphee.tesseract.util.getListTagOrNull
 import com.valaphee.tesseract.util.getOrCreateCompoundTag
 import com.valaphee.tesseract.util.getStringOrNull
+import com.valaphee.tesseract.util.nbt.CompoundTag
+import com.valaphee.tesseract.util.nbt.compoundTag
+import com.valaphee.tesseract.util.nbt.listTag
 
 /**
  * @author Kevin Ludwig

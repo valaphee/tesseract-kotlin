@@ -43,11 +43,9 @@ sealed class BitArray(
             return if (indices > indicesRounded) indicesRounded + 1 else indicesRounded
         }
 
-        @JvmOverloads
         fun bitArray(size: Int, data: IntArray = IntArray(bitArrayDataSize(size))) = if (this == V3 || this == V5 || this == V6) PaddedBitArray(this, size, data) else PowerOfTwoBitArray(this, size, data)
 
         companion object {
-            @JvmStatic
             fun byBitsPerEntry(bitsPerEntry: Int): Version {
                 var bitsPerEntry0 = bitsPerEntry.toByte()
                 var version: Version?

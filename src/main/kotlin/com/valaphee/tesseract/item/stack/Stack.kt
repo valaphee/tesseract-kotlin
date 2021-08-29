@@ -7,9 +7,6 @@ package com.valaphee.tesseract.item.stack
 
 import com.valaphee.tesseract.item.Item
 import com.valaphee.tesseract.item.meta.Meta
-import com.valaphee.tesseract.nbt.CompoundTag
-import com.valaphee.tesseract.nbt.NbtInputStream
-import com.valaphee.tesseract.nbt.NbtOutputStream
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.util.LittleEndianByteBufInputStream
 import com.valaphee.tesseract.util.LittleEndianByteBufOutputStream
@@ -19,6 +16,9 @@ import com.valaphee.tesseract.util.getCompoundTagOrNull
 import com.valaphee.tesseract.util.getInt
 import com.valaphee.tesseract.util.getIntOrNull
 import com.valaphee.tesseract.util.getString
+import com.valaphee.tesseract.util.nbt.CompoundTag
+import com.valaphee.tesseract.util.nbt.NbtInputStream
+import com.valaphee.tesseract.util.nbt.NbtOutputStream
 
 /**
  * @author Kevin Ludwig

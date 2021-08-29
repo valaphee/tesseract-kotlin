@@ -5,12 +5,12 @@
 
 package com.valaphee.tesseract.util
 
-import com.valaphee.tesseract.nbt.CompoundTag
-import com.valaphee.tesseract.nbt.ListTag
-import com.valaphee.tesseract.nbt.NbtException
-import com.valaphee.tesseract.nbt.compoundTag
-import com.valaphee.tesseract.nbt.listTag
-import com.valaphee.tesseract.nbt.ofBool
+import com.valaphee.tesseract.util.nbt.CompoundTag
+import com.valaphee.tesseract.util.nbt.ListTag
+import com.valaphee.tesseract.util.nbt.NbtException
+import com.valaphee.tesseract.util.nbt.compoundTag
+import com.valaphee.tesseract.util.nbt.listTag
+import com.valaphee.tesseract.util.nbt.ofBool
 
 fun CompoundTag.getBoolOrNull(key: String): Boolean? {
     val tag = this[key] ?: return null

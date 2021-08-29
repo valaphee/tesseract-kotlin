@@ -3,8 +3,6 @@
  * All rights reserved.
  */
 
-@file:JvmName("NibbleArrays")
-
 package com.valaphee.tesseract.util
 
 import sun.misc.Unsafe

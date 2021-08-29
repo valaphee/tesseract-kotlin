@@ -5,7 +5,7 @@
 
 package com.valaphee.tesseract.world.chunk.terrain
 
-import com.valaphee.tesseract.nbt.compoundTag
+import com.valaphee.tesseract.util.nbt.compoundTag
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.util.getCompoundTag
 import com.valaphee.tesseract.util.getString

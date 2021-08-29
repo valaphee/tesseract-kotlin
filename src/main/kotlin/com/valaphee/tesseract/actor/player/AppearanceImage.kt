@@ -68,7 +68,6 @@ data class AppearanceImage(
     override fun toString() = "AppearanceImage(width=$width, height=$height, image=$image)"
 
     companion object {
-        @JvmField
         val Empty = AppearanceImage(0, 0, ByteArray(0))
     }
 }

@@ -5,7 +5,7 @@
 
 package com.valaphee.tesseract.world.chunk.terrain.block
 
-import com.valaphee.tesseract.nbt.CompoundTag
+import com.valaphee.tesseract.util.nbt.CompoundTag
 import com.valaphee.tesseract.world.chunk.terrain.BlockUpdateList
 
 /**

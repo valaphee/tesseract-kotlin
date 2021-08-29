@@ -19,7 +19,9 @@ import com.valaphee.tesseract.actor.location.Teleport
 import com.valaphee.tesseract.actor.location.position
 import com.valaphee.tesseract.actor.location.rotation
 import com.valaphee.tesseract.actor.player.AuthExtra
+import com.valaphee.tesseract.actor.player.InteractPacket
 import com.valaphee.tesseract.actor.player.Player
+import com.valaphee.tesseract.actor.player.PlayerActionPacket
 import com.valaphee.tesseract.actor.player.PlayerLocationPacket
 import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.actor.player.User
@@ -189,6 +191,18 @@ class WorldPacketHandler(
         else if (positionalMovement) player.sendMessage(Move(context, player, newPosition.toMutableFloat3().sub(position)))
         else if (rotationalMovement) player.sendMessage(Rotate(context, player, newRotation))*/
         player.sendMessage(Teleport(context, player, player, packet.position, packet.rotation))
+    }
+
+    override fun interact(packet: InteractPacket) {
+        when (packet.action) {
+            InteractPacket.Action.OpenInventory -> {
+                
+            }
+        }
+    }
+
+    override fun playerAction(packet: PlayerActionPacket) {
+
     }
 
     override fun viewDistanceRequest(packet: ViewDistanceRequestPacket) {

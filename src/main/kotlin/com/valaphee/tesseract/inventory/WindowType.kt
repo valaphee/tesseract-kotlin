@@ -50,7 +50,6 @@ enum class WindowType(
     SmithingTable(33);
 
     companion object {
-        @JvmStatic
         fun byId(id: Int) = byId[id]
 
         private val byId = Int2ObjectOpenHashMap<WindowType>(values().size).apply { values().forEach { this[it.id] = it } }
