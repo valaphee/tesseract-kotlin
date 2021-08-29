@@ -20,7 +20,6 @@ import com.valaphee.tesseract.actor.location.position
 import com.valaphee.tesseract.actor.location.rotation
 import com.valaphee.tesseract.actor.player.AuthExtra
 import com.valaphee.tesseract.actor.player.Player
-import com.valaphee.tesseract.actor.player.PlayerActionPacket
 import com.valaphee.tesseract.actor.player.PlayerLocationPacket
 import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.actor.player.User
@@ -43,6 +42,7 @@ import com.valaphee.tesseract.net.base.TextPacket
 import com.valaphee.tesseract.net.init.StatusPacket
 import com.valaphee.tesseract.world.chunk.Chunk
 import com.valaphee.tesseract.world.chunk.ChunkAddPacket
+import com.valaphee.tesseract.world.chunk.ChunkRelease
 import com.valaphee.tesseract.world.chunk.terrain.block.Block
 import com.valaphee.tesseract.world.chunk.terrain.terrain
 import com.valaphee.tesseract.world.entity.addEntities
@@ -168,6 +168,7 @@ class WorldPacketHandler(
     }
 
     override fun destroy() {
+        context.world.sendMessage(ChunkRelease(context, player, player.findFacet(View::class).acquiredChunks))
         context.world.removeEntities(context, null, player.id)
     }
 
@@ -188,10 +189,6 @@ class WorldPacketHandler(
         else if (positionalMovement) player.sendMessage(Move(context, player, newPosition.toMutableFloat3().sub(position)))
         else if (rotationalMovement) player.sendMessage(Rotate(context, player, newRotation))*/
         player.sendMessage(Teleport(context, player, player, packet.position, packet.rotation))
-    }
-
-    override fun playerAction(packet: PlayerActionPacket) {
-        super.playerAction(packet)
     }
 
     override fun viewDistanceRequest(packet: ViewDistanceRequestPacket) {

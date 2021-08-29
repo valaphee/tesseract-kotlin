@@ -31,7 +31,8 @@ class View @Inject constructor(
     private val config: Config
 ) : BaseFacet<WorldContext, LocationManagerMessage>(LocationManagerMessage::class) {
     private lateinit var lastChunkPosition: Int2
-    private val acquiredChunks = LongOpenHashSet()
+    private val _acquiredChunks = LongOpenHashSet()
+    val acquiredChunks: LongArray get() = _acquiredChunks.toLongArray()
 
     var distance = config.maximumViewDistance
         set(value) {
@@ -57,14 +58,14 @@ class View @Inject constructor(
                     distance(chunkX, chunkZ, x1, z1).compareTo(distance(chunkX, chunkZ, x2, z2))
                 }
 
-                val chunksToRelease = acquiredChunks.filterNot(chunksInDistance::contains)
-                val chunksToAcquire = chunksInDistance.filterNot(acquiredChunks::contains)
+                val chunksToRelease = _acquiredChunks.filterNot(chunksInDistance::contains)
+                val chunksToAcquire = chunksInDistance.filterNot(_acquiredChunks::contains)
                 if (chunksToRelease.isNotEmpty()) {
-                    acquiredChunks.removeAll(chunksToRelease)
+                    _acquiredChunks.removeAll(chunksToRelease)
                     message.context.world.receiveMessage(ChunkRelease(message.context, message.source, chunksToRelease.toLongArray()))
                 }
                 if (chunksToAcquire.isNotEmpty()) {
-                    acquiredChunks.addAll(chunksToAcquire)
+                    _acquiredChunks.addAll(chunksToAcquire)
                     message.context.world.receiveMessage(ChunkAcquire(message.context, message.source, chunksToAcquire.toLongArray()))
                 }
             }

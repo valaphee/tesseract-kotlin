@@ -31,17 +31,17 @@ class BlockUpdateList(
         if (cartesian[x, y, z] != value) {
             val position = encodePosition(x, y, z)
             changes[position] = value
-            pending[position] = updatesIn
+            if (updatesIn != 0) pending[position] = updatesIn
         }
     }
 
-    fun setIfEmpty(x: Int, y: Int, z: Int, value: Int, updatesIn: Int): Boolean {
+    fun setIfEmpty(x: Int, y: Int, z: Int, value: Int, updatesIn: Int = 1): Boolean {
         if (!(x in 0 until BlockStorage.XZSize && y in 0 until BlockStorage.SectionCount * Section.YSize && z in 0 until BlockStorage.XZSize)) return false
 
         if (get(x, y, z) == airId) {
             val position = encodePosition(x, y, z)
             changes[position] = value
-            pending[position] = updatesIn
+            if (updatesIn != 0) pending[position] = updatesIn
 
             return true
         }

@@ -76,10 +76,8 @@ class ServerInstance(
     override fun createEntityFactory() = super.createEntityFactory().apply {
         register(WorldType) {
             facets(
-                EntityManager::class.java,
-                ChunkManager::class.java,
-                PlayerList::class.java,
-                ChunkPacketizer::class.java,
+                PlayerList::class.java, EntityManager::class.java,
+                ChunkManager::class.java, ChunkPacketizer::class.java,
             )
         }
         register(ChunkType) {
@@ -90,9 +88,7 @@ class ServerInstance(
         }
         register(PlayerType) {
             facets(
-                LocationManager::class.java,
-                View::class.java,
-                PlayerLocationPacketizer::class.java
+                LocationManager::class.java, View::class.java, PlayerLocationPacketizer::class.java
             )
         }
     }

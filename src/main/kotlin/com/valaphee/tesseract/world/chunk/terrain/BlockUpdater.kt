@@ -30,7 +30,7 @@ class BlockUpdater : BaseBehavior<WorldContext>() {
                 it.broadcast(*blockUpdateChanges.map { (position, value) ->
                     val (x, y, z) = decodePosition(position)
                     blockStorage[x, y, z] = value
-                    BlockUpdatePacket(Int3((chunkX * BlockStorage.XZSize) + x, y, (chunkZ * BlockStorage.XZSize)), value, BlockUpdatePacket.Flag.All, 0)
+                    BlockUpdatePacket(Int3((chunkX * BlockStorage.XZSize) + x, y, (chunkZ * BlockStorage.XZSize) + z), value, BlockUpdatePacket.Flag.All, 0)
                 }.toTypedArray())
                 blockUpdateChanges.clear()
             }

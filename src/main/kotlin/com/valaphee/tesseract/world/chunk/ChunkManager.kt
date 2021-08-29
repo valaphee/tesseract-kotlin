@@ -30,10 +30,10 @@ class ChunkManager : BaseFacet<WorldContext, ChunkManagerMessage>(ChunkManagerMe
         when (message) {
             is ChunkAcquire -> {
                 context.world.addEntities(context, message.source, *message.chunkPositions.filterNot(chunks::containsKey).map {
-                    context.provider.loadChunk(it) ?: run {
-                        val position = decodePosition(it)
-                        context.entityFactory(ChunkType, setOf(Ticket(), Location(position), generator.generate(position))).apply { chunks[it] = this }
-                    }
+                    /*context.provider.loadChunk(it) ?: run {*/
+                    val position = decodePosition(it)
+                    context.entityFactory(ChunkType, setOf(Ticket(), Location(position), generator.generate(position))).apply { chunks[it] = this }
+                    /*}*/
                 }.toTypedArray())
                 return MessageResponse(ChunkAcquired(context, message.source, message.chunkPositions.map(chunks::get).filterNotNull().onEach { chunk -> message.source?.let { message.source?.whenTypeIs<PlayerType> { chunk.players += it } } }.toTypedArray()))
             }
