@@ -101,7 +101,7 @@ class SectionLegacy(
 class SectionCompact(
     var layers: Array<Layer>
 ) : Section {
-    constructor(version: BitArray.Version, runtime: Boolean) : this(arrayOf(Layer(air.runtimeId, version, runtime), Layer(air.runtimeId, version, runtime)))
+    constructor(version: BitArray.Version, runtime: Boolean) : this(arrayOf(Layer(air.id, version, runtime), Layer(air.id, version, runtime)))
 
     override fun get(x: Int, y: Int, z: Int) = get(x, y, z, 0)
 
@@ -124,8 +124,8 @@ class SectionCompact(
 
 fun PacketBuffer.readSection() = when (readUnsignedByte().toInt()) {
     0, 2, 3, 4, 5, 6 -> SectionLegacy(ByteArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize).apply { readBytes(this) }, nibbleArray(ByteArray((BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize) / 2).apply { readBytes(this) }))
-    1 -> SectionCompact(arrayOf(readLayer(air.runtimeId)))
-    8 -> SectionCompact(Array(readUnsignedByte().toInt()) { readLayer(air.runtimeId) })
+    1 -> SectionCompact(arrayOf(readLayer(air.id)))
+    8 -> SectionCompact(Array(readUnsignedByte().toInt()) { readLayer(air.id) })
     else -> TODO()
 }
 

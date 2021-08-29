@@ -10,6 +10,4 @@ package com.valaphee.tesseract.world.chunk.terrain
  */
 interface ReadWriteCartesian : ReadOnlyCartesian {
     operator fun set(x: Int, y: Int, z: Int, value: Int)
-
-    fun setIfEmpty(x: Int, y: Int, z: Int, value: Int): Int
 }

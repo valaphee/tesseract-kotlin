@@ -12,6 +12,8 @@ import com.valaphee.tesseract.actor.player.Player
 import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.connection
+import com.valaphee.tesseract.world.chunk.Chunk
+import com.valaphee.tesseract.world.chunk.players
 import com.valaphee.tesseract.world.entity.EntityAdd
 import com.valaphee.tesseract.world.entity.EntityManagerMessage
 import com.valaphee.tesseract.world.entity.EntityRemove
@@ -20,7 +22,7 @@ import com.valaphee.tesseract.world.entity.EntityRemove
  * @author Kevin Ludwig
  */
 class PlayerList : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMessage::class) {
-    private val players = mutableListOf<Player>()
+    val players = mutableListOf<Player>()
 
     override suspend fun receive(message: EntityManagerMessage): Response {
         when (message) {
@@ -49,16 +51,16 @@ class PlayerList : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMe
 
         return Pass
     }
-
-    fun broadcast(vararg packets: Packet) {
-        players.forEach { packets.forEach(it.connection::write) }
-    }
-
-    fun broadcast(player: Player, vararg packets: Packet) {
-        players.forEach { if (it != player) packets.forEach(it.connection::write) }
-    }
 }
 
-fun World.broadcast(vararg packets: Packet) = findFacet(PlayerList::class).broadcast(*packets)
+@JvmName("worldBroadcast")
+fun World.broadcast(vararg packets: Packet) = findFacet(PlayerList::class).players.forEach { packets.forEach(it.connection::write) }
 
-fun World.broadcast(source: Player, vararg packets: Packet) = findFacet(PlayerList::class).broadcast(source, *packets)
+@JvmName("worldBroadcast")
+fun World.broadcast(source: Player, vararg packets: Packet) = findFacet(PlayerList::class).players.forEach { if (it != source) packets.forEach(it.connection::write) }
+
+@JvmName("chunkBroadcast")
+fun Chunk.broadcast(vararg packets: Packet) = players.forEach { packets.forEach(it.connection::write) }
+
+@JvmName("chunkBroadcast")
+fun Chunk.broadcast(source: Player, vararg packets: Packet) = players.forEach { if (it != source) packets.forEach(it.connection::write) }

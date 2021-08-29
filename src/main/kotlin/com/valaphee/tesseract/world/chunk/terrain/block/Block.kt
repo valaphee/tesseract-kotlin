@@ -6,6 +6,7 @@
 package com.valaphee.tesseract.world.chunk.terrain.block
 
 import com.valaphee.tesseract.nbt.CompoundTag
+import com.valaphee.tesseract.world.chunk.terrain.BlockUpdateList
 
 /**
  * @author Kevin Ludwig
@@ -14,6 +15,8 @@ class Block(
     val key: String,
     val component: CompoundTag? = null
 ) {
+    var onUpdate: ((BlockUpdateList, Int, Int, Int, BlockState) -> Unit)? = null
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -37,7 +40,10 @@ class Block(
             check(!finished) { "Already finished" }
 
             finished = true
-            HashSet<String>().apply { BlockState.all.forEach { add(it.key) } }.forEach { byKey[it] = Block(it) }
+            BlockState.all.groupBy { it.key }.forEach { (key, states) ->
+                val block = Block(key).also { byKey[key] = it }
+                states.forEach { it.block = block }
+            }
         }
 
         fun byKey(key: String) = byKey[key]

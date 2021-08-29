@@ -6,52 +6,51 @@
 package com.valaphee.tesseract.world.chunk.terrain
 
 import com.valaphee.foundry.math.Int3
-import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.chunk.Chunk
 import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
 import it.unimi.dsi.fastutil.shorts.Short2IntOpenHashMap
 
 /**
  * @author Kevin Ludwig
  */
-class CartesianDelta(
+class BlockUpdateList(
     private val cartesian: ReadWriteCartesian
 ) : ReadWriteCartesian {
-    private val changes = Short2IntOpenHashMap()
+    val changes = Short2IntOpenHashMap()
+    val pending = Short2IntOpenHashMap()
 
     override fun get(x: Int, y: Int, z: Int) = if (x in 0 until BlockStorage.XZSize && y in 0 until BlockStorage.SectionCount * Section.YSize && z in 0 until BlockStorage.XZSize) {
         val key = encodePosition(x, y, z)
         if (changes.containsKey(key)) changes.get(key) else cartesian[x, y, z]
     } else airId
 
-    override fun set(x: Int, y: Int, z: Int, value: Int) {
+    override fun set(x: Int, y: Int, z: Int, value: Int) = set(x, y, z, value, 1)
+
+    fun set(x: Int, y: Int, z: Int, value: Int, updatesIn: Int) {
         if (!(x in 0 until BlockStorage.XZSize && y in 0 until BlockStorage.SectionCount * Section.YSize && z in 0 until BlockStorage.XZSize)) return
 
-        changes[encodePosition(x, y, z)] = value
+        if (cartesian[x, y, z] != value) {
+            val position = encodePosition(x, y, z)
+            changes[position] = value
+            pending[position] = updatesIn
+        }
     }
 
-    override fun setIfEmpty(x: Int, y: Int, z: Int, value: Int): Int {
-        if (!(x in 0 until BlockStorage.XZSize && y in 0 until BlockStorage.SectionCount * Section.YSize && z in 0 until BlockStorage.XZSize)) return airId
+    fun setIfEmpty(x: Int, y: Int, z: Int, value: Int, updatesIn: Int): Boolean {
+        if (!(x in 0 until BlockStorage.XZSize && y in 0 until BlockStorage.SectionCount * Section.YSize && z in 0 until BlockStorage.XZSize)) return false
 
-        val oldValue = get(x, y, z)
-        if (oldValue == airId) {
-            set(x, y, z, value)
+        if (get(x, y, z) == airId) {
+            val position = encodePosition(x, y, z)
+            changes[position] = value
+            pending[position] = updatesIn
 
-            return oldValue
+            return true
         }
 
-        return oldValue
-    }
-
-    fun merge(context: WorldContext, sector: Chunk) {
-        if (changes.isNotEmpty()) {
-            sector.sendMessage(CartesianDeltaMerge(context, sector, changes.clone()))
-            changes.clear()
-        }
+        return false
     }
 
     companion object {
-        private val airId = BlockState.byKeyWithStates("minecraft:air")?.runtimeId ?: error("Missing minecraft:air")
+        private val airId = BlockState.byKeyWithStates("minecraft:air")?.id ?: error("Missing minecraft:air")
     }
 }
 

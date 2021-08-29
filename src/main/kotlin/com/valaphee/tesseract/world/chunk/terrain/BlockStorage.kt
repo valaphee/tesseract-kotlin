@@ -29,21 +29,8 @@ class BlockStorage : ReadWriteCartesian {
         sections[y shr YShift].set(x, y and SectionMask, z, value, layer)
     }
 
-    override fun setIfEmpty(x: Int, y: Int, z: Int, value: Int): Int {
-        if (!(x in 0 until XZSize && y in 0 until SectionCount * Section.YSize && z in 0 until XZSize)) return airId
-
-        val oldValue = get(x, y, z)
-        if (oldValue == airId) {
-            set(x, y, z, value)
-
-            return oldValue
-        }
-
-        return oldValue
-    }
-
     companion object {
-        private val airId = BlockState.byKeyWithStates("minecraft:air")?.runtimeId ?: error("Missing minecraft:air")
+        private val airId = BlockState.byKeyWithStates("minecraft:air")?.id ?: error("Missing minecraft:air")
 
         const val XZSize = 16
         const val XZMask = XZSize - 1

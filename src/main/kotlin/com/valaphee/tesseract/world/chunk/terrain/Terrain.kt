@@ -5,7 +5,6 @@
 
 package com.valaphee.tesseract.world.chunk.terrain
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.valaphee.foundry.ecs.BaseAttribute
 import com.valaphee.tesseract.world.chunk.Chunk
 
@@ -13,10 +12,9 @@ import com.valaphee.tesseract.world.chunk.Chunk
  * @author Kevin Ludwig
  */
 class Terrain(
-    val blockStorage: BlockStorage,
+    val blockStorage: BlockStorage
 ) : BaseAttribute() {
-    @JsonIgnore
-    val cartesianDelta = CartesianDelta(blockStorage)
+    val blockUpdates = BlockUpdateList(blockStorage)
 }
 
 val Chunk.terrain get() = findAttribute(Terrain::class)

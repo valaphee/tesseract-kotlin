@@ -27,11 +27,8 @@ data class BlockUpdatePacket(
         Neighbors, Network, NonVisual, Priority;
 
         companion object {
-            @JvmField
-            val All: Collection<Flag> = EnumSet.of(Neighbors, Network)
-
-            @JvmField
-            val AllPriority: Collection<Flag> = EnumSet.of(Neighbors, Network, Priority)
+            val All: EnumSet<Flag> = EnumSet.of(Neighbors, Network)
+            val AllPriority: EnumSet<Flag> = EnumSet.of(Neighbors, Network, Priority)
         }
     }
 

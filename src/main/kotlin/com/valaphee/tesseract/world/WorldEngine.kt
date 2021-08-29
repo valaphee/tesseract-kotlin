@@ -62,7 +62,15 @@ class WorldEngine(
                     while (cycles.hasNext()) {
                         context.cycleDelta = cycles.next()
                         val span = tracer.spanBuilder("cycle ${cycle++}").setSpanKind(SpanKind.INTERNAL).startSpan()
-                        entityById.values.filter { it.needsUpdate }.map { async { it.update(context) } }.also { span.setAttribute(updates, it.size.toLong()) }.awaitAll()
+                        entityById.values.filter { it.needsUpdate }.map {
+                            async {
+                                try {
+                                    it.update(context)
+                                } catch (thrown: Throwable) {
+                                    span.recordException(thrown)
+                                }
+                            }
+                        }.also { span.setAttribute(updates, it.size.toLong()) }.awaitAll()
                         span.end()
                     }
                 }

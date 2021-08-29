@@ -5,6 +5,7 @@
 
 package com.valaphee.tesseract
 
+import Test
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.google.inject.AbstractModule
 import com.google.inject.Inject
@@ -26,9 +27,7 @@ import com.valaphee.tesseract.world.WorldType
 import com.valaphee.tesseract.world.chunk.ChunkManager
 import com.valaphee.tesseract.world.chunk.ChunkPacketizer
 import com.valaphee.tesseract.world.chunk.ChunkType
-import com.valaphee.tesseract.world.chunk.terrain.CartesianDeltaMergePacketizer
-import com.valaphee.tesseract.world.chunk.terrain.CartesianDeltaMerger
-import com.valaphee.tesseract.world.chunk.terrain.TerrainManager
+import com.valaphee.tesseract.world.chunk.terrain.BlockUpdater
 import com.valaphee.tesseract.world.entity.EntityManager
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.buffer.PooledByteBufAllocator
@@ -57,12 +56,12 @@ class ServerInstance(
     telemetry: OpenTelemetry,
 ) : Instance(injector, telemetry) {
     @Inject
-    lateinit var config: Config
+    private lateinit var config: Config
 
     private val parentGroup = underlyingNetworking.groupFactory(0, ThreadFactoryBuilder().setNameFormat("server-%d").build())
     private val childGroup = underlyingNetworking.groupFactory(0, ThreadFactoryBuilder().setNameFormat("server-c-%d").build())
 
-    lateinit var channel: Channel
+    private lateinit var channel: Channel
 
     init {
         this.injector.injectMembers(this)
@@ -85,11 +84,8 @@ class ServerInstance(
         }
         register(ChunkType) {
             behaviors(
-                CartesianDeltaMerger::class.java
-            )
-            facets(
-                TerrainManager::class.java,
-                CartesianDeltaMergePacketizer::class.java
+                Test::class.java,
+                BlockUpdater::class.java
             )
         }
         register(PlayerType) {

@@ -24,7 +24,8 @@ class BlockState(
             else -> TODO()
         }
     }
-    var runtimeId = 0
+    var id = 0
+    lateinit var block: Block
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -32,12 +33,12 @@ class BlockState(
 
         other as BlockState
 
-        if (runtimeId != other.runtimeId) return false
+        if (id != other.id) return false
 
         return true
     }
 
-    override fun hashCode() = runtimeId
+    override fun hashCode() = id
 
     override fun toString() = StringBuilder().apply {
         append(key)
@@ -62,7 +63,7 @@ class BlockState(
 
             finished = true
             values.sortWith(compareBy { it.key.split(":", limit = 2)[1].lowercase() })
-            values.forEachIndexed { i, it -> it.runtimeId = i }
+            values.forEachIndexed { i, it -> it.id = i }
         }
 
         fun byId(id: Int) = if (id < values.size) values[id] else null

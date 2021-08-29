@@ -72,7 +72,7 @@ fun PacketBuffer.readLayer(default: Int): Layer {
                 repeat(paletteSize) {
                     add(stream.readTag()?.asCompoundTag()?.let { it ->
                         val propertiesNbt = it.getCompoundTag("states")
-                        BlockState.byKey(it.getString("name")).filter { it.propertiesNbt == propertiesNbt }.findAny().orElseGet { null }?.runtimeId
+                        BlockState.byKey(it.getString("name")).filter { it.propertiesNbt == propertiesNbt }.findAny().orElseGet { null }?.id
                     } ?: default)
                 }
             }

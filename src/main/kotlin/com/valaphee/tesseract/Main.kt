@@ -24,10 +24,14 @@ import com.valaphee.tesseract.util.getString
 import com.valaphee.tesseract.util.getStringOrNull
 import com.valaphee.tesseract.world.chunk.terrain.block.Block
 import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
+import com.valaphee.tesseract.world.chunk.terrain.block.Blocks
 import io.netty.buffer.ByteBufInputStream
 import io.netty.buffer.PooledByteBufAllocator
 import io.netty.buffer.Unpooled
+import io.opentelemetry.exporter.jaeger.JaegerGrpcSpanExporter
 import io.opentelemetry.sdk.OpenTelemetrySdk
+import io.opentelemetry.sdk.trace.SdkTracerProvider
+import io.opentelemetry.sdk.trace.export.BatchSpanProcessor
 import org.mozilla.javascript.Context
 import java.io.IOException
 import java.io.InputStreamReader
@@ -59,6 +63,7 @@ fun main() {
         }
         BlockState.finish()
         Block.finish()
+        Blocks.populate()
     }
 
     run {
@@ -99,11 +104,11 @@ fun main() {
     val instance = ServerInstance(
         Guice.createInjector(),
         OpenTelemetrySdk.builder()
-            /*.setTracerProvider(
+            .setTracerProvider(
                 SdkTracerProvider.builder()
                     .addSpanProcessor(BatchSpanProcessor.builder(JaegerGrpcSpanExporter.builder().build()).build())
                     .build()
-            )*/
+            )
             .buildAndRegisterGlobal()
     )
     instance.bind()
