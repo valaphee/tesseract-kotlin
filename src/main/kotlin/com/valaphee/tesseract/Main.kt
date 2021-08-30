@@ -25,6 +25,7 @@
 package com.valaphee.tesseract
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
@@ -108,7 +109,7 @@ fun main(arguments: Array<String>) {
     run {
         @Suppress("BlockingMethodInNonBlockingContext")
         gson.newJsonReader(InputStreamReader(clazz.getResourceAsStream("/creative_items.json")!!)).use {
-            val content = ArrayList<Stack<*>>()
+            val content = mutableListOf<Stack<*>>()
             (gson.fromJson(it, JsonObject::class.java) as JsonObject).getJsonArray("items").map { it.asJsonObject }.forEach {
                 Item.byKey(it.getString("id"))?.let { item ->
                     content += Stack(Item.byId(item.id)!!, it.getIntOrNull("damage") ?: 0, 1, it.getStringOrNull("nbt_b64")?.let {
@@ -133,6 +134,7 @@ fun main(arguments: Array<String>) {
                         .addSerializer(Pattern::class.java, PatternSerializer)
                         .addDeserializer(Pattern::class.java, PatternDeserializer)
                 )
+                propertyNamingStrategy = PropertyNamingStrategies.KEBAB_CASE
                 enable(SerializationFeature.INDENT_OUTPUT)
             })
             bind(Argument::class.java).toInstance(argument)

@@ -44,18 +44,18 @@ data class InventoryRequestPacket(
     var requests: Array<Request>
 ) : Packet {
     enum class ActionType {
-        Take, Place, Swap, Drop, Destroy, Consume, Create, LabTableCombine, BeaconPayment, CraftRecipe, CraftRecipeAuto, CraftCreative, CraftRecipeOptional, CraftNonImplementedDeprecated, CraftResultsDeprecated
+        Take, Put, Swap, Drop, Destroy, Consume, Create, LabTableCombine, BeaconPayment, MineBlock, CraftRecipe, CraftRecipeAuto, CraftCreative, CraftRecipeOptional, CraftNonImplementedDeprecated, CraftResultsDeprecated
     }
 
     data class Action(
         val result: Array<Stack<*>?>?,
         var type: ActionType,
         var count: Int,
-        var sourceWindowId: Int,
+        var sourceSlotType: WindowSlotType?,
         var sourceSlotId: Int,
         var sourceNetId: Int,
         var random: Boolean,
-        var destinationWindowId: Int,
+        var destinationSlotType: WindowSlotType?,
         var destinationSlotId: Int,
         var destinationNetId: Int,
         var slotId: Int,
@@ -71,11 +71,11 @@ data class InventoryRequestPacket(
             if (!result.contentEquals(other.result)) return false
             if (type != other.type) return false
             if (count != other.count) return false
-            if (sourceWindowId != other.sourceWindowId) return false
+            if (sourceSlotType != other.sourceSlotType) return false
             if (sourceSlotId != other.sourceSlotId) return false
             if (sourceNetId != other.sourceNetId) return false
             if (random != other.random) return false
-            if (destinationWindowId != other.destinationWindowId) return false
+            if (destinationSlotType != other.destinationSlotType) return false
             if (destinationSlotId != other.destinationSlotId) return false
             if (destinationNetId != other.destinationNetId) return false
             if (slotId != other.slotId) return false
@@ -89,11 +89,11 @@ data class InventoryRequestPacket(
             var result1 = result.contentHashCode()
             result1 = 31 * result1 + type.hashCode()
             result1 = 31 * result1 + count
-            result1 = 31 * result1 + sourceWindowId
+            result1 = 31 * result1 + sourceSlotType.hashCode()
             result1 = 31 * result1 + sourceSlotId
             result1 = 31 * result1 + sourceNetId
             result1 = 31 * result1 + random.hashCode()
-            result1 = 31 * result1 + destinationWindowId
+            result1 = 31 * result1 + destinationSlotType.hashCode()
             result1 = 31 * result1 + destinationSlotId
             result1 = 31 * result1 + destinationNetId
             result1 = 31 * result1 + slotId
@@ -136,30 +136,30 @@ data class InventoryRequestPacket(
             buffer.writeVarUInt(it.actions.size)
             it.actions.forEach {
                 @Suppress("NON_EXHAUSTIVE_WHEN") when (it.type) {
-                    ActionType.Take, ActionType.Place -> {
+                    ActionType.Take, ActionType.Put -> {
                         buffer.writeByte(it.count)
-                        buffer.writeByte(it.sourceWindowId)
+                        buffer.writeByte(it.sourceSlotType!!.ordinal)
                         buffer.writeByte(it.sourceSlotId)
                         buffer.writeVarInt(it.sourceNetId)
                     }
                     ActionType.Swap -> {
-                        buffer.writeByte(it.sourceWindowId)
+                        buffer.writeByte(it.sourceSlotType!!.ordinal)
                         buffer.writeByte(it.sourceSlotId)
                         buffer.writeVarInt(it.sourceNetId)
                     }
                     ActionType.Drop -> {
                         buffer.writeByte(it.count)
-                        buffer.writeByte(it.sourceWindowId)
+                        buffer.writeByte(it.sourceSlotType!!.ordinal)
                         buffer.writeByte(it.sourceSlotId)
                         buffer.writeVarInt(it.sourceNetId)
                         buffer.writeBoolean(it.random)
                     }
                     ActionType.Destroy, ActionType.Consume -> {
                         buffer.writeByte(it.count)
-                        buffer.writeByte(it.sourceWindowId)
+                        buffer.writeByte(it.sourceSlotType!!.ordinal)
                         buffer.writeByte(it.sourceSlotId)
                         buffer.writeVarInt(it.sourceNetId)
-                        buffer.writeByte(it.destinationWindowId)
+                        buffer.writeByte(it.destinationSlotType!!.ordinal)
                         buffer.writeByte(it.destinationSlotId)
                         buffer.writeVarInt(it.destinationNetId)
                     }
@@ -168,7 +168,11 @@ data class InventoryRequestPacket(
                         buffer.writeVarInt(it.auxInt)
                         buffer.writeVarInt(it.auxInt2)
                     }
-                    ActionType.CraftRecipe, ActionType.CraftRecipeAuto, ActionType.CraftCreative -> buffer.writeVarInt(it.auxInt)
+                    ActionType.CraftRecipe, ActionType.CraftCreative -> buffer.writeVarInt(it.auxInt)
+                    ActionType.CraftRecipeAuto -> {
+                        buffer.writeVarInt(it.auxInt)
+                        if (version >= 448) buffer.writeByte(it.auxInt2)
+                    }
                     ActionType.CraftRecipeOptional -> {
                         buffer.writeVarUInt(it.auxInt)
                         buffer.writeIntLE(it.auxInt2)
@@ -212,16 +216,17 @@ object InventoryRequestPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int) = InventoryRequestPacket(Array(buffer.readVarUInt()) {
         InventoryRequestPacket.Request(buffer.readVarInt(), Array(buffer.readVarUInt()) {
             when (val actionType = InventoryRequestPacket.ActionType.values()[buffer.readByte().toInt()]) {
-                InventoryRequestPacket.ActionType.Take, InventoryRequestPacket.ActionType.Place -> InventoryRequestPacket.Action(null, actionType, buffer.readByte().toInt(), buffer.readByte().toInt(), buffer.readByte().toInt(), buffer.readVarInt(), false, buffer.readByte().toInt(), buffer.readByte().toInt(), buffer.readVarInt(), 0, 0, 0)
-                InventoryRequestPacket.ActionType.Swap -> InventoryRequestPacket.Action(null, actionType, 0, buffer.readByte().toInt(), buffer.readByte().toInt(), buffer.readVarInt(), false, buffer.readByte().toInt(), buffer.readByte().toInt(), buffer.readVarInt(), 0, 0, 0)
-                InventoryRequestPacket.ActionType.Drop -> InventoryRequestPacket.Action(null, actionType, buffer.readByte().toInt(), buffer.readByte().toInt(), buffer.readByte().toInt(), buffer.readVarInt(), buffer.readBoolean(), 0, 0, 0, 0, 0, 0)
-                InventoryRequestPacket.ActionType.Destroy, InventoryRequestPacket.ActionType.Consume -> InventoryRequestPacket.Action(null, actionType, buffer.readByte().toInt(), buffer.readByte().toInt(), buffer.readByte().toInt(), buffer.readVarInt(), false, 0, 0, 0, 0, 0, 0)
-                InventoryRequestPacket.ActionType.Create -> InventoryRequestPacket.Action(null, actionType, 0, 0, buffer.readByte().toInt(), 0, false, 0, 0, 0, 0, 0, 0)
-                InventoryRequestPacket.ActionType.BeaconPayment -> InventoryRequestPacket.Action(null, actionType, 0, 0, 0, 0, false, 0, 0, 0, 0, buffer.readVarInt(), buffer.readVarInt())
-                InventoryRequestPacket.ActionType.CraftRecipe, InventoryRequestPacket.ActionType.CraftRecipeAuto, InventoryRequestPacket.ActionType.CraftCreative -> InventoryRequestPacket.Action(null, actionType, 0, 0, 0, 0, false, 0, 0, 0, 0, buffer.readVarInt(), 0)
-                InventoryRequestPacket.ActionType.CraftRecipeOptional -> InventoryRequestPacket.Action(null, actionType, 0, 0, 0, 0, false, 0, 0, 0, 0, buffer.readVarUInt(), buffer.readIntLE())
-                InventoryRequestPacket.ActionType.CraftResultsDeprecated -> InventoryRequestPacket.Action(Array(buffer.readVarUInt()) { if (version >= 431) buffer.readStackInstance() else buffer.readStackPre431() }, actionType, 0, 0, 0, 0, false, 0, 0, 0, 0, buffer.readByte().toInt(), 0)
-                else -> InventoryRequestPacket.Action(null, actionType, 0, 0, 0, 0, false, 0, 0, 0, 0, 0, 0)
+                InventoryRequestPacket.ActionType.Take, InventoryRequestPacket.ActionType.Put -> InventoryRequestPacket.Action(null, actionType, buffer.readByte().toInt(), WindowSlotType.values()[buffer.readByte().toInt()], buffer.readByte().toInt(), buffer.readVarInt(), false, WindowSlotType.values()[buffer.readByte().toInt()], buffer.readByte().toInt(), buffer.readVarInt(), 0, 0, 0)
+                InventoryRequestPacket.ActionType.Swap -> InventoryRequestPacket.Action(null, actionType, 0, WindowSlotType.values()[buffer.readByte().toInt()], buffer.readByte().toInt(), buffer.readVarInt(), false, WindowSlotType.values()[buffer.readByte().toInt()], buffer.readByte().toInt(), buffer.readVarInt(), 0, 0, 0)
+                InventoryRequestPacket.ActionType.Drop -> InventoryRequestPacket.Action(null, actionType, buffer.readByte().toInt(), WindowSlotType.values()[buffer.readByte().toInt()], buffer.readByte().toInt(), buffer.readVarInt(), buffer.readBoolean(), null, 0, 0, 0, 0, 0)
+                InventoryRequestPacket.ActionType.Destroy, InventoryRequestPacket.ActionType.Consume -> InventoryRequestPacket.Action(null, actionType, buffer.readByte().toInt(), WindowSlotType.values()[buffer.readByte().toInt()], buffer.readByte().toInt(), buffer.readVarInt(), false, null, 0, 0, 0, 0, 0)
+                InventoryRequestPacket.ActionType.Create -> InventoryRequestPacket.Action(null, actionType, 0, null, buffer.readByte().toInt(), 0, false, null, 0, 0, 0, 0, 0)
+                InventoryRequestPacket.ActionType.BeaconPayment -> InventoryRequestPacket.Action(null, actionType, 0, null, 0, 0, false, null, 0, 0, 0, buffer.readVarInt(), buffer.readVarInt())
+                InventoryRequestPacket.ActionType.CraftRecipe, InventoryRequestPacket.ActionType.CraftCreative -> InventoryRequestPacket.Action(null, actionType, 0, null, 0, 0, false, null, 0, 0, 0, buffer.readVarInt(), 0)
+                InventoryRequestPacket.ActionType.CraftRecipeAuto -> InventoryRequestPacket.Action(null, actionType, 0, null, 0, 0, false, null, 0, 0, 0, buffer.readVarInt(), if (version >= 448) buffer.readByte().toInt() else 0)
+                InventoryRequestPacket.ActionType.CraftRecipeOptional -> InventoryRequestPacket.Action(null, actionType, 0, null, 0, 0, false, null, 0, 0, 0, buffer.readVarUInt(), buffer.readIntLE())
+                InventoryRequestPacket.ActionType.CraftResultsDeprecated -> InventoryRequestPacket.Action(Array(buffer.readVarUInt()) { if (version >= 431) buffer.readStackInstance() else buffer.readStackPre431() }, actionType, 0, null, 0, 0, false, null, 0, 0, 0, buffer.readByte().toInt(), 0)
+                else -> TODO()
             }
         }, if (version >= 422) Array(buffer.readVarUInt()) { buffer.readString() } else emptyArray())
     })

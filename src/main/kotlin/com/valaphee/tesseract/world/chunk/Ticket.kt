@@ -31,7 +31,7 @@ import com.valaphee.tesseract.actor.player.Player
  * @author Kevin Ludwig
  */
 class Ticket : BaseAttribute() {
-    val players = mutableListOf<Player>()
+    val players = mutableSetOf<Player>()
 }
 
 val Chunk.players get() = findAttribute(Ticket::class).players

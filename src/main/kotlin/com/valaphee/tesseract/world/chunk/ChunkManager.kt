@@ -25,7 +25,6 @@
 package com.valaphee.tesseract.world.chunk
 
 import com.google.inject.Inject
-import com.valaphee.foundry.ecs.MessageResponse
 import com.valaphee.foundry.ecs.Pass
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
@@ -55,7 +54,8 @@ class ChunkManager @Inject constructor(
                     context.entityFactory(ChunkType, setOf(Ticket(), Location(position), generator.generate(position))).apply { chunks[it] = this }
                     /*}*/
                 }.toTypedArray())
-                return MessageResponse(ChunkAcquired(context, message.source, message.chunkPositions.map(chunks::get).filterNotNull().onEach { chunk -> message.source?.let { message.source?.whenTypeIs<PlayerType> { chunk.players += it } } }.toTypedArray()))
+                message.usage.chunks = message.chunkPositions.map(chunks::get).filterNotNull().onEach { chunk -> message.source?.whenTypeIs<PlayerType> { chunk.players += it } }.toTypedArray()
+                message.source?.sendMessage(message.usage)
             }
             is ChunkRelease -> {
                 val chunksRemoved = message.chunkPositions.filter { chunkPosition ->

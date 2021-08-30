@@ -31,8 +31,8 @@ import com.valaphee.tesseract.actor.player.InputPacket
 import com.valaphee.tesseract.actor.player.InteractPacket
 import com.valaphee.tesseract.actor.player.PlayerActionPacket
 import com.valaphee.tesseract.actor.player.PlayerLocationPacket
-import com.valaphee.tesseract.actor.player.ViewDistancePacket
-import com.valaphee.tesseract.actor.player.ViewDistanceRequestPacket
+import com.valaphee.tesseract.actor.player.view.ViewDistancePacket
+import com.valaphee.tesseract.actor.player.view.ViewDistanceRequestPacket
 import com.valaphee.tesseract.command.CommandPacket
 import com.valaphee.tesseract.command.CommandResponsePacket
 import com.valaphee.tesseract.inventory.CreativeInventoryPacket
@@ -60,7 +60,7 @@ import com.valaphee.tesseract.net.init.ServerToClientHandshakePacket
 import com.valaphee.tesseract.net.init.StatusPacket
 import com.valaphee.tesseract.world.PlayerListPacket
 import com.valaphee.tesseract.world.WorldPacket
-import com.valaphee.tesseract.world.chunk.ChunkAddPacket
+import com.valaphee.tesseract.actor.player.view.ChunkAddPacket
 import com.valaphee.tesseract.world.chunk.ChunkPublishPacket
 import com.valaphee.tesseract.world.chunk.terrain.BlockUpdatePacket
 import com.valaphee.tesseract.world.chunk.terrain.BlockUpdateSyncedPacket

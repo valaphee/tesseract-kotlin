@@ -36,7 +36,7 @@ class InMemoryProvider : Provider {
     private var world: World? = null
     private var chunks = Long2ObjectOpenHashMap<Chunk>()
 
-    override fun loadWorld(): World? = world
+    override fun loadWorld() = world
 
     override fun saveWorld(world: World) {
         this.world = world

@@ -22,18 +22,31 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk
+package com.valaphee.tesseract.actor.player.view
 
-import com.valaphee.tesseract.world.AnyEntityOfWorld
-import com.valaphee.tesseract.world.WorldContext
+import com.valaphee.tesseract.net.Packet
+import com.valaphee.tesseract.net.PacketBuffer
+import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 
 /**
  * @author Kevin Ludwig
  */
-class ChunkRelease(
-    context: WorldContext,
-    source: AnyEntityOfWorld?,
-    chunkPositions: LongArray
-) : ChunkManagerMessage(context, source, chunkPositions) {
-    override val entity: AnyEntityOfWorld? get() = null
+data class ViewDistanceRequestPacket(
+    var distance: Int = 0
+) : Packet {
+    override val id get() = 0x45
+
+    override fun write(buffer: PacketBuffer, version: Int) {
+        buffer.writeVarInt(distance)
+    }
+
+    override fun handle(handler: PacketHandler) = handler.viewDistanceRequest(this)
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object ViewDistanceRequestPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = ViewDistanceRequestPacket(buffer.readVarInt())
 }

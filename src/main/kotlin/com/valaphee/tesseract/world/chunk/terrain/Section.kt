@@ -144,7 +144,7 @@ class SectionCompact(
 }
 
 fun PacketBuffer.readSection() = when (readUnsignedByte().toInt()) {
-    0, 2, 3, 4, 5, 6 -> SectionLegacy(ByteArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize).apply { readBytes(this) }, nibbleArray(ByteArray((BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize) / 2).apply { readBytes(this) }))
+    0, 2, 3, 4, 5, 6 -> SectionLegacy(ByteArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize).apply { readBytes(this) }, nibbleArray(ByteArray((BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize) / 2).apply { readBytes(this) })).also { if (isReadable(4096)) skipBytes(4096) }
     1 -> SectionCompact(arrayOf(readLayer(air.id)))
     8 -> SectionCompact(Array(readUnsignedByte().toInt()) { readLayer(air.id) })
     else -> TODO()

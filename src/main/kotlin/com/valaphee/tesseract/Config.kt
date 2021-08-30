@@ -24,7 +24,6 @@
 
 package com.valaphee.tesseract
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.inject.Inject
@@ -40,16 +39,16 @@ import java.util.regex.Pattern
 @Singleton
 @ProvidedBy(Config.Provider::class)
 data class Config(
-    @get:JsonProperty("address") var address: InetSocketAddress = InetSocketAddress("0.0.0.0", 19132),
-    @get:JsonProperty("maximum-players") var maximumPlayers: Int = 10,
-    @get:JsonProperty("server-name") var serverName: String = "Tesseract",
-    @get:JsonProperty("timeout") var timeout: Int = 30_000,
-    @get:JsonProperty("compression-level") var compressionLevel: Int = 7,
-    @get:JsonProperty("verification") var verification: Boolean = true,
-    @get:JsonProperty("user-name-pattern") var userNamePattern: Pattern = Pattern.compile("^[a-zA-Z0-9_-]{3,16}\$"),
-    @get:JsonProperty("encryption") var encryption: Boolean = true,
-    @get:JsonProperty("caching") var caching: Boolean = false,
-    @get:JsonProperty("maximum-view-distance") var maximumViewDistance: Int = 32,
+    var address: InetSocketAddress = InetSocketAddress("0.0.0.0", 19132),
+    var maximumPlayers: Int = 10,
+    var serverName: String = "Tesseract",
+    var timeout: Int = 30_000,
+    var compressionLevel: Int = 7,
+    var verification: Boolean = true,
+    var userNamePattern: Pattern = Pattern.compile("^[a-zA-Z0-9_-]{3,16}\$"),
+    var encryption: Boolean = true,
+    var caching: Boolean = false,
+    var maximumViewDistance: Int = 32,
 ) {
     class Provider @Inject constructor(
         private val argument: Argument,

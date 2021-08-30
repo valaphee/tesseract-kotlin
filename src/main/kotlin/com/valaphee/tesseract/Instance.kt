@@ -25,6 +25,7 @@
 package com.valaphee.tesseract
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.dataformat.smile.SmileFactory
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
@@ -40,9 +41,10 @@ import com.valaphee.tesseract.actor.player.InputPacketReader
 import com.valaphee.tesseract.actor.player.InteractPacketReader
 import com.valaphee.tesseract.actor.player.PlayerActionPacketReader
 import com.valaphee.tesseract.actor.player.PlayerLocationPacketReader
-import com.valaphee.tesseract.actor.player.ViewDistanceRequestPacketReader
+import com.valaphee.tesseract.actor.player.view.ViewDistanceRequestPacketReader
 import com.valaphee.tesseract.command.CommandPacketReader
 import com.valaphee.tesseract.inventory.InventoryRequestPacketReader
+import com.valaphee.tesseract.inventory.WindowClosePacketReader
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.base.CacheBlobStatusPacketReader
 import com.valaphee.tesseract.net.base.CacheStatusPacketReader
@@ -105,6 +107,7 @@ abstract class Instance(
                         .addSerializer(Entity::class.java, EntitySerializer)
                         .addDeserializer(Entity::class.java, entityDeserializer)
                 )
+                propertyNamingStrategy = PropertyNamingStrategies.LOWER_CASE
             })
             bind(this@Instance.javaClass).toInstance(this@Instance)
             bind(Provider::class.java).to(TesseractProvider::class.java)
@@ -119,7 +122,7 @@ abstract class Instance(
     @Suppress("LeakingThis")
     protected val worldContext = WorldContext(this.injector, coroutineScope, worldEngine, createEntityFactory().also { entityDeserializer.entityFactory = it }, this.injector.getInstance(Provider::class.java))
 
-    protected val readers = Int2ObjectOpenHashMap<PacketReader>().apply {
+    protected val packetReaders = Int2ObjectOpenHashMap<PacketReader>().apply {
         this[0x01] = LoginPacketReader
         /*this[0x02] = StatusPacketReader*/
 
@@ -135,6 +138,8 @@ abstract class Instance(
         this[0x21] = InteractPacketReader(worldContext)
 
         this[0x24] = PlayerActionPacketReader(worldContext)
+
+        this[0x2F] = WindowClosePacketReader
 
         this[0x45] = ViewDistanceRequestPacketReader
         /*this[0x46] = ViewDistancePacketReader*/

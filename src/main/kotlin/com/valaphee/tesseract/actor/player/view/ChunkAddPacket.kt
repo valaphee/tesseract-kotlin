@@ -22,13 +22,15 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk
+package com.valaphee.tesseract.actor.player.view
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import com.valaphee.tesseract.world.chunk.Chunk
+import com.valaphee.tesseract.world.chunk.position
 import com.valaphee.tesseract.world.chunk.terrain.BlockStorage.Companion.XZSize
 import com.valaphee.tesseract.world.chunk.terrain.terrain
 

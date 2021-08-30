@@ -27,6 +27,7 @@ package com.valaphee.tesseract.inventory
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 
 /**
  * @author Kevin Ludwig
@@ -43,4 +44,11 @@ data class WindowClosePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.windowClose(this)
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object WindowClosePacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = WindowClosePacket(buffer.readByte().toInt(), if (version >= 419) buffer.readBoolean() else false)
 }

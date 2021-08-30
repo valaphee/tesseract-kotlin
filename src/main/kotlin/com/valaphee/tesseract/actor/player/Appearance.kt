@@ -196,7 +196,7 @@ val JsonObject.asAppearance
         getStringOrNull("ArmSize") ?: "",
         getStringOrNull("SkinColor") ?: "#0",
         run {
-            val personaPieces = ArrayList<Appearance.PersonaPiece>()
+            val personaPieces = mutableListOf<Appearance.PersonaPiece>()
             getJsonArrayOrNull("PersonaPieces")?.forEach {
                 val jsonPersonaPiece = it.asJsonObject
                 personaPieces.add(
@@ -212,7 +212,7 @@ val JsonObject.asAppearance
             personaPieces
         },
         run {
-            val personaPieceTints = ArrayList<Appearance.PersonaPieceTint>()
+            val personaPieceTints = mutableListOf<Appearance.PersonaPieceTint>()
             getJsonArrayOrNull("PieceTintColors")?.forEach {
                 val jsonPersonaPieceTint = it.asJsonObject
                 val jsonPersonaPieceTintColors = jsonPersonaPieceTint.getJsonArray("Colors")
@@ -228,8 +228,7 @@ fun PacketBuffer.readAppearancePre390(): Appearance {
     val skinId = readString()
     val skinResourcePatch = Streams.parse(JsonReader(ByteBufStringReader(this, readVarUInt()))).asJsonObject
     val skinImage = readAppearanceImage()
-    val animationCount = readIntLE()
-    val animations = ArrayList<AppearanceAnimation>(animationCount).apply { repeat(animationCount) { add(AppearanceAnimation(readAppearanceImage(), AppearanceAnimation.Type.values()[readIntLE()], buffer.readFloatLE())) } }
+    val animations = mutableListOf<AppearanceAnimation>().apply { repeat(readIntLE()) { add(AppearanceAnimation(readAppearanceImage(), AppearanceAnimation.Type.values()[readIntLE()], buffer.readFloatLE())) } }
     val capeImage = readAppearanceImage()
     val skinGeometryData = readString()
     val skinAnimationData = readString()
@@ -245,8 +244,7 @@ fun PacketBuffer.readAppearancePre419(): Appearance {
     val skinId = readString()
     val skinResourcePatch = Streams.parse(JsonReader(ByteBufStringReader(this, readVarUInt()))).asJsonObject
     val skinImage = readAppearanceImage()
-    val animationCount = readIntLE()
-    val animations = ArrayList<AppearanceAnimation>(animationCount).apply { repeat(animationCount) { add(AppearanceAnimation(readAppearanceImage(), AppearanceAnimation.Type.values()[buffer.readIntLE()], buffer.readFloatLE())) } }
+    val animations = mutableListOf<AppearanceAnimation>().apply { repeat(readIntLE()) { add(AppearanceAnimation(readAppearanceImage(), AppearanceAnimation.Type.values()[buffer.readIntLE()], buffer.readFloatLE())) } }
     val capeImage = readAppearanceImage()
     val skinGeometryData = readString()
     val skinAnimationData = readString()
@@ -257,8 +255,8 @@ fun PacketBuffer.readAppearancePre419(): Appearance {
     val id = readString()
     val armSize = readString()
     val skinColor = readString()
-    val personaPieces = ArrayList<Appearance.PersonaPiece>().apply { repeat(readIntLE()) { add(Appearance.PersonaPiece(readString(), readString(), readString(), readBoolean(), readString())) } }
-    val personaPieceTints = ArrayList<Appearance.PersonaPieceTint>().apply { repeat(readIntLE()) { add(Appearance.PersonaPieceTint(readString(), Array(readIntLE()) { readString() })) } }
+    val personaPieces = mutableListOf<Appearance.PersonaPiece>().apply { repeat(readIntLE()) { add(Appearance.PersonaPiece(readString(), readString(), readString(), readBoolean(), readString())) } }
+    val personaPieceTints = mutableListOf<Appearance.PersonaPieceTint>().apply { repeat(readIntLE()) { add(Appearance.PersonaPieceTint(readString(), Array(readIntLE()) { readString() })) } }
     return Appearance(id, skinId, mutableMapOf<String, Any>().apply { skinResourcePatch.entrySet().forEach { this[it.key] = gson.fromJson(it.value, Any::class.java) } }, skinImage, skinGeometryData, skinAnimationData, capeId, capeImage, capeOnClassicSkin, animations, premiumSkin, personaSkin, armSize, skinColor, personaPieces, personaPieceTints, false, "")
 }
 
@@ -266,8 +264,7 @@ fun PacketBuffer.readAppearancePre428(): Appearance {
     val skinId = readString()
     val skinResourcePatch = Streams.parse(JsonReader(ByteBufStringReader(this, readVarUInt()))).asJsonObject
     val skinImage = readAppearanceImage()
-    val animationCount = readIntLE()
-    val animations = ArrayList<AppearanceAnimation>(animationCount).apply { repeat(animationCount) { add(AppearanceAnimation(readAppearanceImage(), AppearanceAnimation.Type.values()[buffer.readIntLE()], buffer.readFloatLE(), AppearanceAnimation.Expression.values()[buffer.readIntLE()])) } }
+    val animations = mutableListOf<AppearanceAnimation>().apply { repeat(readIntLE()) { add(AppearanceAnimation(readAppearanceImage(), AppearanceAnimation.Type.values()[buffer.readIntLE()], buffer.readFloatLE(), AppearanceAnimation.Expression.values()[buffer.readIntLE()])) } }
     val capeImage = readAppearanceImage()
     val skinGeometryData = readString()
     val skinAnimationData = readString()
@@ -278,8 +275,8 @@ fun PacketBuffer.readAppearancePre428(): Appearance {
     val id = readString()
     val armSize = readString()
     val skinColor = readString()
-    val personaPieces = ArrayList<Appearance.PersonaPiece>().apply { repeat(readIntLE()) { add(Appearance.PersonaPiece(readString(), readString(), readString(), readBoolean(), readString())) } }
-    val personaPieceTints = ArrayList<Appearance.PersonaPieceTint>().apply { repeat(readIntLE()) { add(Appearance.PersonaPieceTint(readString(), Array(readIntLE()) { readString() })) } }
+    val personaPieces = mutableListOf<Appearance.PersonaPiece>().apply { repeat(readIntLE()) { add(Appearance.PersonaPiece(readString(), readString(), readString(), readBoolean(), readString())) } }
+    val personaPieceTints = mutableListOf<Appearance.PersonaPieceTint>().apply { repeat(readIntLE()) { add(Appearance.PersonaPieceTint(readString(), Array(readIntLE()) { readString() })) } }
     return Appearance(id, skinId, mutableMapOf<String, Any>().apply { skinResourcePatch.entrySet().forEach { this[it.key] = gson.fromJson(it.value, Any::class.java) } }, skinImage, skinGeometryData, skinAnimationData, capeId, capeImage, capeOnClassicSkin, animations, premiumSkin, personaSkin, armSize, skinColor, personaPieces, personaPieceTints, false, "")
 }
 
@@ -288,8 +285,7 @@ fun PacketBuffer.readAppearance(): Appearance {
     val playFabId = readString()
     val skinResourcePatch = Streams.parse(JsonReader(ByteBufStringReader(this, readVarUInt()))).asJsonObject
     val skinImage = readAppearanceImage()
-    val animationCount = readIntLE()
-    val animations = ArrayList<AppearanceAnimation>(animationCount).apply { repeat(animationCount) { add(AppearanceAnimation(readAppearanceImage(), AppearanceAnimation.Type.values()[buffer.readIntLE()], buffer.readFloatLE(), AppearanceAnimation.Expression.values()[buffer.readIntLE()])) } }
+    val animations = mutableListOf<AppearanceAnimation>().apply { repeat(readIntLE()) { add(AppearanceAnimation(readAppearanceImage(), AppearanceAnimation.Type.values()[buffer.readIntLE()], buffer.readFloatLE(), AppearanceAnimation.Expression.values()[buffer.readIntLE()])) } }
     val capeImage = readAppearanceImage()
     val skinGeometryData = readString()
     val skinAnimationData = readString()
@@ -300,8 +296,8 @@ fun PacketBuffer.readAppearance(): Appearance {
     val id = readString()
     val armSize = readString()
     val skinColor = readString()
-    val personaPieces = ArrayList<Appearance.PersonaPiece>().apply { repeat(readIntLE()) { add(Appearance.PersonaPiece(readString(), readString(), readString(), readBoolean(), readString())) } }
-    val personaPieceTints = ArrayList<Appearance.PersonaPieceTint>().apply { repeat(readIntLE()) { add(Appearance.PersonaPieceTint(readString(), Array(readIntLE()) { readString() })) } }
+    val personaPieces = mutableListOf<Appearance.PersonaPiece>().apply { repeat(readIntLE()) { add(Appearance.PersonaPiece(readString(), readString(), readString(), readBoolean(), readString())) } }
+    val personaPieceTints = mutableListOf<Appearance.PersonaPieceTint>().apply { repeat(readIntLE()) { add(Appearance.PersonaPieceTint(readString(), Array(readIntLE()) { readString() })) } }
     return Appearance(id, skinId, mutableMapOf<String, Any>().apply { skinResourcePatch.entrySet().forEach { this[it.key] = gson.fromJson(it.value, Any::class.java) } }, skinImage, skinGeometryData, skinAnimationData, capeId, capeImage, capeOnClassicSkin, animations, premiumSkin, personaSkin, armSize, skinColor, personaPieces, personaPieceTints, false, playFabId)
 }
 

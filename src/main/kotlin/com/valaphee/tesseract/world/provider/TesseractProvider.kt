@@ -36,7 +36,6 @@ import org.fusesource.leveldbjni.JniDBFactory
 import org.iq80.leveldb.DB
 import org.iq80.leveldb.Options
 import java.io.File
-import java.nio.ByteBuffer
 
 /**
  * @author Kevin Ludwig
@@ -46,19 +45,40 @@ class TesseractProvider @Inject constructor(
 ) : Provider {
     private val database: DB = JniDBFactory.factory.open(File("world"), Options().createIfMissing(true).blockSize(64 * 1024))
 
-    override fun loadWorld(): World? = null
+    override fun loadWorld() = database.get(Key.World.toKey())?.let { objectMapper.readValue<World>(it) }
 
-    override fun saveWorld(world: World) = Unit
+    override fun saveWorld(world: World) {
+        database.put(Key.World.toKey(), objectMapper.writeValueAsBytes(world))
+    }
 
-    override fun loadChunk(chunkPosition: Long) = database.get(ByteBuffer.wrap(ByteArray(8)).apply { putLong(chunkPosition) }.array())?.let { objectMapper.readValue<Chunk>(it) }
+    override fun loadChunk(chunkPosition: Long) = database.get(Key.Chunk.toKey(chunkPosition))?.let { objectMapper.readValue<Chunk>(it) }
 
     override fun saveChunks(chunks: Iterable<Chunk>) {
         database.createWriteBatch().use { batch ->
             chunks.forEach {
                 val (x, y) = it.position
-                batch.put(ByteBuffer.wrap(ByteArray(8)).apply { putLong(encodePosition(x, y)) }.array(), objectMapper.writeValueAsBytes(it))
+                batch.put(Key.Chunk.toKey(encodePosition(x, y)), objectMapper.writeValueAsBytes(it))
             }
             database.write(batch)
         }
+    }
+
+    enum class Key(
+        private val uniqueifier: Byte
+    ) {
+        World(0x00),
+        Chunk(0x01);
+
+        fun toKey(position: Long = 0L) = byteArrayOf(
+            ((position shr 56) and 0xFF).toByte(),
+            ((position shr 48) and 0xFF).toByte(),
+            ((position shr 40) and 0xFF).toByte(),
+            ((position shr 32) and 0xFF).toByte(),
+            ((position shr 24) and 0xFF).toByte(),
+            ((position shr 16) and 0xFF).toByte(),
+            ((position shr 8) and 0xFF).toByte(),
+            (position and 0xFF).toByte(),
+            uniqueifier
+        )
     }
 }

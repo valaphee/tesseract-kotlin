@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.player
+package com.valaphee.tesseract.actor.player.view
 
 import com.google.inject.Inject
 import com.valaphee.foundry.ecs.Pass
@@ -33,6 +33,7 @@ import com.valaphee.tesseract.Config
 import com.valaphee.tesseract.actor.location.Location
 import com.valaphee.tesseract.actor.location.LocationManagerMessage
 import com.valaphee.tesseract.actor.location.position
+import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.ChunkAcquire
 import com.valaphee.tesseract.world.chunk.ChunkRelease
@@ -81,11 +82,11 @@ class View @Inject constructor(
                 val chunksToAcquire = chunksInDistance.filterNot(_acquiredChunks::contains)
                 if (chunksToRelease.isNotEmpty()) {
                     _acquiredChunks.removeAll(chunksToRelease)
-                    message.context.world.receiveMessage(ChunkRelease(message.context, message.source, chunksToRelease.toLongArray()))
+                    message.context.world.receiveMessage(ChunkRelease(message.context, it, chunksToRelease.toLongArray()))
                 }
                 if (chunksToAcquire.isNotEmpty()) {
                     _acquiredChunks.addAll(chunksToAcquire)
-                    message.context.world.receiveMessage(ChunkAcquire(message.context, message.source, chunksToAcquire.toLongArray()))
+                    message.context.world.receiveMessage(ChunkAcquire(message.context, it, chunksToAcquire.toLongArray(), ViewChunk(message.context, it)))
                 }
             }
         }

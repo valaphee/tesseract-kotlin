@@ -62,7 +62,7 @@ enum class WindowType(
     Grindstone(26, 3),
     BlastFurnace(27, 3),
     Smoker(28, 3),
-    StoneCutter(29, 2),
+    Stonecutter(29, 2),
     Cartography(30, 3),
     Hud(31),
     JigsawEditor(32),

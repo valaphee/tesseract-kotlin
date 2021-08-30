@@ -31,7 +31,8 @@ import com.google.inject.Injector
 import com.valaphee.tesseract.actor.location.LocationManager
 import com.valaphee.tesseract.actor.player.PlayerLocationPacketizer
 import com.valaphee.tesseract.actor.player.PlayerType
-import com.valaphee.tesseract.actor.player.View
+import com.valaphee.tesseract.actor.player.view.View
+import com.valaphee.tesseract.actor.player.view.ViewChunkPacketizer
 import com.valaphee.tesseract.net.Compressor
 import com.valaphee.tesseract.net.Connection
 import com.valaphee.tesseract.net.Decompressor
@@ -43,7 +44,6 @@ import com.valaphee.tesseract.util.generateKeyPair
 import com.valaphee.tesseract.world.PlayerList
 import com.valaphee.tesseract.world.WorldType
 import com.valaphee.tesseract.world.chunk.ChunkManager
-import com.valaphee.tesseract.world.chunk.ChunkPacketizer
 import com.valaphee.tesseract.world.chunk.ChunkType
 import com.valaphee.tesseract.world.chunk.terrain.BlockUpdater
 import com.valaphee.tesseract.world.entity.EntityManager
@@ -95,7 +95,7 @@ class ServerInstance(
         register(WorldType) {
             facets(
                 PlayerList::class.java, EntityManager::class.java,
-                ChunkManager::class.java, ChunkPacketizer::class.java,
+                ChunkManager::class.java
             )
         }
         register(ChunkType) {
@@ -105,7 +105,8 @@ class ServerInstance(
         }
         register(PlayerType) {
             facets(
-                LocationManager::class.java, View::class.java, PlayerLocationPacketizer::class.java
+                LocationManager::class.java, PlayerLocationPacketizer::class.java,
+                View::class.java, ViewChunkPacketizer::class.java
             )
         }
     }
@@ -141,7 +142,7 @@ class ServerInstance(
                         .addLast(Compressor.NAME, Compressor())
                         .addLast(Decompressor.NAME, Decompressor())
                         .addLast(PacketEncoder.NAME, PacketEncoder(true))
-                        .addLast(PacketDecoder.NAME, PacketDecoder(readers))
+                        .addLast(PacketDecoder.NAME, PacketDecoder(packetReaders))
                         .addLast(connection)
                 }
             })

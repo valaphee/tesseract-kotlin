@@ -22,19 +22,26 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk
+package com.valaphee.tesseract.actor.player.view
 
-import com.valaphee.foundry.ecs.Message
-import com.valaphee.tesseract.world.AnyEntityOfWorld
+import com.valaphee.foundry.ecs.Pass
+import com.valaphee.foundry.ecs.Response
+import com.valaphee.foundry.ecs.system.BaseFacet
+import com.valaphee.tesseract.actor.location.position
+import com.valaphee.tesseract.net.connection
 import com.valaphee.tesseract.world.WorldContext
+import com.valaphee.tesseract.world.WorldPacketHandler
+import com.valaphee.tesseract.world.chunk.ChunkPublishPacket
 
 /**
  * @author Kevin Ludwig
  */
-class ChunkAcquired(
-    override val context: WorldContext,
-    override val source: AnyEntityOfWorld?,
-    val chunks: Array<Chunk>
-) : Message<WorldContext> {
-    override val entity: AnyEntityOfWorld? = null
+class ViewChunkPacketizer : BaseFacet<WorldContext, ViewChunk>(ViewChunk::class) {
+    override suspend fun receive(message: ViewChunk): Response {
+        val player = message.source
+        player.connection.write(ChunkPublishPacket(player.position.toInt3(), player.findFacet(View::class).distance shl 4))
+        message.chunks.forEach { chunk -> (player.connection.handler as WorldPacketHandler).cacheChunk(chunk) }
+
+        return Pass
+    }
 }

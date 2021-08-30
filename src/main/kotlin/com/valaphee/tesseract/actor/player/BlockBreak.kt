@@ -22,29 +22,29 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk
+package com.valaphee.tesseract.actor.player
 
-import com.valaphee.foundry.ecs.Pass
-import com.valaphee.foundry.ecs.Response
-import com.valaphee.foundry.ecs.system.BaseFacet
-import com.valaphee.tesseract.actor.location.position
-import com.valaphee.tesseract.actor.player.PlayerType
-import com.valaphee.tesseract.actor.player.View
-import com.valaphee.tesseract.net.connection
+import com.valaphee.foundry.math.Int3
+import com.valaphee.tesseract.world.World
 import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.WorldPacketHandler
-import com.valaphee.tesseract.world.whenTypeIs
+import com.valaphee.tesseract.world.chunk.Chunk
+import com.valaphee.tesseract.world.chunk.ChunkAcquire
+import com.valaphee.tesseract.world.chunk.ChunkUsage
+import com.valaphee.tesseract.world.chunk.encodePosition
 
 /**
  * @author Kevin Ludwig
  */
-class ChunkPacketizer : BaseFacet<WorldContext, ChunkAcquired>(ChunkAcquired::class) {
-    override suspend fun receive(message: ChunkAcquired): Response {
-        message.source?.whenTypeIs<PlayerType> {
-            it.connection.write(ChunkPublishPacket(it.position.toInt3(), it.findFacet(View::class).distance shl 4))
-            message.chunks.forEach { chunk -> (it.connection.handler as WorldPacketHandler).cacheChunk(chunk) }
-        }
+class BlockBreak(
+    override val context: WorldContext,
+    override val source: Player,
+    val position: Int3
+) : ChunkUsage {
+    override val entity get() = source
 
-        return Pass
-    }
+    override lateinit var chunks: Array<Chunk>
+}
+
+fun World.breakBlock(context: WorldContext, source: Player, position: Int3) {
+    sendMessage(ChunkAcquire(context, source, longArrayOf(encodePosition(position.x, position.z)), BlockBreak(context, source, position)))
 }
