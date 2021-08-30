@@ -35,8 +35,9 @@ class BlockUpdater : BaseBehavior<WorldContext>() {
                 blockUpdateChanges.clear()
             }
 
+            val cycle = context.cycle.toInt()
             blockUpdates.pending.clone().forEach {
-                if (context.engine.cycle.toInt() % it.value == 0) {
+                if (cycle and it.value == 0) {
                     val (x, y, z) = decodePosition(it.key)
                     val blockState = BlockState.byId(blockStorage[x, y, z])
                     blockState?.block?.onUpdate?.invoke(blockUpdates, x, y, z, blockState)

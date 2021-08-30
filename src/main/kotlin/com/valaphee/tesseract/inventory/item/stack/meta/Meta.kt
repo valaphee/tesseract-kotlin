@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package com.valaphee.tesseract.item.meta
+package com.valaphee.tesseract.inventory.item.stack.meta
 
 import com.valaphee.tesseract.util.getCompoundTagOrNull
 import com.valaphee.tesseract.util.getIntOrNull

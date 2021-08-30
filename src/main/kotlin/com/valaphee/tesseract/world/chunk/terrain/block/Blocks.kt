@@ -69,10 +69,10 @@ object Blocks {
             }
         }
         Block.byKey("minecraft:flowing_water")?.apply {
-            onUpdate = flowingMovement(BlockState.byKey(key).associate { it.id to 7 - it.properties["liquid_depth"] as Int }.filterValues { it >= 0 }, 5)
+            onUpdate = flowingMovement(BlockState.byKey(key).associate { it.id to 7 - it.properties["liquid_depth"] as Int }.filterValues { it >= 0 }, 2)
         }
         Block.byKey("minecraft:flowing_lava")?.apply {
-            onUpdate = flowingMovement(BlockState.byKey(key).associate { it.id to 7 - it.properties["liquid_depth"] as Int }.filterValues { it >= 0 }, 10)
+            onUpdate = flowingMovement(BlockState.byKey(key).associate { it.id to 7 - it.properties["liquid_depth"] as Int }.filterValues { it >= 0 }, 4)
         }
 
         val fallingMoves = intArrayOf(
@@ -87,12 +87,12 @@ object Blocks {
         )
         val fallingMovement: OnUpdate = { updateList, x, y, z, state ->
             val id = state.id
-            if (!updateList.setIfAir(x, y - 1, z, id, 1)) {
+            if (!updateList.setIfAir(x, y - 1, z, id, 0)) {
                 val entropy = (0 until 4).shuffled()
                 for (i in 0 until 8 step 4) {
                     if (entropy.find { j ->
                             val offset = ((i + j) * 3)
-                            updateList.setIfAir(x + fallingMoves[offset], y + fallingMoves[offset + 1], z + fallingMoves[offset + 2], id, 1)
+                            updateList.setIfAir(x + fallingMoves[offset], y + fallingMoves[offset + 1], z + fallingMoves[offset + 2], id, 0)
                         } != null) {
                         updateList[x, y, z] = airId
                         break
@@ -111,7 +111,7 @@ object Blocks {
 
 private val airId = BlockState.byKeyWithStates("minecraft:air")?.id ?: error("Missing minecraft:air")
 
-fun BlockUpdateList.setIfAir(x: Int, y: Int, z: Int, value: Int, updatesIn: Int = 1): Boolean {
+private fun BlockUpdateList.setIfAir(x: Int, y: Int, z: Int, value: Int, updatesIn: Int = 1): Boolean {
     if (!(x in 0 until BlockStorage.XZSize && y in 0 until BlockStorage.SectionCount * Section.YSize && z in 0 until BlockStorage.XZSize)) return false
 
     if (get(x, y, z) == airId) {

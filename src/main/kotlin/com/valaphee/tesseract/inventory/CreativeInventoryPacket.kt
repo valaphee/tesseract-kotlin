@@ -5,9 +5,9 @@
 
 package com.valaphee.tesseract.inventory
 
-import com.valaphee.tesseract.item.stack.Stack
-import com.valaphee.tesseract.item.stack.writeStackInstance
-import com.valaphee.tesseract.item.stack.writeStackWithNetIdPre431
+import com.valaphee.tesseract.inventory.item.stack.Stack
+import com.valaphee.tesseract.inventory.item.stack.writeStackInstance
+import com.valaphee.tesseract.inventory.item.stack.writeStackWithNetIdPre431
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler

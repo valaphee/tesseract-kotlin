@@ -16,12 +16,12 @@ import com.google.inject.AbstractModule
 import com.google.inject.Injector
 import com.google.inject.Module
 import com.valaphee.foundry.ecs.entity.Entity
-import com.valaphee.foundry.math.Double3
-import com.valaphee.foundry.math.Double3Deserializer
-import com.valaphee.foundry.math.Double3Serializer
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float2Deserializer
 import com.valaphee.foundry.math.Float2Serializer
+import com.valaphee.foundry.math.Float3
+import com.valaphee.foundry.math.Float3Deserializer
+import com.valaphee.foundry.math.Float3Serializer
 import com.valaphee.tesseract.actor.player.InputPacketReader
 import com.valaphee.tesseract.actor.player.InteractPacketReader
 import com.valaphee.tesseract.actor.player.PlayerActionPacketReader
@@ -69,7 +69,6 @@ import java.util.concurrent.ThreadFactory
  */
 abstract class Instance(
     injector: Injector,
-    val telemetry: OpenTelemetry,
 ) {
     private val entityDeserializer = EntityDeserializer()
 
@@ -82,8 +81,8 @@ abstract class Instance(
                     SimpleModule()
                         .addSerializer(Float2::class.java, Float2Serializer)
                         .addDeserializer(Float2::class.java, Float2Deserializer)
-                        .addSerializer(Double3::class.java, Double3Serializer)
-                        .addDeserializer(Double3::class.java, Double3Deserializer)
+                        .addSerializer(Float3::class.java, Float3Serializer)
+                        .addDeserializer(Float3::class.java, Float3Deserializer)
                         .addSerializer(Entity::class.java, EntitySerializer)
                         .addDeserializer(Entity::class.java, entityDeserializer)
                 )
@@ -92,11 +91,9 @@ abstract class Instance(
         }
     }, getModule())
 
-    val tracer: Tracer = telemetry.getTracer("tesseract")
-
     private val executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), ThreadFactoryBuilder().setNameFormat("world-%d").build())
     private val coroutineScope = CoroutineScope(executor.asCoroutineDispatcher() + SupervisorJob() + CoroutineExceptionHandler { context, throwable -> log.error("Unhandled exception caught in $context", throwable) })
-    private val worldEngine = WorldEngine(20.0f, coroutineScope.coroutineContext, tracer)
+    private val worldEngine = WorldEngine(20.0f, coroutineScope.coroutineContext)
 
     @Suppress("LeakingThis")
     protected val worldContext = WorldContext(this.injector, coroutineScope, worldEngine, createEntityFactory().also { entityDeserializer.entityFactory = it }, /*AxolotlBackend(this.injector.getInstance(ObjectMapper::class.java), File("world"))*/InMemoryProvider())

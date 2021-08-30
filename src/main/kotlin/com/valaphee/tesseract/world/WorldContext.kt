@@ -27,6 +27,7 @@ class WorldContext(
 ) : Context {
     val world = provider.loadWorld() ?: entityFactory(WorldType, setOf()).also(engine::addEntity)
 
+    var cycle = 0L
     var cycleDelta = 0.0f
 }
 

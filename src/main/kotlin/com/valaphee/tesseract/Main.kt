@@ -10,9 +10,8 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.inject.Guice
 import com.valaphee.tesseract.inventory.CreativeInventoryPacket
-import com.valaphee.tesseract.item.Item
-import com.valaphee.tesseract.item.stack.Stack
-import com.valaphee.tesseract.util.nbt.NbtInputStream
+import com.valaphee.tesseract.inventory.item.Item
+import com.valaphee.tesseract.inventory.item.stack.Stack
 import com.valaphee.tesseract.net.init.BiomeDefinitionsPacket
 import com.valaphee.tesseract.net.init.EntityIdentifiersPacket
 import com.valaphee.tesseract.util.LittleEndianByteBufInputStream
@@ -22,6 +21,7 @@ import com.valaphee.tesseract.util.getIntOrNull
 import com.valaphee.tesseract.util.getJsonArray
 import com.valaphee.tesseract.util.getString
 import com.valaphee.tesseract.util.getStringOrNull
+import com.valaphee.tesseract.util.nbt.NbtInputStream
 import com.valaphee.tesseract.world.chunk.terrain.block.Block
 import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
 import com.valaphee.tesseract.world.chunk.terrain.block.Blocks
@@ -98,16 +98,7 @@ fun main() {
         }
     }
 
-    val instance = ServerInstance(
-        Guice.createInjector(),
-        OpenTelemetrySdk.builder()
-            /*.setTracerProvider(
-                SdkTracerProvider.builder()
-                    .addSpanProcessor(BatchSpanProcessor.builder(JaegerGrpcSpanExporter.builder().build()).build())
-                    .build()
-            )*/
-            .buildAndRegisterGlobal()
-    )
+    val instance = ServerInstance(Guice.createInjector())
     instance.bind()
 
     reader.prompt = "js> "

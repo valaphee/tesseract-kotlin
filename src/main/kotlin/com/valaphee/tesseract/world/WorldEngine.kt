@@ -6,9 +6,6 @@
 package com.valaphee.tesseract.world
 
 import com.valaphee.foundry.ecs.Engine
-import io.opentelemetry.api.common.AttributeKey
-import io.opentelemetry.api.trace.SpanKind
-import io.opentelemetry.api.trace.Tracer
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
@@ -22,17 +19,14 @@ import kotlin.coroutines.CoroutineContext
 class WorldEngine(
     cyclesPerSecond: Float = 50.0f,
     override val coroutineContext: CoroutineContext,
-    val tracer: Tracer
 ) : Engine<WorldContext>, CoroutineScope {
     var running = false
     var stopped = false
         private set
 
-    val timer = Timer()
+    private val timer = Timer()
     private val sleep = (1_000L / cyclesPerSecond).toLong()
     private var lastSleep = sleep
-
-    var cycle = 0L
 
     private val entityById = Long2ObjectOpenHashMap<AnyEntityOfWorld>()
 
@@ -60,27 +54,13 @@ class WorldEngine(
                     }
                     val cycles = timer.run()
                     while (cycles.hasNext()) {
+                        context.cycle++
                         context.cycleDelta = cycles.next()
-                        val span = tracer.spanBuilder("cycle ${cycle++}").setSpanKind(SpanKind.INTERNAL).startSpan()
-                        entityById.values.filter { it.needsUpdate }.map {
-                            async {
-                                try {
-                                    it.update(context)
-                                } catch (thrown: Throwable) {
-                                    thrown.printStackTrace()
-                                    span.recordException(thrown)
-                                }
-                            }
-                        }.also { span.setAttribute(updates, it.size.toLong()) }.awaitAll()
-                        span.end()
+                        entityById.values.filter { it.needsUpdate }.map { async { it.update(context) } }.awaitAll()
                     }
                 }
             }
             if (!stopped) stopped = true
         }
-    }
-
-    companion object {
-        private val updates: AttributeKey<Long> = AttributeKey.longKey("updates")
     }
 }

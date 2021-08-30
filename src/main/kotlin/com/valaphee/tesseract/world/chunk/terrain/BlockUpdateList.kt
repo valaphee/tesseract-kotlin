@@ -23,14 +23,14 @@ class BlockUpdateList(
         if (changes.containsKey(key)) changes.get(key) else cartesian[x, y, z]
     } else airId
 
-    override fun set(x: Int, y: Int, z: Int, value: Int) = set(x, y, z, 1, value)
+    override fun set(x: Int, y: Int, z: Int, value: Int) = set(x, y, z, 0, value)
 
     operator fun set(x: Int, y: Int, z: Int, updatesIn: Int, value: Int) {
         if (x >= BlockStorage.XZSize || y >= BlockStorage.SectionCount * Section.YSize && z >= BlockStorage.XZSize) return
         if (cartesian[x, y, z] != value) {
             val position = encodePosition(x, y, z)
             changes[position] = value
-            if (updatesIn != 0) pending[position] = updatesIn
+            if (updatesIn >= 0) pending[position] = updatesIn
         }
     }
 

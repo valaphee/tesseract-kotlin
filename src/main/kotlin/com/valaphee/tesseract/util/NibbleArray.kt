@@ -11,6 +11,9 @@ fun nibbleArray(data: ByteArray): NibbleArray = HeapNibbleArray(data)
 
 fun nibbleArray(length: Int): NibbleArray = UnsafeNibbleArray(length)
 
+/**
+ * @author Kevin Ludwig
+ */
 interface NibbleArray {
     operator fun get(index: Int): Int
 
@@ -21,6 +24,9 @@ interface NibbleArray {
     val data: ByteArray
 }
 
+/**
+ * @author Kevin Ludwig
+ */
 private class HeapNibbleArray(
     override val data: ByteArray
 ) : NibbleArray {
@@ -53,6 +59,9 @@ private class HeapNibbleArray(
     override fun hashCode() = data.contentHashCode()
 }
 
+/**
+ * @author Kevin Ludwig
+ */
 private class UnsafeNibbleArray(
     override val length: Int
 ) : NibbleArray {

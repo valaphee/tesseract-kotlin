@@ -41,7 +41,6 @@ import io.netty.channel.WriteBufferWaterMark
 import io.netty.channel.epoll.EpollChannelOption
 import io.netty.channel.unix.UnixChannelOption
 import io.netty.handler.timeout.ReadTimeoutHandler
-import io.opentelemetry.api.OpenTelemetry
 import network.ycc.raknet.RakNet
 import network.ycc.raknet.pipeline.UserDataCodec
 import network.ycc.raknet.server.channel.RakNetServerChannel
@@ -51,9 +50,8 @@ import java.security.KeyPair
 import java.util.concurrent.TimeUnit
 
 class ServerInstance(
-    injector: Injector,
-    telemetry: OpenTelemetry,
-) : Instance(injector, telemetry) {
+    injector: Injector
+) : Instance(injector) {
     @Inject
     private lateinit var config: Config
 

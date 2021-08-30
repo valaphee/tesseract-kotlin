@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-import com.valaphee.tesseract.item.stack.Stack
+import com.valaphee.tesseract.inventory.item.stack.Stack
 import java.util.UUID
 
 fun shapelessRecipe(type: Recipe.Type, id: UUID, name: String, inputs: Array<Stack<*>?>, outputs: Array<Stack<*>?>, tag: String, priority: Int, netId: Int) = Recipe(id, name, type, 0, 0, 0, 0, inputs, outputs, tag, priority, netId)

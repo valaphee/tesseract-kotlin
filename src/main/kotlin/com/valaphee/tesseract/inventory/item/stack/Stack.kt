@@ -3,10 +3,10 @@
  * All rights reserved.
  */
 
-package com.valaphee.tesseract.item.stack
+package com.valaphee.tesseract.inventory.item.stack
 
-import com.valaphee.tesseract.item.Item
-import com.valaphee.tesseract.item.meta.Meta
+import com.valaphee.tesseract.inventory.item.Item
+import com.valaphee.tesseract.inventory.item.stack.meta.Meta
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.util.LittleEndianByteBufInputStream
 import com.valaphee.tesseract.util.LittleEndianByteBufOutputStream

@@ -5,7 +5,7 @@
 
 package com.valaphee.tesseract.inventory
 
-import com.valaphee.tesseract.item.stack.Stack
+import com.valaphee.tesseract.inventory.item.stack.Stack
 
 /**
  * @author Kevin Ludwig

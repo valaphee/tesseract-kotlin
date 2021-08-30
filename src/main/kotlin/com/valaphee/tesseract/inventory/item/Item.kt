@@ -3,9 +3,9 @@
  * All rights reserved.
  */
 
-package com.valaphee.tesseract.item
+package com.valaphee.tesseract.inventory.item
 
-import com.valaphee.tesseract.item.meta.Meta
+import com.valaphee.tesseract.inventory.item.stack.meta.Meta
 import com.valaphee.tesseract.util.nbt.CompoundTag
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 

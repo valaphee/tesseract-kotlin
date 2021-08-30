@@ -31,7 +31,7 @@ import com.valaphee.tesseract.actor.player.ViewDistanceRequestPacket
 import com.valaphee.tesseract.biomeDefinitionsPacket
 import com.valaphee.tesseract.creativeInventoryPacket
 import com.valaphee.tesseract.entityIdentifiersPacket
-import com.valaphee.tesseract.item.Item
+import com.valaphee.tesseract.inventory.item.Item
 import com.valaphee.tesseract.net.Connection
 import com.valaphee.tesseract.net.GamePublishMode
 import com.valaphee.tesseract.net.Packet
