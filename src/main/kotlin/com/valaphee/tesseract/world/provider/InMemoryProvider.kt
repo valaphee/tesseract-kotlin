@@ -25,8 +25,10 @@ class InMemoryProvider : Provider {
 
     override fun loadChunk(chunkPosition: Long): Chunk? = chunks[chunkPosition]
 
-    override fun saveChunk(chunk: Chunk) {
-        val (x, y) = chunk.position
-        chunks[encodePosition(x, y)] = chunk
+    override fun saveChunks(chunks: Iterable<Chunk>) {
+        this.chunks.putAll(chunks.associateBy {
+            val (x, y) = it.position
+            encodePosition(x, y)
+        })
     }
 }

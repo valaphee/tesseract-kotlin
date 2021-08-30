@@ -101,7 +101,7 @@ class SectionLegacy(
 class SectionCompact(
     var layers: Array<Layer>
 ) : Section {
-    constructor(version: BitArray.Version, runtime: Boolean) : this(arrayOf(Layer(air.id, version, runtime), Layer(air.id, version, runtime)))
+    constructor(version: BitArray.Version) : this(arrayOf(Layer(air.id, version), Layer(air.id, version)))
 
     override fun get(x: Int, y: Int, z: Int) = get(x, y, z, 0)
 
@@ -113,12 +113,14 @@ class SectionCompact(
 
     override val empty get() = layers.all { it.empty }
 
-    override fun writeToBuffer(buffer: PacketBuffer) {
+    override fun writeToBuffer(buffer: PacketBuffer) = writeToBuffer(buffer, true)
+
+    fun writeToBuffer(buffer: PacketBuffer, runtime: Boolean) {
         if (layers.size == 1) buffer.writeByte(1) else {
             buffer.writeByte(8)
             buffer.writeByte(layers.size)
         }
-        layers.forEach { it.writeToBuffer(buffer) }
+        layers.forEach { it.writeToBuffer(buffer, runtime) }
     }
 }
 
@@ -137,7 +139,8 @@ object SectionSerializer : JsonSerializer<Section>() {
         var buffer: PacketBuffer? = null
         try {
             buffer = PacketBuffer(Unpooled.buffer())
-            value.writeToBuffer(buffer)
+            if (value is SectionCompact) value.writeToBuffer(buffer, false)
+            else value.writeToBuffer(buffer)
             generator.writeBinary(buffer.array())
         } finally {
             buffer?.release()

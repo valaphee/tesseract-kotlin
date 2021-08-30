@@ -13,7 +13,6 @@ import RecipesPacket
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
-import com.valaphee.tesseract.actor.Actor
 import com.valaphee.tesseract.actor.location.Location
 import com.valaphee.tesseract.actor.location.Teleport
 import com.valaphee.tesseract.actor.location.position
@@ -92,14 +91,13 @@ class WorldPacketHandler(
         player = context.entityFactory(PlayerType, setOf(Remote(connection), authExtra, user, Location(Float3(0.0f, 100.0f, 0.0f), Float2.Zero)))
         context.world.addEntities(context, null, player)
 
-        @Suppress("UNCHECKED_CAST") val actor = player as Actor
         connection.write(
             WorldPacket(
                 player.id,
                 player.id,
                 GameMode.Default,
-                actor.position,
-                actor.rotation,
+                player.position,
+                player.rotation,
                 0,
                 WorldPacket.BiomeType.Default,
                 "",
@@ -147,7 +145,7 @@ class WorldPacketHandler(
                 "",
                 false,
                 WorldPacket.AuthoritativeMovement.Client,
-                context.engine.cycle,
+                context.cycle,
                 0,
                 null,
                 null,
@@ -181,28 +179,13 @@ class WorldPacketHandler(
     }
 
     override fun playerLocation(packet: PlayerLocationPacket) {
-        /*@Suppress("UNCHECKED_CAST") val actor = player as Actor
-        val position = actor.position
-        val newPosition = packet.position
-        val positionalMovement = position != newPosition
-        val newRotation = packet.rotation
-        val rotationalMovement = actor.rotation != newRotation
-        if (positionalMovement && rotationalMovement) player.sendMessage(MoveRotate(context, player, newPosition.toMutableFloat3().sub(position), newRotation))
-        else if (positionalMovement) player.sendMessage(Move(context, player, newPosition.toMutableFloat3().sub(position)))
-        else if (rotationalMovement) player.sendMessage(Rotate(context, player, newRotation))*/
         player.sendMessage(Teleport(context, player, player, packet.position, packet.rotation))
     }
 
     override fun interact(packet: InteractPacket) {
-        when (packet.action) {
-            InteractPacket.Action.OpenInventory -> {
-                
-            }
-        }
     }
 
     override fun playerAction(packet: PlayerActionPacket) {
-
     }
 
     override fun viewDistanceRequest(packet: ViewDistanceRequestPacket) {

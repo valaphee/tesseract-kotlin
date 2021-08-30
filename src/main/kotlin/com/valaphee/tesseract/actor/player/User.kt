@@ -5,6 +5,7 @@
 
 package com.valaphee.tesseract.actor.player
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.google.gson.JsonObject
 import com.valaphee.foundry.ecs.BaseAttribute
 import com.valaphee.tesseract.util.address
@@ -19,12 +20,12 @@ import java.util.UUID
 /**
  * @author Kevin Ludwig
  */
-data class User(
+data class User constructor(
     val selfSignedId: UUID,
     val clientId: Long,
     val thirdPartyName: String,
     val thirdPartyNameOnly: Boolean,
-    val appearance: Appearance,
+    @JsonIgnore val appearance: Appearance,
     val platformOfflineId: String,
     val platformOnlineId: String,
     val deviceId: String,

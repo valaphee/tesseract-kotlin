@@ -3,8 +3,6 @@
  * All rights reserved.
  */
 
-@file:Suppress("LeakingThis")
-
 package com.valaphee.tesseract
 
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -15,22 +13,16 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.google.inject.AbstractModule
 import com.google.inject.Injector
 import com.google.inject.Module
+import com.google.inject.name.Names
 import com.valaphee.foundry.ecs.entity.Entity
 import com.valaphee.foundry.math.Float2
-import com.valaphee.foundry.math.Float2Deserializer
-import com.valaphee.foundry.math.Float2Serializer
 import com.valaphee.foundry.math.Float3
-import com.valaphee.foundry.math.Float3Deserializer
-import com.valaphee.foundry.math.Float3Serializer
 import com.valaphee.tesseract.actor.player.InputPacketReader
 import com.valaphee.tesseract.actor.player.InteractPacketReader
 import com.valaphee.tesseract.actor.player.PlayerActionPacketReader
 import com.valaphee.tesseract.actor.player.PlayerLocationPacketReader
 import com.valaphee.tesseract.actor.player.ViewDistanceRequestPacketReader
 import com.valaphee.tesseract.command.CommandPacketReader
-import com.valaphee.tesseract.util.ecs.EntityDeserializer
-import com.valaphee.tesseract.util.ecs.EntityFactory
-import com.valaphee.tesseract.util.ecs.EntitySerializer
 import com.valaphee.tesseract.inventory.InventoryRequestPacketReader
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.base.CacheBlobStatusPacketReader
@@ -39,9 +31,19 @@ import com.valaphee.tesseract.net.base.TextPacketReader
 import com.valaphee.tesseract.net.init.ClientToServerHandshakePacketReader
 import com.valaphee.tesseract.net.init.LoginPacketReader
 import com.valaphee.tesseract.net.init.PacksResponsePacketReader
+import com.valaphee.tesseract.util.ecs.EntityDeserializer
+import com.valaphee.tesseract.util.ecs.EntityFactory
+import com.valaphee.tesseract.util.ecs.EntitySerializer
+import com.valaphee.tesseract.util.jackson.Float2Deserializer
+import com.valaphee.tesseract.util.jackson.Float2Serializer
+import com.valaphee.tesseract.util.jackson.Float3Deserializer
+import com.valaphee.tesseract.util.jackson.Float3Serializer
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.WorldEngine
-import com.valaphee.tesseract.world.provider.InMemoryProvider
+import com.valaphee.tesseract.world.chunk.terrain.generator.Generator
+import com.valaphee.tesseract.world.chunk.terrain.generator.normal.NormalGenerator
+import com.valaphee.tesseract.world.provider.Provider
+import com.valaphee.tesseract.world.provider.TesseractProvider
 import io.netty.channel.EventLoopGroup
 import io.netty.channel.epoll.Epoll
 import io.netty.channel.epoll.EpollDatagramChannel
@@ -52,8 +54,6 @@ import io.netty.channel.kqueue.KQueueEventLoopGroup
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.DatagramChannel
 import io.netty.channel.socket.nio.NioDatagramChannel
-import io.opentelemetry.api.OpenTelemetry
-import io.opentelemetry.api.trace.Tracer
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -75,7 +75,7 @@ abstract class Instance(
     @Suppress("LeakingThis")
     val injector: Injector = injector.createChildInjector(object : AbstractModule() {
         override fun configure() {
-            bind(ObjectMapper::class.java).toInstance(ObjectMapper(SmileFactory()).apply {
+            bind(ObjectMapper::class.java).annotatedWith(Names.named("world")).toInstance(ObjectMapper(SmileFactory()).apply {
                 registerKotlinModule()
                 registerModule(
                     SimpleModule()
@@ -88,6 +88,8 @@ abstract class Instance(
                 )
             })
             bind(this@Instance.javaClass).toInstance(this@Instance)
+            bind(Provider::class.java).to(TesseractProvider::class.java)
+            bind(Generator::class.java).toInstance(NormalGenerator(1))
         }
     }, getModule())
 
@@ -96,7 +98,7 @@ abstract class Instance(
     private val worldEngine = WorldEngine(20.0f, coroutineScope.coroutineContext)
 
     @Suppress("LeakingThis")
-    protected val worldContext = WorldContext(this.injector, coroutineScope, worldEngine, createEntityFactory().also { entityDeserializer.entityFactory = it }, /*AxolotlBackend(this.injector.getInstance(ObjectMapper::class.java), File("world"))*/InMemoryProvider())
+    protected val worldContext = WorldContext(this.injector, coroutineScope, worldEngine, createEntityFactory().also { entityDeserializer.entityFactory = it }, this.injector.getInstance(Provider::class.java))
 
     protected val readers = Int2ObjectOpenHashMap<PacketReader>().apply {
         this[0x01] = LoginPacketReader

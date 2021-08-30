@@ -13,6 +13,9 @@ import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap
 import kotlin.math.min
 import kotlin.random.Random
 
+/**
+ * @author Kevin Ludwig
+ */
 object Blocks {
     fun populate() {
         val flowingMoves = intArrayOf(
@@ -111,13 +114,13 @@ object Blocks {
 
 private val airId = BlockState.byKeyWithStates("minecraft:air")?.id ?: error("Missing minecraft:air")
 
-private fun BlockUpdateList.setIfAir(x: Int, y: Int, z: Int, value: Int, updatesIn: Int = 1): Boolean {
+private fun BlockUpdateList.setIfAir(x: Int, y: Int, z: Int, value: Int, updatesIn: Int = 0): Boolean {
     if (!(x in 0 until BlockStorage.XZSize && y in 0 until BlockStorage.SectionCount * Section.YSize && z in 0 until BlockStorage.XZSize)) return false
 
     if (get(x, y, z) == airId) {
         val position = encodePosition(x, y, z)
         changes[position] = value
-        if (updatesIn != 0) pending[position] = updatesIn
+        if (updatesIn != -1) pending[position] = updatesIn
 
         return true
     }

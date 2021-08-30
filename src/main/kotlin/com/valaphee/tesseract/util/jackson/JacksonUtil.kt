@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package com.valaphee.foundry.math
+package com.valaphee.tesseract.util.jackson
 
 import com.fasterxml.jackson.core.JsonGenerator
 import java.io.IOException

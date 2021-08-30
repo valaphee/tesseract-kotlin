@@ -11,7 +11,7 @@ import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
 import com.valaphee.foundry.math.Int2
 import com.valaphee.tesseract.Config
-import com.valaphee.tesseract.actor.Actor
+import com.valaphee.tesseract.actor.location.Location
 import com.valaphee.tesseract.actor.location.LocationManagerMessage
 import com.valaphee.tesseract.actor.location.position
 import com.valaphee.tesseract.world.WorldContext
@@ -29,7 +29,7 @@ import java.lang.Integer.min
  */
 class View @Inject constructor(
     private val config: Config
-) : BaseFacet<WorldContext, LocationManagerMessage>(LocationManagerMessage::class) {
+) : BaseFacet<WorldContext, LocationManagerMessage>(LocationManagerMessage::class, Location::class) {
     private lateinit var lastChunkPosition: Int2
     private val _acquiredChunks = LongOpenHashSet()
     val acquiredChunks: LongArray get() = _acquiredChunks.toLongArray()
@@ -41,7 +41,7 @@ class View @Inject constructor(
 
     override suspend fun receive(message: LocationManagerMessage): Response {
         message.entity?.whenTypeIs<PlayerType> {
-            val position = @Suppress("UNCHECKED_CAST") (it as Actor).position.toInt3()
+            val position = it.position.toInt3()
             val chunkX = position.x shr 4
             val chunkZ = position.z shr 4
             val chunkPosition = Int2(chunkX, chunkZ)

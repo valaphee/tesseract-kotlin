@@ -27,7 +27,7 @@ import java.util.UUID
 class PacketBuffer(
     buffer: ByteBuf
 ) : ByteBufWrapper(buffer) {
-    var persistent = false
+    var local = false
 
     inline fun <reified T : Enum<T>> readByteFlags(): Collection<T> {
         val flagsValue = readByte().toInt()
@@ -121,13 +121,13 @@ class PacketBuffer(
 
     fun <T : Enum<T>> writeVarUIntFlags(flags: Collection<T>) = writeVarUInt(flags.map { 1 shl it.ordinal }.fold(0) { flagsValue, flagValue -> flagsValue or flagValue })
 
-    fun readVarInt() = if (persistent) readIntLE() else {
+    fun readVarInt() = if (local) readIntLE() else {
         val value = readVarUInt()
         (value ushr 1) xor -(value and 1)
     }
 
     fun writeVarInt(value: Int) {
-        if (persistent) writeIntLE(value) else writeVarUInt((value shl 1) xor (value shr 31))
+        if (local) writeIntLE(value) else writeVarUInt((value shl 1) xor (value shr 31))
     }
 
     fun readVarULong(): Long {
@@ -249,9 +249,9 @@ class PacketBuffer(
         writeFloatLE(value.z)
     }
 
-    fun toNbtOutputStream() = NbtOutputStream(if (persistent) LittleEndianByteBufOutputStream(buffer) else LittleEndianVarIntByteBufOutputStream(buffer))
+    fun toNbtOutputStream() = NbtOutputStream(if (local) LittleEndianByteBufOutputStream(buffer) else LittleEndianVarIntByteBufOutputStream(buffer))
 
-    fun toNbtInputStream() = NbtInputStream(if (persistent) LittleEndianByteBufInputStream(buffer) else LittleEndianVarIntByteBufInputStream(buffer))
+    fun toNbtInputStream() = NbtInputStream(if (local) LittleEndianByteBufInputStream(buffer) else LittleEndianVarIntByteBufInputStream(buffer))
 
     companion object {
         const val MaximumVarUIntLength = 5

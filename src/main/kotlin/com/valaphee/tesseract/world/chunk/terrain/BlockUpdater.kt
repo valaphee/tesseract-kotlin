@@ -11,6 +11,7 @@ import com.valaphee.tesseract.world.AnyEntityOfWorld
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.broadcast
 import com.valaphee.tesseract.world.chunk.ChunkType
+import com.valaphee.tesseract.world.chunk.Location
 import com.valaphee.tesseract.world.chunk.position
 import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
 import com.valaphee.tesseract.world.whenTypeIs
@@ -18,7 +19,7 @@ import com.valaphee.tesseract.world.whenTypeIs
 /**
  * @author Kevin Ludwig
  */
-class BlockUpdater : BaseBehavior<WorldContext>() {
+class BlockUpdater : BaseBehavior<WorldContext>(Location::class, Terrain::class) {
     override suspend fun update(entity: AnyEntityOfWorld, context: WorldContext): Boolean {
         entity.whenTypeIs<ChunkType> {
             val (chunkX, chunkZ) = it.position

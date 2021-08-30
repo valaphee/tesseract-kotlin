@@ -18,5 +18,5 @@ object NullProvider : Provider {
 
     override fun loadChunk(chunkPosition: Long): Chunk? = null
 
-    override fun saveChunk(chunk: Chunk) = Unit
+    override fun saveChunks(chunks: Iterable<Chunk>) = Unit
 }

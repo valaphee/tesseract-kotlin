@@ -18,5 +18,5 @@ interface Provider {
 
     fun loadChunk(chunkPosition: Long): Chunk?
 
-    fun saveChunk(chunk: Chunk)
+    fun saveChunks(chunks: Iterable<Chunk>)
 }

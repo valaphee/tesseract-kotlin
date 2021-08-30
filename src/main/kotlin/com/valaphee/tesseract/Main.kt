@@ -5,10 +5,16 @@
 
 package com.valaphee.tesseract
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.google.inject.AbstractModule
 import com.google.inject.Guice
+import com.google.inject.name.Names
 import com.valaphee.tesseract.inventory.CreativeInventoryPacket
 import com.valaphee.tesseract.inventory.item.Item
 import com.valaphee.tesseract.inventory.item.stack.Stack
@@ -21,6 +27,8 @@ import com.valaphee.tesseract.util.getIntOrNull
 import com.valaphee.tesseract.util.getJsonArray
 import com.valaphee.tesseract.util.getString
 import com.valaphee.tesseract.util.getStringOrNull
+import com.valaphee.tesseract.util.jackson.PatternDeserializer
+import com.valaphee.tesseract.util.jackson.PatternSerializer
 import com.valaphee.tesseract.util.nbt.NbtInputStream
 import com.valaphee.tesseract.world.chunk.terrain.block.Block
 import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
@@ -28,26 +36,28 @@ import com.valaphee.tesseract.world.chunk.terrain.block.Blocks
 import io.netty.buffer.ByteBufInputStream
 import io.netty.buffer.PooledByteBufAllocator
 import io.netty.buffer.Unpooled
-import io.opentelemetry.sdk.OpenTelemetrySdk
-import org.mozilla.javascript.Context
-import java.io.IOException
 import java.io.InputStreamReader
 import java.lang.invoke.MethodHandles
 import java.util.Base64
+import java.util.regex.Pattern
 import kotlin.concurrent.thread
 
+// TODO
 lateinit var biomeDefinitionsPacket: BiomeDefinitionsPacket
 lateinit var entityIdentifiersPacket: EntityIdentifiersPacket
 lateinit var creativeInventoryPacket: CreativeInventoryPacket
+// TODO
 
-fun main() {
+fun main(arguments: Array<String>) {
+    val argument = Argument().apply { if (!parse(arguments)) return }
+
     initializeConsole()
     initializeLogging()
 
+    // TODO
     val clazz = MethodHandles.lookup().lookupClass()
     val gson = GsonBuilder().create()
     val base64Decoder = Base64.getDecoder()
-
     run {
         val buffer = PooledByteBufAllocator.DEFAULT.directBuffer()
         try {
@@ -62,24 +72,20 @@ fun main() {
         Block.finish()
         Blocks.populate()
     }
-
     run {
         @Suppress("BlockingMethodInNonBlockingContext")
         gson.newJsonReader(InputStreamReader(clazz.getResourceAsStream("/runtime_item_states.json")!!)).use { (gson.fromJson(it, JsonArray::class.java) as JsonArray).map { it.asJsonObject }.forEach { Item.register(it.getString("name"), it.getInt("id")) } }
     }
-
     run {
         val data = clazz.getResourceAsStream("/biome_definitions.dat")!!.readBytes()
         @Suppress("BlockingMethodInNonBlockingContext")
         biomeDefinitionsPacket = BiomeDefinitionsPacket(data)
     }
-
     run {
         val data = clazz.getResourceAsStream("/entity_identifiers.dat")!!.readBytes()
         @Suppress("BlockingMethodInNonBlockingContext")
         entityIdentifiersPacket = EntityIdentifiersPacket(data)
     }
-
     run {
         @Suppress("BlockingMethodInNonBlockingContext")
         gson.newJsonReader(InputStreamReader(clazz.getResourceAsStream("/creative_items.json")!!)).use {
@@ -97,33 +103,23 @@ fun main() {
             creativeInventoryPacket = CreativeInventoryPacket(content.toTypedArray())
         }
     }
+    // TODO
 
-    val instance = ServerInstance(Guice.createInjector())
-    instance.bind()
-
-    reader.prompt = "js> "
-    thread(isDaemon = true, name = "console-reader") {
-        val context = Context.enter()
-        try {
-            val scope = context.initStandardObjects()
-            while (true) {
-                try {
-                    val message = reader.readLine(null, null, null)
-                    if (message.trim { it <= ' ' }.isNotEmpty()) {
-                        try {
-                            context.evaluateString(scope, message, "<console>", 1, null)
-                        } catch (ex: Throwable) {
-                            println(ex.message)
-                        }
-                    }
-                } catch (_: IOException) {
-                } catch (_: IndexOutOfBoundsException) {
-                }
-            }
-        } finally {
-            Context.exit()
+    ServerInstance(Guice.createInjector(object : AbstractModule() {
+        override fun configure() {
+            bind(ObjectMapper::class.java).annotatedWith(Names.named("config")).toInstance(ObjectMapper().apply {
+                registerKotlinModule()
+                registerModule(
+                    SimpleModule()
+                        .addSerializer(Pattern::class.java, PatternSerializer)
+                        .addDeserializer(Pattern::class.java, PatternDeserializer)
+                )
+                enable(SerializationFeature.INDENT_OUTPUT)
+            })
+            bind(Argument::class.java).toInstance(argument)
         }
-    }
+    })).bind()
 
+    // TODO
     thread(name = "infinisleeper") { Thread.sleep(Long.MAX_VALUE) }
 }

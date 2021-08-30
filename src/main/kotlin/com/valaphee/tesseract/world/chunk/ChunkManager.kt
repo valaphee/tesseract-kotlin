@@ -5,6 +5,7 @@
 
 package com.valaphee.tesseract.world.chunk
 
+import com.google.inject.Inject
 import com.valaphee.foundry.ecs.MessageResponse
 import com.valaphee.foundry.ecs.Pass
 import com.valaphee.foundry.ecs.Response
@@ -12,7 +13,6 @@ import com.valaphee.foundry.ecs.system.BaseFacet
 import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.terrain.generator.Generator
-import com.valaphee.tesseract.world.chunk.terrain.generator.normal.NormalGenerator
 import com.valaphee.tesseract.world.entity.addEntities
 import com.valaphee.tesseract.world.entity.removeEntities
 import com.valaphee.tesseract.world.whenTypeIs
@@ -21,8 +21,9 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 /**
  * @author Kevin Ludwig
  */
-class ChunkManager : BaseFacet<WorldContext, ChunkManagerMessage>(ChunkManagerMessage::class) {
-    private val generator: Generator = NormalGenerator(1)/*FlatGenerator("minecraft:bedrock,59*minecraft:stone,3*minecraft:dirt,minecraft:grass_block,minecraft:snow;minecraft:snowy_tundra")*/
+class ChunkManager @Inject constructor(
+    private val generator: Generator
+) : BaseFacet<WorldContext, ChunkManagerMessage>(ChunkManagerMessage::class) {
     private val chunks = Long2ObjectOpenHashMap<Chunk>()
 
     override suspend fun receive(message: ChunkManagerMessage): Response {
@@ -37,11 +38,15 @@ class ChunkManager : BaseFacet<WorldContext, ChunkManagerMessage>(ChunkManagerMe
                 }.toTypedArray())
                 return MessageResponse(ChunkAcquired(context, message.source, message.chunkPositions.map(chunks::get).filterNotNull().onEach { chunk -> message.source?.let { message.source?.whenTypeIs<PlayerType> { chunk.players += it } } }.toTypedArray()))
             }
-            is ChunkRelease -> context.world.removeEntities(context, message.source, *message.chunkPositions.filter { chunkPosition ->
-                val chunk = chunks.get(chunkPosition)
-                message.source?.whenTypeIs<PlayerType> { chunk.players -= it }
-                chunk.players.isEmpty()
-            }.map { chunks.remove(it).also { context.provider.saveChunk(it) }.id }.toLongArray())
+            is ChunkRelease -> {
+                val chunksRemoved = message.chunkPositions.filter { chunkPosition ->
+                    val chunk = chunks.get(chunkPosition)
+                    message.source?.whenTypeIs<PlayerType> { chunk.players -= it }
+                    chunk.players.isEmpty()
+                }.map(chunks::remove)
+                context.provider.saveChunks(chunksRemoved)
+                context.world.removeEntities(context, message.source, *chunksRemoved.map { it.id }.toLongArray())
+            }
         }
 
         return Pass

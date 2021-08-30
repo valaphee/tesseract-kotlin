@@ -8,7 +8,7 @@ package com.valaphee.tesseract.actor.location
 import com.valaphee.foundry.ecs.BaseAttribute
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
-import com.valaphee.tesseract.actor.Actor
+import com.valaphee.tesseract.actor.AnyActorOfWorld
 
 /**
  * @author Kevin Ludwig
@@ -18,13 +18,13 @@ class Location(
     var rotation: Float2
 ) : BaseAttribute()
 
-var Actor.position
+var AnyActorOfWorld.position
     get() = findAttribute(Location::class).position
     set(value) {
         findAttribute(Location::class).also { it.position = value }
     }
 
-var Actor.rotation
+var AnyActorOfWorld.rotation
     get() = findAttribute(Location::class).rotation
     set(value) {
         findAttribute(Location::class).also { it.rotation = value }

@@ -35,11 +35,12 @@ version = "${details.lastTag}.${details.commitDistance}${if (details.branchName 
 
 dependencies {
     api("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.4")
-    api("com.fasterxml.jackson.dataformat:jackson-dataformat-smile:2.12.4")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-smile:2.12.4")
     api("com.google.code.gson:gson:2.8.8")
     api("com.google.inject:guice:5.0.1")
     api("com.valaphee:foundry-databind:1.3.0.0")
     api("com.valaphee:foundry-math:1.3.0.0")
+    implementation("commons-cli:commons-cli:1.4")
     implementation("io.grpc:grpc-netty:1.40.1")
     api("io.opentelemetry:opentelemetry-api:1.5.0")
     implementation("io.opentelemetry:opentelemetry-exporter-jaeger:1.5.0")
@@ -49,7 +50,6 @@ dependencies {
     api("io.netty:netty-codec-http2:4.1.67.Final")
     api("it.unimi.dsi:fastutil:8.5.4")
     implementation("jline:jline:2.14.6")
-    implementation("net.sf.jopt-simple:jopt-simple:5.0.4")
     implementation("network.ycc:netty-raknet-server:0.8-SNAPSHOT")
     api("org.apache.logging.log4j:log4j-core:2.14.1")
     implementation("org.apache.logging.log4j:log4j-iostreams:2.14.1")

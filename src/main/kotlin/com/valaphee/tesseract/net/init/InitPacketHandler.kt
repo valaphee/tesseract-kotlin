@@ -28,11 +28,8 @@ class InitPacketHandler(
     private val worldContext: WorldContext,
     private val connection: Connection
 ) : PacketHandler {
-    @Inject
-    private lateinit var config: Config
-
-    @Inject
-    private lateinit var keyPair: KeyPair
+    @Inject private lateinit var config: Config
+    @Inject private lateinit var keyPair: KeyPair
 
     private var state: State? = null
     private lateinit var authExtra: AuthExtra

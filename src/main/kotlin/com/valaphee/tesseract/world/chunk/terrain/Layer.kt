@@ -5,10 +5,10 @@
 
 package com.valaphee.tesseract.world.chunk.terrain
 
-import com.valaphee.tesseract.util.nbt.compoundTag
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.util.getCompoundTag
 import com.valaphee.tesseract.util.getString
+import com.valaphee.tesseract.util.nbt.compoundTag
 import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
 import it.unimi.dsi.fastutil.ints.IntArrayList
 import it.unimi.dsi.fastutil.ints.IntList
@@ -19,9 +19,8 @@ import it.unimi.dsi.fastutil.ints.IntList
 class Layer(
     var palette: IntList,
     var bitArray: BitArray,
-    var runtime: Boolean
 ) {
-    constructor(default: Int, version: BitArray.Version, runtime: Boolean) : this(IntArrayList(16).apply { add(default) }, version.bitArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize), runtime)
+    constructor(default: Int, version: BitArray.Version) : this(IntArrayList(16).apply { add(default) }, version.bitArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize))
 
     fun get(index: Int): Int = palette.getInt(bitArray[index])
 
@@ -44,7 +43,7 @@ class Layer(
 
     val empty get() = bitArray.empty
 
-    fun writeToBuffer(buffer: PacketBuffer) {
+    fun writeToBuffer(buffer: PacketBuffer, runtime: Boolean) {
         buffer.writeByte((bitArray.version.bitsPerEntry shl 1) or if (runtime) 1 else 0)
         bitArray.data.forEach { buffer.writeIntLE(it) }
         buffer.writeVarInt(palette.size)
@@ -77,5 +76,5 @@ fun PacketBuffer.readLayer(default: Int): Layer {
                 }
             }
         }
-    }, blocks, runtime)
+    }, blocks)
 }

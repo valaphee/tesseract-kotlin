@@ -49,11 +49,13 @@ import org.apache.logging.log4j.Logger
 import java.security.KeyPair
 import java.util.concurrent.TimeUnit
 
+/**
+ * @author Kevin Ludwig
+ */
 class ServerInstance(
     injector: Injector
 ) : Instance(injector) {
-    @Inject
-    private lateinit var config: Config
+    @Inject private lateinit var config: Config
 
     private val parentGroup = underlyingNetworking.groupFactory(0, ThreadFactoryBuilder().setNameFormat("server-%d").build())
     private val childGroup = underlyingNetworking.groupFactory(0, ThreadFactoryBuilder().setNameFormat("server-c-%d").build())
@@ -99,7 +101,7 @@ class ServerInstance(
                 override fun initChannel(channel: Channel) {
                     channel.config().writeBufferWaterMark = writeBufferWaterMark
 
-                    channel.pipeline().addLast(UnconnectedPingHandler())
+                    channel.pipeline().addLast(UnconnectedPingHandler(config))
                 }
             })
             .childHandler(object : ChannelInitializer<Channel>() {
