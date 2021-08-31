@@ -45,6 +45,7 @@ import com.valaphee.tesseract.net.UnconnectedPingHandler
 import com.valaphee.tesseract.net.base.DisconnectPacket
 import com.valaphee.tesseract.net.init.InitPacketHandler
 import com.valaphee.tesseract.util.generateKeyPair
+import com.valaphee.tesseract.util.nbs.SongBroadcaster
 import com.valaphee.tesseract.world.EnvironmentUpdater
 import com.valaphee.tesseract.world.PlayerList
 import com.valaphee.tesseract.world.WorldType
@@ -116,6 +117,9 @@ class ServerInstance(
             )
         }
         register(PlayerType) {
+            behaviors(
+                SongBroadcaster::class.java
+            )
             facets(
                 LocationManager::class.java, View::class.java, PlayerLocationPacketizer::class.java, // LocationManagerMessage(Move, MoveRotate, Rotate, Teleport)
                 ViewChunkPacketizer::class.java, // ViewChunk
