@@ -95,43 +95,24 @@ class WorldPacketHandler(
     private val caching: Boolean
 ) : PacketHandler {
     lateinit var player: Player
+    private var playerSpawned = false
 
     private val cacheBlobs = mutableMapOf<Long, ByteArray>()
 
-    fun cacheChunk(chunk: Chunk) {
-        if (caching) {
-            val blockStorage = chunk.terrain.blockStorage
-            var sectionCount = blockStorage.sections.size - 1
-            while (sectionCount >= 0 && blockStorage.sections[sectionCount].empty) sectionCount--
-            sectionCount++
-            val blobIds = LongArray(sectionCount + 1)
-            PacketBuffer(Unpooled.buffer()).use {
-                repeat(sectionCount) { i ->
-                    val section = blockStorage.sections[i]
-                    if (section is SectionCompact) section.writeToBuffer(it, false)
-                    else section.writeToBuffer(it)
-                    val blob = it.array().clone()
-                    it.clear()
-                    val blobId = xxHash64.hash(blob, 0, blob.size, 0)
-                    cacheBlobs[blobId] = blob
-                    blobIds[i] = blobId
-                }
-            }
-            connection.write(ChunkPacket(chunk, blobIds))
-        } else connection.write(ChunkPacket(chunk))
-    }
-
     override fun initialize() {
+        user.appearance.id = "0"
+
         player = (context.provider.loadPlayer(authExtra.userId) ?: context.entityFactory(PlayerType, setOf(
             Location(Float3(0.0f, 100.0f, 0.0f), Float2.Zero)
         ))).asMutableEntity().apply {
             addAttribute(Remote(connection))
-            addAttribute(authExtra)
-            addAttribute(user)
+            addAttribute(this@WorldPacketHandler.authExtra)
+            addAttribute(this@WorldPacketHandler.user)
             addAttribute(InventoryHolder(Inventory(WindowType.Inventory)))
         }
         context.world.addEntities(context, null, player)
 
+        val environment = context.world.environment
         connection.write(
             WorldPacket(
                 player.id,
@@ -148,13 +129,13 @@ class WorldPacketHandler(
                 Difficulty.Normal,
                 Int3.Zero,
                 true,
-                -1,
+                environment.time,
                 0,
                 false,
                 "",
                 WorldPacket.EducationEditionOffer.None,
-                0.0f,
-                0.0f,
+                environment.rainLevel,
+                environment.thunderLevel,
                 false,
                 true,
                 true,
@@ -201,11 +182,13 @@ class WorldPacketHandler(
                 "Tesseract"
             )
         )
+
         connection.write(biomeDefinitionsPacket)
         connection.write(entityIdentifiersPacket)
         connection.write(creativeInventoryPacket)
         connection.write(RecipesPacket(emptyArray(), emptyArray(), emptyArray(), true))
-        connection.write(StatusPacket(StatusPacket.Status.PlayerSpawn))
+
+        player.sendMessage(Teleport(context, player, player, player.position, player.rotation)) // notify view
     }
 
     override fun destroy() {
@@ -265,6 +248,36 @@ class WorldPacketHandler(
     }
 
     override fun inventoryRequest(packet: InventoryRequestPacket) {
+    }
+
+    fun writeChunks(chunks: Array<Chunk>) {
+        chunks.forEach {
+            if (caching) {
+                val blockStorage = it.terrain.blockStorage
+                var sectionCount = blockStorage.sections.size - 1
+                while (sectionCount >= 0 && blockStorage.sections[sectionCount].empty) sectionCount--
+                sectionCount++
+                val blobIds = LongArray(sectionCount + 1)
+                PacketBuffer(Unpooled.buffer()).use {
+                    repeat(sectionCount) { i ->
+                        val section = blockStorage.sections[i]
+                        if (section is SectionCompact) section.writeToBuffer(it, false)
+                        else section.writeToBuffer(it)
+                        val blob = it.array().clone()
+                        it.clear()
+                        val blobId = xxHash64.hash(blob, 0, blob.size, 0)
+                        cacheBlobs[blobId] = blob
+                        blobIds[i] = blobId
+                    }
+                }
+                connection.write(ChunkPacket(it, blobIds))
+            } else connection.write(ChunkPacket(it))
+        }
+
+        if (!playerSpawned) {
+            connection.write(StatusPacket(StatusPacket.Status.PlayerSpawn))
+            playerSpawned = true
+        }
     }
 
     companion object {

@@ -34,7 +34,6 @@ import java.awt.image.ColorModel
 import java.awt.image.ComponentColorModel
 import java.awt.image.DataBuffer
 import java.awt.image.DataBufferByte
-import java.awt.image.Raster
 import java.io.InputStream
 import java.util.Base64
 import javax.imageio.ImageIO
@@ -47,8 +46,6 @@ data class AppearanceImage(
     var height: Int,
     val data: ByteArray
 ) {
-    val image: BufferedImage by lazy { BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB).apply { data = Raster.createRaster(colorModel.createCompatibleSampleModel(width, height), DataBufferByte(this@AppearanceImage.data, this@AppearanceImage.data.size), null) } }
-
     constructor(image: BufferedImage) : this(
         image.width, image.height, (BufferedImage(colorModel, colorModel.createCompatibleWritableRaster(image.width, image.height), false, null).apply {
             createGraphics().apply {
@@ -84,7 +81,7 @@ data class AppearanceImage(
         return result
     }
 
-    override fun toString() = "AppearanceImage(width=$width, height=$height, image=$image)"
+    override fun toString() = "AppearanceImage(width=$width, height=$height)"
 
     companion object {
         val Empty = AppearanceImage(0, 0, ByteArray(0))
@@ -127,7 +124,7 @@ fun JsonObject.getAsAppearanceImage(name: String?): AppearanceImage {
             width = 512
             height = 512
         }
-        else -> throw IllegalArgumentException("Unable to detect image dimensions, image was ${data.size}")
+        else -> error("Unable to detect image dimensions, image was ${data.size}")
     }
     return AppearanceImage(width, height, data)
 }

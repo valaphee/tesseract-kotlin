@@ -69,7 +69,11 @@ class Item<T : Meta> constructor(
             byId[id] = byKey.getOrPut(key) { Item(key, null, ::Meta) }.apply { this.id = id }
         }
 
+        fun byId(id: Int) = checkNotNull(byId[id])
+
         fun byIdOrNull(id: Int): Item<*>? = byId[id]
+
+        fun byKey(key: String) = checkNotNull(byKey[key])
 
         fun byKeyOrNull(key: String) = byKey[key]
 

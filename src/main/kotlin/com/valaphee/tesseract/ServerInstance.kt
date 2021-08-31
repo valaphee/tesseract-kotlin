@@ -40,10 +40,13 @@ import com.valaphee.tesseract.net.Decompressor
 import com.valaphee.tesseract.net.PacketDecoder
 import com.valaphee.tesseract.net.PacketEncoder
 import com.valaphee.tesseract.net.UnconnectedPingHandler
+import com.valaphee.tesseract.net.base.DisconnectPacket
 import com.valaphee.tesseract.net.init.InitPacketHandler
 import com.valaphee.tesseract.util.generateKeyPair
+import com.valaphee.tesseract.world.EnvironmentUpdater
 import com.valaphee.tesseract.world.PlayerList
 import com.valaphee.tesseract.world.WorldType
+import com.valaphee.tesseract.world.broadcast
 import com.valaphee.tesseract.world.chunk.ChunkManager
 import com.valaphee.tesseract.world.chunk.ChunkType
 import com.valaphee.tesseract.world.chunk.terrain.BlockUpdater
@@ -94,6 +97,9 @@ class ServerInstance(
 
     override fun createEntityFactory() = super.createEntityFactory().apply {
         register(WorldType) {
+            behaviors(
+                EnvironmentUpdater::class.java
+            )
             facets(
                 PlayerList::class.java, EntityManager::class.java,
                 ChunkManager::class.java
@@ -171,6 +177,8 @@ class ServerInstance(
     }
 
     override fun destroy() {
+        worldContext.world.broadcast(DisconnectPacket("Server shut down"))
+
         channel.close().syncUninterruptibly()
 
         parentGroup.shutdownGracefully()

@@ -61,7 +61,7 @@ class ChunkManager @Inject constructor(
                 }.toTypedArray())
 
                 message.usage.chunks = message.positions.map(chunks::get).filterNotNull().onEach { chunk -> message.source?.whenTypeIs<PlayerType> { chunk.players += it } }.toTypedArray()
-                message.source?.sendMessage(message.usage)
+                message.source?.receiveMessage(message.usage)
             }
             is ChunkRelease -> {
                 val chunksRemoved = message.positions.filter { chunkPosition ->

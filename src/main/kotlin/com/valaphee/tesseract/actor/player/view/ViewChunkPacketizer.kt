@@ -39,7 +39,7 @@ class ViewChunkPacketizer : BaseFacet<WorldContext, ViewChunk>(ViewChunk::class)
     override suspend fun receive(message: ViewChunk): Response {
         val player = message.source
         player.connection.write(ChunkPublishPacket(player.position.toInt3(), player.findFacet(View::class).distance shl 4))
-        message.chunks.forEach { chunk -> (player.connection.handler as WorldPacketHandler).cacheChunk(chunk) }
+        (player.connection.handler as WorldPacketHandler).writeChunks(message.chunks)
 
         return Pass
     }

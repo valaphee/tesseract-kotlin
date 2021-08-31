@@ -22,28 +22,20 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.provider
+package com.valaphee.tesseract.world
 
-import com.valaphee.tesseract.actor.player.Player
-import com.valaphee.tesseract.world.World
-import com.valaphee.tesseract.world.chunk.Chunk
-import java.util.UUID
+import com.valaphee.foundry.ecs.BaseAttribute
+import kotlin.random.Random
 
 /**
  * @author Kevin Ludwig
  */
-interface Provider {
-    fun loadWorld(): World?
+class Environment(
+    var time: Int = 0,
+    var rainTime: Int = Random.nextInt(168000) + 12000,
+    var rainLevel: Float = 0.0f,
+    var thunderTime: Int = Random.nextInt(168000) + 3600,
+    var thunderLevel: Float = 0.0f
+) : BaseAttribute()
 
-    fun saveWorld(world: World)
-
-    fun loadPlayer(userId: UUID): Player?
-
-    fun savePlayer(userId: UUID, player: Player)
-
-    fun loadChunk(chunkPosition: Long): Chunk?
-
-    fun saveChunks(chunks: Iterable<Chunk>)
-
-    fun destroy() = Unit
-}
+val World.environment get() = findAttribute(Environment::class)

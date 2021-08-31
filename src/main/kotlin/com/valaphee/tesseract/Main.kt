@@ -64,11 +64,9 @@ import java.util.Base64
 import java.util.regex.Pattern
 import kotlin.concurrent.thread
 
-/*TODO*/
 lateinit var biomeDefinitionsPacket: BiomeDefinitionsPacket
 lateinit var entityIdentifiersPacket: EntityIdentifiersPacket
 lateinit var creativeInventoryPacket: CreativeInventoryPacket
-/*TODO*/
 
 fun main(arguments: Array<String>) {
     val argument = Argument().apply { if (!parse(arguments)) return }
@@ -76,10 +74,10 @@ fun main(arguments: Array<String>) {
     initializeConsole()
     initializeLogging()
 
-    /*TODO*/
     val clazz = MethodHandles.lookup().lookupClass()
     val gson = GsonBuilder().create()
     val base64Decoder = Base64.getDecoder()
+
     run {
         val buffer = PooledByteBufAllocator.DEFAULT.directBuffer()
         try {
@@ -94,20 +92,24 @@ fun main(arguments: Array<String>) {
         Block.finish()
         Blocks.populate()
     }
+
     run {
         @Suppress("BlockingMethodInNonBlockingContext")
         gson.newJsonReader(InputStreamReader(clazz.getResourceAsStream("/runtime_item_states.json")!!)).use { (gson.fromJson(it, JsonArray::class.java) as JsonArray).map { it.asJsonObject }.forEach { Item.register(it.getString("name"), it.getInt("id")) } }
     }
+
     run {
         val data = clazz.getResourceAsStream("/biome_definitions.dat")!!.readBytes()
         @Suppress("BlockingMethodInNonBlockingContext")
         biomeDefinitionsPacket = BiomeDefinitionsPacket(data)
     }
+
     run {
         val data = clazz.getResourceAsStream("/entity_identifiers.dat")!!.readBytes()
         @Suppress("BlockingMethodInNonBlockingContext")
         entityIdentifiersPacket = EntityIdentifiersPacket(data)
     }
+
     run {
         @Suppress("BlockingMethodInNonBlockingContext")
         gson.newJsonReader(InputStreamReader(clazz.getResourceAsStream("/creative_items.json")!!)).use {
@@ -125,7 +127,6 @@ fun main(arguments: Array<String>) {
             creativeInventoryPacket = CreativeInventoryPacket(content.toTypedArray())
         }
     }
-    /*TODO*/
 
     val guice = Guice.createInjector(object : AbstractModule() {
         override fun configure() {
@@ -142,7 +143,9 @@ fun main(arguments: Array<String>) {
             bind(Argument::class.java).toInstance(argument)
         }
     })
-    ServerInstance(guice).bind()
+    val serverInstance = ServerInstance(guice)
+    serverInstance.bind()
+    Runtime.getRuntime().addShutdownHook(thread(false) { serverInstance.destroy() })
 
     val commandManager = guice.getInstance(CommandManager::class.java)
 
@@ -158,6 +161,5 @@ fun main(arguments: Array<String>) {
         }
     }
 
-    /*TODO*/
     thread(name = "infinisleeper") { Thread.sleep(Long.MAX_VALUE) }
 }

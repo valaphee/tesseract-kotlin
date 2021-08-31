@@ -60,6 +60,7 @@ class View @Inject constructor(
         }
 
     override suspend fun receive(message: LocationManagerMessage): Response {
+        println(message)
         message.entity?.whenTypeIs<PlayerType> {
             val position = it.position.toInt3()
             val chunkX = position.x shr 4
@@ -72,11 +73,7 @@ class View @Inject constructor(
                 val chunksInDistance = LongArrayList()
                 for (chunkXr in -distance..distance) for (chunkZr in -distance..distance) if ((chunkXr * chunkXr) + (chunkZr * chunkZr) <= distance2) chunksInDistance.add(encodePosition(chunkX + chunkXr, chunkZ + chunkZr))
 
-                chunksInDistance.sort { position1, position2 ->
-                    val (x1, z1) = decodePosition(position1)
-                    val (x2, z2) = decodePosition(position2)
-                    distance(chunkX, chunkZ, x1, z1).compareTo(distance(chunkX, chunkZ, x2, z2))
-                }
+                chunksInDistance.sort { a, b -> chunkPosition.distance2(decodePosition(a)).compareTo(chunkPosition.distance2(decodePosition(b))) }
 
                 val chunksToRelease = _acquiredChunks.filterNot(chunksInDistance::contains)
                 val chunksToAcquire = chunksInDistance.filterNot(_acquiredChunks::contains)
@@ -95,10 +92,10 @@ class View @Inject constructor(
     }
 
     companion object {
-        fun distance(x1: Int, z1: Int, x2: Int, z2: Int): Int {
-            val dx = x1 - x2
-            val dz = z1 - z2
-            return dx * dx + dz * dz
+        fun Int2.distance2(other: Int2): Int {
+            val dx = x - other.x
+            val dy = y - other.y
+            return dx * dx + dy * dy
         }
     }
 }

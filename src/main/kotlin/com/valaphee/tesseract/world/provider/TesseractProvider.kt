@@ -71,6 +71,10 @@ class TesseractProvider @Inject constructor(
         }
     }
 
+    override fun destroy() {
+        database.close()
+    }
+
     companion object {
         private val worldKey = byteArrayOf()
 

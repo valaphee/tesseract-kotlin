@@ -70,23 +70,21 @@ data class PlayerListPacket(
 
     override fun write(buffer: PacketBuffer, version: Int) {
         buffer.writeByte(action.ordinal)
-        entries.let {
-            buffer.writeVarUInt(it.size)
-            it.forEach {
-                buffer.writeUuid(it.userId)
-                if (action == Action.Add) {
-                    buffer.writeVarLong(it.uniqueEntityId)
-                    buffer.writeString(it.userName!!)
-                    buffer.writeString(it.xboxUserId!!)
-                    buffer.writeString(it.platformChatId!!)
-                    buffer.writeIntLE(it.operatingSystem!!.ordinal)
-                    if (version >= 428) buffer.writeAppearance(it.appearance!!) else if (version >= 419) buffer.writeAppearancePre428(it.appearance!!) else if (version >= 390) buffer.writeAppearancePre419(it.appearance!!) else buffer.writeAppearancePre390(it.appearance!!)
-                    buffer.writeBoolean(it.teacher)
-                    buffer.writeBoolean(it.host)
-                }
+        buffer.writeVarUInt(entries.size)
+        entries.forEach {
+            buffer.writeUuid(it.userId)
+            if (action == Action.Add) {
+                buffer.writeVarLong(it.uniqueEntityId)
+                buffer.writeString(it.userName!!)
+                buffer.writeString(it.xboxUserId!!)
+                buffer.writeString(it.platformChatId!!)
+                buffer.writeIntLE(it.operatingSystem!!.ordinal)
+                if (version >= 428) buffer.writeAppearance(it.appearance!!) else if (version >= 419) buffer.writeAppearancePre428(it.appearance!!) else if (version >= 390) buffer.writeAppearancePre419(it.appearance!!) else buffer.writeAppearancePre390(it.appearance!!)
+                buffer.writeBoolean(it.teacher)
+                buffer.writeBoolean(it.host)
             }
-            if (version >= 390 && action == Action.Add) it.forEach { buffer.writeBoolean(it.appearance!!.trusted) }
         }
+        if (version >= 390 && action == Action.Add) entries.forEach { buffer.writeBoolean(it.appearance!!.trusted) }
     }
 
     override fun handle(handler: PacketHandler) = handler.playerList(this)

@@ -30,6 +30,7 @@ import com.valaphee.foundry.ecs.system.BaseFacet
 import com.valaphee.tesseract.actor.player.Player
 import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.actor.player.authExtra
+import com.valaphee.tesseract.actor.player.user
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.base.TextPacket
 import com.valaphee.tesseract.net.connection
@@ -50,12 +51,23 @@ class PlayerList : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMe
     override suspend fun receive(message: EntityManagerMessage): Response {
         when (message) {
             is EntityAdd -> message.entities.first().whenTypeIs<PlayerType> {
+                val authExtra = it.authExtra
+                val user = it.user
+                broadcast(PlayerListPacket(PlayerListPacket.Action.Add, arrayOf(PlayerListPacket.Entry(authExtra.userId, it.id, authExtra.userName, authExtra.xboxUserId, "", user.operatingSystem, user.appearance, false, false))))
                 players.add(it)
+                it.connection.write(PlayerListPacket(PlayerListPacket.Action.Add, players.map {
+                    val authExtra = it.authExtra
+                    val user = it.user
+                    PlayerListPacket.Entry(authExtra.userId, it.id, authExtra.userName, authExtra.xboxUserId, "", user.operatingSystem, user.appearance, false, false)
+                }.toTypedArray()))
+
                 broadcastSystemMessage("${it.authExtra.userName} entered the world")
             }
             is EntityRemove -> message.context.engine.findEntityOrNull(message.entityIds.first())?.whenTypeIs<PlayerType> {
-                broadcastSystemMessage("${it.authExtra.userName} exited the world")
                 players.remove(it)
+
+                broadcastSystemMessage("${it.authExtra.userName} exited the world")
+                broadcast(PlayerListPacket(PlayerListPacket.Action.Remove, arrayOf(PlayerListPacket.Entry(it.authExtra.userId))))
             }
         }
 

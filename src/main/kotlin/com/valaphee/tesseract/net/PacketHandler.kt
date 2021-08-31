@@ -60,6 +60,7 @@ import com.valaphee.tesseract.net.init.PacksResponsePacket
 import com.valaphee.tesseract.net.init.PacksStackPacket
 import com.valaphee.tesseract.net.init.ServerToClientHandshakePacket
 import com.valaphee.tesseract.net.init.StatusPacket
+import com.valaphee.tesseract.world.EventPacket
 import com.valaphee.tesseract.world.PlayerListPacket
 import com.valaphee.tesseract.world.SoundEventPacket
 import com.valaphee.tesseract.world.SoundEventPacketV1
@@ -103,6 +104,8 @@ interface PacketHandler : ProtocolHandler {
     fun blockUpdate(packet: BlockUpdatePacket) = other(packet)
 
     fun soundEventV1(packet: SoundEventPacketV1) = other(packet)
+
+    fun event(packet: EventPacket) = other(packet)
 
     fun interact(packet: InteractPacket) = other(packet)
 
