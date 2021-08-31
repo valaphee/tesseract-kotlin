@@ -25,11 +25,16 @@
 package com.valaphee.tesseract.net
 
 import RecipesPacket
+import com.valaphee.tesseract.actor.ActorAddPacket
+import com.valaphee.tesseract.actor.RemoveEntityPacket
+import com.valaphee.tesseract.actor.attribute.AttributesPacket
 import com.valaphee.tesseract.actor.location.MoveRotatePacket
 import com.valaphee.tesseract.actor.location.TeleportPacket
+import com.valaphee.tesseract.actor.metadata.MetadataPacket
 import com.valaphee.tesseract.actor.player.InputPacket
 import com.valaphee.tesseract.actor.player.InteractPacket
 import com.valaphee.tesseract.actor.player.PlayerActionPacket
+import com.valaphee.tesseract.actor.player.PlayerAddPacket
 import com.valaphee.tesseract.actor.player.PlayerLocationPacket
 import com.valaphee.tesseract.actor.player.view.ChunkPacket
 import com.valaphee.tesseract.actor.player.view.ChunkPublishPacket
@@ -60,13 +65,13 @@ import com.valaphee.tesseract.net.init.PacksResponsePacket
 import com.valaphee.tesseract.net.init.PacksStackPacket
 import com.valaphee.tesseract.net.init.ServerToClientHandshakePacket
 import com.valaphee.tesseract.net.init.StatusPacket
-import com.valaphee.tesseract.world.EventPacket
 import com.valaphee.tesseract.world.PlayerListPacket
 import com.valaphee.tesseract.world.SoundEventPacket
 import com.valaphee.tesseract.world.SoundEventPacketV1
 import com.valaphee.tesseract.world.SoundEventPacketV2
 import com.valaphee.tesseract.world.SoundPacket
 import com.valaphee.tesseract.world.SoundStopPacket
+import com.valaphee.tesseract.world.WorldEventPacket
 import com.valaphee.tesseract.world.WorldPacket
 import com.valaphee.tesseract.world.chunk.terrain.BlockUpdatePacket
 import com.valaphee.tesseract.world.chunk.terrain.BlockUpdateSyncedPacket
@@ -97,6 +102,12 @@ interface PacketHandler : ProtocolHandler {
 
     fun world(packet: WorldPacket) = other(packet)
 
+    fun playerAdd(packet: PlayerAddPacket) = other(packet)
+
+    fun actorAdd(packet: ActorAddPacket) = other(packet)
+
+    fun actorRemove(packet: RemoveEntityPacket) = other(packet)
+
     fun teleport(packet: TeleportPacket) = other(packet)
 
     fun playerLocation(packet: PlayerLocationPacket) = other(packet)
@@ -105,11 +116,15 @@ interface PacketHandler : ProtocolHandler {
 
     fun soundEventV1(packet: SoundEventPacketV1) = other(packet)
 
-    fun event(packet: EventPacket) = other(packet)
+    fun worldEvent(packet: WorldEventPacket) = other(packet)
+
+    fun attributes(packet: AttributesPacket) = other(packet)
 
     fun interact(packet: InteractPacket) = other(packet)
 
     fun playerAction(packet: PlayerActionPacket) = other(packet)
+
+    fun metadata(packet: MetadataPacket) = other(packet)
 
     fun windowOpen(packet: WindowOpenPacket) = other(packet)
 

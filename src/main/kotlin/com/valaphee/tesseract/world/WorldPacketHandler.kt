@@ -32,19 +32,23 @@ import RecipesPacket
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
-import com.valaphee.tesseract.actor.location.Location
 import com.valaphee.tesseract.actor.location.Teleport
 import com.valaphee.tesseract.actor.location.position
 import com.valaphee.tesseract.actor.location.rotation
+import com.valaphee.tesseract.actor.metadata.Flag
+import com.valaphee.tesseract.actor.metadata.Metadata
+import com.valaphee.tesseract.actor.metadata.MetadataField
+import com.valaphee.tesseract.actor.metadata.MetadataPacket
+import com.valaphee.tesseract.actor.metadata.metadata
 import com.valaphee.tesseract.actor.player.AuthExtra
 import com.valaphee.tesseract.actor.player.InteractPacket
 import com.valaphee.tesseract.actor.player.Player
 import com.valaphee.tesseract.actor.player.PlayerActionPacket
 import com.valaphee.tesseract.actor.player.PlayerLocationPacket
-import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.actor.player.User
 import com.valaphee.tesseract.actor.player.authExtra
 import com.valaphee.tesseract.actor.player.breakBlock
+import com.valaphee.tesseract.actor.player.player
 import com.valaphee.tesseract.actor.player.view.ChunkPacket
 import com.valaphee.tesseract.actor.player.view.View
 import com.valaphee.tesseract.actor.player.view.ViewDistancePacket
@@ -55,7 +59,7 @@ import com.valaphee.tesseract.command.net.Origin
 import com.valaphee.tesseract.creativeInventoryPacket
 import com.valaphee.tesseract.entityIdentifiersPacket
 import com.valaphee.tesseract.inventory.Inventory
-import com.valaphee.tesseract.inventory.InventoryHolder
+import com.valaphee.tesseract.inventory.InventoryAttribute
 import com.valaphee.tesseract.inventory.InventoryRequestPacket
 import com.valaphee.tesseract.inventory.WindowClosePacket
 import com.valaphee.tesseract.inventory.WindowType
@@ -102,15 +106,18 @@ class WorldPacketHandler(
     override fun initialize() {
         user.appearance.id = "0"
 
-        player = (context.provider.loadPlayer(authExtra.userId) ?: context.entityFactory(PlayerType, setOf(
-            Location(Float3(0.0f, 100.0f, 0.0f), Float2.Zero)
-        ))).asMutableEntity().apply {
+        player = (context.provider.loadPlayer(authExtra.userId) ?: context.entityFactory.player(Float3(0.0f, 100.0f, 0.0f), Float2.Zero)).asMutableEntity().apply {
             addAttribute(Remote(connection))
             addAttribute(this@WorldPacketHandler.authExtra)
             addAttribute(this@WorldPacketHandler.user)
-            addAttribute(InventoryHolder(Inventory(WindowType.Inventory)))
-        }
-        context.world.addEntities(context, null, player)
+            addAttribute(Metadata().apply {
+                this[MetadataField.Flags] = listOf(
+                    Flag.Breathing,
+                    Flag.HasGravity
+                )
+            })
+            addAttribute(InventoryAttribute(Inventory(WindowType.Inventory)))
+        }.also { context.world.addEntities(context, null, it) }
 
         val environment = context.world.environment
         connection.write(
@@ -187,6 +194,8 @@ class WorldPacketHandler(
         connection.write(entityIdentifiersPacket)
         connection.write(creativeInventoryPacket)
         connection.write(RecipesPacket(emptyArray(), emptyArray(), emptyArray(), true))
+
+        connection.write(MetadataPacket(player.id, player.metadata, 0))
 
         player.sendMessage(Teleport(context, player, player, player.position, player.rotation)) // notify view
     }

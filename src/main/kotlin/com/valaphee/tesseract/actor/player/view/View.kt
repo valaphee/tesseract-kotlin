@@ -60,7 +60,6 @@ class View @Inject constructor(
         }
 
     override suspend fun receive(message: LocationManagerMessage): Response {
-        println(message)
         message.entity?.whenTypeIs<PlayerType> {
             val position = it.position.toInt3()
             val chunkX = position.x shr 4

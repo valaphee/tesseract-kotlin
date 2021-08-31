@@ -44,11 +44,11 @@ class EnvironmentUpdater : BaseBehavior<WorldContext>(Environment::class) {
                 if (raining) {
                     environment.rainLevel = 1.0f
                     environment.rainTime = Random.nextInt(12000) + 12000
-                    it.broadcast(EventPacket(EventPacket.Event.StartRaining, Float3.Zero, environment.rainTime))
+                    it.broadcast(WorldEventPacket(WorldEventPacket.Event.StartRaining, Float3.Zero, environment.rainTime))
                 } else {
                     environment.rainLevel = 0.0f
                     environment.rainTime = Random.nextInt(168000) + 12000
-                    it.broadcast(EventPacket(EventPacket.Event.StopRaining, Float3.Zero, environment.rainTime))
+                    it.broadcast(WorldEventPacket(WorldEventPacket.Event.StopRaining, Float3.Zero, environment.rainTime))
                 }
             }
 
@@ -60,11 +60,11 @@ class EnvironmentUpdater : BaseBehavior<WorldContext>(Environment::class) {
 
                     environment.thunderLevel = 1.0f
                     environment.thunderTime = Random.nextInt(12000) + 12000
-                    it.broadcast(EventPacket(EventPacket.Event.StartThunderstorm, Float3.Zero, environment.rainTime))
+                    it.broadcast(WorldEventPacket(WorldEventPacket.Event.StartThunderstorm, Float3.Zero, environment.rainTime))
                 } else {
                     environment.thunderLevel = 0.0f
                     environment.thunderTime = Random.nextInt(168000) + 3600
-                    it.broadcast(EventPacket(EventPacket.Event.StopThunderstorm, Float3.Zero, environment.rainTime))
+                    it.broadcast(WorldEventPacket(WorldEventPacket.Event.StopThunderstorm, Float3.Zero, environment.rainTime))
                 }
             }
 

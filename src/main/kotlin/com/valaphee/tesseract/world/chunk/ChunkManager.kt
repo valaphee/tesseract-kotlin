@@ -51,7 +51,7 @@ class ChunkManager @Inject constructor(
                 context.world.addEntities(context, message.source, *message.positions.filterNot(chunks::containsKey).map { position ->
                     (context.provider.loadChunk(position) ?: run {
                         val position = decodePosition(position)
-                        context.entityFactory(ChunkType, setOf(Location(position), generator.generate(position)))
+                        context.entityFactory.chunk(position, generator.generate(position))
                     }).also {
                         it.asMutableEntity().apply {
                             addAttribute(Ticket())

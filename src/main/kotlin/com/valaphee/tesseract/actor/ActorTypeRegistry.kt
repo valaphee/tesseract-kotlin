@@ -22,25 +22,21 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.player.view
+package com.valaphee.tesseract.actor
 
-import com.valaphee.foundry.ecs.Consumed
-import com.valaphee.foundry.ecs.Response
-import com.valaphee.foundry.ecs.system.BaseFacet
-import com.valaphee.tesseract.actor.location.position
-import com.valaphee.tesseract.net.connection
-import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.WorldPacketHandler
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap
 
 /**
  * @author Kevin Ludwig
  */
-class ViewChunkPacketizer : BaseFacet<WorldContext, ViewChunk>(ViewChunk::class) {
-    override suspend fun receive(message: ViewChunk): Response {
-        val player = message.source
-        player.connection.write(ChunkPublishPacket(player.position.toInt3(), player.findFacet(View::class).distance shl 4))
-        (player.connection.handler as WorldPacketHandler).writeChunks(message.chunks)
+object ActorTypeRegistry {
+    private val idByKey = Object2IntOpenHashMap<String>()
 
-        return Consumed
+    fun register(key: String, id: Int) {
+        idByKey[key] = id
     }
+
+    fun idByKey(key: String) = idByKey.getInt(key)
+
+    val size get() = idByKey.size
 }

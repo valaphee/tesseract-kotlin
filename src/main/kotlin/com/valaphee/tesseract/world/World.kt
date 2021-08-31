@@ -25,10 +25,15 @@
 package com.valaphee.tesseract.world
 
 import com.valaphee.foundry.ecs.entity.BaseEntityType
+import com.valaphee.tesseract.util.ecs.EntityFactory
 
 /**
  * @author Kevin Ludwig
  */
-object WorldType : BaseEntityType("world")
+object WorldType : BaseEntityType("tesseract:world")
 
 typealias World = EntityOfWorld<WorldType>
+
+fun EntityFactory<WorldContext>.world() = invoke(WorldType, setOf(
+    Environment()
+))

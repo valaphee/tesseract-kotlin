@@ -28,8 +28,10 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.google.inject.AbstractModule
 import com.google.inject.Inject
 import com.google.inject.Injector
+import com.valaphee.tesseract.actor.ActorPacketizer
 import com.valaphee.tesseract.actor.location.LocationManager
 import com.valaphee.tesseract.actor.player.BlockBreakProcessor
+import com.valaphee.tesseract.actor.player.PlayerAddPacketizer
 import com.valaphee.tesseract.actor.player.PlayerLocationPacketizer
 import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.actor.player.view.View
@@ -101,8 +103,8 @@ class ServerInstance(
                 EnvironmentUpdater::class.java
             )
             facets(
-                PlayerList::class.java, EntityManager::class.java,
-                ChunkManager::class.java
+                EntityManager::class.java, PlayerList::class.java, PlayerAddPacketizer::class.java, ActorPacketizer::class.java, // EntityManagerMessage(EntityAdd, EntityRemove)
+                ChunkManager::class.java // ChunkManagerMessage(ChunkAcquire, ChunkRelease)
             )
         }
         register(ChunkType) {
@@ -112,9 +114,9 @@ class ServerInstance(
         }
         register(PlayerType) {
             facets(
-                LocationManager::class.java, PlayerLocationPacketizer::class.java,
-                View::class.java, ViewChunkPacketizer::class.java,
-                BlockBreakProcessor::class.java
+                LocationManager::class.java, View::class.java, PlayerLocationPacketizer::class.java, // LocationManagerMessage(Move, MoveRotate, Rotate, Teleport)
+                ViewChunkPacketizer::class.java, // ViewChunk
+                BlockBreakProcessor::class.java // BlockBreak
             )
         }
     }

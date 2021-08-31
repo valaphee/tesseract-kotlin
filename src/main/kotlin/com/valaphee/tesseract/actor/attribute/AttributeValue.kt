@@ -22,18 +22,41 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.inventory
-
-import com.valaphee.foundry.ecs.BaseAttribute
-import com.valaphee.tesseract.actor.AnyActorOfWorld
-import com.valaphee.tesseract.util.ecs.Runtime
+package com.valaphee.tesseract.actor.attribute
 
 /**
  * @author Kevin Ludwig
  */
-@Runtime
-class InventoryHolder(
-    val inventory: Inventory
-) : BaseAttribute()
+class AttributeValue internal constructor(
+    val key: String,
+    minimum: Float,
+    maximum: Float,
+    defaultValue: Float,
+    value: Float = defaultValue
+) {
+    var minimum = minimum
+        set(value) {
+            field = value
+            modified = true
+        }
 
-val AnyActorOfWorld.inventory get() = findAttribute(InventoryHolder::class).inventory
+    var maximum = maximum
+        set(value) {
+            field = value
+            modified = true
+        }
+
+    var defaultValue = defaultValue
+        set(value) {
+            field = value
+            modified = true
+        }
+
+    var value = value
+        set(value) {
+            field = value
+            modified = true
+        }
+
+    var modified = true
+}

@@ -22,25 +22,36 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.player.view
+package com.valaphee.tesseract.actor
 
 import com.valaphee.foundry.ecs.Consumed
+import com.valaphee.foundry.ecs.Pass
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
+import com.valaphee.foundry.math.Float3
+import com.valaphee.tesseract.actor.attribute._attributes
 import com.valaphee.tesseract.actor.location.position
-import com.valaphee.tesseract.net.connection
+import com.valaphee.tesseract.actor.location.rotation
+import com.valaphee.tesseract.actor.metadata.metadata
 import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.WorldPacketHandler
+import com.valaphee.tesseract.world.broadcast
+import com.valaphee.tesseract.world.entity.EntityAdd
+import com.valaphee.tesseract.world.entity.EntityManagerMessage
+import com.valaphee.tesseract.world.filterType
 
 /**
  * @author Kevin Ludwig
  */
-class ViewChunkPacketizer : BaseFacet<WorldContext, ViewChunk>(ViewChunk::class) {
-    override suspend fun receive(message: ViewChunk): Response {
-        val player = message.source
-        player.connection.write(ChunkPublishPacket(player.position.toInt3(), player.findFacet(View::class).distance shl 4))
-        (player.connection.handler as WorldPacketHandler).writeChunks(message.chunks)
+class ActorPacketizer : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMessage::class) {
+    override suspend fun receive(message: EntityManagerMessage): Response {
+        when (message) {
+            is EntityAdd -> message.entities.filterType<ActorType>().forEach {
+                message.context.world.broadcast(ActorAddPacket(it.id, it.id, it.type, it.position, Float3.Zero, it.rotation, 0.0f, it._attributes, it.metadata, emptyArray())) // TODO replace broadcast
 
-        return Consumed
+                return Consumed
+            }
+        }
+
+        return Pass
     }
 }

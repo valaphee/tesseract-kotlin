@@ -35,14 +35,22 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.valaphee.foundry.ecs.BaseAttribute
 import com.valaphee.foundry.ecs.entity.BaseEntityType
 import com.valaphee.foundry.math.Int2
+import com.valaphee.tesseract.util.ecs.EntityFactory
 import com.valaphee.tesseract.world.EntityOfWorld
+import com.valaphee.tesseract.world.WorldContext
+import com.valaphee.tesseract.world.chunk.terrain.Terrain
 
 /**
  * @author Kevin Ludwig
  */
-object ChunkType : BaseEntityType("chunk")
+object ChunkType : BaseEntityType("tesseract:chunk")
 
 typealias Chunk = EntityOfWorld<ChunkType>
+
+fun EntityFactory<WorldContext>.chunk(position: Int2, terrain: Terrain) = invoke(ChunkType, setOf(
+    Location(position),
+    terrain
+))
 
 /**
  * @author Kevin Ludwig

@@ -50,7 +50,7 @@ class PlayerList : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMe
 
     override suspend fun receive(message: EntityManagerMessage): Response {
         when (message) {
-            is EntityAdd -> message.entities.first().whenTypeIs<PlayerType> {
+            is EntityAdd -> message.entities.filterType<PlayerType>().forEach {
                 val authExtra = it.authExtra
                 val user = it.user
                 broadcast(PlayerListPacket(PlayerListPacket.Action.Add, arrayOf(PlayerListPacket.Entry(authExtra.userId, it.id, authExtra.userName, authExtra.xboxUserId, "", user.operatingSystem, user.appearance, false, false))))
@@ -63,7 +63,7 @@ class PlayerList : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMe
 
                 broadcastSystemMessage("${it.authExtra.userName} entered the world")
             }
-            is EntityRemove -> message.context.engine.findEntityOrNull(message.entityIds.first())?.whenTypeIs<PlayerType> {
+            is EntityRemove -> message.entityIds.map(message.context.engine::findEntityOrNull).filterNotNull().filterType<PlayerType>().forEach {
                 players.remove(it)
 
                 broadcastSystemMessage("${it.authExtra.userName} exited the world")

@@ -48,5 +48,5 @@ class CommandManager {
         }
     }
 
-    fun dispatch(command: String) = Result().fail("TODO")
+    fun dispatch(command: String): Result = TODO()
 }

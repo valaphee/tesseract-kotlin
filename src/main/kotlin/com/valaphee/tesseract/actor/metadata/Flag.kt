@@ -22,25 +22,75 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.player.view
-
-import com.valaphee.foundry.ecs.Consumed
-import com.valaphee.foundry.ecs.Response
-import com.valaphee.foundry.ecs.system.BaseFacet
-import com.valaphee.tesseract.actor.location.position
-import com.valaphee.tesseract.net.connection
-import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.WorldPacketHandler
+package com.valaphee.tesseract.actor.metadata
 
 /**
  * @author Kevin Ludwig
  */
-class ViewChunkPacketizer : BaseFacet<WorldContext, ViewChunk>(ViewChunk::class) {
-    override suspend fun receive(message: ViewChunk): Response {
-        val player = message.source
-        player.connection.write(ChunkPublishPacket(player.position.toInt3(), player.findFacet(View::class).distance shl 4))
-        (player.connection.handler as WorldPacketHandler).writeChunks(message.chunks)
+enum class Flag {
+    OnFire,
+    Crouching,
+    Riding,
+    Sprinting,
+    UsingItem,
+    Invisible,
+    Tempted,
+    InLove,
+    Saddled,
+    Powered,
+    Charged,
+    Baby,
+    Converting,
+    Critical,
+    CanShowName,
+    AlwaysShowName,
+    Immobile,
+    Silent,
+    WallClimbing,
+    CanClimb,
+    CanSwim,
+    CanFly,
+    CanWalk,
+    Resting,
+    Sitting,
+    Angry,
+    Interested,
+    Charged2,
+    Tamed,
+    Orphaned,
+    Leashed,
+    Sheared,
+    Gliding,
+    Elder,
+    Moving,
+    Breathing,
+    Chested,
+    Stackable,
+    ShowBottom,
+    Standing,
+    Shaking,
+    Idling,
+    Casting,
+    Charging,
+    Controlled,
+    CanPowerJump,
+    Lingering,
+    HasCollision,
+    HasGravity,
+    FireImmune,
+    Dancing,
+    Enchanted,
+    ReturnTrident,
+    ContainerIsPrivate,
+    Transforming,
+    DamageNearbyMobs,
+    Swimming,
+    Bribed,
+    IsPregnant,
+    LayingEgg,
+    RiderCanPick,
+    TransitionSitting,
+    Eating,
+    LayingDown
 
-        return Consumed
-    }
 }

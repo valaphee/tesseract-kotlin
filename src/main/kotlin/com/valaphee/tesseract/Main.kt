@@ -35,6 +35,7 @@ import com.google.gson.JsonObject
 import com.google.inject.AbstractModule
 import com.google.inject.Guice
 import com.google.inject.name.Names
+import com.valaphee.tesseract.actor.ActorTypeRegistry
 import com.valaphee.tesseract.command.CommandManager
 import com.valaphee.tesseract.inventory.CreativeInventoryPacket
 import com.valaphee.tesseract.inventory.item.Item
@@ -42,10 +43,12 @@ import com.valaphee.tesseract.inventory.item.stack.Stack
 import com.valaphee.tesseract.net.init.BiomeDefinitionsPacket
 import com.valaphee.tesseract.net.init.EntityIdentifiersPacket
 import com.valaphee.tesseract.util.LittleEndianByteBufInputStream
+import com.valaphee.tesseract.util.LittleEndianVarIntByteBufInputStream
 import com.valaphee.tesseract.util.getCompoundTag
 import com.valaphee.tesseract.util.getInt
 import com.valaphee.tesseract.util.getIntOrNull
 import com.valaphee.tesseract.util.getJsonArray
+import com.valaphee.tesseract.util.getListTag
 import com.valaphee.tesseract.util.getString
 import com.valaphee.tesseract.util.getStringOrNull
 import com.valaphee.tesseract.util.jackson.PatternDeserializer
@@ -57,6 +60,7 @@ import com.valaphee.tesseract.world.chunk.terrain.block.Blocks
 import io.netty.buffer.ByteBufInputStream
 import io.netty.buffer.PooledByteBufAllocator
 import io.netty.buffer.Unpooled
+import org.apache.logging.log4j.LogManager
 import java.io.IOException
 import java.io.InputStreamReader
 import java.lang.invoke.MethodHandles
@@ -74,6 +78,8 @@ fun main(arguments: Array<String>) {
     initializeConsole()
     initializeLogging()
 
+    val log = LogManager.getLogger("Registry")
+
     val clazz = MethodHandles.lookup().lookupClass()
     val gson = GsonBuilder().create()
     val base64Decoder = Base64.getDecoder()
@@ -81,9 +87,7 @@ fun main(arguments: Array<String>) {
     run {
         val buffer = PooledByteBufAllocator.DEFAULT.directBuffer()
         try {
-            @Suppress("BlockingMethodInNonBlockingContext")
             buffer.writeBytes(clazz.getResourceAsStream("/runtime_block_states.dat")!!.readBytes())
-            @Suppress("BlockingMethodInNonBlockingContext")
             NbtInputStream(ByteBufInputStream(buffer)).use { it.readTag() }?.asCompoundTag()?.get("blocks")?.asListTag()!!.toList().map { it.asCompoundTag()!! }.forEach { BlockState.register(BlockState(it.getString("name"), it.getCompoundTag("states"), it.getInt("version"))) }
         } finally {
             buffer.release()
@@ -91,27 +95,34 @@ fun main(arguments: Array<String>) {
         BlockState.finish()
         Block.finish()
         Blocks.populate()
+        log.info("Blocks: {}", Block.all.size)
+        log.info("Block states: {}", BlockState.all.size)
     }
 
     run {
-        @Suppress("BlockingMethodInNonBlockingContext")
         gson.newJsonReader(InputStreamReader(clazz.getResourceAsStream("/runtime_item_states.json")!!)).use { (gson.fromJson(it, JsonArray::class.java) as JsonArray).map { it.asJsonObject }.forEach { Item.register(it.getString("name"), it.getInt("id")) } }
+        log.info("Items: {}", Item.all.size)
     }
 
     run {
         val data = clazz.getResourceAsStream("/biome_definitions.dat")!!.readBytes()
-        @Suppress("BlockingMethodInNonBlockingContext")
         biomeDefinitionsPacket = BiomeDefinitionsPacket(data)
     }
 
     run {
-        val data = clazz.getResourceAsStream("/entity_identifiers.dat")!!.readBytes()
-        @Suppress("BlockingMethodInNonBlockingContext")
-        entityIdentifiersPacket = EntityIdentifiersPacket(data)
+        val buffer = PooledByteBufAllocator.DEFAULT.directBuffer()
+        try {
+            val data = clazz.getResourceAsStream("/entity_identifiers.dat")!!.readBytes()
+            buffer.writeBytes(data)
+            NbtInputStream(LittleEndianVarIntByteBufInputStream(buffer)).use { it.readTag() }!!.asCompoundTag()!!.getListTag("idlist").toList().map { it.asCompoundTag()!! }.forEach { ActorTypeRegistry.register(it.getString("id"), it.getInt("rid")) }
+            entityIdentifiersPacket = EntityIdentifiersPacket(data)
+        } finally {
+            buffer.release()
+        }
+        log.info("Actor types: {}", ActorTypeRegistry.size)
     }
 
     run {
-        @Suppress("BlockingMethodInNonBlockingContext")
         gson.newJsonReader(InputStreamReader(clazz.getResourceAsStream("/creative_items.json")!!)).use {
             val content = mutableListOf<Stack<*>>()
             (gson.fromJson(it, JsonObject::class.java) as JsonObject).getJsonArray("items").map { it.asJsonObject }.forEach {

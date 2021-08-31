@@ -22,25 +22,20 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.player.view
-
-import com.valaphee.foundry.ecs.Consumed
-import com.valaphee.foundry.ecs.Response
-import com.valaphee.foundry.ecs.system.BaseFacet
-import com.valaphee.tesseract.actor.location.position
-import com.valaphee.tesseract.net.connection
-import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.WorldPacketHandler
+package com.valaphee.tesseract.actor.metadata
 
 /**
  * @author Kevin Ludwig
  */
-class ViewChunkPacketizer : BaseFacet<WorldContext, ViewChunk>(ViewChunk::class) {
-    override suspend fun receive(message: ViewChunk): Response {
-        val player = message.source
-        player.connection.write(ChunkPublishPacket(player.position.toInt3(), player.findFacet(View::class).distance shl 4))
-        (player.connection.handler as WorldPacketHandler).writeChunks(message.chunks)
+class MetadataValue<T>(
+    val type: MetadataType<T>,
+    value: Any?,
+) {
+    var value = value
+        set(value) {
+            field = value
+            modified = true
+        }
 
-        return Consumed
-    }
+    var modified = true
 }

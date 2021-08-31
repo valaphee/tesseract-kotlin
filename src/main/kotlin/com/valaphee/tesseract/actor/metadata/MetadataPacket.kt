@@ -22,25 +22,30 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.player.view
+package com.valaphee.tesseract.actor.metadata
 
-import com.valaphee.foundry.ecs.Consumed
-import com.valaphee.foundry.ecs.Response
-import com.valaphee.foundry.ecs.system.BaseFacet
-import com.valaphee.tesseract.actor.location.position
-import com.valaphee.tesseract.net.connection
-import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.WorldPacketHandler
+import com.valaphee.tesseract.net.Packet
+import com.valaphee.tesseract.net.PacketBuffer
+import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.Restrict
+import com.valaphee.tesseract.net.Restriction
 
 /**
  * @author Kevin Ludwig
  */
-class ViewChunkPacketizer : BaseFacet<WorldContext, ViewChunk>(ViewChunk::class) {
-    override suspend fun receive(message: ViewChunk): Response {
-        val player = message.source
-        player.connection.write(ChunkPublishPacket(player.position.toInt3(), player.findFacet(View::class).distance shl 4))
-        (player.connection.handler as WorldPacketHandler).writeChunks(message.chunks)
+@Restrict(Restriction.Clientbound)
+data class MetadataPacket(
+    var runtimeEntityId: Long,
+    val metadata: Metadata,
+    var tick: Long
+) : Packet {
+    override val id get() = 0x27
 
-        return Consumed
+    override fun write(buffer: PacketBuffer, version: Int) {
+        buffer.writeVarULong(runtimeEntityId)
+        metadata.writeToBuffer(buffer)
+        if (version >= 419) buffer.writeVarULong(tick)
     }
+
+    override fun handle(handler: PacketHandler) = handler.metadata(this)
 }

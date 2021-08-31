@@ -24,6 +24,7 @@
 
 package com.valaphee.tesseract.actor.player
 
+import com.valaphee.foundry.ecs.Consumed
 import com.valaphee.foundry.ecs.Pass
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
@@ -32,6 +33,7 @@ import com.valaphee.tesseract.actor.location.LocationManagerMessage
 import com.valaphee.tesseract.actor.location.position
 import com.valaphee.tesseract.actor.location.rotation
 import com.valaphee.tesseract.world.WorldContext
+import com.valaphee.tesseract.world.broadcast
 import com.valaphee.tesseract.world.whenTypeIs
 
 /**
@@ -39,7 +41,11 @@ import com.valaphee.tesseract.world.whenTypeIs
  */
 class PlayerLocationPacketizer : BaseFacet<WorldContext, LocationManagerMessage>(LocationManagerMessage::class, Location::class) {
     override suspend fun receive(message: LocationManagerMessage): Response {
-        message.entity?.whenTypeIs<PlayerType> { PlayerLocationPacket(it, it.position, it.rotation, 0.0f, PlayerLocationPacket.Mode.Normal, true, null, null, 0L) }
+        message.entity?.whenTypeIs<PlayerType> {
+            message.context.world.broadcast(it, PlayerLocationPacket(it, it.position, it.rotation, 0.0f, PlayerLocationPacket.Mode.Normal, true, null, null, 0L)) // TODO replace broadcast
+
+            return Consumed
+        }
 
         return Pass
     }

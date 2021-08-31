@@ -121,7 +121,38 @@ signing {
     sign(publishing.publications)
 }
 
-publishing { publications { create<MavenPublication>("maven") { from(components["java"]) } } }
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            pom.apply {
+                name.set("Tesseract")
+                description.set("Experience Minecraft in a different way.")
+                url.set("https://valaphee.com")
+                scm {
+                    connection.set("https://github.com/valaphee/tesseract.git")
+                    developerConnection.set("https://github.com/valaphee/tesseract.git")
+                    url.set("https://github.com/valaphee/tesseract")
+                }
+                licenses {
+                    license {
+                        name.set("MIT License")
+                        url.set("https://raw.githubusercontent.com/valaphee/tesseract/master/LICENSE.txt")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("valaphee")
+                        name.set("Valaphee")
+                        email.set("iam@valaphee.com")
+                        roles.add("owner")
+                    }
+                }
+            }
+
+            from(components["java"])
+        }
+    }
+}
 
 launch4j {
     mainClassName = "com.valaphee.tesseract.MainKt"
@@ -130,7 +161,7 @@ launch4j {
     icon = "${projectDir}/app.ico"
     copyright = "Copyright (c) 2021, Valaphee"
     companyName = "Valaphee"
-    fileDescription = "Experience Minecraft in a different way"
+    fileDescription = "Experience Minecraft in a different way."
     productName = "Tesseract"
     jvmOptions = setOf("--add-opens java.base/jdk.internal.misc=ALL-UNNAMED", "--add-opens=java.base/java.nio=ALL-UNNAMED", "-Dio.netty.tryReflectionSetAccessible=true")
     copyConfigurable = emptyArray<Any>()

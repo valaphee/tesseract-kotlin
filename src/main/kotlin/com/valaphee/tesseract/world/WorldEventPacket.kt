@@ -36,7 +36,7 @@ import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.Clientbound)
-data class EventPacket(
+data class WorldEventPacket(
     var eventOrParticleType: Event,
     var position: Float3,
     var data: Int
@@ -230,7 +230,7 @@ data class EventPacket(
         buffer.writeVarInt(data)
     }
 
-    override fun handle(handler: PacketHandler) = handler.event(this)
+    override fun handle(handler: PacketHandler) = handler.worldEvent(this)
 
     companion object {
         private val eventsPre407 = Int2ObjectOpenHashBiMap<Event>().apply {

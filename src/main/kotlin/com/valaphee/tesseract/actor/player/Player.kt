@@ -24,13 +24,21 @@
 
 package com.valaphee.tesseract.actor.player
 
-import com.valaphee.foundry.ecs.entity.BaseEntityType
+import com.valaphee.foundry.math.Float2
+import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.actor.ActorType
+import com.valaphee.tesseract.actor.location.Location
+import com.valaphee.tesseract.util.ecs.EntityFactory
 import com.valaphee.tesseract.world.EntityOfWorld
+import com.valaphee.tesseract.world.WorldContext
 
 /**
  * @author Kevin Ludwig
  */
-object PlayerType : BaseEntityType("player"), ActorType
+object PlayerType : ActorType("minecraft:player")
 
 typealias Player = EntityOfWorld<PlayerType>
+
+fun EntityFactory<WorldContext>.player(position: Float3, rotation: Float2) = invoke(PlayerType, setOf(
+    Location(position, rotation)
+))
