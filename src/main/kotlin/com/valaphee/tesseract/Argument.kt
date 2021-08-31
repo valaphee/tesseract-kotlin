@@ -40,12 +40,13 @@ class Argument {
 
     fun parse(arguments: Array<String>): Boolean {
         val options = Options().apply {
-            addOption(Option.builder("c")
-                .desc("use a different configuration")
-                .longOpt("config")
-                .type(File::class.java)
-                .hasArg()
-                .build()
+            addOption(
+                Option.builder("c")
+                    .desc("use a different configuration")
+                    .longOpt("config")
+                    .type(File::class.java)
+                    .hasArg()
+                    .build()
             )
         }
         return try {

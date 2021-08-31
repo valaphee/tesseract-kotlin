@@ -22,6 +22,8 @@
  * SOFTWARE.
  */
 
+package com.valaphee.tesseract.inventory.recipe
+
 import com.valaphee.tesseract.inventory.item.stack.Stack
 import java.util.UUID
 

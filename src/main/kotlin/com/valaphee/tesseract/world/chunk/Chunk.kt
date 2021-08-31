@@ -47,10 +47,12 @@ object ChunkType : BaseEntityType("tesseract:chunk")
 
 typealias Chunk = EntityOfWorld<ChunkType>
 
-fun EntityFactory<WorldContext>.chunk(position: Int2, terrain: Terrain) = invoke(ChunkType, setOf(
-    Location(position),
-    terrain
-))
+fun EntityFactory<WorldContext>.chunk(position: Int2, terrain: Terrain) = invoke(
+    ChunkType, setOf(
+        Location(position),
+        terrain
+    )
+)
 
 /**
  * @author Kevin Ludwig

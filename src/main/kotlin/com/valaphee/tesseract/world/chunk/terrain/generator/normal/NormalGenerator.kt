@@ -52,7 +52,7 @@ class NormalGenerator(
                 set(xr, height, zr, grassId)
             }
         }
-    })
+    }, true)
 
     companion object {
         private val stoneId = BlockState.byKeyWithStates("minecraft:stone").id

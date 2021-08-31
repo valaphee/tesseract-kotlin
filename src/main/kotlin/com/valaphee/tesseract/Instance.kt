@@ -167,12 +167,16 @@ abstract class Instance(
     }
 
     open fun destroy() {
+        defaultSystemOut.println("Stopping engine...")
+
         worldEngine.running = false
 
         /*worldContext.provider.saveWorld(worldContext.world) TODO Chunk and Players get saved because destroy is called in PacketHandler, but saving the world leads to a non-loadable world*/
         worldContext.provider.destroy()
 
         executor.shutdown()
+
+        defaultSystemOut.println("Goodbye and see you soon!")
     }
 
     companion object {

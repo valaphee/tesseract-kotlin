@@ -22,6 +22,8 @@
  * SOFTWARE.
  */
 
+package com.valaphee.tesseract.inventory.recipe
+
 import com.valaphee.tesseract.inventory.item.stack.writeIngredient
 import com.valaphee.tesseract.inventory.item.stack.writeStackInstance
 import com.valaphee.tesseract.inventory.item.stack.writeStackPre431

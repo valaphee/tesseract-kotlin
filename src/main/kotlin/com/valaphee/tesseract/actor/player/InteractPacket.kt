@@ -64,8 +64,7 @@ class InteractPacketReader(
 ) : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int): InteractPacket {
         val action = InteractPacket.Action.values()[buffer.readByte().toInt()]
-        @Suppress("UNCHECKED_CAST")
-        val actor = context.engine.findEntityOrNull(buffer.readVarULong()) as? Actor
+        @Suppress("UNCHECKED_CAST") val actor = context.engine.findEntityOrNull(buffer.readVarULong()) as? Actor
         val mousePosition = if (action == InteractPacket.Action.Mouseover || action == InteractPacket.Action.NpcOpen) buffer.readFloat3() else null
         return InteractPacket(action, actor, mousePosition)
     }

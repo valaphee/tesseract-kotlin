@@ -24,7 +24,7 @@
 
 package com.valaphee.tesseract.net
 
-import GameMode
+import com.valaphee.tesseract.world.GameMode
 import java.util.StringJoiner
 
 /**

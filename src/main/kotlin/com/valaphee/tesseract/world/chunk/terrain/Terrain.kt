@@ -32,7 +32,8 @@ import com.valaphee.tesseract.world.chunk.Chunk
  * @author Kevin Ludwig
  */
 class Terrain(
-    val blockStorage: BlockStorage
+    val blockStorage: BlockStorage,
+    @JsonIgnore var modified: Boolean = false
 ) : BaseAttribute() {
     @JsonIgnore val blockUpdates = BlockUpdateList(blockStorage)
 }

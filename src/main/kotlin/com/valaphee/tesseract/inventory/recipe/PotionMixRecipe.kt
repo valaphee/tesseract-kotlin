@@ -22,23 +22,18 @@
  * SOFTWARE.
  */
 
+package com.valaphee.tesseract.inventory.recipe
+
 /**
  * @author Kevin Ludwig
  */
-enum class GameMode(
-    val key: String = ""
+data class PotionMixRecipe(
+    var inputId: Int,
+    var inputSubId: Int,
+    var reagentId: Int,
+    var reagentSubId: Int,
+    var outputId: Int,
+    var outputSubId: Int
 ) {
-    Survival("Survival"),
-    Creative("Creative"),
-    Adventure("Adventure"),
-    SurvivalViewer,
-    CreativeViewer,
-    Default("Default"),
-    WorldDefault;
-
-    companion object {
-        private val byKey = values().associateBy { it.key }
-
-        fun byKeyOrNull(key: String) = byKey[key]
-    }
+    constructor(inputId: Int, reagentId: Int, outputId: Int) : this(inputId, 0, reagentId, 0, outputId, 0)
 }

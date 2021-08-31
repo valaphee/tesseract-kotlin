@@ -22,16 +22,13 @@
  * SOFTWARE.
  */
 
+package com.valaphee.tesseract.inventory.recipe
+
 /**
  * @author Kevin Ludwig
  */
-data class PotionMixRecipe(
+data class ContainerMixRecipe(
     var inputId: Int,
-    var inputSubId: Int,
     var reagentId: Int,
-    var reagentSubId: Int,
-    var outputId: Int,
-    var outputSubId: Int
-) {
-    constructor(inputId: Int, reagentId: Int, outputId: Int) : this(inputId, 0, reagentId, 0, outputId, 0)
-}
+    var outputId: Int
+)

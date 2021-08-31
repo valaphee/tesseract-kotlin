@@ -53,6 +53,7 @@ class BlockUpdater : BaseBehavior<WorldContext>(Location::class, Terrain::class)
                     BlockUpdatePacket(Int3((chunkX * BlockStorage.XZSize) + x, y, (chunkZ * BlockStorage.XZSize) + z), value, BlockUpdatePacket.Flag.All, 0)
                 }.toTypedArray())
                 blockUpdateChanges.clear()
+                terrain.modified = true
             }
 
             val cycle = context.cycle.toInt()

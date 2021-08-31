@@ -31,6 +31,7 @@ import com.valaphee.foundry.ecs.system.BaseFacet
 import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.terrain.generator.Generator
+import com.valaphee.tesseract.world.chunk.terrain.terrain
 import com.valaphee.tesseract.world.entity.addEntities
 import com.valaphee.tesseract.world.entity.removeEntities
 import com.valaphee.tesseract.world.whenTypeIs
@@ -69,7 +70,7 @@ class ChunkManager @Inject constructor(
                     message.source?.whenTypeIs<PlayerType> { chunk.players -= it }
                     chunk.players.isEmpty()
                 }.map(chunks::remove)
-                context.provider.saveChunks(chunksRemoved)
+                context.provider.saveChunks(chunksRemoved.filter { it.terrain.modified })
                 context.world.removeEntities(context, message.source, *chunksRemoved.map { it.id }.toLongArray())
             }
         }

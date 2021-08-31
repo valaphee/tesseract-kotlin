@@ -79,6 +79,7 @@ fun main(arguments: Array<String>) {
     initializeLogging()
 
     val log = LogManager.getLogger("Registry")
+    log.info("Populating registries...")
 
     val clazz = MethodHandles.lookup().lookupClass()
     val gson = GsonBuilder().create()
@@ -95,13 +96,13 @@ fun main(arguments: Array<String>) {
         BlockState.finish()
         Block.finish()
         Blocks.populate()
-        log.info("Blocks: {}", Block.all.size)
-        log.info("Block states: {}", BlockState.all.size)
+        log.info("Blocks found: {}", Block.all.size)
+        log.info("Block states found: {}", BlockState.all.size)
     }
 
     run {
         gson.newJsonReader(InputStreamReader(clazz.getResourceAsStream("/runtime_item_states.json")!!)).use { (gson.fromJson(it, JsonArray::class.java) as JsonArray).map { it.asJsonObject }.forEach { Item.register(it.getString("name"), it.getInt("id")) } }
-        log.info("Items: {}", Item.all.size)
+        log.info("Items found: {}", Item.all.size)
     }
 
     run {
@@ -119,7 +120,7 @@ fun main(arguments: Array<String>) {
         } finally {
             buffer.release()
         }
-        log.info("Actor types: {}", ActorTypeRegistry.size)
+        log.info("Actor types found: {}", ActorTypeRegistry.size)
     }
 
     run {
@@ -156,7 +157,6 @@ fun main(arguments: Array<String>) {
     })
     val serverInstance = ServerInstance(guice)
     serverInstance.bind()
-    Runtime.getRuntime().addShutdownHook(thread(false) { serverInstance.destroy() })
 
     val commandManager = guice.getInstance(CommandManager::class.java)
 

@@ -34,6 +34,9 @@ object WorldType : BaseEntityType("tesseract:world")
 
 typealias World = EntityOfWorld<WorldType>
 
-fun EntityFactory<WorldContext>.world() = invoke(WorldType, setOf(
-    Environment()
-))
+fun EntityFactory<WorldContext>.world() = invoke(
+    WorldType, setOf(
+        Settings(GameMode.Creative, Difficulty.Normal),
+        Environment()
+    )
+)

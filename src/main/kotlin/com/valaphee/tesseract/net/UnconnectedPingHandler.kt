@@ -24,8 +24,8 @@
 
 package com.valaphee.tesseract.net
 
-import GameMode
 import com.valaphee.tesseract.Config
+import com.valaphee.tesseract.world.GameMode
 import io.netty.channel.ChannelFutureListener
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.socket.DatagramPacket

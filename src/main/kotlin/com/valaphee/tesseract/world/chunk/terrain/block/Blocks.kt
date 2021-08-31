@@ -83,7 +83,6 @@ object Blocks {
 
                         updateList[x + flowingMoves[offset], y + flowingMoves[offset + 1], z + flowingMoves[offset + 2], viscosity] = masses.entries.elementAt(maximumMass - newMass).key
                     }
-
                 }
 
                 if (mass == 0) updateList[x, y, z, 0] = airId

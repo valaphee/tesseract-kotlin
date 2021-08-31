@@ -24,11 +24,7 @@
 
 package com.valaphee.tesseract.world
 
-import Difficulty
-import Dimension
-import GameMode
 import Rank
-import RecipesPacket
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
@@ -65,6 +61,7 @@ import com.valaphee.tesseract.inventory.WindowClosePacket
 import com.valaphee.tesseract.inventory.WindowType
 import com.valaphee.tesseract.inventory.inventory
 import com.valaphee.tesseract.inventory.item.Item
+import com.valaphee.tesseract.inventory.recipe.RecipesPacket
 import com.valaphee.tesseract.net.Connection
 import com.valaphee.tesseract.net.GamePublishMode
 import com.valaphee.tesseract.net.Packet
@@ -119,6 +116,7 @@ class WorldPacketHandler(
             addAttribute(InventoryAttribute(Inventory(WindowType.Inventory)))
         }.also { context.world.addEntities(context, null, it) }
 
+        val settings = context.world.settings
         val environment = context.world.environment
         connection.write(
             WorldPacket(
@@ -132,8 +130,8 @@ class WorldPacketHandler(
                 "",
                 Dimension.Overworld,
                 WorldPacket.Overworld,
-                GameMode.Creative,
-                Difficulty.Normal,
+                settings.gameMode,
+                settings.difficulty,
                 Int3.Zero,
                 true,
                 environment.time,
@@ -185,8 +183,7 @@ class WorldPacketHandler(
                 "",
                 true,
                 0,
-                true,
-                "Tesseract"
+                true
             )
         )
 

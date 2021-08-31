@@ -49,7 +49,7 @@ class FlatGenerator(
         this.column = column.map { it.id }.toTypedArray()
     }
 
-    override fun generate(position: Int2) = Terrain(BlockStorage().apply { repeat(BlockStorage.XZSize) { xr -> repeat(BlockStorage.XZSize) { zr -> column.forEachIndexed { i, it -> set(xr, i, zr, it) } } } })
+    override fun generate(position: Int2) = Terrain(BlockStorage().apply { repeat(BlockStorage.XZSize) { xr -> repeat(BlockStorage.XZSize) { zr -> column.forEachIndexed { i, it -> set(xr, i, zr, it) } } } }, true)
 
     companion object {
         private val air = BlockState.byKeyWithStates("minecraft:air")

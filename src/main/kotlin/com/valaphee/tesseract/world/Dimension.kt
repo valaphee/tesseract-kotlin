@@ -22,11 +22,11 @@
  * SOFTWARE.
  */
 
+package com.valaphee.tesseract.world
+
 /**
  * @author Kevin Ludwig
  */
-data class ContainerMixRecipe(
-    var inputId: Int,
-    var reagentId: Int,
-    var outputId: Int
-)
+enum class Dimension {
+    Overworld, TheNether, TheEnd
+}

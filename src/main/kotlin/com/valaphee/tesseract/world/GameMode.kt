@@ -22,74 +22,25 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.metadata
+package com.valaphee.tesseract.world
 
 /**
  * @author Kevin Ludwig
  */
-enum class Flag {
-    OnFire,
-    Crouching,
-    Riding,
-    Sprinting,
-    UsingItem,
-    Invisible,
-    Tempted,
-    InLove,
-    Saddled,
-    Powered,
-    Charged,
-    Baby,
-    Converting,
-    Critical,
-    CanShowName,
-    AlwaysShowName,
-    Immobile,
-    Silent,
-    WallClimbing,
-    CanClimb,
-    CanSwim,
-    CanFly,
-    CanWalk,
-    Resting,
-    Sitting,
-    Angry,
-    Interested,
-    Charged2,
-    Tamed,
-    Orphaned,
-    Leashed,
-    Sheared,
-    Gliding,
-    Elder,
-    Moving,
-    Breathing,
-    Chested,
-    Stackable,
-    ShowBottom,
-    Standing,
-    Shaking,
-    Idling,
-    Casting,
-    Charging,
-    Controlled,
-    CanPowerJump,
-    Lingering,
-    HasCollision,
-    HasGravity,
-    FireImmune,
-    Dancing,
-    Enchanted,
-    ReturnTrident,
-    ContainerIsPrivate,
-    Transforming,
-    DamageNearbyMobs,
-    Swimming,
-    Bribed,
-    IsPregnant,
-    LayingEgg,
-    RiderCanPick,
-    TransitionSitting,
-    Eating,
-    LayingDown
+enum class GameMode(
+    val key: String = ""
+) {
+    Survival("Survival"),
+    Creative("Creative"),
+    Adventure("Adventure"),
+    SurvivalViewer,
+    CreativeViewer,
+    Default("Default"),
+    WorldDefault;
+
+    companion object {
+        private val byKey = values().associateBy { it.key }
+
+        fun byKeyOrNull(key: String) = byKey[key]
+    }
 }

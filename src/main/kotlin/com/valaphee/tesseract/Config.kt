@@ -48,7 +48,7 @@ data class Config(
     var userNamePattern: Pattern = Pattern.compile("^[a-zA-Z0-9_-]{3,16}\$"),
     var encryption: Boolean = true,
     var caching: Boolean = false,
-    var maximumViewDistance: Int = 32,
+    var maximumViewDistance: Int = 32
 ) {
     class Provider @Inject constructor(
         private val argument: Argument,

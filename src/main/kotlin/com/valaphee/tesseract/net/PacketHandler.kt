@@ -24,7 +24,6 @@
 
 package com.valaphee.tesseract.net
 
-import RecipesPacket
 import com.valaphee.tesseract.actor.ActorAddPacket
 import com.valaphee.tesseract.actor.RemoveEntityPacket
 import com.valaphee.tesseract.actor.attribute.AttributesPacket
@@ -50,6 +49,7 @@ import com.valaphee.tesseract.inventory.InventorySlotPacket
 import com.valaphee.tesseract.inventory.WindowClosePacket
 import com.valaphee.tesseract.inventory.WindowOpenPacket
 import com.valaphee.tesseract.inventory.WindowPropertyPacket
+import com.valaphee.tesseract.inventory.recipe.RecipesPacket
 import com.valaphee.tesseract.net.base.CacheBlobStatusPacket
 import com.valaphee.tesseract.net.base.CacheBlobsPacket
 import com.valaphee.tesseract.net.base.CacheStatusPacket

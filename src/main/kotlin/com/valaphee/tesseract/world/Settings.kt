@@ -22,9 +22,16 @@
  * SOFTWARE.
  */
 
+package com.valaphee.tesseract.world
+
+import com.valaphee.foundry.ecs.BaseAttribute
+
 /**
  * @author Kevin Ludwig
  */
-enum class Dimension {
-    Overworld, TheNether, TheEnd
-}
+class Settings(
+    var gameMode: GameMode,
+    var difficulty: Difficulty,
+) : BaseAttribute()
+
+val World.settings get() = findAttribute(Settings::class)

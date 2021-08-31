@@ -22,6 +22,8 @@
  * SOFTWARE.
  */
 
+package com.valaphee.tesseract.world
+
 /**
  * @author Kevin Ludwig
  */

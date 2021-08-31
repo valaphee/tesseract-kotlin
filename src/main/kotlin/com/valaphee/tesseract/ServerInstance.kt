@@ -73,6 +73,7 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.security.KeyPair
 import java.util.concurrent.TimeUnit
+import kotlin.concurrent.thread
 
 /**
  * @author Kevin Ludwig
@@ -89,6 +90,8 @@ class ServerInstance(
 
     init {
         this.injector.injectMembers(this)
+
+        Runtime.getRuntime().addShutdownHook(thread(false, name = "world-destroy") { destroy() })
     }
 
     override fun getModule() = object : AbstractModule() {
@@ -179,7 +182,9 @@ class ServerInstance(
     }
 
     override fun destroy() {
-        worldContext.world.broadcast(DisconnectPacket("Server shut down"))
+        defaultSystemOut.println("Disconnecting all players and shutting down listener...")
+
+        worldContext.world.broadcast(DisconnectPacket("Shut down"))
 
         channel.close().syncUninterruptibly()
 

@@ -39,6 +39,8 @@ object PlayerType : ActorType("minecraft:player")
 
 typealias Player = EntityOfWorld<PlayerType>
 
-fun EntityFactory<WorldContext>.player(position: Float3, rotation: Float2) = invoke(PlayerType, setOf(
-    Location(position, rotation)
-))
+fun EntityFactory<WorldContext>.player(position: Float3, rotation: Float2) = invoke(
+    PlayerType, setOf(
+        Location(position, rotation)
+    )
+)
