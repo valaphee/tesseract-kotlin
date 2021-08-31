@@ -43,7 +43,7 @@ class FlatGenerator(
         val settings = string.split(';')
         settings[0].split(',').forEach {
             val heightStart = it.indexOf('*')
-            val layer = BlockState.byKeyWithStates(it.substring(if (heightStart == -1) 0 else heightStart + 1)) ?: air
+            val layer = BlockState.byKeyWithStatesOrNull(it.substring(if (heightStart == -1) 0 else heightStart + 1)) ?: air
             repeat(if (heightStart == -1) 1 else it.substring(0, heightStart).toInt()) { column.add(layer) }
         }
         this.column = column.map { it.id }.toTypedArray()
@@ -52,6 +52,6 @@ class FlatGenerator(
     override fun generate(position: Int2) = Terrain(BlockStorage().apply { repeat(BlockStorage.XZSize) { xr -> repeat(BlockStorage.XZSize) { zr -> column.forEachIndexed { i, it -> set(xr, i, zr, it) } } } })
 
     companion object {
-        private val air = BlockState.byKeyWithStates("minecraft:air") ?: error("Missing minecraft:air")
+        private val air = BlockState.byKeyWithStates("minecraft:air")
     }
 }

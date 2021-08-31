@@ -90,10 +90,10 @@ object Blocks {
                 else updateList[x, y, z, if (flowingMasses.isEmpty()) 0 else viscosity] = masses.entries.elementAt(maximumMass - mass).key
             }
         }
-        Block.byKey("minecraft:flowing_water")?.apply {
+        Block.byKeyOrNull("minecraft:flowing_water")?.apply {
             onUpdate = flowingMovement(BlockState.byKey(key).associate { it.id to 7 - it.properties["liquid_depth"] as Int }.filterValues { it >= 0 }, 2)
         }
-        Block.byKey("minecraft:flowing_lava")?.apply {
+        Block.byKeyOrNull("minecraft:flowing_lava")?.apply {
             onUpdate = flowingMovement(BlockState.byKey(key).associate { it.id to 7 - it.properties["liquid_depth"] as Int }.filterValues { it >= 0 }, 4)
         }
 
@@ -122,16 +122,16 @@ object Blocks {
                 }
             } else updateList[x, y, z] = airId
         }
-        Block.byKey("minecraft:sand")?.apply {
+        Block.byKeyOrNull("minecraft:sand")?.apply {
             onUpdate = fallingMovement
         }
-        Block.byKey("minecraft:gravel")?.apply {
+        Block.byKeyOrNull("minecraft:gravel")?.apply {
             onUpdate = fallingMovement
         }
     }
 }
 
-private val airId = BlockState.byKeyWithStates("minecraft:air")?.id ?: error("Missing minecraft:air")
+private val airId = BlockState.byKeyWithStates("minecraft:air").id
 
 private fun BlockUpdateList.setIfAir(x: Int, y: Int, z: Int, value: Int, updatesIn: Int = 0): Boolean {
     if (!(x in 0 until BlockStorage.XZSize && y in 0 until BlockStorage.SectionCount * Section.YSize && z in 0 until BlockStorage.XZSize)) return false

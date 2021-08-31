@@ -35,6 +35,7 @@ import com.google.gson.JsonObject
 import com.google.inject.AbstractModule
 import com.google.inject.Guice
 import com.google.inject.name.Names
+import com.valaphee.tesseract.command.CommandManager
 import com.valaphee.tesseract.inventory.CreativeInventoryPacket
 import com.valaphee.tesseract.inventory.item.Item
 import com.valaphee.tesseract.inventory.item.stack.Stack
@@ -56,17 +57,18 @@ import com.valaphee.tesseract.world.chunk.terrain.block.Blocks
 import io.netty.buffer.ByteBufInputStream
 import io.netty.buffer.PooledByteBufAllocator
 import io.netty.buffer.Unpooled
+import java.io.IOException
 import java.io.InputStreamReader
 import java.lang.invoke.MethodHandles
 import java.util.Base64
 import java.util.regex.Pattern
 import kotlin.concurrent.thread
 
-// TODO
+/*TODO*/
 lateinit var biomeDefinitionsPacket: BiomeDefinitionsPacket
 lateinit var entityIdentifiersPacket: EntityIdentifiersPacket
 lateinit var creativeInventoryPacket: CreativeInventoryPacket
-// TODO
+/*TODO*/
 
 fun main(arguments: Array<String>) {
     val argument = Argument().apply { if (!parse(arguments)) return }
@@ -74,7 +76,7 @@ fun main(arguments: Array<String>) {
     initializeConsole()
     initializeLogging()
 
-    // TODO
+    /*TODO*/
     val clazz = MethodHandles.lookup().lookupClass()
     val gson = GsonBuilder().create()
     val base64Decoder = Base64.getDecoder()
@@ -111,8 +113,8 @@ fun main(arguments: Array<String>) {
         gson.newJsonReader(InputStreamReader(clazz.getResourceAsStream("/creative_items.json")!!)).use {
             val content = mutableListOf<Stack<*>>()
             (gson.fromJson(it, JsonObject::class.java) as JsonObject).getJsonArray("items").map { it.asJsonObject }.forEach {
-                Item.byKey(it.getString("id"))?.let { item ->
-                    content += Stack(Item.byId(item.id)!!, it.getIntOrNull("damage") ?: 0, 1, it.getStringOrNull("nbt_b64")?.let {
+                Item.byKeyOrNull(it.getString("id"))?.let { item ->
+                    content += Stack(Item.byIdOrNull(item.id)!!, it.getIntOrNull("damage") ?: 0, 1, it.getStringOrNull("nbt_b64")?.let {
                         val buffer = Unpooled.wrappedBuffer(base64Decoder.decode(it))
                         val tag = NbtInputStream(LittleEndianByteBufInputStream(buffer)).use { it.readTag() }?.asCompoundTag()
                         buffer.release()
@@ -123,9 +125,9 @@ fun main(arguments: Array<String>) {
             creativeInventoryPacket = CreativeInventoryPacket(content.toTypedArray())
         }
     }
-    // TODO
+    /*TODO*/
 
-    ServerInstance(Guice.createInjector(object : AbstractModule() {
+    val guice = Guice.createInjector(object : AbstractModule() {
         override fun configure() {
             bind(ObjectMapper::class.java).annotatedWith(Names.named("config")).toInstance(ObjectMapper().apply {
                 registerKotlinModule()
@@ -139,8 +141,23 @@ fun main(arguments: Array<String>) {
             })
             bind(Argument::class.java).toInstance(argument)
         }
-    })).bind()
+    })
+    ServerInstance(guice).bind()
 
-    // TODO
+    val commandManager = guice.getInstance(CommandManager::class.java)
+
+    reader.prompt = "tesseract> "
+    thread(isDaemon = true, name = "console-reader") {
+        while (true) {
+            try {
+                val message = reader.readLine(null, null, null)
+                if (message.trim { it <= ' ' }.isNotEmpty()) commandManager.dispatch(message).messages.forEach { println(it.message) }
+            } catch (_: IOException) {
+            } catch (_: IndexOutOfBoundsException) {
+            }
+        }
+    }
+
+    /*TODO*/
     thread(name = "infinisleeper") { Thread.sleep(Long.MAX_VALUE) }
 }

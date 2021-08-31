@@ -43,6 +43,6 @@ class BlockBreakProcessor : BaseFacet<WorldContext, BlockBreak>(BlockBreak::clas
     }
 
     companion object {
-        val airId = BlockState.byKeyWithStates("minecraft:air")?.id ?: error("Missing minecraft:air")
+        val airId = BlockState.byKeyWithStates("minecraft:air").id
     }
 }

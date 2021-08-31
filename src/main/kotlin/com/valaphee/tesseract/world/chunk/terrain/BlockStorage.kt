@@ -49,8 +49,7 @@ class BlockStorage : ReadWriteCartesian {
     }
 
     companion object {
-        private val airId = BlockState.byKeyWithStates("minecraft:air")?.id ?: error("Missing minecraft:air")
-
+        private val airId = BlockState.byKeyWithStates("minecraft:air").id
         const val XZSize = 16
         const val XZMask = XZSize - 1
         const val SectionCount = 16

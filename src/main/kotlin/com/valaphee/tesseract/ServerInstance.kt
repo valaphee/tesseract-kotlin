@@ -170,11 +170,9 @@ class ServerInstance(
         } else serverBootstrap.bind(config.address).addListener(channelFutureListener)
     }
 
-    fun close() {
-        channel.close().syncUninterruptibly()
-    }
-
     override fun destroy() {
+        channel.close().syncUninterruptibly()
+
         parentGroup.shutdownGracefully()
         parentGroup.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS)
 

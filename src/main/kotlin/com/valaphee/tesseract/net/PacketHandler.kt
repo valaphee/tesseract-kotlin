@@ -31,10 +31,12 @@ import com.valaphee.tesseract.actor.player.InputPacket
 import com.valaphee.tesseract.actor.player.InteractPacket
 import com.valaphee.tesseract.actor.player.PlayerActionPacket
 import com.valaphee.tesseract.actor.player.PlayerLocationPacket
+import com.valaphee.tesseract.actor.player.view.ChunkPacket
+import com.valaphee.tesseract.actor.player.view.ChunkPublishPacket
 import com.valaphee.tesseract.actor.player.view.ViewDistancePacket
 import com.valaphee.tesseract.actor.player.view.ViewDistanceRequestPacket
-import com.valaphee.tesseract.command.CommandPacket
-import com.valaphee.tesseract.command.CommandResponsePacket
+import com.valaphee.tesseract.command.net.CommandPacket
+import com.valaphee.tesseract.command.net.CommandResponsePacket
 import com.valaphee.tesseract.inventory.CreativeInventoryPacket
 import com.valaphee.tesseract.inventory.InventoryContentPacket
 import com.valaphee.tesseract.inventory.InventoryRequestPacket
@@ -59,9 +61,12 @@ import com.valaphee.tesseract.net.init.PacksStackPacket
 import com.valaphee.tesseract.net.init.ServerToClientHandshakePacket
 import com.valaphee.tesseract.net.init.StatusPacket
 import com.valaphee.tesseract.world.PlayerListPacket
+import com.valaphee.tesseract.world.SoundEventPacket
+import com.valaphee.tesseract.world.SoundEventPacketV1
+import com.valaphee.tesseract.world.SoundEventPacketV2
+import com.valaphee.tesseract.world.SoundPacket
+import com.valaphee.tesseract.world.SoundStopPacket
 import com.valaphee.tesseract.world.WorldPacket
-import com.valaphee.tesseract.actor.player.view.ChunkPacket
-import com.valaphee.tesseract.actor.player.view.ChunkPublishPacket
 import com.valaphee.tesseract.world.chunk.terrain.BlockUpdatePacket
 import com.valaphee.tesseract.world.chunk.terrain.BlockUpdateSyncedPacket
 
@@ -97,6 +102,8 @@ interface PacketHandler : ProtocolHandler {
 
     fun blockUpdate(packet: BlockUpdatePacket) = other(packet)
 
+    fun soundEventV1(packet: SoundEventPacketV1) = other(packet)
+
     fun interact(packet: InteractPacket) = other(packet)
 
     fun playerAction(packet: PlayerActionPacket) = other(packet)
@@ -125,6 +132,10 @@ interface PacketHandler : ProtocolHandler {
 
     fun commandResponse(packet: CommandResponsePacket) = other(packet)
 
+    fun sound(packet: SoundPacket) = other(packet)
+
+    fun soundStop(packet: SoundStopPacket) = other(packet)
+
     fun behaviorTree(packet: BehaviorTreePacket) = other(packet)
 
     fun blockUpdateSynced(packet: BlockUpdateSyncedPacket) = other(packet)
@@ -133,9 +144,13 @@ interface PacketHandler : ProtocolHandler {
 
     fun entityIdentifiers(packet: EntityIdentifiersPacket) = other(packet)
 
+    fun soundEventV2(packet: SoundEventPacketV2) = other(packet)
+
     fun chunkPublish(packet: ChunkPublishPacket) = other(packet)
 
     fun biomeDefinitions(packet: BiomeDefinitionsPacket) = other(packet)
+
+    fun soundEvent(packet: SoundEventPacket) = other(packet)
 
     fun cacheStatus(packet: CacheStatusPacket) = other(packet)
 

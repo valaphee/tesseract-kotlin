@@ -25,7 +25,6 @@
 package com.valaphee.tesseract.world.chunk.terrain
 
 import com.valaphee.tesseract.net.PacketBuffer
-import com.valaphee.tesseract.util.getCompoundTag
 import com.valaphee.tesseract.util.getString
 import com.valaphee.tesseract.util.nbt.compoundTag
 import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
@@ -69,7 +68,7 @@ class Layer(
         if (runtime) palette.forEach { buffer.writeVarInt(it) } else buffer.toNbtOutputStream().use { stream ->
             palette.forEach {
                 stream.writeTag(compoundTag().apply {
-                    val block = BlockState.byId(it)!!
+                    val block = BlockState.byId(it)
                     setString("name", block.key)
                     set("states", block.propertiesNbt)
                 })
@@ -89,8 +88,8 @@ fun PacketBuffer.readLayer(default: Int): Layer {
             toNbtInputStream().use { stream ->
                 repeat(paletteSize) {
                     add(stream.readTag()?.asCompoundTag()?.let {
-                        val propertiesNbt = it.getCompoundTag("states")
-                        BlockState.byKey(it.getString("name")).find { it.propertiesNbt == propertiesNbt }?.id
+                        /*val propertiesNbt = it.getCompoundTag("states")*/
+                        BlockState.byKeyWithStatesOrNull(it.getString("name"))/*.find { it.propertiesNbt == propertiesNbt }TODO*/?.id
                     } ?: default)
                 }
             }

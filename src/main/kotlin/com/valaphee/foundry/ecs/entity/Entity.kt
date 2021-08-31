@@ -43,7 +43,6 @@ import com.valaphee.foundry.ecs.mutator.facetMutator
 import com.valaphee.foundry.ecs.system.Behavior
 import com.valaphee.foundry.ecs.system.Facet
 import com.valaphee.foundry.ecs.system.FacetWithContext
-import kotlin.random.Random
 
 /**
  * @author Kevin Ludwig
@@ -66,7 +65,8 @@ interface Entity<T : EntityType, C : Context> : AttributeAccessor, BehaviorAcces
  * @author Kevin Ludwig
  */
 class EntityBuilder<T : EntityType, C : Context>(
-    private val type: T
+    private val type: T,
+    private val id: Long
 ) {
     private var attributes = setOf<Attribute>()
     private var behaviors = setOf<Behavior<C>>()
@@ -86,11 +86,11 @@ class EntityBuilder<T : EntityType, C : Context>(
 
     fun build(): Entity<T, C> {
         require(behaviors.flatMap { it.mandatoryAttributes }.plus(facets.flatMap { it.mandatoryAttributes }).toSet().subtract(this.attributes.map { it::class }).isEmpty())
-        return DefaultEntity(type, attributes, behaviors, facets)
+        return DefaultEntity(type, attributes, behaviors, facets, id)
     }
 }
 
-fun <T : EntityType, C : Context> entity(type: T, block: EntityBuilder<T, C>.() -> Unit) = EntityBuilder<T, C>(type).apply(block).build()
+fun <T : EntityType, C : Context> entity(type: T, id: Long, block: EntityBuilder<T, C>.() -> Unit) = EntityBuilder<T, C>(type, id).apply(block).build()
 
 /**
  * @author Kevin Ludwig
@@ -100,7 +100,7 @@ abstract class BaseEntity<T : EntityType, C : Context>(
     attributes: Set<Attribute> = setOf(),
     behaviors: Set<Behavior<C>> = setOf(),
     facets: Set<FacetWithContext<C>> = setOf(),
-    override val id: Long = Random.nextLong(),
+    override val id: Long,
 ) : MutableEntity<T, C>, AttributeMutator by attributeMutator(attributes), BehaviorMutator<C> by behaviorMutator(behaviors), FacetMutator<C> by facetMutator(facets) {
     override fun asMutableEntity() = this
 
@@ -119,7 +119,7 @@ open class DefaultEntity<T : EntityType, C : Context>(
     attributes: Set<Attribute> = setOf(),
     behaviors: Set<Behavior<C>> = setOf(),
     facets: Set<FacetWithContext<C>> = setOf(),
-    id: Long = Random.nextLong(),
+    id: Long,
 ) : BaseEntity<T, C>(type, attributes + type, behaviors, facets, id) {
     private val messages = mutableListOf<Message<C>>()
     override val needsUpdate get() = hasBehaviors || messages.isNotEmpty()

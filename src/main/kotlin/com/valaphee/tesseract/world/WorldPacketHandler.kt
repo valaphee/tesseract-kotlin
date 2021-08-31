@@ -43,12 +43,15 @@ import com.valaphee.tesseract.actor.player.PlayerActionPacket
 import com.valaphee.tesseract.actor.player.PlayerLocationPacket
 import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.actor.player.User
+import com.valaphee.tesseract.actor.player.authExtra
 import com.valaphee.tesseract.actor.player.breakBlock
 import com.valaphee.tesseract.actor.player.view.ChunkPacket
 import com.valaphee.tesseract.actor.player.view.View
 import com.valaphee.tesseract.actor.player.view.ViewDistancePacket
 import com.valaphee.tesseract.actor.player.view.ViewDistanceRequestPacket
 import com.valaphee.tesseract.biomeDefinitionsPacket
+import com.valaphee.tesseract.command.net.CommandPacket
+import com.valaphee.tesseract.command.net.Origin
 import com.valaphee.tesseract.creativeInventoryPacket
 import com.valaphee.tesseract.entityIdentifiersPacket
 import com.valaphee.tesseract.inventory.Inventory
@@ -70,6 +73,7 @@ import com.valaphee.tesseract.net.base.TextPacket
 import com.valaphee.tesseract.net.init.StatusPacket
 import com.valaphee.tesseract.world.chunk.Chunk
 import com.valaphee.tesseract.world.chunk.ChunkRelease
+import com.valaphee.tesseract.world.chunk.terrain.SectionCompact
 import com.valaphee.tesseract.world.chunk.terrain.block.Block
 import com.valaphee.tesseract.world.chunk.terrain.terrain
 import com.valaphee.tesseract.world.entity.addEntities
@@ -77,6 +81,8 @@ import com.valaphee.tesseract.world.entity.removeEntities
 import io.netty.buffer.Unpooled
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import net.jpountz.xxhash.XXHashFactory
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 /**
  * @author Kevin Ludwig
@@ -101,7 +107,9 @@ class WorldPacketHandler(
             val blobIds = LongArray(sectionCount + 1)
             PacketBuffer(Unpooled.buffer()).use {
                 repeat(sectionCount) { i ->
-                    blockStorage.sections[i].writeToBuffer(it)
+                    val section = blockStorage.sections[i]
+                    if (section is SectionCompact) section.writeToBuffer(it, false)
+                    else section.writeToBuffer(it)
                     val blob = it.array().clone()
                     it.clear()
                     val blobId = xxHash64.hash(blob, 0, blob.size, 0)
@@ -207,9 +215,10 @@ class WorldPacketHandler(
     override fun other(packet: Packet) = Unit
 
     override fun text(packet: TextPacket) {
-        if (packet.type != TextPacket.Type.Chat || packet.xboxUserId != authExtra.xboxUserId) return
+        if (packet.type != TextPacket.Type.Chat || packet.xboxUserId != player.authExtra.xboxUserId) return
 
         context.world.broadcast(packet)
+        chatLog.info("{}: {}", player.authExtra.userName, packet.message)
     }
 
     override fun playerLocation(packet: PlayerLocationPacket) {
@@ -242,6 +251,10 @@ class WorldPacketHandler(
         connection.write(ViewDistancePacket(player.findFacet(View::class).apply { distance = packet.distance }.distance))
     }
 
+    override fun command(packet: CommandPacket) {
+        if (packet.origin.where != Origin.Where.Player) return
+    }
+
     override fun cacheBlobStatus(packet: CacheBlobStatusPacket) {
         val blobs = Long2ObjectOpenHashMap<ByteArray>()
         packet.misses.forEach { blobId -> this.cacheBlobs.remove(blobId)?.let { blobs[blobId] = it } }
@@ -253,6 +266,7 @@ class WorldPacketHandler(
     }
 
     companion object {
+        private val chatLog: Logger = LogManager.getLogger("Chat")
         private val xxHash64 = XXHashFactory.fastestInstance().hash64()
     }
 }

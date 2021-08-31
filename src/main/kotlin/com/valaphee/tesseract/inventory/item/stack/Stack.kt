@@ -101,8 +101,8 @@ data class Stack<T : Meta> private constructor(
 
 fun CompoundTag.asStack() = Stack(
     when {
-        has("Name") -> Item.byKey(getString("Name")) ?: Item.default
-        has("id") -> Item.byId(getInt("id"))
+        has("Name") -> Item.byKeyOrNull(getString("Name")) ?: Item.default
+        has("id") -> Item.byIdOrNull(getInt("id"))
         else -> Item.default
     } as Item<*>, getIntOrNull("Damage") ?: 0, getIntOrNull("Count") ?: 1, getCompoundTagOrNull("tag")
 )
@@ -110,7 +110,7 @@ fun CompoundTag.asStack() = Stack(
 fun PacketBuffer.readStackPre431(): Stack<*>? {
     val id = readVarInt()
     if (id == 0) return null
-    val item = Item.byId(id) as Item<*>
+    val item = Item.byIdOrNull(id) as Item<*>
     val countAndSubId = readVarInt()
     return Stack(
         item,
@@ -139,7 +139,7 @@ fun PacketBuffer.readStackWithNetIdPre431(): Stack<*>? {
 fun PacketBuffer.readStack(): Stack<*>? {
     val id = readVarInt()
     if (id == 0) return null
-    val item = Item.byId(id) as Item<*>
+    val item = Item.byIdOrNull(id) as Item<*>
     val count = readUnsignedShortLE()
     val subId = readVarUInt()
     val netId = if (readBoolean()) readVarInt() else 0
@@ -167,7 +167,7 @@ fun PacketBuffer.readStack(): Stack<*>? {
 fun PacketBuffer.readStackInstance(): Stack<*>? {
     val id = readVarInt()
     if (id == 0) return null
-    val item = Item.byId(id) as Item<*>
+    val item = Item.byIdOrNull(id) as Item<*>
     val count = readUnsignedShortLE()
     val subId = readVarUInt()
     val blockRuntimeId = readVarInt()
@@ -194,7 +194,7 @@ fun PacketBuffer.readStackInstance(): Stack<*>? {
 fun PacketBuffer.readIngredient(): Stack<*>? {
     val id = readVarInt()
     if (id == 0) return null
-    return Stack(Item.byId(id) as Item<*>, readVarInt().let { if (it == Short.MAX_VALUE.toInt()) -1 else it }, readVarInt())
+    return Stack(Item.byIdOrNull(id) as Item<*>, readVarInt().let { if (it == Short.MAX_VALUE.toInt()) -1 else it }, readVarInt())
 }
 
 fun PacketBuffer.writeStackPre431(value: Stack<*>?) {
@@ -287,4 +287,4 @@ fun PacketBuffer.writeIngredient(value: Stack<*>?) {
     } ?: writeVarInt(0)
 }
 
-private val shield = Item.byKey("minecraft:shield")
+private val shield = Item.byKeyOrNull("minecraft:shield")

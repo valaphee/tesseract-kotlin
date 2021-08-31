@@ -55,8 +55,8 @@ class NormalGenerator(
     })
 
     companion object {
-        private val stoneId = BlockState.byKeyWithStates("minecraft:stone")?.id ?: error("Missing minecraft:stone")
-        private val dirtId = BlockState.byKeyWithStates("minecraft:dirt")?.id ?: error("Missing minecraft:dirt")
-        private val grassId = BlockState.byKeyWithStates("minecraft:grass")?.id ?: error("Missing minecraft:grass")
+        private val stoneId = BlockState.byKeyWithStates("minecraft:stone").id
+        private val dirtId = BlockState.byKeyWithStates("minecraft:dirt").id
+        private val grassId = BlockState.byKeyWithStates("minecraft:grass").id
     }
 }

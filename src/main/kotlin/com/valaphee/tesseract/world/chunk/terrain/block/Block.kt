@@ -65,7 +65,7 @@ class Block(
             }
         }
 
-        fun byKey(key: String) = byKey[key]
+        fun byKeyOrNull(key: String) = byKey[key]
 
         val all get() = byKey.values
     }

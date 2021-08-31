@@ -60,7 +60,7 @@ class BlockUpdater : BaseBehavior<WorldContext>(Location::class, Terrain::class)
                 if (cycle and it.value == 0) {
                     val (x, y, z) = decodePosition(it.key)
                     val blockState = BlockState.byId(blockStorage[x, y, z])
-                    blockState?.block?.onUpdate?.invoke(blockUpdates, x, y, z, blockState)
+                    blockState.block.onUpdate?.invoke(blockUpdates, x, y, z, blockState)
                     blockUpdates.pending.remove(it.key)
                 }
             }

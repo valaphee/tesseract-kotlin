@@ -158,8 +158,8 @@ object SectionSerializer : JsonSerializer<Section>() {
         var buffer: PacketBuffer? = null
         try {
             buffer = PacketBuffer(Unpooled.buffer())
-            /*if (value is SectionCompact) value.writeToBuffer(buffer, false)
-            else */value.writeToBuffer(buffer)
+            if (value is SectionCompact) value.writeToBuffer(buffer, false)
+            else value.writeToBuffer(buffer)
             generator.writeBinary(buffer.array())
         } finally {
             buffer?.release()
@@ -182,4 +182,4 @@ class SectionDeserializer : JsonDeserializer<Section>() {
     }
 }
 
-private val air = BlockState.byKeyWithStates("minecraft:air") ?: error("Missing minecraft:air")
+private val air = BlockState.byKeyWithStates("minecraft:air")

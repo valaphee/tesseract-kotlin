@@ -85,11 +85,15 @@ class BlockState(
             values.forEachIndexed { i, it -> it.id = i }
         }
 
-        fun byId(id: Int) = if (id < values.size) values[id] else null
+        fun byId(id: Int) = checkNotNull(byIdOrNull(id))
+
+        fun byIdOrNull(id: Int) = if (id < values.size) values[id] else null
 
         fun byKey(key: String) = values.filter { key == it.key }
 
-        fun byKeyWithStates(keyWithProperties: String): BlockState? {
+        fun byKeyWithStates(keyWithProperties: String) = checkNotNull(byKeyWithStatesOrNull(keyWithProperties))
+
+        fun byKeyWithStatesOrNull(keyWithProperties: String): BlockState? {
             val propertiesBegin = keyWithProperties.indexOf('[')
             val propertiesEnd = keyWithProperties.indexOf(']')
             return if (propertiesBegin == -1 && propertiesEnd == -1) {

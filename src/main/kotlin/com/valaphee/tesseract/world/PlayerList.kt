@@ -49,20 +49,13 @@ class PlayerList : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMe
 
     override suspend fun receive(message: EntityManagerMessage): Response {
         when (message) {
-            is EntityAdd -> {
-                message.entities.first().whenTypeIs<PlayerType> {
-                    players.add(it)
-                    log.info("Added player {}, id is {}", it.authExtra.userName, it.id)
-                    broadcastSystemMessage("${it.authExtra.userName} entered the world")
-                }
+            is EntityAdd -> message.entities.first().whenTypeIs<PlayerType> {
+                players.add(it)
+                broadcastSystemMessage("${it.authExtra.userName} entered the world")
             }
-            is EntityRemove -> {
-                val engine = message.context.engine
-                engine.findEntityOrNull(message.entityIds.first())?.whenTypeIs<PlayerType> {
-                    broadcastSystemMessage("${it.authExtra.userName} exited the world")
-                    log.info("Removed player {}, id was {}", it.authExtra.userName, it.id)
-                    players.remove(it)
-                }
+            is EntityRemove -> message.context.engine.findEntityOrNull(message.entityIds.first())?.whenTypeIs<PlayerType> {
+                broadcastSystemMessage("${it.authExtra.userName} exited the world")
+                players.remove(it)
             }
         }
 
@@ -75,11 +68,11 @@ class PlayerList : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMe
 
     fun broadcastSystemMessage(message: String) {
         broadcast(TextPacket(TextPacket.Type.System, false, null, message, null, "", ""))
-        log.info("System: {}", message)
+        chatLog.info("System: {}", message)
     }
 
     companion object {
-        private val log: Logger = LogManager.getLogger(PlayerList::class.java)
+        private val chatLog: Logger = LogManager.getLogger("Chat")
     }
 }
 

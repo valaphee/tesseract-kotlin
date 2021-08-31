@@ -37,8 +37,8 @@ enum class GameMode(
     WorldDefault;
 
     companion object {
-        fun byKey(key: String) = byKey[key]
-
         private val byKey = values().associateBy { it.key }
+
+        fun byKeyOrNull(key: String) = byKey[key]
     }
 }

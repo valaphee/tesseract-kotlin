@@ -22,8 +22,11 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.command
+package com.valaphee.tesseract.command.net
 
+import com.valaphee.tesseract.command.Message
+import com.valaphee.tesseract.command.readMessage
+import com.valaphee.tesseract.command.writeMessage
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler

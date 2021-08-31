@@ -42,7 +42,7 @@ import com.valaphee.tesseract.actor.player.InteractPacketReader
 import com.valaphee.tesseract.actor.player.PlayerActionPacketReader
 import com.valaphee.tesseract.actor.player.PlayerLocationPacketReader
 import com.valaphee.tesseract.actor.player.view.ViewDistanceRequestPacketReader
-import com.valaphee.tesseract.command.CommandPacketReader
+import com.valaphee.tesseract.command.net.CommandPacketReader
 import com.valaphee.tesseract.inventory.InventoryRequestPacketReader
 import com.valaphee.tesseract.inventory.WindowClosePacketReader
 import com.valaphee.tesseract.net.PacketReader

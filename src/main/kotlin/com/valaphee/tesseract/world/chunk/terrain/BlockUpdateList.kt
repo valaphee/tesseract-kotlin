@@ -54,7 +54,7 @@ class BlockUpdateList(
     }
 
     companion object {
-        private val airId = BlockState.byKeyWithStates("minecraft:air")?.id ?: error("Missing minecraft:air")
+        private val airId = BlockState.byKeyWithStates("minecraft:air").id
     }
 }
 

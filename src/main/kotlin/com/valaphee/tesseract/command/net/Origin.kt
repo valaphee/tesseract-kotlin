@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.command
+package com.valaphee.tesseract.command.net
 
 import com.valaphee.tesseract.net.PacketBuffer
 import java.util.UUID
@@ -32,8 +32,8 @@ import java.util.UUID
  */
 data class Origin(
     var where: Where,
-    var userId: UUID,
-    var requestId: String,
+    var requestId: UUID,
+    var purpose: String,
     var eventId: Long
 ) {
     enum class Where {
@@ -62,7 +62,7 @@ fun PacketBuffer.readOrigin(): Origin {
 
 fun PacketBuffer.writeOrigin(value: Origin) {
     writeVarUInt(value.where.ordinal)
-    writeUuid(value.userId)
-    writeString(value.requestId)
+    writeUuid(value.requestId)
+    writeString(value.purpose)
     if (value.where == Origin.Where.DeveloperConsole || value.where == Origin.Where.Test) writeVarLong(value.eventId)
 }
