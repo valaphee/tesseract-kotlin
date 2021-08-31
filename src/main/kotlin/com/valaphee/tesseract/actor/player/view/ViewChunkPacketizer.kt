@@ -31,7 +31,6 @@ import com.valaphee.tesseract.actor.location.position
 import com.valaphee.tesseract.net.connection
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.WorldPacketHandler
-import com.valaphee.tesseract.world.chunk.ChunkPublishPacket
 
 /**
  * @author Kevin Ludwig

@@ -22,19 +22,29 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk.terrain
+package com.valaphee.tesseract.actor.player.view
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.valaphee.foundry.ecs.BaseAttribute
-import com.valaphee.tesseract.world.chunk.Chunk
+import com.valaphee.foundry.math.Int3
+import com.valaphee.tesseract.net.Packet
+import com.valaphee.tesseract.net.PacketBuffer
+import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.Restrict
+import com.valaphee.tesseract.net.Restriction
 
 /**
  * @author Kevin Ludwig
  */
-class Terrain(
-    val blockStorage: BlockStorage
-) : BaseAttribute() {
-    @JsonIgnore val blockUpdates = BlockUpdateList(blockStorage)
-}
+@Restrict(Restriction.Clientbound)
+data class ChunkPublishPacket(
+    var position: Int3,
+    var radius: Int
+) : Packet {
+    override val id get() = 0x79
 
-val Chunk.terrain get() = findAttribute(Terrain::class)
+    override fun write(buffer: PacketBuffer, version: Int) {
+        buffer.writeInt3(position)
+        buffer.writeVarUInt(radius)
+    }
+
+    override fun handle(handler: PacketHandler) = handler.chunkPublish(this)
+}

@@ -33,7 +33,7 @@ import com.valaphee.tesseract.world.WorldContext
 class ChunkRelease(
     context: WorldContext,
     source: AnyEntityOfWorld?,
-    chunkPositions: LongArray
-) : ChunkManagerMessage(context, source, chunkPositions) {
+    positions: LongArray
+) : ChunkManagerMessage(context, source, positions) {
     override val entity: AnyEntityOfWorld? get() = null
 }

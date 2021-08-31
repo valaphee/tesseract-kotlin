@@ -46,5 +46,6 @@ class BlockBreak(
 }
 
 fun World.breakBlock(context: WorldContext, source: Player, position: Int3) {
-    sendMessage(ChunkAcquire(context, source, longArrayOf(encodePosition(position.x, position.z)), BlockBreak(context, source, position)))
+    val (x, y, z) = position
+    sendMessage(ChunkAcquire(context, source, longArrayOf(encodePosition(x shr 4, z shr 4)), BlockBreak(context, source, Int3(x and 0xF, y and 0xFF, z and 0xF))))
 }

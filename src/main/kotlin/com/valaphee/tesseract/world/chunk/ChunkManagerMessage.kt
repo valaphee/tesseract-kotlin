@@ -34,5 +34,5 @@ import com.valaphee.tesseract.world.WorldContext
 sealed class ChunkManagerMessage(
     override val context: WorldContext,
     override val source: AnyEntityOfWorld?,
-    val chunkPositions: LongArray
+    val positions: LongArray
 ) : Message<WorldContext>

@@ -46,8 +46,8 @@ class InMemoryProvider : Provider {
 
     override fun saveChunks(chunks: Iterable<Chunk>) {
         this.chunks.putAll(chunks.associateBy {
-            val (x, y) = it.position
-            encodePosition(x, y)
+            val (x, z) = it.position
+            encodePosition(x, z)
         })
     }
 }

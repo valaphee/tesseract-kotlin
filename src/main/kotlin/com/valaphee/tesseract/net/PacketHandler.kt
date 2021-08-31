@@ -60,8 +60,8 @@ import com.valaphee.tesseract.net.init.ServerToClientHandshakePacket
 import com.valaphee.tesseract.net.init.StatusPacket
 import com.valaphee.tesseract.world.PlayerListPacket
 import com.valaphee.tesseract.world.WorldPacket
-import com.valaphee.tesseract.actor.player.view.ChunkAddPacket
-import com.valaphee.tesseract.world.chunk.ChunkPublishPacket
+import com.valaphee.tesseract.actor.player.view.ChunkPacket
+import com.valaphee.tesseract.actor.player.view.ChunkPublishPacket
 import com.valaphee.tesseract.world.chunk.terrain.BlockUpdatePacket
 import com.valaphee.tesseract.world.chunk.terrain.BlockUpdateSyncedPacket
 
@@ -113,7 +113,7 @@ interface PacketHandler : ProtocolHandler {
 
     fun recipes(packet: RecipesPacket) = other(packet)
 
-    fun chunkAdd(packet: ChunkAddPacket) = other(packet)
+    fun chunkAdd(packet: ChunkPacket) = other(packet)
 
     fun playerList(packet: PlayerListPacket) = other(packet)
 

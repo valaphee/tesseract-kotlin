@@ -56,8 +56,8 @@ class TesseractProvider @Inject constructor(
     override fun saveChunks(chunks: Iterable<Chunk>) {
         database.createWriteBatch().use { batch ->
             chunks.forEach {
-                val (x, y) = it.position
-                batch.put(Key.Chunk.toKey(encodePosition(x, y)), objectMapper.writeValueAsBytes(it))
+                val (x, z) = it.position
+                batch.put(Key.Chunk.toKey(encodePosition(x, z)), objectMapper.writeValueAsBytes(it))
             }
             database.write(batch)
         }

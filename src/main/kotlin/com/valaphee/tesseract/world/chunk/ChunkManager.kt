@@ -48,17 +48,18 @@ class ChunkManager @Inject constructor(
         val context = message.context
         when (message) {
             is ChunkAcquire -> {
-                context.world.addEntities(context, message.source, *message.chunkPositions.filterNot(chunks::containsKey).map {
-                    /*context.provider.loadChunk(it) ?: run {*/
-                    val position = decodePosition(it)
-                    context.entityFactory(ChunkType, setOf(Ticket(), Location(position), generator.generate(position))).apply { chunks[it] = this }
-                    /*}*/
+                context.world.addEntities(context, message.source, *message.positions.filterNot(chunks::containsKey).map { position ->
+                    (context.provider.loadChunk(position) ?: run {
+                        val position = decodePosition(position)
+                        context.entityFactory(ChunkType, setOf(Ticket(), Location(position), generator.generate(position)))
+                    }).also { chunks[position] = it }
                 }.toTypedArray())
-                message.usage.chunks = message.chunkPositions.map(chunks::get).filterNotNull().onEach { chunk -> message.source?.whenTypeIs<PlayerType> { chunk.players += it } }.toTypedArray()
+
+                message.usage.chunks = message.positions.map(chunks::get).filterNotNull().onEach { chunk -> message.source?.whenTypeIs<PlayerType> { chunk.players += it } }.toTypedArray()
                 message.source?.sendMessage(message.usage)
             }
             is ChunkRelease -> {
-                val chunksRemoved = message.chunkPositions.filter { chunkPosition ->
+                val chunksRemoved = message.positions.filter { chunkPosition ->
                     val chunk = chunks.get(chunkPosition)
                     message.source?.whenTypeIs<PlayerType> { chunk.players -= it }
                     chunk.players.isEmpty()

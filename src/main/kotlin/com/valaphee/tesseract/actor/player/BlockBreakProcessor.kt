@@ -22,29 +22,27 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk
+package com.valaphee.tesseract.actor.player
 
-import com.valaphee.foundry.math.Int3
-import com.valaphee.tesseract.net.Packet
-import com.valaphee.tesseract.net.PacketBuffer
-import com.valaphee.tesseract.net.PacketHandler
-import com.valaphee.tesseract.net.Restrict
-import com.valaphee.tesseract.net.Restriction
+import com.valaphee.foundry.ecs.Pass
+import com.valaphee.foundry.ecs.Response
+import com.valaphee.foundry.ecs.system.BaseFacet
+import com.valaphee.tesseract.world.WorldContext
+import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
+import com.valaphee.tesseract.world.chunk.terrain.terrain
 
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
-data class ChunkPublishPacket(
-    var position: Int3,
-    var radius: Int
-) : Packet {
-    override val id get() = 0x79
+class BlockBreakProcessor : BaseFacet<WorldContext, BlockBreak>(BlockBreak::class) {
+    override suspend fun receive(message: BlockBreak): Response {
+        val (x, y, z) = message.position
+        message.chunks.first().terrain.blockUpdates[x, y, z] = airId
 
-    override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeInt3(position)
-        buffer.writeVarUInt(radius)
+        return Pass
     }
 
-    override fun handle(handler: PacketHandler) = handler.chunkPublish(this)
+    companion object {
+        val airId = BlockState.byKeyWithStates("minecraft:air")?.id ?: error("Missing minecraft:air")
+    }
 }

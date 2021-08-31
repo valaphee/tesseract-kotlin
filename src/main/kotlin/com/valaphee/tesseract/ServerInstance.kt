@@ -29,6 +29,7 @@ import com.google.inject.AbstractModule
 import com.google.inject.Inject
 import com.google.inject.Injector
 import com.valaphee.tesseract.actor.location.LocationManager
+import com.valaphee.tesseract.actor.player.BlockBreakProcessor
 import com.valaphee.tesseract.actor.player.PlayerLocationPacketizer
 import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.actor.player.view.View
@@ -106,7 +107,8 @@ class ServerInstance(
         register(PlayerType) {
             facets(
                 LocationManager::class.java, PlayerLocationPacketizer::class.java,
-                View::class.java, ViewChunkPacketizer::class.java
+                View::class.java, ViewChunkPacketizer::class.java,
+                BlockBreakProcessor::class.java
             )
         }
     }

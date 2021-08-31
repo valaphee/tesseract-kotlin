@@ -44,7 +44,7 @@ import com.valaphee.tesseract.actor.player.PlayerLocationPacket
 import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.actor.player.User
 import com.valaphee.tesseract.actor.player.breakBlock
-import com.valaphee.tesseract.actor.player.view.ChunkAddPacket
+import com.valaphee.tesseract.actor.player.view.ChunkPacket
 import com.valaphee.tesseract.actor.player.view.View
 import com.valaphee.tesseract.actor.player.view.ViewDistancePacket
 import com.valaphee.tesseract.actor.player.view.ViewDistanceRequestPacket
@@ -109,8 +109,8 @@ class WorldPacketHandler(
                     blobIds[i] = blobId
                 }
             }
-            connection.write(ChunkAddPacket(chunk, blobIds))
-        } else connection.write(ChunkAddPacket(chunk))
+            connection.write(ChunkPacket(chunk, blobIds))
+        } else connection.write(ChunkPacket(chunk))
     }
 
     override fun initialize() {

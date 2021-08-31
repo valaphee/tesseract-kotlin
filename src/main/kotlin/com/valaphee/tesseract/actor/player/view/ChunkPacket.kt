@@ -38,7 +38,7 @@ import com.valaphee.tesseract.world.chunk.terrain.terrain
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.Clientbound)
-data class ChunkAddPacket(
+data class ChunkPacket(
     var chunk: Chunk,
     var cache: Boolean,
     val blobIds: LongArray? = null
@@ -79,7 +79,7 @@ data class ChunkAddPacket(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as ChunkAddPacket
+        other as ChunkPacket
 
         if (chunk != other.chunk) return false
         if (cache != other.cache) return false

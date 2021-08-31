@@ -33,8 +33,8 @@ import com.valaphee.tesseract.world.WorldContext
 class ChunkAcquire(
     context: WorldContext,
     source: AnyEntityOfWorld?,
-    chunkPositions: LongArray,
+    positions: LongArray,
     val usage: ChunkUsage
-) : ChunkManagerMessage(context, source, chunkPositions) {
+) : ChunkManagerMessage(context, source, positions) {
     override val entity: AnyEntityOfWorld? get() = null
 }
