@@ -122,13 +122,14 @@ class WorldPacketHandler(
     }
 
     override fun initialize() {
-        player = context.entityFactory(PlayerType, setOf(
-            Remote(connection),
-            authExtra,
-            user,
-            Location(Float3(0.0f, 100.0f, 0.0f), Float2.Zero),
-            InventoryHolder(Inventory(WindowType.Inventory))
-        ))
+        player = (context.provider.loadPlayer(authExtra.userId) ?: context.entityFactory(PlayerType, setOf(
+            Location(Float3(0.0f, 100.0f, 0.0f), Float2.Zero)
+        ))).asMutableEntity().apply {
+            addAttribute(Remote(connection))
+            addAttribute(authExtra)
+            addAttribute(user)
+            addAttribute(InventoryHolder(Inventory(WindowType.Inventory)))
+        }
         context.world.addEntities(context, null, player)
 
         connection.write(
@@ -210,6 +211,7 @@ class WorldPacketHandler(
     override fun destroy() {
         context.world.sendMessage(ChunkRelease(context, player, player.findFacet(View::class).acquiredChunks))
         context.world.removeEntities(context, null, player.id)
+        context.provider.savePlayer(authExtra.userId, player)
     }
 
     override fun other(packet: Packet) = Unit

@@ -24,8 +24,10 @@
 
 package com.valaphee.tesseract.world.provider
 
+import com.valaphee.tesseract.actor.player.Player
 import com.valaphee.tesseract.world.World
 import com.valaphee.tesseract.world.chunk.Chunk
+import java.util.UUID
 
 /**
  * @author Kevin Ludwig
@@ -34,6 +36,10 @@ object NullProvider : Provider {
     override fun loadWorld(): World? = null
 
     override fun saveWorld(world: World) = Unit
+
+    override fun loadPlayer(userId: UUID): Player? = null
+
+    override fun savePlayer(userId: UUID, player: Player) = Unit
 
     override fun loadChunk(chunkPosition: Long): Chunk? = null
 

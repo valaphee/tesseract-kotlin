@@ -24,8 +24,10 @@
 
 package com.valaphee.tesseract.world.provider
 
+import com.valaphee.tesseract.actor.player.Player
 import com.valaphee.tesseract.world.World
 import com.valaphee.tesseract.world.chunk.Chunk
+import java.util.UUID
 
 /**
  * @author Kevin Ludwig
@@ -34,6 +36,10 @@ interface Provider {
     fun loadWorld(): World?
 
     fun saveWorld(world: World)
+
+    fun loadPlayer(userId: UUID): Player?
+
+    fun savePlayer(userId: UUID, player: Player)
 
     fun loadChunk(chunkPosition: Long): Chunk?
 

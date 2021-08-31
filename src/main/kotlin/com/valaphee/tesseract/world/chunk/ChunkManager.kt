@@ -51,8 +51,13 @@ class ChunkManager @Inject constructor(
                 context.world.addEntities(context, message.source, *message.positions.filterNot(chunks::containsKey).map { position ->
                     (context.provider.loadChunk(position) ?: run {
                         val position = decodePosition(position)
-                        context.entityFactory(ChunkType, setOf(Ticket(), Location(position), generator.generate(position)))
-                    }).also { chunks[position] = it }
+                        context.entityFactory(ChunkType, setOf(Location(position), generator.generate(position)))
+                    }).also {
+                        it.asMutableEntity().apply {
+                            addAttribute(Ticket())
+                        }
+                        chunks[position] = it
+                    }
                 }.toTypedArray())
 
                 message.usage.chunks = message.positions.map(chunks::get).filterNotNull().onEach { chunk -> message.source?.whenTypeIs<PlayerType> { chunk.players += it } }.toTypedArray()

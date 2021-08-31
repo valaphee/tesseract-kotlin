@@ -28,6 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.inject.Inject
 import com.google.inject.name.Named
+import com.valaphee.tesseract.actor.player.Player
 import com.valaphee.tesseract.world.World
 import com.valaphee.tesseract.world.chunk.Chunk
 import com.valaphee.tesseract.world.chunk.encodePosition
@@ -36,6 +37,7 @@ import org.fusesource.leveldbjni.JniDBFactory
 import org.iq80.leveldb.DB
 import org.iq80.leveldb.Options
 import java.io.File
+import java.util.UUID
 
 /**
  * @author Kevin Ludwig
@@ -45,31 +47,57 @@ class TesseractProvider @Inject constructor(
 ) : Provider {
     private val database: DB = JniDBFactory.factory.open(File("world"), Options().createIfMissing(true).blockSize(64 * 1024))
 
-    override fun loadWorld() = database.get(Key.World.toKey())?.let { objectMapper.readValue<World>(it) }
+    override fun loadWorld() = database.get(worldKey)?.let { objectMapper.readValue<World>(it) }
 
     override fun saveWorld(world: World) {
-        database.put(Key.World.toKey(), objectMapper.writeValueAsBytes(world))
+        database.put(worldKey, objectMapper.writeValueAsBytes(world))
     }
 
-    override fun loadChunk(chunkPosition: Long) = database.get(Key.Chunk.toKey(chunkPosition))?.let { objectMapper.readValue<Chunk>(it) }
+    override fun loadPlayer(userId: UUID) = database.get(playerKey(userId))?.let { objectMapper.readValue<Player>(it) }
+
+    override fun savePlayer(userId: UUID, player: Player) {
+        database.put(playerKey(userId), objectMapper.writeValueAsBytes(player))
+    }
+
+    override fun loadChunk(chunkPosition: Long) = database.get(chunkKey(chunkPosition))?.let { objectMapper.readValue<Chunk>(it) }
 
     override fun saveChunks(chunks: Iterable<Chunk>) {
         database.createWriteBatch().use { batch ->
             chunks.forEach {
                 val (x, z) = it.position
-                batch.put(Key.Chunk.toKey(encodePosition(x, z)), objectMapper.writeValueAsBytes(it))
+                batch.put(chunkKey(encodePosition(x, z)), objectMapper.writeValueAsBytes(it))
             }
             database.write(batch)
         }
     }
 
-    enum class Key(
-        private val uniqueifier: Byte
-    ) {
-        World(0x00),
-        Chunk(0x01);
+    companion object {
+        private val worldKey = byteArrayOf()
 
-        fun toKey(position: Long = 0L) = byteArrayOf(
+        fun playerKey(userId: UUID): ByteArray {
+            val mostSignificantBits = userId.mostSignificantBits
+            val leastSignificantBits = userId.leastSignificantBits
+            return byteArrayOf(
+                ((mostSignificantBits shr 56) and 0xFF).toByte(),
+                ((mostSignificantBits shr 48) and 0xFF).toByte(),
+                ((mostSignificantBits shr 40) and 0xFF).toByte(),
+                ((mostSignificantBits shr 32) and 0xFF).toByte(),
+                ((mostSignificantBits shr 24) and 0xFF).toByte(),
+                ((mostSignificantBits shr 16) and 0xFF).toByte(),
+                ((mostSignificantBits shr 8) and 0xFF).toByte(),
+                (mostSignificantBits and 0xFF).toByte(),
+                ((leastSignificantBits shr 56) and 0xFF).toByte(),
+                ((leastSignificantBits shr 48) and 0xFF).toByte(),
+                ((leastSignificantBits shr 40) and 0xFF).toByte(),
+                ((leastSignificantBits shr 32) and 0xFF).toByte(),
+                ((leastSignificantBits shr 24) and 0xFF).toByte(),
+                ((leastSignificantBits shr 16) and 0xFF).toByte(),
+                ((leastSignificantBits shr 8) and 0xFF).toByte(),
+                (leastSignificantBits and 0xFF).toByte()
+            )
+        }
+
+        fun chunkKey(position: Long = 0L) = byteArrayOf(
             ((position shr 56) and 0xFF).toByte(),
             ((position shr 48) and 0xFF).toByte(),
             ((position shr 40) and 0xFF).toByte(),
@@ -77,8 +105,7 @@ class TesseractProvider @Inject constructor(
             ((position shr 24) and 0xFF).toByte(),
             ((position shr 16) and 0xFF).toByte(),
             ((position shr 8) and 0xFF).toByte(),
-            (position and 0xFF).toByte(),
-            uniqueifier
+            (position and 0xFF).toByte()
         )
     }
 }

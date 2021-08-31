@@ -21,42 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.valaphee.tesseract.world.provider
 
-import com.valaphee.tesseract.actor.player.Player
-import com.valaphee.tesseract.world.World
-import com.valaphee.tesseract.world.chunk.Chunk
-import com.valaphee.tesseract.world.chunk.encodePosition
-import com.valaphee.tesseract.world.chunk.position
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
-import java.util.UUID
+package com.valaphee.tesseract.util.ecs
 
 /**
  * @author Kevin Ludwig
  */
-class InMemoryProvider : Provider {
-    private var world: World? = null
-    private var players = mutableMapOf<UUID, Player>()
-    private var chunks = Long2ObjectOpenHashMap<Chunk>()
-
-    override fun loadWorld() = world
-
-    override fun saveWorld(world: World) {
-        this.world = world
-    }
-
-    override fun loadPlayer(userId: UUID) = players[userId]
-
-    override fun savePlayer(userId: UUID, player: Player) {
-        players[userId] = player
-    }
-
-    override fun loadChunk(chunkPosition: Long): Chunk? = chunks[chunkPosition]
-
-    override fun saveChunks(chunks: Iterable<Chunk>) {
-        this.chunks.putAll(chunks.associateBy {
-            val (x, z) = it.position
-            encodePosition(x, z)
-        })
-    }
-}
+@Target(AnnotationTarget.CLASS)
+annotation class Runtime

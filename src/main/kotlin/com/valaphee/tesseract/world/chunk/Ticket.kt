@@ -26,10 +26,12 @@ package com.valaphee.tesseract.world.chunk
 
 import com.valaphee.foundry.ecs.BaseAttribute
 import com.valaphee.tesseract.actor.player.Player
+import com.valaphee.tesseract.util.ecs.Runtime
 
 /**
  * @author Kevin Ludwig
  */
+@Runtime
 class Ticket : BaseAttribute() {
     val players = mutableSetOf<Player>()
 }

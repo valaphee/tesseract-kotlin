@@ -26,10 +26,12 @@ package com.valaphee.tesseract.inventory
 
 import com.valaphee.foundry.ecs.BaseAttribute
 import com.valaphee.tesseract.actor.AnyActorOfWorld
+import com.valaphee.tesseract.util.ecs.Runtime
 
 /**
  * @author Kevin Ludwig
  */
+@Runtime
 class InventoryHolder(
     val inventory: Inventory
 ) : BaseAttribute()

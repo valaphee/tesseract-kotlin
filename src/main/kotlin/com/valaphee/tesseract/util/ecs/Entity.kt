@@ -35,6 +35,7 @@ import com.valaphee.foundry.ecs.Attribute
 import com.valaphee.foundry.ecs.entity.Entity
 import com.valaphee.foundry.ecs.entity.EntityType
 import com.valaphee.tesseract.world.WorldContext
+import kotlin.reflect.full.hasAnnotation
 
 /**
  * @author Kevin Ludwig
@@ -43,9 +44,9 @@ object EntitySerializer : JsonSerializer<Entity<*, *>>() {
     override fun serialize(value: Entity<*, *>, generator: JsonGenerator, provider: SerializerProvider) {
         generator.writeStartObject()
         generator.writeNumberField("id", value.id)
-        generator.writeObjectField("attributes", value.attributes.associateBy { it::class.java.name }.toMap())
-        generator.writeObjectField("behaviors", value.behaviors.map { it::class.java.name })
-        generator.writeObjectField("facets", value.facets.map { it::class.java.name })
+        generator.writeObjectField("attributes", value.attributes.filter { !it::class.hasAnnotation<Runtime>() }.associateBy { it::class.qualifiedName }.toMap())
+        /*generator.writeObjectField("behaviors", value.behaviors.map { it::class.qualifiedName })
+        generator.writeObjectField("facets", value.facets.map { it::class.qualifiedName })*/
         generator.writeEndObject()
     }
 }

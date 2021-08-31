@@ -24,15 +24,16 @@
 
 package com.valaphee.tesseract.net
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.valaphee.foundry.ecs.BaseAttribute
 import com.valaphee.tesseract.actor.player.Player
+import com.valaphee.tesseract.util.ecs.Runtime
 
 /**
  * @author Kevin Ludwig
  */
+@Runtime
 class Remote(
-    @JsonIgnore val connection: Connection
+    val connection: Connection
 ) : BaseAttribute()
 
 val Player.connection get() = findAttribute(Remote::class).connection
