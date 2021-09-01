@@ -27,11 +27,14 @@ package com.valaphee.tesseract.world.chunk.terrain.generator.hijack
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.valaphee.foundry.math.Int2
 import com.valaphee.tesseract.Instance
+import com.valaphee.tesseract.command.net.CommandPacket
+import com.valaphee.tesseract.command.net.Origin
 import com.valaphee.tesseract.net.Compressor
 import com.valaphee.tesseract.net.Connection
 import com.valaphee.tesseract.net.Decompressor
 import com.valaphee.tesseract.net.PacketDecoder
 import com.valaphee.tesseract.net.PacketEncoder
+import com.valaphee.tesseract.world.chunk.terrain.BlockStorage
 import com.valaphee.tesseract.world.chunk.terrain.Terrain
 import com.valaphee.tesseract.world.chunk.terrain.generator.Generator
 import io.netty.bootstrap.Bootstrap
@@ -48,6 +51,8 @@ import network.ycc.raknet.pipeline.UserDataCodec
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.net.InetSocketAddress
+import java.util.UUID
+import java.util.concurrent.CompletableFuture
 
 /**
  * @author Kevin Ludwig
@@ -56,6 +61,7 @@ class HijackGenerator : Generator {
     private var group = Instance.underlyingNetworking.groupFactory(0, ThreadFactoryBuilder().setNameFormat("hijack-%d").build())
 
     lateinit var connection: Connection
+    lateinit var handler: HijackPacketHandler
 
     init {
         val userDataCodec = UserDataCodec(0xFE)
@@ -67,7 +73,8 @@ class HijackGenerator : Generator {
             .handler(object : ChannelInitializer<Channel>() {
                 override fun initChannel(channel: Channel) {
                     connection = Connection()
-                    connection.setHandler(InitPacketHandler(connection))
+                    handler = HijackPacketHandler(connection)
+                    connection.setHandler(handler)
                     channel.pipeline()
                         .addLast(UserDataCodec.NAME, userDataCodec)
                         .addLast(Compressor.NAME, Compressor())
@@ -87,7 +94,12 @@ class HijackGenerator : Generator {
     }
 
     override fun generate(position: Int2): Terrain {
-        TODO()
+        val (x, z) = position
+        handler.chunkPosition = position
+        val chunkBlockStorageFuture = CompletableFuture<BlockStorage>()
+        handler.chunkBlockStorageFuture = chunkBlockStorageFuture
+        connection.write(CommandPacket("/teleport ${x * BlockStorage.XZSize + 7} 255 ${z * BlockStorage.XZSize + 7}", Origin(Origin.Where.Player, UUID.randomUUID(), "", 0L), false))
+        return Terrain(chunkBlockStorageFuture.join(), true)
     }
 
     companion object {

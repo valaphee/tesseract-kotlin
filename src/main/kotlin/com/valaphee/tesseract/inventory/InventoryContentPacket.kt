@@ -47,7 +47,7 @@ data class InventoryContentPacket(
     override fun write(buffer: PacketBuffer, version: Int) {
         buffer.writeVarUInt(windowId)
         buffer.writeVarUInt(content.size)
-        content.forEach { if (version >= 431) buffer.writeStack(it) else if (version >= 407) buffer.writeStackWithNetIdPre431(it) else buffer.writeStackPre431(it) }
+        if (version >= 431) content.forEach(buffer::writeStack) else if (version >= 407) content.forEach(buffer::writeStackWithNetIdPre431) else content.forEach(buffer::writeStackPre431)
     }
 
     override fun handle(handler: PacketHandler) = handler.inventoryContent(this)

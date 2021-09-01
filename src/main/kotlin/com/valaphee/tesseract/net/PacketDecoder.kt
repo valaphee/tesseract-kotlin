@@ -28,6 +28,7 @@ import com.valaphee.tesseract.actor.player.InputPacketReader
 import com.valaphee.tesseract.actor.player.InteractPacketReader
 import com.valaphee.tesseract.actor.player.PlayerActionPacketReader
 import com.valaphee.tesseract.actor.player.PlayerLocationPacketReader
+import com.valaphee.tesseract.actor.player.view.ChunkPacketReader
 import com.valaphee.tesseract.actor.player.view.ViewDistancePacketReader
 import com.valaphee.tesseract.actor.player.view.ViewDistanceRequestPacketReader
 import com.valaphee.tesseract.command.net.CommandPacketReader
@@ -43,7 +44,9 @@ import com.valaphee.tesseract.net.init.LoginPacketReader
 import com.valaphee.tesseract.net.init.PacksPacketReader
 import com.valaphee.tesseract.net.init.PacksResponsePacketReader
 import com.valaphee.tesseract.net.init.PacksStackPacketReader
+import com.valaphee.tesseract.net.init.ServerToClientHandshakePacketReader
 import com.valaphee.tesseract.net.init.StatusPacketReader
+import com.valaphee.tesseract.world.WorldPacketReader
 import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.MessageToMessageDecoder
@@ -67,13 +70,15 @@ class PacketDecoder(
         private val readers = Int2ObjectOpenHashMap<PacketReader>().apply {
             this[0x01] = LoginPacketReader
             this[0x02] = StatusPacketReader
-
+            this[0x03] = ServerToClientHandshakePacketReader
             this[0x04] = ClientToServerHandshakePacketReader
             this[0x05] = DisconnectPacketReader
             this[0x06] = PacksPacketReader
             this[0x07] = PacksStackPacketReader
             this[0x08] = PacksResponsePacketReader
             this[0x09] = TextPacketReader
+
+            this[0x0B] = WorldPacketReader
 
             this[0x13] = PlayerLocationPacketReader
 
@@ -82,6 +87,8 @@ class PacketDecoder(
             this[0x24] = PlayerActionPacketReader
 
             this[0x2F] = WindowClosePacketReader
+
+            this[0x3A] = ChunkPacketReader
 
             this[0x45] = ViewDistanceRequestPacketReader
             this[0x46] = ViewDistancePacketReader

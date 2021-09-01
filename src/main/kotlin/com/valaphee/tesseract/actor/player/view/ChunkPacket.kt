@@ -24,46 +24,43 @@
 
 package com.valaphee.tesseract.actor.player.view
 
+import com.valaphee.foundry.math.Int2
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
-import com.valaphee.tesseract.world.chunk.Chunk
-import com.valaphee.tesseract.world.chunk.position
 import com.valaphee.tesseract.world.chunk.terrain.BlockStorage
 import com.valaphee.tesseract.world.chunk.terrain.readSection
-import com.valaphee.tesseract.world.chunk.terrain.terrain
-import it.unimi.dsi.fastutil.ints.Int2ShortOpenHashMap
 
 /**
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.Clientbound)
 data class ChunkPacket(
-    var chunk: Chunk,
+    var position: Int2,
+    var blockStorage: BlockStorage,
     var cache: Boolean,
     val blobIds: LongArray? = null
 ) : Packet {
     override val id get() = 0x3A
 
-    constructor(chunk: Chunk) : this(chunk, false, null)
+    constructor(position: Int2, blockStorage: BlockStorage) : this(position, blockStorage, false, null)
 
-    constructor(chunk: Chunk, blobIds: LongArray) : this(chunk, true, blobIds)
+    constructor(position: Int2, blockStorage: BlockStorage, blobIds: LongArray) : this(position, blockStorage, true, blobIds)
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        val (x, z) = chunk.position
+        val (x, z) = position
         buffer.writeVarInt(x)
         buffer.writeVarInt(z)
-        val blockStorage = chunk.terrain.blockStorage
         var sectionCount = blockStorage.sections.size - 1
         while (sectionCount >= 0 && blockStorage.sections[sectionCount].empty) sectionCount--
         buffer.writeVarUInt(++sectionCount)
         buffer.writeBoolean(cache)
         if (cache) blobIds!!.let {
             buffer.writeVarUInt(it.size)
-            it.forEach { buffer.writeLongLE(it) }
+            it.forEach(buffer::writeLongLE)
         }
         val dataLengthIndex = buffer.writerIndex()
         buffer.writeZero(PacketBuffer.MaximumVarUIntLength)
@@ -76,7 +73,7 @@ data class ChunkPacket(
         buffer.setMaximumLengthVarUInt(dataLengthIndex, buffer.writerIndex() - (dataLengthIndex + PacketBuffer.MaximumVarUIntLength))
     }
 
-    override fun handle(handler: PacketHandler) = handler.chunkAdd(this)
+    override fun handle(handler: PacketHandler) = handler.chunk(this)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -84,7 +81,8 @@ data class ChunkPacket(
 
         other as ChunkPacket
 
-        if (chunk != other.chunk) return false
+        if (position != other.position) return false
+        if (blockStorage != other.blockStorage) return false
         if (cache != other.cache) return false
         if (blobIds != null) {
             if (other.blobIds == null) return false
@@ -95,7 +93,8 @@ data class ChunkPacket(
     }
 
     override fun hashCode(): Int {
-        var result = chunk.hashCode()
+        var result = position.hashCode()
+        result = 31 * result + blockStorage.hashCode()
         result = 31 * result + cache.hashCode()
         result = 31 * result + (blobIds?.contentHashCode() ?: 0)
         return result
@@ -105,20 +104,20 @@ data class ChunkPacket(
 /**
  * @author Kevin Ludwig
  */
-class PlayerLocationPacketReader : PacketReader {
+object ChunkPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int): ChunkPacket {
-        val x = buffer.readVarInt()
-        val z = buffer.readVarInt()
+        val position = Int2(buffer.readVarInt(), buffer.readVarInt())
         val sectionCount = buffer.readVarUInt()
+        val blockStorage = BlockStorage()
         val cache = buffer.readBoolean()
-        if (cache) LongArray(buffer.readVarUInt()) { buffer.readLongLE() }
+        val blobIds = if (cache) LongArray(buffer.readVarUInt()) { buffer.readLongLE() } else null
         buffer.readVarUInt()
         if (!cache) {
-            Array(sectionCount) { buffer.readSection() }
+            blockStorage.sections = Array(sectionCount) { buffer.readSection() }
             buffer.readBytes(ByteArray(BlockStorage.XZSize * BlockStorage.XZSize))
         }
         buffer.readByte()
-        Int2ShortOpenHashMap().apply { repeat(buffer.readVarInt()) { this[buffer.readVarInt()] = buffer.readShortLE() } }
-        TODO()
+        /*Int2ShortOpenHashMap().apply { repeat(buffer.readVarInt()) { this[buffer.readVarInt()] = buffer.readShortLE() } } TODO*/
+        return ChunkPacket(position, blockStorage, cache, blobIds)
     }
 }

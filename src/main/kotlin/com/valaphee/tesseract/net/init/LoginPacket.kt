@@ -24,6 +24,7 @@
 
 package com.valaphee.tesseract.net.init
 
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.internal.Streams
 import com.google.gson.stream.JsonReader
@@ -40,13 +41,18 @@ import com.valaphee.tesseract.net.Restriction
 import com.valaphee.tesseract.util.MojangRootKey
 import com.valaphee.tesseract.util.generatePublicKey
 import com.valaphee.tesseract.util.getJsonArray
+import com.valaphee.tesseract.util.getJsonObject
+import com.valaphee.tesseract.util.getString
 import io.netty.util.AsciiString
 import org.jose4j.jwa.AlgorithmConstraints
+import org.jose4j.jws.JsonWebSignature
 import org.jose4j.jwt.JwtClaims
 import org.jose4j.jwt.consumer.InvalidJwtException
 import org.jose4j.jwt.consumer.JwtConsumerBuilder
 import java.io.StringReader
+import java.security.PrivateKey
 import java.security.PublicKey
+import java.util.Base64
 
 /**
  * @author Kevin Ludwig
@@ -55,6 +61,7 @@ import java.security.PublicKey
 data class LoginPacket(
     val protocolVersion: Int,
     val publicKey: PublicKey,
+    val privateKey: PrivateKey?,
     val authExtra: AuthExtra,
     val user: User,
     var verified: Boolean
@@ -63,14 +70,37 @@ data class LoginPacket(
 
     override fun write(buffer: PacketBuffer, version: Int) {
         buffer.writeInt(protocolVersion)
-        val dataLengthIndex = buffer.writerIndex()
+        val jwtLengthIndex = buffer.writerIndex()
         buffer.writeZero(PacketBuffer.MaximumVarUIntLength)
-        buffer.writeAsciiStringLe(AsciiString.EMPTY_STRING)
-        buffer.writeAsciiStringLe(AsciiString.EMPTY_STRING)
-        buffer.setMaximumLengthVarUInt(dataLengthIndex, buffer.writerIndex() - (dataLengthIndex + PacketBuffer.MaximumVarUIntLength))
+        buffer.writeAsciiStringLe(AsciiString(JsonObject().apply {
+            add("chain", JsonArray().apply {
+                val authJws = JsonWebSignature()
+                authJws.setHeader("alg", "ES384")
+                authJws.setHeader("x5u", base64Encoder.encodeToString(publicKey.encoded))
+                authJws.payload = JsonObject().apply {
+                    addProperty("exp", System.currentTimeMillis() + 31_536_000_000L)
+                    add("extraData", JsonObject().apply(authExtra::toJson))
+                    addProperty("identityPublicKey", base64Encoder.encodeToString(publicKey.encoded))
+                    addProperty("nbf", System.currentTimeMillis() - 21_600_000L)
+                }.toString()
+                authJws.key = privateKey
+                add(authJws.compactSerialization)
+            })
+        }.toString()))
+        val userJws = JsonWebSignature()
+        userJws.setHeader("alg", "ES384")
+        userJws.setHeader("x5u", base64Encoder.encodeToString(publicKey.encoded))
+        userJws.payload = JsonObject().apply(user::toJson).toString()
+        userJws.key = privateKey
+        buffer.writeAsciiStringLe(AsciiString(userJws.compactSerialization))
+        buffer.setMaximumLengthVarUInt(jwtLengthIndex, buffer.writerIndex() - (jwtLengthIndex + PacketBuffer.MaximumVarUIntLength))
     }
 
     override fun handle(handler: PacketHandler) = handler.login(this)
+
+    companion object {
+        private val base64Encoder: Base64.Encoder = Base64.getEncoder()
+    }
 }
 
 /**
@@ -110,7 +140,7 @@ object LoginPacketReader : PacketReader {
                 authJwtClaims = authJwtConsumerBuilder.build().processToClaims(authJsonJws.asString)
             }
             authJwsJsonPayload = Streams.parse(JsonReader(StringReader(authJwtClaims.rawJson))).asJsonObject
-            verificationKey = generatePublicKey(authJwsJsonPayload["identityPublicKey"].asString)
+            verificationKey = generatePublicKey(authJwsJsonPayload.getString("identityPublicKey"))
         }
         val userJws = buffer.readAsciiStringLe().toString()
         val userJwtConsumerBuilder = JwtConsumerBuilder().setJwsAlgorithmConstraints(AlgorithmConstraints.ConstraintType.PERMIT, "ES384")
@@ -126,7 +156,8 @@ object LoginPacketReader : PacketReader {
         return LoginPacket(
             protocolVersion,
             verificationKey!!,
-            authJwsJsonPayload!!.getAsJsonObject("extraData").asAuthExtra,
+            null,
+            authJwsJsonPayload!!.getJsonObject("extraData").asAuthExtra,
             Streams.parse(JsonReader(StringReader(userJwtClaims.rawJson))).asJsonObject.asUser,
             verified && mojangKeyVerified
         )

@@ -90,7 +90,7 @@ data class PlayerAddPacket(
         buffer.writeVarUInt(customFlags)
         buffer.writeLongLE(uniqueEntityId)
         buffer.writeVarUInt(links.size)
-        links.forEach { if (version >= 407) buffer.writeLink(it) else buffer.writeLinkPre407(it) }
+        if (version >= 407) links.forEach(buffer::writeLink) else links.forEach(buffer::writeLinkPre407)
         buffer.writeString(deviceId)
         buffer.writeIntLE(operatingSystem.ordinal)
     }

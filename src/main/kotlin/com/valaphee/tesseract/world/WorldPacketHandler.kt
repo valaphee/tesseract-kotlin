@@ -74,6 +74,7 @@ import com.valaphee.tesseract.net.base.TextPacket
 import com.valaphee.tesseract.net.init.StatusPacket
 import com.valaphee.tesseract.world.chunk.Chunk
 import com.valaphee.tesseract.world.chunk.ChunkRelease
+import com.valaphee.tesseract.world.chunk.position
 import com.valaphee.tesseract.world.chunk.terrain.SectionCompact
 import com.valaphee.tesseract.world.chunk.terrain.block.Block
 import com.valaphee.tesseract.world.chunk.terrain.terrain
@@ -276,8 +277,8 @@ class WorldPacketHandler(
                         blobIds[i] = blobId
                     }
                 }
-                connection.write(ChunkPacket(it, blobIds))
-            } else connection.write(ChunkPacket(it))
+                connection.write(ChunkPacket(it.position, blockStorage, blobIds))
+            } else connection.write(ChunkPacket(it.position, it.terrain.blockStorage))
         }
 
         if (!playerSpawned) {

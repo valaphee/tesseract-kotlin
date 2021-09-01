@@ -102,7 +102,7 @@ class Connection : SimpleChannelInboundHandler<Packet>() {
 
     fun write(packet: Packet) {
         if (notClosed) {
-            /*log.debug("Out: {}", lazyToString(packet::toString))*/
+            log.debug("Out: {}", lazyToString(packet::toString))
             context.write(packet, context.voidPromise())
         }
     }
@@ -111,7 +111,7 @@ class Connection : SimpleChannelInboundHandler<Packet>() {
         if (notClosed) {
             notClosed = false
             if (packet != null && context.channel().isActive) {
-                /*log.debug("Out: {}", lazyToString(packet::toString))*/
+                log.debug("Out: {}", lazyToString(packet::toString))
                 context.writeAndFlush(packet).addListeners(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE, ChannelFutureListener.CLOSE)
             } else {
                 context.flush()

@@ -48,9 +48,10 @@ import java.security.SecureRandom
  * @author Kevin Ludwig
  */
 class EncryptionInitializer(
-    serverKeyPair: KeyPair,
-    clientPublicKey: Key,
-    val gcm: Boolean
+    keyPair: KeyPair,
+    otherPublicKey: Key,
+    val gcm: Boolean,
+    salt: ByteArray = ByteArray(16).apply(random::nextBytes),
 ) : ChannelInitializer<Channel>() {
     val serverToClientHandshakePacket: ServerToClientHandshakePacket
     private val key: ByteArray
@@ -58,19 +59,17 @@ class EncryptionInitializer(
     private lateinit var keyBuffer: ByteBuf
 
     init {
-        val clientSalt = ByteArray(16)
-        random.nextBytes(clientSalt)
-        val secret = generateSecret(serverKeyPair.private, clientPublicKey)
+        val secret = generateSecret(keyPair.private, otherPublicKey)
         val hasher = hasherLocal.get()
-        val buffer = PooledByteBufAllocator.DEFAULT.directBuffer(clientSalt.size + secret.size)
+        val buffer = PooledByteBufAllocator.DEFAULT.directBuffer(salt.size + secret.size)
         try {
-            buffer.writeBytes(clientSalt)
+            buffer.writeBytes(salt)
             buffer.writeBytes(secret)
             hasher.update(buffer)
         } finally {
             buffer.release()
         }
-        serverToClientHandshakePacket = ServerToClientHandshakePacket(serverKeyPair.public, serverKeyPair.private, clientSalt)
+        serverToClientHandshakePacket = ServerToClientHandshakePacket(keyPair.public, keyPair.private, salt)
         key = hasher.digest()
         if (gcm) {
             iv = ByteArray(16)

@@ -54,6 +54,7 @@ import com.valaphee.tesseract.net.base.CacheBlobStatusPacket
 import com.valaphee.tesseract.net.base.CacheBlobsPacket
 import com.valaphee.tesseract.net.base.CacheStatusPacket
 import com.valaphee.tesseract.net.base.DisconnectPacket
+import com.valaphee.tesseract.net.base.LocalPlayerAsInitializedPacket
 import com.valaphee.tesseract.net.base.TextPacket
 import com.valaphee.tesseract.net.init.BehaviorTreePacket
 import com.valaphee.tesseract.net.init.BiomeDefinitionsPacket
@@ -138,7 +139,7 @@ interface PacketHandler : ProtocolHandler {
 
     fun recipes(packet: RecipesPacket) = other(packet)
 
-    fun chunkAdd(packet: ChunkPacket) = other(packet)
+    fun chunk(packet: ChunkPacket) = other(packet)
 
     fun playerList(packet: PlayerListPacket) = other(packet)
 
@@ -159,6 +160,8 @@ interface PacketHandler : ProtocolHandler {
     fun blockUpdateSynced(packet: BlockUpdateSyncedPacket) = other(packet)
 
     fun moveRotate(packet: MoveRotatePacket) = other(packet)
+
+    fun localPlayerAsInitialized(packet: LocalPlayerAsInitializedPacket) = other(packet)
 
     fun entityIdentifiers(packet: EntityIdentifiersPacket) = other(packet)
 
