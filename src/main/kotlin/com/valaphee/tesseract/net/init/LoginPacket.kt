@@ -40,6 +40,7 @@ import com.valaphee.tesseract.net.Restriction
 import com.valaphee.tesseract.util.MojangRootKey
 import com.valaphee.tesseract.util.generatePublicKey
 import com.valaphee.tesseract.util.getJsonArray
+import io.netty.util.AsciiString
 import org.jose4j.jwa.AlgorithmConstraints
 import org.jose4j.jwt.JwtClaims
 import org.jose4j.jwt.consumer.InvalidJwtException
@@ -60,7 +61,14 @@ data class LoginPacket(
 ) : Packet {
     override val id get() = 0x01
 
-    override fun write(buffer: PacketBuffer, version: Int) = TODO()
+    override fun write(buffer: PacketBuffer, version: Int) {
+        buffer.writeInt(protocolVersion)
+        val dataLengthIndex = buffer.writerIndex()
+        buffer.writeZero(PacketBuffer.MaximumVarUIntLength)
+        buffer.writeAsciiStringLe(AsciiString.EMPTY_STRING)
+        buffer.writeAsciiStringLe(AsciiString.EMPTY_STRING)
+        buffer.setMaximumLengthVarUInt(dataLengthIndex, buffer.writerIndex() - (dataLengthIndex + PacketBuffer.MaximumVarUIntLength))
+    }
 
     override fun handle(handler: PacketHandler) = handler.login(this)
 }

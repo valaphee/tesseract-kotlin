@@ -37,21 +37,6 @@ import com.google.inject.name.Names
 import com.valaphee.foundry.ecs.entity.Entity
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
-import com.valaphee.tesseract.actor.player.InputPacketReader
-import com.valaphee.tesseract.actor.player.InteractPacketReader
-import com.valaphee.tesseract.actor.player.PlayerActionPacketReader
-import com.valaphee.tesseract.actor.player.PlayerLocationPacketReader
-import com.valaphee.tesseract.actor.player.view.ViewDistanceRequestPacketReader
-import com.valaphee.tesseract.command.net.CommandPacketReader
-import com.valaphee.tesseract.inventory.InventoryRequestPacketReader
-import com.valaphee.tesseract.inventory.WindowClosePacketReader
-import com.valaphee.tesseract.net.PacketReader
-import com.valaphee.tesseract.net.base.CacheBlobStatusPacketReader
-import com.valaphee.tesseract.net.base.CacheStatusPacketReader
-import com.valaphee.tesseract.net.base.TextPacketReader
-import com.valaphee.tesseract.net.init.ClientToServerHandshakePacketReader
-import com.valaphee.tesseract.net.init.LoginPacketReader
-import com.valaphee.tesseract.net.init.PacksResponsePacketReader
 import com.valaphee.tesseract.util.ecs.EntityDeserializer
 import com.valaphee.tesseract.util.ecs.EntityFactory
 import com.valaphee.tesseract.util.ecs.EntitySerializer
@@ -62,7 +47,7 @@ import com.valaphee.tesseract.util.jackson.Float3Serializer
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.WorldEngine
 import com.valaphee.tesseract.world.chunk.terrain.generator.Generator
-import com.valaphee.tesseract.world.chunk.terrain.generator.normal.NormalGenerator
+import com.valaphee.tesseract.world.chunk.terrain.generator.hijack.HijackGenerator
 import com.valaphee.tesseract.world.provider.Provider
 import com.valaphee.tesseract.world.provider.TesseractProvider
 import io.netty.channel.EventLoopGroup
@@ -75,7 +60,6 @@ import io.netty.channel.kqueue.KQueueEventLoopGroup
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.DatagramChannel
 import io.netty.channel.socket.nio.NioDatagramChannel
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -111,7 +95,7 @@ abstract class Instance(
             })
             bind(this@Instance.javaClass).toInstance(this@Instance)
             bind(Provider::class.java).to(TesseractProvider::class.java)
-            bind(Generator::class.java).toInstance(NormalGenerator(1))
+            bind(Generator::class.java).toInstance(HijackGenerator())
         }
     }, getModule())
 
@@ -121,42 +105,6 @@ abstract class Instance(
 
     @Suppress("LeakingThis")
     protected val worldContext = WorldContext(this.injector, coroutineScope, worldEngine, createEntityFactory().also { entityDeserializer.entityFactory = it }, this.injector.getInstance(Provider::class.java))
-
-    protected val packetReaders = Int2ObjectOpenHashMap<PacketReader>().apply {
-        this[0x01] = LoginPacketReader
-        /*this[0x02] = StatusPacketReader*/
-
-        this[0x04] = ClientToServerHandshakePacketReader
-        /*this[0x05] = DisconnectPacketReader
-        this[0x06] = PacksPacketReader
-        this[0x07] = PacksStackPacketReader*/
-        this[0x08] = PacksResponsePacketReader
-        this[0x09] = TextPacketReader
-
-        this[0x13] = PlayerLocationPacketReader(worldContext)
-
-        this[0x21] = InteractPacketReader(worldContext)
-
-        this[0x24] = PlayerActionPacketReader(worldContext)
-
-        this[0x2F] = WindowClosePacketReader
-
-        this[0x45] = ViewDistanceRequestPacketReader
-        /*this[0x46] = ViewDistancePacketReader*/
-
-        this[0x4D] = CommandPacketReader
-
-        /*this[0x4F] = CommandResponsePacketReader*/
-
-        this[0x81] = CacheStatusPacketReader
-
-        this[0x87] = CacheBlobStatusPacketReader
-        /*this[0x88] = ChunkCacheBlobsPacketReader*/
-
-        this[0x90] = InputPacketReader
-
-        this[0x93] = InventoryRequestPacketReader
-    }
 
     abstract fun getModule(): Module
 

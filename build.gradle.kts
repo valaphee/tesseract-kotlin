@@ -69,6 +69,7 @@ dependencies {
     api("io.netty:netty-codec-http2:4.1.67.Final")
     api("it.unimi.dsi:fastutil:8.5.4")
     implementation("jline:jline:2.14.6")
+    implementation("network.ycc:netty-raknet-client:0.8-SNAPSHOT")
     implementation("network.ycc:netty-raknet-server:0.8-SNAPSHOT")
     api("org.apache.logging.log4j:log4j-core:2.14.1")
     implementation("org.apache.logging.log4j:log4j-iostreams:2.14.1")

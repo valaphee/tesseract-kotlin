@@ -203,7 +203,9 @@ class WorldPacketHandler(
         context.provider.savePlayer(authExtra.userId, player)
     }
 
-    override fun other(packet: Packet) = Unit
+    override fun other(packet: Packet) {
+        log.debug("{}: Unhandled packet: {}", packet)
+    }
 
     override fun text(packet: TextPacket) {
         if (packet.type != TextPacket.Type.Chat || packet.xboxUserId != player.authExtra.xboxUserId) return
@@ -213,7 +215,7 @@ class WorldPacketHandler(
     }
 
     override fun playerLocation(packet: PlayerLocationPacket) {
-        if (packet.player != player) return
+        if (packet.runtimeEntityId != player.id) return
 
         player.sendMessage(Teleport(context, player, player, packet.position, packet.rotation))
     }
@@ -221,11 +223,9 @@ class WorldPacketHandler(
     override fun interact(packet: InteractPacket) {
         when (packet.action) {
             InteractPacket.Action.OpenInventory -> {
-                packet.actor?.let {
-                    if (it != player) return
+                if (packet.runtimeEntityId != player.id) return
 
-                    it.inventory.open(player)
-                }
+                player.inventory.open(player)
             }
         }
     }
@@ -287,6 +287,7 @@ class WorldPacketHandler(
     }
 
     companion object {
+        private val log: Logger = LogManager.getLogger(WorldPacketHandler::class.java)
         private val chatLog: Logger = LogManager.getLogger("Chat")
         private val xxHash64 = XXHashFactory.fastestInstance().hash64()
     }

@@ -27,12 +27,15 @@ package com.valaphee.tesseract.actor.player.view
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 import com.valaphee.tesseract.world.chunk.Chunk
 import com.valaphee.tesseract.world.chunk.position
-import com.valaphee.tesseract.world.chunk.terrain.BlockStorage.Companion.XZSize
+import com.valaphee.tesseract.world.chunk.terrain.BlockStorage
+import com.valaphee.tesseract.world.chunk.terrain.readSection
 import com.valaphee.tesseract.world.chunk.terrain.terrain
+import it.unimi.dsi.fastutil.ints.Int2ShortOpenHashMap
 
 /**
  * @author Kevin Ludwig
@@ -66,7 +69,7 @@ data class ChunkPacket(
         buffer.writeZero(PacketBuffer.MaximumVarUIntLength)
         if (!cache) {
             repeat(sectionCount) { i -> blockStorage.sections[i].writeToBuffer(buffer) }
-            buffer.writeBytes(ByteArray(XZSize * XZSize))
+            buffer.writeBytes(ByteArray(BlockStorage.XZSize * BlockStorage.XZSize))
         }
         buffer.writeByte(0)
         buffer.writeVarInt(0)
@@ -96,5 +99,26 @@ data class ChunkPacket(
         result = 31 * result + cache.hashCode()
         result = 31 * result + (blobIds?.contentHashCode() ?: 0)
         return result
+    }
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+class PlayerLocationPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int): ChunkPacket {
+        val x = buffer.readVarInt()
+        val z = buffer.readVarInt()
+        val sectionCount = buffer.readVarUInt()
+        val cache = buffer.readBoolean()
+        if (cache) LongArray(buffer.readVarUInt()) { buffer.readLongLE() }
+        buffer.readVarUInt()
+        if (!cache) {
+            Array(sectionCount) { buffer.readSection() }
+            buffer.readBytes(ByteArray(BlockStorage.XZSize * BlockStorage.XZSize))
+        }
+        buffer.readByte()
+        Int2ShortOpenHashMap().apply { repeat(buffer.readVarInt()) { this[buffer.readVarInt()] = buffer.readShortLE() } }
+        TODO()
     }
 }

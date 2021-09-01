@@ -159,7 +159,7 @@ class ServerInstance(
                         .addLast(Compressor.NAME, Compressor())
                         .addLast(Decompressor.NAME, Decompressor())
                         .addLast(PacketEncoder.NAME, PacketEncoder(true))
-                        .addLast(PacketDecoder.NAME, PacketDecoder(packetReaders))
+                        .addLast(PacketDecoder.NAME, PacketDecoder())
                         .addLast(connection)
                 }
             })

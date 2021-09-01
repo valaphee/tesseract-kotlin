@@ -47,20 +47,20 @@ class LocationPacketizer : BaseFacet<WorldContext, LocationManagerMessage>(Locat
                 when (message) {
                     is Move -> {
                         val (x, y, z) = it.position
-                        MoveRotatePacket(it, Int3.Zero, Float3(if (message.move.x.isZero()) Float.NaN else x, if (message.move.y.isZero()) Float.NaN else y, if (message.move.z.isZero()) Float.NaN else z), Float2(Float.NaN), Float.NaN, true, false, false)
+                        MoveRotatePacket(it.id, Int3.Zero, Float3(if (message.move.x.isZero()) Float.NaN else x, if (message.move.y.isZero()) Float.NaN else y, if (message.move.z.isZero()) Float.NaN else z), Float2(Float.NaN), Float.NaN, true, false, false)
                     }
                     is MoveRotate -> {
                         val (x, y, z) = it.position
                         val (yaw, pitch) = it.rotation
-                        MoveRotatePacket(it, Int3.Zero, Float3(if (message.move.x.isZero()) Float.NaN else x, if (message.move.y.isZero()) Float.NaN else y, if (message.move.z.isZero()) Float.NaN else z), Float2(pitch, yaw), Float.NaN, true, false, false)
+                        MoveRotatePacket(it.id, Int3.Zero, Float3(if (message.move.x.isZero()) Float.NaN else x, if (message.move.y.isZero()) Float.NaN else y, if (message.move.z.isZero()) Float.NaN else z), Float2(pitch, yaw), Float.NaN, true, false, false)
                     }
                     is Rotate -> {
                         val (yaw, pitch) = it.rotation
-                        MoveRotatePacket(it, Int3.Zero, Float3(Float.NaN), Float2(pitch, yaw), Float.NaN, true, false, false)
+                        MoveRotatePacket(it.id, Int3.Zero, Float3(Float.NaN), Float2(pitch, yaw), Float.NaN, true, false, false)
                     }
                     is Teleport -> {
                         val (yaw, pitch) = it.rotation
-                        TeleportPacket(it, it.position, Float2(pitch, yaw), Float.NaN, true, false)
+                        TeleportPacket(it.id, it.position, Float2(pitch, yaw), Float.NaN, true, false)
                     }
                 }
             ) // TODO replace broadcast

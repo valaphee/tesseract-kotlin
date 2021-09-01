@@ -43,7 +43,7 @@ class WorldEngine(
     var stopped = false
         private set
 
-    private val timer = Timer()
+    private val clock = Clock()
     private val sleep = (1_000L / cyclesPerSecond).toLong()
     private var lastSleep = sleep
 
@@ -65,13 +65,13 @@ class WorldEngine(
                 running = true
 
                 while (running) {
-                    lastSleep = sleep - (timer.realDelta - lastSleep)
+                    lastSleep = sleep - (clock.realDelta - lastSleep)
                     @Suppress("BlockingMethodInNonBlockingContext")
                     if (lastSleep > 0L) try {
                         Thread.sleep(lastSleep)
                     } catch (_: InterruptedException) {
                     }
-                    val cycles = timer.run()
+                    val cycles = clock.run()
                     while (cycles.hasNext()) {
                         context.cycle++
                         context.cycleDelta = cycles.next()

@@ -22,13 +22,12 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk.terrain.generator.flat
+package com.valaphee.tesseract.world.chunk.terrain.generator
 
 import com.valaphee.foundry.math.Int2
 import com.valaphee.tesseract.world.chunk.terrain.BlockStorage
 import com.valaphee.tesseract.world.chunk.terrain.Terrain
 import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
-import com.valaphee.tesseract.world.chunk.terrain.generator.Generator
 
 /**
  * @author Kevin Ludwig

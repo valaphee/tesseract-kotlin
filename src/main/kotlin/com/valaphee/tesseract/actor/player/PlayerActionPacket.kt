@@ -29,13 +29,12 @@ import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
-import com.valaphee.tesseract.world.WorldContext
 
 /**
  * @author Kevin Ludwig
  */
 data class PlayerActionPacket(
-    var player: Player,
+    var runtimeEntityId: Long,
     var action: Action,
     var blockPosition: Int3,
     var data: Int
@@ -74,7 +73,7 @@ data class PlayerActionPacket(
     override val id get() = 0x24
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarULong(player.id)
+        buffer.writeVarULong(runtimeEntityId)
         buffer.writeVarInt(action.ordinal)
         buffer.writeInt3UnsignedY(blockPosition)
         buffer.writeVarUInt(data)
@@ -86,14 +85,6 @@ data class PlayerActionPacket(
 /**
  * @author Kevin Ludwig
  */
-class PlayerActionPacketReader(
-    private val context: WorldContext
-) : PacketReader {
-    @Suppress("UNCHECKED_CAST")
-    override fun read(buffer: PacketBuffer, version: Int) = PlayerActionPacket(
-        context.engine.findEntityOrNull(buffer.readVarULong()) as Player,
-        PlayerActionPacket.Action.values()[buffer.readVarInt()],
-        buffer.readInt3UnsignedY(),
-        buffer.readVarInt()
-    )
+object PlayerActionPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = PlayerActionPacket(buffer.readVarULong(), PlayerActionPacket.Action.values()[buffer.readVarInt()], buffer.readInt3UnsignedY(), buffer.readVarInt())
 }
