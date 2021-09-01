@@ -37,12 +37,14 @@ import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.ChunkAcquire
 import com.valaphee.tesseract.world.chunk.ChunkRelease
-import com.valaphee.tesseract.world.chunk.decodePosition
 import com.valaphee.tesseract.world.chunk.encodePosition
 import com.valaphee.tesseract.world.whenTypeIs
 import it.unimi.dsi.fastutil.longs.LongArrayList
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet
 import java.lang.Integer.min
+import kotlin.math.acos
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * @author Kevin Ludwig
@@ -68,21 +70,26 @@ class View @Inject constructor(
             if (!this::lastChunkPosition.isInitialized || lastChunkPosition != chunkPosition) {
                 lastChunkPosition = chunkPosition
 
-                val distance2 = distance * distance
-                val chunksInDistance = LongArrayList()
-                for (chunkXr in -distance..distance) for (chunkZr in -distance..distance) if ((chunkXr * chunkXr) + (chunkZr * chunkZr) <= distance2) chunksInDistance.add(encodePosition(chunkX + chunkXr, chunkZ + chunkZr))
+                val chunksVisible = LongArrayList()
+                repeat(distance) { distance ->
+                    val chunksInDistance = LongArrayList()
+                    val minAngle = acos(1.0f - 1.0f / distance)
+                    var angle = 0.0f
+                    while (angle <= 360.0f) {
+                        val chunk = encodePosition((chunkX + distance * cos(angle)).toInt(),  (chunkZ + distance * sin(angle)).toInt())
+                        chunksInDistance.add(chunk)
+                        chunksVisible.add(chunk)
+                        angle += minAngle
+                    }
 
-                chunksInDistance.sort { a, b -> chunkPosition.distance2(decodePosition(a)).compareTo(chunkPosition.distance2(decodePosition(b))) }
-
-                val chunksToRelease = _acquiredChunks.filterNot(chunksInDistance::contains)
-                val chunksToAcquire = chunksInDistance.filterNot(_acquiredChunks::contains)
+                    val chunksToAcquire = chunksInDistance.filterNot(_acquiredChunks::contains)
+                    _acquiredChunks.addAll(chunksToAcquire)
+                    message.context.world.sendMessage(ChunkAcquire(message.context, it, chunksToAcquire.toLongArray(), ViewChunk(message.context, it, position, distance + 1)))
+                }
+                val chunksToRelease = _acquiredChunks.filterNot(chunksVisible::contains)
                 if (chunksToRelease.isNotEmpty()) {
                     _acquiredChunks.removeAll(chunksToRelease)
-                    message.context.world.receiveMessage(ChunkRelease(message.context, it, chunksToRelease.toLongArray()))
-                }
-                if (chunksToAcquire.isNotEmpty()) {
-                    _acquiredChunks.addAll(chunksToAcquire)
-                    message.context.world.receiveMessage(ChunkAcquire(message.context, it, chunksToAcquire.toLongArray(), ViewChunk(message.context, it)))
+                    message.context.world.sendMessage(ChunkRelease(message.context, it, chunksToRelease.toLongArray()))
                 }
             }
         }

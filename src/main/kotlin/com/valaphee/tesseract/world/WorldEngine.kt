@@ -25,6 +25,8 @@
 package com.valaphee.tesseract.world
 
 import com.valaphee.foundry.ecs.Engine
+import io.opentelemetry.api.common.AttributeKey
+import io.opentelemetry.api.trace.Tracer
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
@@ -38,12 +40,13 @@ import kotlin.coroutines.CoroutineContext
 class WorldEngine(
     cyclesPerSecond: Float = 50.0f,
     override val coroutineContext: CoroutineContext,
+    private val tracer: Tracer
 ) : Engine<WorldContext>, CoroutineScope {
     var running = false
     var stopped = false
         private set
 
-    private val timer = Timer()
+    private val clock = Clock()
     private val sleep = (1_000L / cyclesPerSecond).toLong()
     private var lastSleep = sleep
 
@@ -65,21 +68,26 @@ class WorldEngine(
                 running = true
 
                 while (running) {
-                    lastSleep = sleep - (timer.realDelta - lastSleep)
+                    lastSleep = sleep - (clock.realDelta - lastSleep)
                     @Suppress("BlockingMethodInNonBlockingContext")
                     if (lastSleep > 0L) try {
                         Thread.sleep(lastSleep)
                     } catch (_: InterruptedException) {
                     }
-                    val cycles = timer.run()
+                    val cycles = clock.run()
                     while (cycles.hasNext()) {
-                        context.cycle++
+                        val span = tracer.spanBuilder("update ${context.cycle++}").startSpan()
                         context.cycleDelta = cycles.next()
-                        entityById.values.filter { it.needsUpdate }.map { async { it.update(context) } }.awaitAll()
+                        entityById.values.filter { it.needsUpdate }.map { async { it.update(context) } }.also { span.setAttribute(needsUpdate, it.size) }.awaitAll()
+                        span.end()
                     }
                 }
             }
             if (!stopped) stopped = true
         }
+    }
+
+    companion object {
+        private val needsUpdate = AttributeKey.longKey("needsUpdate")
     }
 }

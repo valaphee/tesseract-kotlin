@@ -24,14 +24,23 @@
 
 package com.valaphee.tesseract.net.init
 
+import com.google.gson.JsonObject
+import com.google.gson.internal.Streams
+import com.google.gson.stream.JsonReader
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import com.valaphee.tesseract.util.generatePublicKey
+import com.valaphee.tesseract.util.getString
+import org.jose4j.jwa.AlgorithmConstraints
 import org.jose4j.jws.JsonWebSignature
-import org.jose4j.jwt.JwtClaims
-import java.security.Key
+import org.jose4j.jwt.consumer.JwtConsumerBuilder
+import java.io.StringReader
+import java.security.PrivateKey
+import java.security.PublicKey
 import java.util.Base64
 
 /**
@@ -39,19 +48,17 @@ import java.util.Base64
  */
 @Restrict(Restriction.Clientbound)
 data class ServerToClientHandshakePacket(
-    var serverPublicKey: Key,
-    val serverPrivateKey: Key,
-    var clientSalt: ByteArray
+    var serverPublicKey: PublicKey,
+    val serverPrivateKey: PrivateKey?,
+    var salt: ByteArray
 ) : Packet {
     override val id get() = 0x03
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        val jwtClaims = JwtClaims()
-        jwtClaims.setClaim("salt", base64Encoder.encodeToString(clientSalt))
         val jws = JsonWebSignature()
         jws.setHeader("alg", "ES384")
         jws.setHeader("x5u", base64Encoder.encodeToString(serverPublicKey.encoded))
-        jws.payload = jwtClaims.toJson()
+        jws.payload = JsonObject().apply { addProperty("salt", base64Encoder.encodeToString(salt)) }.toString()
         jws.key = serverPrivateKey
         buffer.writeString(jws.compactSerialization)
     }
@@ -66,7 +73,7 @@ data class ServerToClientHandshakePacket(
 
         if (serverPublicKey != other.serverPublicKey) return false
         if (serverPrivateKey != other.serverPrivateKey) return false
-        if (!clientSalt.contentEquals(other.clientSalt)) return false
+        if (!salt.contentEquals(other.salt)) return false
 
         return true
     }
@@ -74,11 +81,27 @@ data class ServerToClientHandshakePacket(
     override fun hashCode(): Int {
         var result = serverPublicKey.hashCode()
         result = 31 * result + serverPrivateKey.hashCode()
-        result = 31 * result + clientSalt.contentHashCode()
+        result = 31 * result + salt.contentHashCode()
         return result
     }
 
     companion object {
         private val base64Encoder: Base64.Encoder = Base64.getEncoder()
+
     }
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object ServerToClientHandshakePacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int): ServerToClientHandshakePacket {
+        val jws = buffer.readString()
+        val jwtConsumerBuilder = JwtConsumerBuilder().setJwsAlgorithmConstraints(AlgorithmConstraints.ConstraintType.PERMIT, "ES384")
+        jwtConsumerBuilder.setSkipSignatureVerification()
+        val jwtContext = jwtConsumerBuilder.build().process(jws)
+        return ServerToClientHandshakePacket(generatePublicKey(jwtContext.joseObjects.first().headers.getStringHeaderValue("x5u")), null, base64Decoder.decode(Streams.parse(JsonReader(StringReader(jwtContext.jwtClaims.rawJson))).asJsonObject.getString("salt")))
+    }
+
+    private val base64Decoder: Base64.Decoder = Base64.getDecoder()
 }

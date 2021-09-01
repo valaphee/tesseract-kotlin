@@ -74,6 +74,7 @@ import com.valaphee.tesseract.net.base.TextPacket
 import com.valaphee.tesseract.net.init.StatusPacket
 import com.valaphee.tesseract.world.chunk.Chunk
 import com.valaphee.tesseract.world.chunk.ChunkRelease
+import com.valaphee.tesseract.world.chunk.position
 import com.valaphee.tesseract.world.chunk.terrain.SectionCompact
 import com.valaphee.tesseract.world.chunk.terrain.block.Block
 import com.valaphee.tesseract.world.chunk.terrain.terrain
@@ -118,74 +119,7 @@ class WorldPacketHandler(
 
         val settings = context.world.settings
         val environment = context.world.environment
-        connection.write(
-            WorldPacket(
-                player.id,
-                player.id,
-                GameMode.Default,
-                player.position,
-                player.rotation,
-                0,
-                WorldPacket.BiomeType.Default,
-                "",
-                Dimension.Overworld,
-                WorldPacket.Overworld,
-                settings.gameMode,
-                settings.difficulty,
-                Int3.Zero,
-                true,
-                environment.time,
-                0,
-                false,
-                "",
-                WorldPacket.EducationEditionOffer.None,
-                environment.rainLevel,
-                environment.thunderLevel,
-                false,
-                true,
-                true,
-                GamePublishMode.Public,
-                GamePublishMode.Public,
-                true,
-                false,
-                arrayOf(),
-                arrayOf(),
-                false,
-                false,
-                false,
-                Rank.Operator,
-                4,
-                false,
-                false,
-                false,
-                true,
-                false,
-                false,
-                false,
-                "*",
-                16,
-                16,
-                true,
-                false,
-                "",
-                "Tesseract",
-                "",
-                false,
-                WorldPacket.AuthoritativeMovement.Client,
-                context.cycle,
-                0,
-                null,
-                null,
-                null,
-                Block.all.toTypedArray(),
-                null,
-                Item.all.toTypedArray(),
-                "",
-                true,
-                0,
-                true
-            )
-        )
+        connection.write(WorldPacket(player.id, player.id, GameMode.Default, player.position, player.rotation, 0, WorldPacket.BiomeType.Default, "plains", Dimension.Overworld, WorldPacket.Overworld, settings.gameMode, settings.difficulty, Int3.Zero, true, environment.time, WorldPacket.EducationEditionOffer.None, 0, false, "", environment.rainLevel, environment.thunderLevel, false, true, true, GamePublishMode.FriendsOfFriends, GamePublishMode.FriendsOfFriends, true, false, arrayOf(), arrayOf(), false, false, false, Rank.Operator, 4, false, false, false, false, false, false, false, "*", 16, 16, false, false, "Tesseract", "Tesseract", "00000000-0000-0000-0000-000000000000", false, WorldPacket.AuthoritativeMovement.Client, context.cycle, 0, null, null, null, Block.all.toTypedArray(), null, Item.all.toTypedArray(), "", true, 0, true))
 
         connection.write(biomeDefinitionsPacket)
         connection.write(entityIdentifiersPacket)
@@ -203,7 +137,9 @@ class WorldPacketHandler(
         context.provider.savePlayer(authExtra.userId, player)
     }
 
-    override fun other(packet: Packet) = Unit
+    override fun other(packet: Packet) {
+        log.debug("{}: Unhandled packet: {}", packet)
+    }
 
     override fun text(packet: TextPacket) {
         if (packet.type != TextPacket.Type.Chat || packet.xboxUserId != player.authExtra.xboxUserId) return
@@ -213,7 +149,7 @@ class WorldPacketHandler(
     }
 
     override fun playerLocation(packet: PlayerLocationPacket) {
-        if (packet.player != player) return
+        if (packet.runtimeEntityId != player.id) return
 
         player.sendMessage(Teleport(context, player, player, packet.position, packet.rotation))
     }
@@ -221,11 +157,9 @@ class WorldPacketHandler(
     override fun interact(packet: InteractPacket) {
         when (packet.action) {
             InteractPacket.Action.OpenInventory -> {
-                packet.actor?.let {
-                    if (it != player) return
+                if (packet.runtimeEntityId != player.id) return
 
-                    it.inventory.open(player)
-                }
+                player.inventory.open(player)
             }
         }
     }
@@ -276,8 +210,8 @@ class WorldPacketHandler(
                         blobIds[i] = blobId
                     }
                 }
-                connection.write(ChunkPacket(it, blobIds))
-            } else connection.write(ChunkPacket(it))
+                connection.write(ChunkPacket(it.position, blockStorage, blobIds))
+            } else connection.write(ChunkPacket(it.position, it.terrain.blockStorage))
         }
 
         if (!playerSpawned) {
@@ -287,6 +221,7 @@ class WorldPacketHandler(
     }
 
     companion object {
+        private val log: Logger = LogManager.getLogger(WorldPacketHandler::class.java)
         private val chatLog: Logger = LogManager.getLogger("Chat")
         private val xxHash64 = XXHashFactory.fastestInstance().hash64()
     }

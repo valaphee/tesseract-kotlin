@@ -27,7 +27,6 @@ package com.valaphee.tesseract.actor.location
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
-import com.valaphee.tesseract.actor.AnyActorOfWorld
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
@@ -36,7 +35,7 @@ import com.valaphee.tesseract.net.PacketHandler
  * @author Kevin Ludwig
  */
 data class MoveRotatePacket(
-    var actor: AnyActorOfWorld,
+    var runtimeEntityId: Long,
     var positionDelta: Int3,
     var position: Float3,
     var rotation: Float2,
@@ -48,7 +47,7 @@ data class MoveRotatePacket(
     override val id get() = 0x6F
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarULong(actor.id)
+        buffer.writeVarULong(runtimeEntityId)
         val flagsIndex = buffer.writerIndex()
         buffer.writeZero(Short.SIZE_BYTES)
         var flagsValue = 0

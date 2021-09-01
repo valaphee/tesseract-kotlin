@@ -31,7 +31,7 @@ import kotlin.math.sign
 /**
  * @author Kevin Ludwig
  */
-class Timer {
+class Clock {
     private var last = 0L
     val realTime get() = System.currentTimeMillis()
     var realDelta = 0L
@@ -63,7 +63,7 @@ class Timer {
             log.warn("Took {}ms, capping to {}ms", delta, cycleCap)
             delta = cycleCap
         }
-        val cycles = ((delta - 1) / maximumUpdateCycleLength).toInt() + 1
+        val cycles = ((delta - 1) / maximumCycleLength).toInt() + 1
 
         if (desync != 0L) {
             var difference = ceil(desync * resync).toLong()
@@ -105,9 +105,9 @@ class Timer {
     }
 
     companion object {
-        private val log = LogManager.getLogger(Timer::class.java)
+        private val log = LogManager.getLogger(Clock::class.java)
         private const val resync = 0.1f
-        private const val maximumUpdateCycleLength = 1000L
+        private const val maximumCycleLength = 50L
         private const val cycleCap = 1000L
     }
 }

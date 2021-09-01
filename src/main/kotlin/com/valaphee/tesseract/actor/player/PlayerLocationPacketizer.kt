@@ -42,7 +42,7 @@ import com.valaphee.tesseract.world.whenTypeIs
 class PlayerLocationPacketizer : BaseFacet<WorldContext, LocationManagerMessage>(LocationManagerMessage::class, Location::class) {
     override suspend fun receive(message: LocationManagerMessage): Response {
         message.entity?.whenTypeIs<PlayerType> {
-            message.context.world.broadcast(it, PlayerLocationPacket(it, it.position, it.rotation, 0.0f, PlayerLocationPacket.Mode.Normal, true, null, null, 0L)) // TODO replace broadcast
+            message.context.world.broadcast(it, PlayerLocationPacket(it.id, it.position, it.rotation, 0.0f, PlayerLocationPacket.Mode.Normal, true, 0L, null, 0L)) // TODO replace broadcast
 
             return Consumed
         }

@@ -31,7 +31,6 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
-import readExperiment
 import writeExperiment
 import java.util.UUID
 
@@ -119,8 +118,8 @@ object PacksStackPacketReader : PacketReader {
         Array(buffer.readVarUInt()) { PacksStackPacket.Pack(UUID.fromString(buffer.readString()), buffer.readString(), buffer.readString()) },
         Array(buffer.readVarUInt()) { PacksStackPacket.Pack(UUID.fromString(buffer.readString()), buffer.readString(), buffer.readString()) },
         if (version < 419) buffer.readBoolean() else false,
-        buffer.readString(),
+        "", emptyArray(), false/*buffer.readString(),
         if (version >= 419) Array(buffer.readIntLE()) { buffer.readExperiment() } else emptyArray(),
-        if (version >= 419) buffer.readBoolean() else false
+        if (version >= 419) buffer.readBoolean() else false TODO*/
     )
 }

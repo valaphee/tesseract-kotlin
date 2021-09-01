@@ -34,12 +34,14 @@ import com.valaphee.tesseract.net.GamePublishMode
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 import com.valaphee.tesseract.util.LittleEndianVarIntByteBufOutputStream
 import com.valaphee.tesseract.util.nbt.ListTag
 import com.valaphee.tesseract.util.nbt.NbtOutputStream
 import com.valaphee.tesseract.world.chunk.terrain.block.Block
+import readExperiment
 import writeExperiment
 
 /**
@@ -52,9 +54,9 @@ data class WorldPacket(
     var gameMode: GameMode,
     var position: Float3,
     var rotation: Float2,
-    var seed: Int = 0,
-    var biomeType: BiomeType,
-    var biomeName: String,
+    var seed: Int,
+    var biomeType: BiomeType?,
+    var biomeName: String?,
     var dimension: Dimension,
     var generatorId: Int,
     var defaultGameMode: GameMode,
@@ -62,10 +64,10 @@ data class WorldPacket(
     var defaultSpawn: Int3,
     var achievementsDisabled: Boolean,
     var time: Int,
+    var educationEditionOffer: EducationEditionOffer,
     var educationModeId: Int,
     var educationFeaturesEnabled: Boolean,
-    var educationProductId: String,
-    var educationEditionOffer: EducationEditionOffer,
+    var educationProductId: String?,
     var rainLevel: Float,
     var thunderLevel: Float,
     var platformLockedContentConfirmed: Boolean,
@@ -76,7 +78,7 @@ data class WorldPacket(
     var commandsEnabled: Boolean,
     var resourcePacksRequired: Boolean,
     var gameRules: Array<GameRule<*>>,
-    var experiments: Array<Experiment>,
+    var experiments: Array<Experiment>?,
     var experimentsPreviouslyToggled: Boolean,
     var bonusChestEnabled: Boolean,
     var startingWithMap: Boolean,
@@ -142,8 +144,8 @@ data class WorldPacket(
         buffer.writeFloat2(rotation)
         buffer.writeVarInt(seed)
         if (version >= 407) {
-            buffer.writeShortLE(biomeType.ordinal)
-            buffer.writeString(biomeName)
+            buffer.writeShortLE(biomeType!!.ordinal)
+            buffer.writeString(biomeName!!)
         }
         buffer.writeVarInt(dimension.ordinal)
         buffer.writeVarInt(generatorId)
@@ -156,7 +158,7 @@ data class WorldPacket(
             buffer.writeVarInt(educationEditionOffer.ordinal)
             if (version < 419) buffer.writeByte(educationModeId)
             buffer.writeBoolean(educationFeaturesEnabled)
-            buffer.writeString(educationProductId)
+            buffer.writeString(educationProductId!!)
         } else {
             buffer.writeBoolean(educationFeaturesEnabled)
             buffer.writeVarInt(educationEditionOffer.ordinal)
@@ -171,10 +173,12 @@ data class WorldPacket(
         buffer.writeBoolean(commandsEnabled)
         buffer.writeBoolean(resourcePacksRequired)
         buffer.writeVarUInt(gameRules.size)
-        if (version >= 440) gameRules.forEach { buffer.writeGameRule(it) } else gameRules.forEach { buffer.writeGameRulePre440(it) }
+        if (version >= 440) gameRules.forEach(buffer::writeGameRule) else gameRules.forEach(buffer::writeGameRulePre440)
         if (version >= 419) {
-            buffer.writeIntLE(experiments.size)
-            experiments.forEach { buffer.writeExperiment(it) }
+            experiments!!.let {
+                buffer.writeIntLE(it.size)
+                it.forEach(buffer::writeExperiment)
+            }
             buffer.writeBoolean(experimentsPreviouslyToggled)
         }
         buffer.writeBoolean(bonusChestEnabled)
@@ -391,4 +395,118 @@ data class WorldPacket(
     }
 
     override fun toString() = "WorldPacket(uniqueEntityId=$uniqueEntityId, runtimeEntityId=$runtimeEntityId, gameMode=$gameMode, position=$position, rotation=$rotation, seed=$seed, biomeType=$biomeType, biomeName='$biomeName', dimension=$dimension, generatorId=$generatorId, defaultGameMode=$defaultGameMode, difficulty=$difficulty, defaultSpawn=$defaultSpawn, achievementsDisabled=$achievementsDisabled, time=$time, educationModeId=$educationModeId, educationFeaturesEnabled=$educationFeaturesEnabled, educationProductId='$educationProductId', educationEditionOffer=$educationEditionOffer, rainLevel=$rainLevel, thunderLevel=$thunderLevel, platformLockedContentConfirmed=$platformLockedContentConfirmed, multiplayerGame=$multiplayerGame, broadcastingToLan=$broadcastingToLan, xboxLiveBroadcastMode=$xboxLiveBroadcastMode, platformBroadcastMode=$platformBroadcastMode, commandsEnabled=$commandsEnabled, resourcePacksRequired=$resourcePacksRequired, gameRules=${gameRules.contentToString()}, experiments=${experiments.contentToString()}, experimentsPreviouslyToggled=$experimentsPreviouslyToggled, bonusChestEnabled=$bonusChestEnabled, startingWithMap=$startingWithMap, defaultRank=$defaultRank, serverChunkTickRange=$serverChunkTickRange, behaviorPackLocked=$behaviorPackLocked, resourcePackLocked=$resourcePackLocked, fromLockedWorldTemplate=$fromLockedWorldTemplate, usingMsaGamerTagsOnly=$usingMsaGamerTagsOnly, fromWorldTemplate=$fromWorldTemplate, worldTemplateOptionLocked=$worldTemplateOptionLocked, onlySpawningV1Villagers=$onlySpawningV1Villagers, version='$version', limitedWorldRadius=$limitedWorldRadius, limitedWorldHeight=$limitedWorldHeight, v2Nether=$v2Nether, experimentalGameplay=$experimentalGameplay, worldId='$worldId', worldName='$worldName', premiumWorldTemplateId='$premiumWorldTemplateId', trial=$trial, movementAuthoritative=$movementAuthoritative, tick=$tick, enchantmentSeed=$enchantmentSeed, blocksTag=$blocksTag, blocksComponent=${blocksComponent?.contentToString()}, items=${items?.contentToString()}, multiplayerCorrelationId='$multiplayerCorrelationId', inventoriesServerAuthoritative=$inventoriesServerAuthoritative, movementRewindHistory=$movementRewindHistory, blockBreakingServerAuthoritative=$blockBreakingServerAuthoritative)"
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object WorldPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int): WorldPacket {
+        val uniqueEntityId = buffer.readVarLong()
+        val runtimeEntityId = buffer.readVarULong()
+        val gameMode = GameMode.values()[buffer.readVarInt()]
+        val position = buffer.readFloat3()
+        val rotation = buffer.readFloat2()
+        val seed = buffer.readVarInt()
+        val biomeType: WorldPacket.BiomeType?
+        val biomeName: String?
+        if (version >= 407) {
+            biomeType = WorldPacket.BiomeType.values()[buffer.readShortLE().toInt()]
+            biomeName = buffer.readString()
+        } else {
+            biomeType = null
+            biomeName = null
+        }
+        val dimension = Dimension.values()[buffer.readVarInt()]
+        val generatorId = buffer.readVarInt()
+        val defaultGameMode = GameMode.values()[buffer.readVarInt()]
+        val difficulty = Difficulty.values()[buffer.readVarInt()]
+        val defaultSpawn = buffer.readInt3UnsignedY()
+        val achievementsDisabled = buffer.readBoolean()
+        val time = buffer.readVarInt()
+        val educationEditionOffer: WorldPacket.EducationEditionOffer
+        val educationModeId: Int
+        val educationFeaturesEnabled: Boolean
+        val educationProductId: String?
+        if (version >= 407) {
+            educationEditionOffer = WorldPacket.EducationEditionOffer.values()[buffer.readVarInt()]
+            educationModeId = if (version < 419) buffer.readByte().toInt() else 0
+            educationFeaturesEnabled = buffer.readBoolean()
+            educationProductId = buffer.readString()
+        } else {
+            educationFeaturesEnabled = buffer.readBoolean()
+            educationModeId = 0
+            educationEditionOffer = WorldPacket.EducationEditionOffer.values()[buffer.readVarInt()]
+            educationProductId = null
+        }
+        val rainLevel = buffer.readFloatLE()
+        val thunderLevel = buffer.readFloatLE()
+        val platformLockedContentConfirmed = buffer.readBoolean()
+        val multiplayerGame = buffer.readBoolean()
+        val broadcastingToLan = buffer.readBoolean()
+        val xboxLiveBroadcastMode = GamePublishMode.values()[buffer.readVarInt()]
+        val platformBroadcastMode = GamePublishMode.values()[buffer.readVarInt()]
+        val commandsEnabled = buffer.readBoolean()
+        val resourcePacksRequired = buffer.readBoolean()
+        val gameRules = if (version >= 440) Array(buffer.readVarUInt()) { buffer.readGameRule() } else Array(buffer.readVarUInt()) { buffer.readGameRulePre440() }
+        val experiments: Array<Experiment>?
+        val experimentsPreviouslyToggled: Boolean
+        if (version >= 419) {
+            experiments = Array(buffer.readIntLE()) { buffer.readExperiment() }
+            experimentsPreviouslyToggled = buffer.readBoolean()
+        } else {
+            experiments = null
+            experimentsPreviouslyToggled = false
+        }
+        val bonusChestEnabled = buffer.readBoolean()
+        val startingWithMap = buffer.readBoolean()
+        val defaultPlayerPermission = Rank.values()[buffer.readVarInt()]
+        val serverChunkTickRange = buffer.readIntLE()
+        val behaviorPackLocked = buffer.readBoolean()
+        val resourcePackLocked = buffer.readBoolean()
+        val fromLockedWorldTemplate = buffer.readBoolean()
+        val usingMsaGamerTagsOnly = buffer.readBoolean()
+        val fromWorldTemplate = buffer.readBoolean()
+        val worldTemplateOptionLocked = buffer.readBoolean()
+        val onlySpawningV1Villagers = buffer.readBoolean()
+        val sversion = buffer.readString()
+        val limitedWorldRadius: Int
+        val limitedWorldHeight: Int
+        val v2Nether: Boolean
+        val experimentalGameplay: Boolean
+        if (version >= 407) {
+            limitedWorldRadius = buffer.readIntLE()
+            limitedWorldHeight = buffer.readIntLE()
+            v2Nether = buffer.readBoolean()
+            experimentalGameplay = if (version >= 419) { if (buffer.readBoolean()) buffer.readBoolean() else false } else buffer.readBoolean()
+        } else {
+            limitedWorldRadius = 0
+            limitedWorldHeight = 0
+            v2Nether = false
+            experimentalGameplay = false
+        }
+        val levelId = buffer.readString()
+        val worldName = buffer.readString()
+        println("$limitedWorldRadius $limitedWorldHeight $v2Nether $experimentalGameplay")
+        val premiumWorldTemplateId = buffer.readString()
+        val trial = buffer.readBoolean()
+        val movementAuthoritative = when {
+            version >= 419 -> WorldPacket.AuthoritativeMovement.values()[buffer.readVarUInt()]
+            buffer.readBoolean() -> WorldPacket.AuthoritativeMovement.Server
+            else -> WorldPacket.AuthoritativeMovement.Client
+        }
+        val movementRewindHistory: Int
+        val blockBreakingServerAuthoritative: Boolean
+        if (version >= 428) {
+            movementRewindHistory = buffer.readVarInt()
+            blockBreakingServerAuthoritative = buffer.readBoolean()
+        } else {
+            movementRewindHistory = 0
+            blockBreakingServerAuthoritative = false
+        }
+        val tick = buffer.readLongLE()
+        val enchantmentSeed = buffer.readVarInt()
+        // TODO
+        return WorldPacket(uniqueEntityId, runtimeEntityId, gameMode, position, rotation, seed, biomeType, biomeName, dimension, generatorId, defaultGameMode, difficulty, defaultSpawn, achievementsDisabled, time, educationEditionOffer, educationModeId, educationFeaturesEnabled, educationProductId, rainLevel, thunderLevel, platformLockedContentConfirmed, multiplayerGame, broadcastingToLan, xboxLiveBroadcastMode, platformBroadcastMode, commandsEnabled, resourcePacksRequired, gameRules, experiments, experimentsPreviouslyToggled, bonusChestEnabled, startingWithMap, defaultPlayerPermission, serverChunkTickRange, behaviorPackLocked, resourcePackLocked, fromLockedWorldTemplate, usingMsaGamerTagsOnly, fromWorldTemplate, worldTemplateOptionLocked, onlySpawningV1Villagers, sversion, limitedWorldRadius, limitedWorldHeight, v2Nether, experimentalGameplay, levelId, worldName, premiumWorldTemplateId, trial, movementAuthoritative, tick, enchantmentSeed, null, null, null, null, null, null, "", false, movementRewindHistory, blockBreakingServerAuthoritative)
+    }
 }

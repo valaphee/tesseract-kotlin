@@ -47,19 +47,21 @@ class TesseractProvider @Inject constructor(
 ) : Provider {
     private val database: DB = JniDBFactory.factory.open(File("world"), Options().createIfMissing(true).blockSize(64 * 1024))
 
-    override fun loadWorld() = database.get(worldKey)?.let { objectMapper.readValue<World>(it) }
+    override fun loadWorld() = synchronized(database) { database.get(worldKey) }?.let { objectMapper.readValue<World>(it) }
 
     override fun saveWorld(world: World) {
-        database.put(worldKey, objectMapper.writeValueAsBytes(world))
+        val value = objectMapper.writeValueAsBytes(world)
+        synchronized(database) { database.put(worldKey, value) }
     }
 
-    override fun loadPlayer(userId: UUID) = database.get(playerKey(userId))?.let { objectMapper.readValue<Player>(it) }
+    override fun loadPlayer(userId: UUID) = synchronized(database) { database.get(playerKey(userId)) }?.let { objectMapper.readValue<Player>(it) }
 
     override fun savePlayer(userId: UUID, player: Player) {
-        database.put(playerKey(userId), objectMapper.writeValueAsBytes(player))
+        val value = objectMapper.writeValueAsBytes(player)
+        synchronized(database) { database.put(playerKey(userId), value) }
     }
 
-    override fun loadChunk(chunkPosition: Long) = database.get(chunkKey(chunkPosition))?.let { objectMapper.readValue<Chunk>(it) }
+    override fun loadChunk(chunkPosition: Long) = synchronized(database) { database.get(chunkKey(chunkPosition)) }?.let { objectMapper.readValue<Chunk>(it) }
 
     override fun saveChunks(chunks: Iterable<Chunk>) {
         database.createWriteBatch().use { batch ->
@@ -67,12 +69,12 @@ class TesseractProvider @Inject constructor(
                 val (x, z) = it.position
                 batch.put(chunkKey(encodePosition(x, z)), objectMapper.writeValueAsBytes(it))
             }
-            database.write(batch)
+            synchronized(database) { database.write(batch) }
         }
     }
 
     override fun destroy() {
-        database.close()
+        synchronized(database) { database.close() }
     }
 
     companion object {

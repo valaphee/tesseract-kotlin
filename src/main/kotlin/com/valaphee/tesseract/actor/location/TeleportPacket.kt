@@ -26,7 +26,6 @@ package com.valaphee.tesseract.actor.location
 
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
-import com.valaphee.tesseract.actor.AnyActorOfWorld
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
@@ -35,7 +34,7 @@ import com.valaphee.tesseract.net.PacketHandler
  * @author Kevin Ludwig
  */
 data class TeleportPacket(
-    var actor: AnyActorOfWorld,
+    var runtimeEntityId: Long,
     var position: Float3,
     var rotation: Float2,
     var headRotationYaw: Float,
@@ -45,7 +44,7 @@ data class TeleportPacket(
     override val id get() = 0x12
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarULong(actor.id)
+        buffer.writeVarULong(runtimeEntityId)
         var flagsValue = if (onGround) flagOnGround else 0
         if (immediate) flagsValue = flagsValue or flagImmediate
         buffer.writeByte(flagsValue)

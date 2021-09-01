@@ -22,45 +22,26 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.player
+package com.valaphee.tesseract.net.base
 
-import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
-import com.valaphee.tesseract.net.PacketReader
+import com.valaphee.tesseract.net.Restrict
+import com.valaphee.tesseract.net.Restriction
 
 /**
  * @author Kevin Ludwig
  */
-data class InteractPacket(
-    var action: Action,
-    var runtimeEntityId: Long,
-    var mousePosition: Float3?
+@Restrict(Restriction.Serverbound)
+data class LocalPlayerAsInitializedPacket(
+    var runtimeEntityId: Long
 ) : Packet {
-    enum class Action {
-        None, Interact, Damage, LeaveVehicle, Mouseover, NpcOpen, OpenInventory
-    }
-
-    override val id get() = 0x21
+    override val id get() = 0x71
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeByte(action.ordinal)
         buffer.writeVarULong(runtimeEntityId)
-        if (action == Action.Mouseover || action == Action.NpcOpen) buffer.writeFloat3(mousePosition!!)
     }
 
-    override fun handle(handler: PacketHandler) = handler.interact(this)
-}
-
-/**
- * @author Kevin Ludwig
- */
-object InteractPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int): InteractPacket {
-        val action = InteractPacket.Action.values()[buffer.readByte().toInt()]
-        val runtimeEntityId = buffer.readVarULong()
-        val mousePosition = if (action == InteractPacket.Action.Mouseover || action == InteractPacket.Action.NpcOpen) buffer.readFloat3() else null
-        return InteractPacket(action, runtimeEntityId, mousePosition)
-    }
+    override fun handle(handler: PacketHandler) = handler.localPlayerAsInitialized(this)
 }

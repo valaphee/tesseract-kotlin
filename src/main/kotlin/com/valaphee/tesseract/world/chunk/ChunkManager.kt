@@ -28,6 +28,9 @@ import com.google.inject.Inject
 import com.valaphee.foundry.ecs.Pass
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
+import com.valaphee.foundry.math.Int2
+import com.valaphee.tesseract.Config
+import com.valaphee.tesseract.ServerInstance
 import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.terrain.generator.Generator
@@ -35,40 +38,80 @@ import com.valaphee.tesseract.world.chunk.terrain.terrain
 import com.valaphee.tesseract.world.entity.addEntities
 import com.valaphee.tesseract.world.entity.removeEntities
 import com.valaphee.tesseract.world.whenTypeIs
+import it.unimi.dsi.fastutil.longs.Long2ObjectMaps
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.selects.select
 
 /**
  * @author Kevin Ludwig
  */
 class ChunkManager @Inject constructor(
+    private val instance: ServerInstance,
+    config: Config,
     private val generator: Generator
 ) : BaseFacet<WorldContext, ChunkManagerMessage>(ChunkManagerMessage::class) {
-    private val chunks = Long2ObjectOpenHashMap<Chunk>()
+    private val awaitedChunksChannel = Channel<AwaitedChunk>()
+    private val requestedChunksChannel = Channel<Int2>(Channel.UNLIMITED)
+    private val loadedChunksChannel = Channel<Chunk>()
+
+    private val workers = List(config.concurrency) {
+        instance.coroutineScope.launch {
+            for (requestedChunk in requestedChunksChannel) {
+                val (x, z) = requestedChunk
+                loadedChunksChannel.send((instance.worldContext.provider.loadChunk(encodePosition(x, z)) ?: instance.worldContext.entityFactory.chunk(requestedChunk, generator.generate(requestedChunk))).asMutableEntity().apply {
+                    addAttribute(Ticket())
+                })
+            }
+        }
+    }
+
+    private val loader = instance.coroutineScope.launch {
+        val requestedChunks = mutableMapOf<Int2, MutableList<AwaitedChunk>>()
+        while (true) select<Unit> {
+            awaitedChunksChannel.onReceive { awaitedChunk ->
+                requestedChunks[awaitedChunk.position]?.add(awaitedChunk) ?: run {
+                    requestedChunks[awaitedChunk.position] = mutableListOf(awaitedChunk)
+                    requestedChunksChannel.send(awaitedChunk.position)
+                }
+            }
+            loadedChunksChannel.onReceive { loadedChunk ->
+                requestedChunks.remove(loadedChunk.position)!!.forEach { it.awaiting.complete(loadedChunk) }
+            }
+        }
+    }
+
+    private val chunks = Long2ObjectMaps.synchronize(Long2ObjectOpenHashMap<Chunk>())
 
     override suspend fun receive(message: ChunkManagerMessage): Response {
         val context = message.context
         when (message) {
             is ChunkAcquire -> {
-                context.world.addEntities(context, message.source, *message.positions.filterNot(chunks::containsKey).map { position ->
-                    (context.provider.loadChunk(position) ?: run {
-                        val position = decodePosition(position)
-                        context.entityFactory.chunk(position, generator.generate(position))
-                    }).also {
-                        it.asMutableEntity().apply {
-                            addAttribute(Ticket())
-                        }
-                        chunks[position] = it
-                    }
-                }.toTypedArray())
-
-                message.usage.chunks = message.positions.map(chunks::get).filterNotNull().onEach { chunk -> message.source?.whenTypeIs<PlayerType> { chunk.players += it } }.toTypedArray()
-                message.source?.receiveMessage(message.usage)
+                val chunks = message.positions.map { chunks[it] }.filterNotNull()
+                if (chunks.isNotEmpty()) {
+                    message.usage.chunks = chunks.onEach { chunk -> message.source?.whenTypeIs<PlayerType> { chunk.players += it } }.toTypedArray()
+                    message.source?.sendMessage(message.usage)
+                }
+                if (message.positions.size != chunks.size) instance.coroutineScope.launch {
+                    val loadedChunks = message.positions.filterNot(this@ChunkManager.chunks::containsKey).map { position ->
+                        val decodedPosition = decodePosition(position)
+                        val awaitedChunk = AwaitedChunk(decodedPosition)
+                        awaitedChunksChannel.send(awaitedChunk)
+                        awaitedChunk.awaiting.await().also { this@ChunkManager.chunks[position] = it }
+                    }.toTypedArray()
+                    context.world.addEntities(context, message.source, *loadedChunks)
+                    message.usage.chunks = loadedChunks
+                    message.source?.sendMessage(message.usage)
+                }
             }
             is ChunkRelease -> {
                 val chunksRemoved = message.positions.filter { chunkPosition ->
-                    val chunk = chunks.get(chunkPosition)
-                    message.source?.whenTypeIs<PlayerType> { chunk.players -= it }
-                    chunk.players.isEmpty()
+                    chunks.get(chunkPosition)?.let { chunk ->
+                        message.source?.whenTypeIs<PlayerType> { chunk.players -= it }
+                        chunk.players.isEmpty()
+                    } ?: false // TODO
                 }.map(chunks::remove)
                 context.provider.saveChunks(chunksRemoved.filter { it.terrain.modified })
                 context.world.removeEntities(context, message.source, *chunksRemoved.map { it.id }.toLongArray())
@@ -77,4 +120,9 @@ class ChunkManager @Inject constructor(
 
         return Pass
     }
+
+    private inner class AwaitedChunk(
+        val position: Int2,
+        val awaiting: CompletableDeferred<Chunk> = CompletableDeferred()
+    )
 }

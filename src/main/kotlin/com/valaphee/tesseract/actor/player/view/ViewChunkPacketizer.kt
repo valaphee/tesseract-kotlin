@@ -27,7 +27,6 @@ package com.valaphee.tesseract.actor.player.view
 import com.valaphee.foundry.ecs.Consumed
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
-import com.valaphee.tesseract.actor.location.position
 import com.valaphee.tesseract.net.connection
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.WorldPacketHandler
@@ -37,9 +36,9 @@ import com.valaphee.tesseract.world.WorldPacketHandler
  */
 class ViewChunkPacketizer : BaseFacet<WorldContext, ViewChunk>(ViewChunk::class) {
     override suspend fun receive(message: ViewChunk): Response {
-        val player = message.source
-        player.connection.write(ChunkPublishPacket(player.position.toInt3(), player.findFacet(View::class).distance shl 4))
-        (player.connection.handler as WorldPacketHandler).writeChunks(message.chunks)
+        val connection = message.source.connection
+        connection.write(ChunkPublishPacket(message.center, message.radius shl 4))
+        (connection.handler as WorldPacketHandler).writeChunks(message.chunks)
 
         return Consumed
     }
