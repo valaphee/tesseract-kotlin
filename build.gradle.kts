@@ -37,8 +37,6 @@ plugins {
     id("edu.sc.seis.launch4j") version "2.5.0"
     kotlin("jvm") version "1.5.30"
     `maven-publish`
-    id("net.linguica.maven-settings") version "0.5"
-    id("org.hibernate.build.maven-repo-auth") version "3.0.4"
     signing
 }
 
