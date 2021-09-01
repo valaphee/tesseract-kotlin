@@ -41,8 +41,8 @@ plugins {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
+    maven("https://repo.codemc.org/repository/maven-public")
 }
 
 group = "com.valaphee"
