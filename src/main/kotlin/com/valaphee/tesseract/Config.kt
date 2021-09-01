@@ -39,6 +39,7 @@ import java.util.regex.Pattern
 @Singleton
 @ProvidedBy(Config.Provider::class)
 data class Config(
+    var concurrency: Int = 0,
     var address: InetSocketAddress = InetSocketAddress("0.0.0.0", 19132),
     var maximumPlayers: Int = 10,
     var serverName: String = "Tesseract",

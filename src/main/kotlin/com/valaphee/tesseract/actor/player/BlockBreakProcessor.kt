@@ -27,9 +27,7 @@ package com.valaphee.tesseract.actor.player
 import com.valaphee.foundry.ecs.Pass
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
-import com.valaphee.tesseract.net.connection
 import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.WorldEventPacket
 import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
 import com.valaphee.tesseract.world.chunk.terrain.terrain
 
@@ -39,9 +37,7 @@ import com.valaphee.tesseract.world.chunk.terrain.terrain
 class BlockBreakProcessor : BaseFacet<WorldContext, BlockBreak>(BlockBreak::class) {
     override suspend fun receive(message: BlockBreak): Response {
         val (x, y, z) = message.position
-        val block = message.chunks.first().terrain.blockStorage[x, y, z]
         message.chunks.first().terrain.blockUpdates[x, y, z] = airId
-        message.source.connection.write(WorldEventPacket(WorldEventPacket.Event.ParticleDestroyBlock, message.position.toFloat3(), block))
 
         return Pass
     }

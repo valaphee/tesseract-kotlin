@@ -60,6 +60,7 @@ import io.netty.channel.kqueue.KQueueEventLoopGroup
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.DatagramChannel
 import io.netty.channel.socket.nio.NioDatagramChannel
+import io.opentelemetry.api.OpenTelemetry
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -74,6 +75,7 @@ import java.util.concurrent.ThreadFactory
  */
 abstract class Instance(
     injector: Injector,
+    telemetry: OpenTelemetry
 ) {
     private val entityDeserializer = EntityDeserializer()
 
@@ -99,9 +101,11 @@ abstract class Instance(
         }
     }, getModule())
 
-    private val executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), ThreadFactoryBuilder().setNameFormat("world-%d").build())
-    private val coroutineScope = CoroutineScope(executor.asCoroutineDispatcher() + SupervisorJob() + CoroutineExceptionHandler { context, throwable -> log.error("Unhandled exception caught in $context", throwable) })
-    private val worldEngine = WorldEngine(20.0f, coroutineScope.coroutineContext)
+    protected val config: Config = injector.getInstance(Config::class.java)
+
+    private val executor = Executors.newFixedThreadPool(if (config.concurrency <= 0) Runtime.getRuntime().availableProcessors() else config.concurrency, ThreadFactoryBuilder().setNameFormat("world-%d").build())
+    internal val coroutineScope = CoroutineScope(executor.asCoroutineDispatcher() + SupervisorJob() + CoroutineExceptionHandler { context, throwable -> log.error("Unhandled exception caught in $context", throwable) })
+    private val worldEngine = WorldEngine(20.0f, coroutineScope.coroutineContext, telemetry.getTracer("tesseract"))
 
     @Suppress("LeakingThis")
     internal val worldContext = WorldContext(this.injector, coroutineScope, worldEngine, createEntityFactory().also { entityDeserializer.entityFactory = it }, this.injector.getInstance(Provider::class.java))

@@ -60,6 +60,7 @@ import com.valaphee.tesseract.world.chunk.terrain.block.Blocks
 import io.netty.buffer.ByteBufInputStream
 import io.netty.buffer.PooledByteBufAllocator
 import io.netty.buffer.Unpooled
+import io.opentelemetry.sdk.OpenTelemetrySdk
 import org.apache.logging.log4j.LogManager
 import java.io.IOException
 import java.io.InputStreamReader
@@ -155,7 +156,16 @@ fun main(arguments: Array<String>) {
             bind(Argument::class.java).toInstance(argument)
         }
     })
-    val serverInstance = ServerInstance(guice)
+    val serverInstance = ServerInstance(
+        guice,
+        OpenTelemetrySdk.builder()
+            /*.setTracerProvider(
+                SdkTracerProvider.builder()
+                    .addSpanProcessor(BatchSpanProcessor.builder(JaegerGrpcSpanExporter.builder().build()).build())
+                    .build()
+            )*/
+            .buildAndRegisterGlobal()
+    )
     serverInstance.bind()
 
     val commandManager = guice.getInstance(CommandManager::class.java)
@@ -165,7 +175,7 @@ fun main(arguments: Array<String>) {
         while (true) {
             try {
                 val message = reader.readLine(null, null, null)
-                if (message.trim { it <= ' ' }.isNotEmpty()) commandManager.dispatch(message).messages.forEach { println(it.message) }
+                if (message.trim { it <= ' ' }.isNotEmpty()) commandManager.dispatch(message)
             } catch (_: IOException) {
             } catch (_: IndexOutOfBoundsException) {
             }

@@ -29,6 +29,7 @@ import com.valaphee.foundry.ecs.Pass
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
 import com.valaphee.foundry.math.Int2
+import com.valaphee.tesseract.Config
 import com.valaphee.tesseract.ServerInstance
 import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.world.WorldContext
@@ -40,8 +41,6 @@ import com.valaphee.tesseract.world.whenTypeIs
 import it.unimi.dsi.fastutil.longs.Long2ObjectMaps
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.select
@@ -51,18 +50,15 @@ import kotlinx.coroutines.selects.select
  */
 class ChunkManager @Inject constructor(
     private val instance: ServerInstance,
+    config: Config,
     private val generator: Generator
-) : BaseFacet<WorldContext, ChunkManagerMessage>(ChunkManagerMessage::class), CoroutineScope {
-    private val job = Job()
-
-    override val coroutineContext get() = job
-
+) : BaseFacet<WorldContext, ChunkManagerMessage>(ChunkManagerMessage::class) {
     private val awaitedChunksChannel = Channel<AwaitedChunk>()
     private val requestedChunksChannel = Channel<Int2>(Channel.UNLIMITED)
     private val loadedChunksChannel = Channel<Chunk>()
 
-    private val workers = List(maximumWorkers) {
-        launch {
+    private val workers = List(config.concurrency) {
+        instance.coroutineScope.launch {
             for (requestedChunk in requestedChunksChannel) {
                 val (x, z) = requestedChunk
                 loadedChunksChannel.send((instance.worldContext.provider.loadChunk(encodePosition(x, z)) ?: instance.worldContext.entityFactory.chunk(requestedChunk, generator.generate(requestedChunk))).asMutableEntity().apply {
@@ -72,7 +68,7 @@ class ChunkManager @Inject constructor(
         }
     }
 
-    private val loader = launch {
+    private val loader = instance.coroutineScope.launch {
         val requestedChunks = mutableMapOf<Int2, MutableList<AwaitedChunk>>()
         while (true) select<Unit> {
             awaitedChunksChannel.onReceive { awaitedChunk ->
@@ -98,7 +94,7 @@ class ChunkManager @Inject constructor(
                     message.usage.chunks = chunks.onEach { chunk -> message.source?.whenTypeIs<PlayerType> { chunk.players += it } }.toTypedArray()
                     message.source?.sendMessage(message.usage)
                 }
-                if (message.positions.size != chunks.size) launch {
+                if (message.positions.size != chunks.size) instance.coroutineScope.launch {
                     val loadedChunks = message.positions.filterNot(this@ChunkManager.chunks::containsKey).map { position ->
                         val decodedPosition = decodePosition(position)
                         val awaitedChunk = AwaitedChunk(decodedPosition)
@@ -115,7 +111,7 @@ class ChunkManager @Inject constructor(
                     chunks.get(chunkPosition)?.let { chunk ->
                         message.source?.whenTypeIs<PlayerType> { chunk.players -= it }
                         chunk.players.isEmpty()
-                    } ?: false
+                    } ?: false // TODO
                 }.map(chunks::remove)
                 context.provider.saveChunks(chunksRemoved.filter { it.terrain.modified })
                 context.world.removeEntities(context, message.source, *chunksRemoved.map { it.id }.toLongArray())
@@ -129,8 +125,4 @@ class ChunkManager @Inject constructor(
         val position: Int2,
         val awaiting: CompletableDeferred<Chunk> = CompletableDeferred()
     )
-
-    companion object {
-        private const val maximumWorkers = 4
-    }
 }

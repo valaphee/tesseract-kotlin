@@ -53,8 +53,8 @@ val details = versionDetails()
 version = "${details.lastTag}.${details.commitDistance}${if (details.branchName != "master") "-${details.branchName.split('/').last()}" else ""}"
 
 dependencies {
-    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.4")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-smile:2.12.4")
+    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-smile:2.12.5")
     api("com.google.code.gson:gson:2.8.8")
     api("com.google.inject:guice:5.0.1")
     api("com.valaphee:foundry-databind:1.3.0.0")
@@ -74,6 +74,7 @@ dependencies {
     api("org.apache.logging.log4j:log4j-core:2.14.1")
     implementation("org.apache.logging.log4j:log4j-iostreams:2.14.1")
     implementation("org.apache.logging.log4j:log4j-jul:2.14.1")
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.14.1")
     implementation("org.bitbucket.b_c:jose4j:0.7.9")
     implementation("org.fusesource.leveldbjni:leveldbjni-all:1.8")
     api("org.jetbrains.kotlin:kotlin-reflect:1.5.30")

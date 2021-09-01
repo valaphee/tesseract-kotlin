@@ -26,7 +26,6 @@ package com.valaphee.tesseract
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.google.inject.AbstractModule
-import com.google.inject.Inject
 import com.google.inject.Injector
 import com.valaphee.tesseract.actor.ActorPacketizer
 import com.valaphee.tesseract.actor.location.LocationManager
@@ -67,6 +66,7 @@ import io.netty.channel.WriteBufferWaterMark
 import io.netty.channel.epoll.EpollChannelOption
 import io.netty.channel.unix.UnixChannelOption
 import io.netty.handler.timeout.ReadTimeoutHandler
+import io.opentelemetry.api.OpenTelemetry
 import network.ycc.raknet.RakNet
 import network.ycc.raknet.pipeline.UserDataCodec
 import network.ycc.raknet.server.channel.RakNetServerChannel
@@ -80,10 +80,9 @@ import kotlin.concurrent.thread
  * @author Kevin Ludwig
  */
 class ServerInstance(
-    injector: Injector
-) : Instance(injector) {
-    @Inject private lateinit var config: Config
-
+    injector: Injector,
+    telemetry: OpenTelemetry
+) : Instance(injector, telemetry) {
     private val parentGroup = underlyingNetworking.groupFactory(0, ThreadFactoryBuilder().setNameFormat("server-%d").build())
     private val childGroup = underlyingNetworking.groupFactory(0, ThreadFactoryBuilder().setNameFormat("server-c-%d").build())
 
@@ -149,7 +148,7 @@ class ServerInstance(
                     } catch (_: ChannelException) {
                     }
                     config.setAllocator(PooledByteBufAllocator.DEFAULT).writeBufferWaterMark = childWriteBufferWaterMark
-                    (config as RakNet.Config).maxQueuedBytes = 8 * 1024 * 1024
+                    (config as RakNet.Config).maxQueuedBytes = 16 * 1024 * 1024
 
                     val connection = Connection()
                     connection.setHandler(InitPacketHandler(worldContext, connection).apply { injector.injectMembers(this) })
