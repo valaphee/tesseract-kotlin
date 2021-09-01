@@ -1,6 +1,8 @@
 # tesseract
 
-![Version](https://img.shields.io/badge/version-0.0.1-darkred.svg)
+![license](https://img.shields.io/badge/license-MIT%20License-blue.svg)
+![version](https://img.shields.io/badge/version-0.0.1-darkred.svg)
+[![build](https://github.com/valaphee/tesseract/actions/workflows/build.yml/badge.svg)](https://github.com/valaphee/tesseract/actions/workflows/build.yml)
 
 Experience Minecraft in a different way. Tesseract is a server software for Minecraft: Bedrock Edition.<br>
 But it uses a different concept then most servers out there, some are for example:
@@ -21,7 +23,3 @@ But it uses a different concept then most servers out there, some are for exampl
 1. `git clone https://github.com/valaphee/tesseract`
 2. `cd tesseract`
 3. `./gradlew build`
-
-## Docker
-
-## Kubernetes & Helm
