@@ -47,7 +47,7 @@ import com.valaphee.tesseract.util.jackson.Float3Serializer
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.WorldEngine
 import com.valaphee.tesseract.world.chunk.terrain.generator.Generator
-import com.valaphee.tesseract.world.chunk.terrain.generator.hijack.HijackGenerator
+import com.valaphee.tesseract.world.chunk.terrain.generator.normal.NormalGenerator
 import com.valaphee.tesseract.world.provider.Provider
 import com.valaphee.tesseract.world.provider.TesseractProvider
 import io.netty.channel.EventLoopGroup
@@ -95,7 +95,7 @@ abstract class Instance(
             })
             bind(this@Instance.javaClass).toInstance(this@Instance)
             bind(Provider::class.java).to(TesseractProvider::class.java)
-            bind(Generator::class.java).toInstance(HijackGenerator())
+            bind(Generator::class.java).toInstance(NormalGenerator(0))
         }
     }, getModule())
 
@@ -104,7 +104,7 @@ abstract class Instance(
     private val worldEngine = WorldEngine(20.0f, coroutineScope.coroutineContext)
 
     @Suppress("LeakingThis")
-    protected val worldContext = WorldContext(this.injector, coroutineScope, worldEngine, createEntityFactory().also { entityDeserializer.entityFactory = it }, this.injector.getInstance(Provider::class.java))
+    internal val worldContext = WorldContext(this.injector, coroutineScope, worldEngine, createEntityFactory().also { entityDeserializer.entityFactory = it }, this.injector.getInstance(Provider::class.java))
 
     abstract fun getModule(): Module
 

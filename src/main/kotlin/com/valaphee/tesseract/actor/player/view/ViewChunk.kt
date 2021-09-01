@@ -24,6 +24,7 @@
 
 package com.valaphee.tesseract.actor.player.view
 
+import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.actor.player.Player
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.Chunk
@@ -34,7 +35,9 @@ import com.valaphee.tesseract.world.chunk.ChunkUsage
  */
 class ViewChunk(
     override val context: WorldContext,
-    override val source: Player
+    override val source: Player,
+    val center: Int3,
+    val radius: Int
 ) : ChunkUsage {
     override val entity get() = source
 

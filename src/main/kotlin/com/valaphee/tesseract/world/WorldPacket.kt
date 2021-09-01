@@ -54,7 +54,7 @@ data class WorldPacket(
     var gameMode: GameMode,
     var position: Float3,
     var rotation: Float2,
-    var seed: Int = 0,
+    var seed: Int,
     var biomeType: BiomeType?,
     var biomeName: String?,
     var dimension: Dimension,
@@ -64,10 +64,10 @@ data class WorldPacket(
     var defaultSpawn: Int3,
     var achievementsDisabled: Boolean,
     var time: Int,
+    var educationEditionOffer: EducationEditionOffer,
     var educationModeId: Int,
     var educationFeaturesEnabled: Boolean,
     var educationProductId: String?,
-    var educationEditionOffer: EducationEditionOffer,
     var rainLevel: Float,
     var thunderLevel: Float,
     var platformLockedContentConfirmed: Boolean,
@@ -435,8 +435,8 @@ object WorldPacketReader : PacketReader {
             educationProductId = buffer.readString()
         } else {
             educationFeaturesEnabled = buffer.readBoolean()
-            educationEditionOffer = WorldPacket.EducationEditionOffer.values()[buffer.readVarInt()]
             educationModeId = 0
+            educationEditionOffer = WorldPacket.EducationEditionOffer.values()[buffer.readVarInt()]
             educationProductId = null
         }
         val rainLevel = buffer.readFloatLE()
@@ -478,8 +478,7 @@ object WorldPacketReader : PacketReader {
             limitedWorldRadius = buffer.readIntLE()
             limitedWorldHeight = buffer.readIntLE()
             v2Nether = buffer.readBoolean()
-            experimentalGameplay = buffer.readBoolean()
-            if (version >= 419) buffer.readBoolean()
+            experimentalGameplay = if (version >= 419) { if (buffer.readBoolean()) buffer.readBoolean() else false } else buffer.readBoolean()
         } else {
             limitedWorldRadius = 0
             limitedWorldHeight = 0
@@ -488,6 +487,7 @@ object WorldPacketReader : PacketReader {
         }
         val levelId = buffer.readString()
         val worldName = buffer.readString()
+        println("$limitedWorldRadius $limitedWorldHeight $v2Nether $experimentalGameplay")
         val premiumWorldTemplateId = buffer.readString()
         val trial = buffer.readBoolean()
         val movementAuthoritative = when {
@@ -507,6 +507,6 @@ object WorldPacketReader : PacketReader {
         val tick = buffer.readLongLE()
         val enchantmentSeed = buffer.readVarInt()
         // TODO
-        return WorldPacket(uniqueEntityId, runtimeEntityId, gameMode, position, rotation, seed, biomeType, biomeName, dimension, generatorId, defaultGameMode, difficulty, defaultSpawn, achievementsDisabled, time, educationModeId, educationFeaturesEnabled, educationProductId, educationEditionOffer, rainLevel, thunderLevel, platformLockedContentConfirmed, multiplayerGame, broadcastingToLan, xboxLiveBroadcastMode, platformBroadcastMode, commandsEnabled, resourcePacksRequired, gameRules, experiments, experimentsPreviouslyToggled, bonusChestEnabled, startingWithMap, defaultPlayerPermission, serverChunkTickRange, behaviorPackLocked, resourcePackLocked, fromLockedWorldTemplate, usingMsaGamerTagsOnly, fromWorldTemplate, worldTemplateOptionLocked, onlySpawningV1Villagers, sversion, limitedWorldRadius, limitedWorldHeight, v2Nether, experimentalGameplay, levelId, worldName, premiumWorldTemplateId, trial, movementAuthoritative, tick, enchantmentSeed, null, null, null, null, null, null, "", false, movementRewindHistory, blockBreakingServerAuthoritative)
+        return WorldPacket(uniqueEntityId, runtimeEntityId, gameMode, position, rotation, seed, biomeType, biomeName, dimension, generatorId, defaultGameMode, difficulty, defaultSpawn, achievementsDisabled, time, educationEditionOffer, educationModeId, educationFeaturesEnabled, educationProductId, rainLevel, thunderLevel, platformLockedContentConfirmed, multiplayerGame, broadcastingToLan, xboxLiveBroadcastMode, platformBroadcastMode, commandsEnabled, resourcePacksRequired, gameRules, experiments, experimentsPreviouslyToggled, bonusChestEnabled, startingWithMap, defaultPlayerPermission, serverChunkTickRange, behaviorPackLocked, resourcePackLocked, fromLockedWorldTemplate, usingMsaGamerTagsOnly, fromWorldTemplate, worldTemplateOptionLocked, onlySpawningV1Villagers, sversion, limitedWorldRadius, limitedWorldHeight, v2Nether, experimentalGameplay, levelId, worldName, premiumWorldTemplateId, trial, movementAuthoritative, tick, enchantmentSeed, null, null, null, null, null, null, "", false, movementRewindHistory, blockBreakingServerAuthoritative)
     }
 }
