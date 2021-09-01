@@ -70,7 +70,7 @@ class View @Inject constructor(
             if (!this::lastChunkPosition.isInitialized || lastChunkPosition != chunkPosition) {
                 lastChunkPosition = chunkPosition
 
-                val chunksVisible = LongArrayList()
+                val chunksInView = LongArrayList()
                 repeat(distance) { distance ->
                     val chunksInDistance = LongArrayList()
                     val minAngle = acos(1.0f - 1.0f / distance)
@@ -78,7 +78,7 @@ class View @Inject constructor(
                     while (angle <= 360.0f) {
                         val chunk = encodePosition((chunkX + distance * cos(angle)).toInt(),  (chunkZ + distance * sin(angle)).toInt())
                         chunksInDistance.add(chunk)
-                        chunksVisible.add(chunk)
+                        chunksInView.add(chunk)
                         angle += minAngle
                     }
 
@@ -86,7 +86,7 @@ class View @Inject constructor(
                     _acquiredChunks.addAll(chunksToAcquire)
                     message.context.world.sendMessage(ChunkAcquire(message.context, it, chunksToAcquire.toLongArray(), ViewChunk(message.context, it, position, distance + 1)))
                 }
-                val chunksToRelease = _acquiredChunks.filterNot(chunksVisible::contains)
+                val chunksToRelease = _acquiredChunks.filterNot(chunksInView::contains)
                 if (chunksToRelease.isNotEmpty()) {
                     _acquiredChunks.removeAll(chunksToRelease)
                     message.context.world.sendMessage(ChunkRelease(message.context, it, chunksToRelease.toLongArray()))
@@ -95,13 +95,5 @@ class View @Inject constructor(
         }
 
         return Pass
-    }
-
-    companion object {
-        fun Int2.distance2(other: Int2): Int {
-            val dx = x - other.x
-            val dy = y - other.y
-            return dx * dx + dy * dy
-        }
     }
 }

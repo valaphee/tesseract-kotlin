@@ -107,7 +107,7 @@ class Clock {
     companion object {
         private val log = LogManager.getLogger(Clock::class.java)
         private const val resync = 0.1f
-        private const val maximumCycleLength = 50L
+        private const val maximumCycleLength = 1000L
         private const val cycleCap = 1000L
     }
 }

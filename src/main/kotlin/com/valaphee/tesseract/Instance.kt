@@ -46,8 +46,8 @@ import com.valaphee.tesseract.util.jackson.Float3Deserializer
 import com.valaphee.tesseract.util.jackson.Float3Serializer
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.WorldEngine
+import com.valaphee.tesseract.world.chunk.terrain.generator.FlatGenerator
 import com.valaphee.tesseract.world.chunk.terrain.generator.Generator
-import com.valaphee.tesseract.world.chunk.terrain.generator.normal.NormalGenerator
 import com.valaphee.tesseract.world.provider.Provider
 import com.valaphee.tesseract.world.provider.TesseractProvider
 import io.netty.channel.EventLoopGroup
@@ -97,13 +97,13 @@ abstract class Instance(
             })
             bind(this@Instance.javaClass).toInstance(this@Instance)
             bind(Provider::class.java).to(TesseractProvider::class.java)
-            bind(Generator::class.java).toInstance(NormalGenerator(0))
+            bind(Generator::class.java).toInstance(FlatGenerator("minecraft:bedrock,3*minecraft:stone,52*minecraft:sandstone;minecraft:desert"))
         }
     }, getModule())
 
     protected val config: Config = injector.getInstance(Config::class.java)
 
-    private val executor = Executors.newFixedThreadPool(if (config.concurrency <= 0) Runtime.getRuntime().availableProcessors() else config.concurrency, ThreadFactoryBuilder().setNameFormat("world-%d").build())
+    private val executor = Executors.newFixedThreadPool(if (config.concurrency <= 0) Runtime.getRuntime().availableProcessors() else config.concurrency, ThreadFactoryBuilder().setNameFormat("world-%d").setDaemon(false).build())
     internal val coroutineScope = CoroutineScope(executor.asCoroutineDispatcher() + SupervisorJob() + CoroutineExceptionHandler { context, throwable -> log.error("Unhandled exception caught in $context", throwable) })
     private val worldEngine = WorldEngine(20.0f, coroutineScope.coroutineContext, telemetry.getTracer("tesseract"))
 
