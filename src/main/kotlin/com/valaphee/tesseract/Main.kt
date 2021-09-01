@@ -181,6 +181,4 @@ fun main(arguments: Array<String>) {
             }
         }
     }
-
-    thread(name = "infinisleeper") { Thread.sleep(Long.MAX_VALUE) }
 }

@@ -31,6 +31,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
@@ -71,7 +72,7 @@ class WorldEngine(
                     lastSleep = sleep - (clock.realDelta - lastSleep)
                     @Suppress("BlockingMethodInNonBlockingContext")
                     if (lastSleep > 0L) try {
-                        Thread.sleep(lastSleep)
+                        delay(lastSleep)
                     } catch (_: InterruptedException) {
                     }
                     val cycles = clock.run()
