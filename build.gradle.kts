@@ -23,7 +23,6 @@
  */
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import proguard.gradle.ProGuardTask
 
 buildscript {
     dependencies {
@@ -37,7 +36,7 @@ plugins {
     id("edu.sc.seis.launch4j") version "2.5.0"
     kotlin("jvm") version "1.5.30"
     `maven-publish`
-    signing
+    /*signing*/
 }
 
 repositories {
@@ -103,22 +102,17 @@ tasks {
         into("build/libs/libs")
     }
 
-    register<ProGuardTask>("proguard") {
-        dependsOn("shadowJar")
-        configuration("../proguard.conf")
-        injars(shadowJar.get().archivePath)
-        outjars("build/libs/${project.name}.jar")
-        libraryjars("C:\\Program Files\\Java\\jdk-16.0.1\\jmods")
-        libraryjars(configurations.default)
-    }
+    shadowJar {
+        archiveName = "tesseract.jar"
 
-    shadowJar { manifest { attributes["Main-Class"] = "com.valaphee.tesseract.MainKt" } }
+        manifest { attributes["Main-Class"] = "com.valaphee.tesseract.MainKt" }
+    }
 }
 
-signing {
+/*signing {
     useGpgCmd()
     sign(publishing.publications)
-}
+}*/
 
 publishing {
     publications {

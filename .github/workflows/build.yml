@@ -19,15 +19,15 @@ jobs:
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
       - name: Build with Gradle
-        run: gradle build
+        run: gradle shadowJar
       - name: Create Release
-        id: create_release
         uses: actions/create-release@v1
+        id: create_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
-          release_name: GGAddition ${{ github.ref }}
+          release_name: Tesseract ${{ github.ref }}
           draft: false
           prerelease: true
       - name: Upload Release Asset
@@ -36,7 +36,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: build/libs
+          asset_path: build/libs/tesseract.jar
           asset_name: tesseract.jar
           asset_content_type: application/java-archive
       - name: Cleanup Gradle Cache
