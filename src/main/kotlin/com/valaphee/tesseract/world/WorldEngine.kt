@@ -47,6 +47,8 @@ class WorldEngine(
     var stopped = false
         private set
 
+    private val watchdog = Watchdog()
+
     private val clock = Clock()
     private val sleep = (1_000L / cyclesPerSecond).toLong()
     private var lastSleep = sleep
@@ -67,6 +69,7 @@ class WorldEngine(
         launch {
             if (!running) {
                 running = true
+                watchdog.start()
 
                 while (running) {
                     lastSleep = sleep - (clock.realDelta - lastSleep)
@@ -82,9 +85,13 @@ class WorldEngine(
                         entityById.values.filter { it.needsUpdate }.map { async { it.update(context) } }.also { span.setAttribute(needsUpdate, it.size) }.awaitAll()
                         span.end()
                     }
+                    watchdog.update(clock.realTime)
                 }
             }
-            if (!stopped) stopped = true
+            if (!stopped) {
+                watchdog.interrupt()
+                stopped = true
+            }
         }
     }
 

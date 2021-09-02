@@ -22,18 +22,8 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world
+#pragma once
+#include <jni.h>
+#include <stdlib.h>
 
-import com.valaphee.foundry.ecs.BaseAttribute
-
-/**
- * @author Kevin Ludwig
- */
-class Settings(
-    var gameMode: GameMode,
-    var difficulty: Difficulty,
-    var gameRules: MutableList<GameRule<*>>,
-    var experiments: MutableList<Experiment>
-) : BaseAttribute()
-
-val World.settings get() = findAttribute(Settings::class)
+jint throwException(JNIEnv *environment, const char *message, int code);

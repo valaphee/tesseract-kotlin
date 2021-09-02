@@ -22,18 +22,12 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world
+#include "Common.hpp"
 
-import com.valaphee.foundry.ecs.BaseAttribute
-
-/**
- * @author Kevin Ludwig
- */
-class Settings(
-    var gameMode: GameMode,
-    var difficulty: Difficulty,
-    var gameRules: MutableList<GameRule<*>>,
-    var experiments: MutableList<Experiment>
-) : BaseAttribute()
-
-val World.settings get() = findAttribute(Settings::class)
+jint throwException(JNIEnv *environment, const char *message, int code) {
+	jclass exceptionClass = environment->FindClass("com/valaphee/tesseract/util/NativeException");
+	jmethodID exceptionConstructor = environment->GetMethodID(exceptionClass, "<init>", "(Ljava/lang/String;I)V");
+	jstring jmessage = environment->NewStringUTF(message);
+	jthrowable throwable = (jthrowable) environment->NewObject(exceptionClass, exceptionConstructor, jmessage, code);
+	return environment->Throw(throwable);
+}

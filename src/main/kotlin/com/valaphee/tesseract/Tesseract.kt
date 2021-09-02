@@ -26,6 +26,8 @@ package com.valaphee.tesseract
 
 import com.valaphee.tesseract.log.Log4JLogHandler
 import com.valaphee.tesseract.log.QueueAppender
+import jline.Terminal
+import jline.TerminalFactory
 import jline.UnsupportedTerminal
 import jline.console.ConsoleReader
 import jline.console.CursorBuffer
@@ -45,6 +47,7 @@ import kotlin.concurrent.thread
 val defaultSystemIn: InputStream = System.`in`
 val defaultSystemOut: PrintStream = System.out
 val defaultSystemErr: PrintStream = System.err
+val terminal: Terminal = TerminalFactory.get()
 var ansi = false
 lateinit var reader: ConsoleReader
 lateinit var writer: PrintWriter
@@ -55,12 +58,12 @@ fun initializeConsole() {
     if (ansi) AnsiConsole.systemInstall()
 
     try {
-        reader = ConsoleReader()
+        reader = ConsoleReader("tesseract", defaultSystemIn, defaultSystemOut, terminal)
     } catch (ex: IOException) {
         try {
             System.setProperty("jline.terminal", UnsupportedTerminal::class.java.name)
             System.setProperty("user.language", "en")
-            reader = ConsoleReader()
+            reader = ConsoleReader("tesseract", defaultSystemIn, defaultSystemOut, terminal)
             ansi = false
         } catch (_: IOException) {
         }

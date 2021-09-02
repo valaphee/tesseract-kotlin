@@ -75,6 +75,16 @@ lateinit var creativeInventoryPacket: CreativeInventoryPacket
 
 fun main(arguments: Array<String>) {
     val argument = Argument().apply { if (!parse(arguments)) return }
+    println("""
+        ________                                           _____ 
+        ___  __/____________________________________ ________  /_
+        __  /  _  _ \_  ___/_  ___/  _ \_  ___/  __ `/  ___/  __/
+        _  /   /  __/(__  )_(__  )/  __/  /   / /_/ // /__ / /_  
+        /_/    \___//____/ /____/ \___//_/    \__,_/ \___/ \__/  
+    """.trimIndent())
+    println("Java: ${System.getProperty("java.version")} in ${System.getProperty("java.home")}")
+    println("Java VM: ${System.getProperty("java.vm.name")}(${System.getProperty("java.vm.version")})")
+    println("Java Runtime: ${Runtime.getRuntime().maxMemory() / (1024 * 1024)}MiB, ${Runtime.getRuntime().availableProcessors()} cores")
 
     initializeConsole()
     initializeLogging()
@@ -156,6 +166,7 @@ fun main(arguments: Array<String>) {
             bind(Argument::class.java).toInstance(argument)
         }
     })
+
     val serverInstance = ServerInstance(
         guice,
         OpenTelemetrySdk.builder()
@@ -169,8 +180,7 @@ fun main(arguments: Array<String>) {
     serverInstance.bind()
 
     val commandManager = guice.getInstance(CommandManager::class.java)
-
-    reader.prompt = "tesseract> "
+    if (ansi) reader.prompt = "tesseract> "
     thread(isDaemon = true, name = "console-reader") {
         while (true) {
             try {

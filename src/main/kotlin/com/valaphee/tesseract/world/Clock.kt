@@ -33,15 +33,18 @@ import kotlin.math.sign
  */
 class Clock {
     private var last = 0L
+
     val realTime get() = System.currentTimeMillis()
     var realDelta = 0L
         private set
+
     var simulationTimeDilation = 1.0f
     var simulationTime = 0L
         private set
     var simulationDelta = 0L
         private set
     private var desync = 0L
+
     var paused = false
 
     init {

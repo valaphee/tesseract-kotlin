@@ -39,6 +39,7 @@ import com.valaphee.tesseract.world.chunk.players
 import com.valaphee.tesseract.world.entity.EntityAdd
 import com.valaphee.tesseract.world.entity.EntityManagerMessage
 import com.valaphee.tesseract.world.entity.EntityRemove
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -46,7 +47,7 @@ import org.apache.logging.log4j.Logger
  * @author Kevin Ludwig
  */
 class PlayerList : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMessage::class) {
-    private val players = mutableListOf<Player>()
+    private val players = Long2ObjectOpenHashMap<Player>()
 
     override suspend fun receive(message: EntityManagerMessage): Response {
         when (message) {
@@ -54,8 +55,8 @@ class PlayerList : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMe
                 val authExtra = it.authExtra
                 val user = it.user
                 broadcast(PlayerListPacket(PlayerListPacket.Action.Add, arrayOf(PlayerListPacket.Entry(authExtra.userId, it.id, authExtra.userName, authExtra.xboxUserId, "", user.operatingSystem, user.appearance, false, false))))
-                players.add(it)
-                it.connection.write(PlayerListPacket(PlayerListPacket.Action.Add, players.map {
+                players[it.id] = it
+                it.connection.write(PlayerListPacket(PlayerListPacket.Action.Add, players.values.map {
                     val authExtra = it.authExtra
                     val user = it.user
                     PlayerListPacket.Entry(authExtra.userId, it.id, authExtra.userName, authExtra.xboxUserId, "", user.operatingSystem, user.appearance, false, false)
@@ -63,9 +64,7 @@ class PlayerList : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMe
 
                 broadcastSystemMessage("${it.authExtra.userName} entered the world")
             }
-            is EntityRemove -> message.entityIds.map(message.context.engine::findEntityOrNull).filterNotNull().filterType<PlayerType>().forEach {
-                players.remove(it)
-
+            is EntityRemove -> message.entityIds.map(players::remove).filterNotNull().forEach {
                 broadcastSystemMessage("${it.authExtra.userName} exited the world")
                 broadcast(PlayerListPacket(PlayerListPacket.Action.Remove, arrayOf(PlayerListPacket.Entry(it.authExtra.userId))))
             }
@@ -74,9 +73,9 @@ class PlayerList : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMe
         return Pass
     }
 
-    fun broadcast(vararg packets: Packet) = players.forEach { packets.forEach(it.connection::write) }
+    fun broadcast(vararg packets: Packet) = players.values.forEach { packets.forEach(it.connection::write) }
 
-    fun broadcast(source: Player, vararg packets: Packet) = players.forEach { if (it != source) packets.forEach(it.connection::write) }
+    fun broadcast(source: Player, vararg packets: Packet) = players.values.forEach { if (it != source) packets.forEach(it.connection::write) }
 
     fun broadcastSystemMessage(message: String) {
         broadcast(TextPacket(TextPacket.Type.System, false, null, message, null, "", ""))

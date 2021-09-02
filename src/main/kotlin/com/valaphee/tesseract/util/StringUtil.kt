@@ -22,18 +22,24 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world
+package com.valaphee.tesseract.util
 
-import com.valaphee.foundry.ecs.BaseAttribute
+fun String.padLeft(length: Int, pad: Char): String {
+    val padLeft = StringBuilder()
+    for (i in length - 1 downTo 0) padLeft.append(pad)
+    return padLeft.append(this).toString()
+}
 
-/**
- * @author Kevin Ludwig
- */
-class Settings(
-    var gameMode: GameMode,
-    var difficulty: Difficulty,
-    var gameRules: MutableList<GameRule<*>>,
-    var experiments: MutableList<Experiment>
-) : BaseAttribute()
+fun String.padRight(length: Int, pad: Char): String {
+    val padRight = StringBuilder().append(this)
+    for (i in length - 1 downTo 0) padRight.append(pad)
+    return padRight.toString()
+}
 
-val World.settings get() = findAttribute(Settings::class)
+fun String.center(width: Int, padLeft: Char, padRight: Char = padLeft): String {
+    val paddingLeft = (width - length) / 2
+    val paddingRight = width - length - paddingLeft
+    return (if (padLeft != ' ') {
+        padRight(paddingRight, padLeft)
+    } else "").padLeft(paddingLeft, padRight)
+}
