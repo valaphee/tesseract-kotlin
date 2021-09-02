@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.net.base
+package com.valaphee.tesseract.world
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -34,22 +34,37 @@ import com.valaphee.tesseract.net.Restriction
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Serverbound)
-data class LocalPlayerAsInitializedPacket(
-    var runtimeEntityId: Long
+@Restrict(Restriction.Clientbound)
+data class GameRulesPacket(
+    var gameRules: Array<GameRule<*>>
 ) : Packet {
-    override val id get() = 0x71
+    override val id get() = 0x48
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarULong(runtimeEntityId)
+        buffer.writeVarUInt(gameRules.size)
+        if (version >= 440) gameRules.forEach(buffer::writeGameRule) else gameRules.forEach(buffer::writeGameRulePre440)
     }
 
-    override fun handle(handler: PacketHandler) = handler.localPlayerAsInitialized(this)
+    override fun handle(handler: PacketHandler) = handler.gameRules(this)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as GameRulesPacket
+
+        if (!gameRules.contentEquals(other.gameRules)) return false
+
+        return true
+    }
+
+    override fun hashCode() = gameRules.contentHashCode()
 }
+
 
 /**
  * @author Kevin Ludwig
  */
-object LocalPlayerAsInitializedPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = LocalPlayerAsInitializedPacket(buffer.readVarULong())
+object GameRulesPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = GameRulesPacket(if (version >= 440) Array(buffer.readVarUInt()) { buffer.readGameRule() } else Array(buffer.readVarUInt()) { buffer.readGameRulePre440() })
 }

@@ -22,34 +22,30 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.net.base
+package com.valaphee.tesseract.actor.player
 
+import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
-import com.valaphee.tesseract.net.PacketReader
-import com.valaphee.tesseract.net.Restrict
-import com.valaphee.tesseract.net.Restriction
 
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Serverbound)
-data class LocalPlayerAsInitializedPacket(
-    var runtimeEntityId: Long
+data class InputCorrectPacket(
+    var position: Float3,
+    var positionDelta: Float3,
+    var onGround: Boolean,
+    var tick: Long
 ) : Packet {
-    override val id get() = 0x71
+    override val id get() = 0xA1
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarULong(runtimeEntityId)
+        buffer.writeFloat3(position)
+        buffer.writeFloat3(positionDelta)
+        buffer.writeBoolean(onGround)
+        buffer.writeVarULong(tick)
     }
 
-    override fun handle(handler: PacketHandler) = handler.localPlayerAsInitialized(this)
-}
-
-/**
- * @author Kevin Ludwig
- */
-object LocalPlayerAsInitializedPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = LocalPlayerAsInitializedPacket(buffer.readVarULong())
+    override fun handle(handler: PacketHandler) = handler.inputCorrect(this)
 }

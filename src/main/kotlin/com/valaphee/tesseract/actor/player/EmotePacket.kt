@@ -22,34 +22,39 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.net.base
+package com.valaphee.tesseract.actor.player
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
-import com.valaphee.tesseract.net.Restrict
-import com.valaphee.tesseract.net.Restriction
 
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Serverbound)
-data class LocalPlayerAsInitializedPacket(
-    var runtimeEntityId: Long
+data class EmotePacket(
+    var runtimeEntityId: Long,
+    var emoteId: String,
+    var flags: Collection<Flag>
 ) : Packet {
-    override val id get() = 0x71
+    enum class Flag {
+        Serverside
+    }
+
+    override val id get() = 0x8A
 
     override fun write(buffer: PacketBuffer, version: Int) {
         buffer.writeVarULong(runtimeEntityId)
+        buffer.writeString(emoteId)
+        buffer.writeByteFlags(flags)
     }
 
-    override fun handle(handler: PacketHandler) = handler.localPlayerAsInitialized(this)
+    override fun handle(handler: PacketHandler) = handler.emote(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object LocalPlayerAsInitializedPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = LocalPlayerAsInitializedPacket(buffer.readVarULong())
+object EmotePacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = EmotePacket(buffer.readVarULong(), buffer.readString(), buffer.readByteFlags())
 }

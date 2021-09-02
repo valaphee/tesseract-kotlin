@@ -28,28 +28,39 @@ import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
-import com.valaphee.tesseract.net.Restrict
-import com.valaphee.tesseract.net.Restriction
 
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Serverbound)
-data class LocalPlayerAsInitializedPacket(
-    var runtimeEntityId: Long
+data class ViolationPacket(
+    var type: Type,
+    var severity: Severity,
+    var packetId: Int,
+    var context: String
 ) : Packet {
-    override val id get() = 0x71
-
-    override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarULong(runtimeEntityId)
+    enum class Type {
+        Unknown, MalformedPacket
     }
 
-    override fun handle(handler: PacketHandler) = handler.localPlayerAsInitialized(this)
+    enum class Severity {
+        Information, Warning, Error, Severe
+    }
+
+    override val id get() = 0x9C
+
+    override fun write(buffer: PacketBuffer, version: Int) {
+        buffer.writeVarInt(type.ordinal - 1)
+        buffer.writeVarInt(severity.ordinal)
+        buffer.writeVarInt(packetId)
+        buffer.writeString(context)
+    }
+
+    override fun handle(handler: PacketHandler) = handler.violation(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object LocalPlayerAsInitializedPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = LocalPlayerAsInitializedPacket(buffer.readVarULong())
+object ViolationPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = ViolationPacket(ViolationPacket.Type.values()[buffer.readVarInt() + 1], ViolationPacket.Severity.values()[buffer.readVarInt()], buffer.readVarInt(), buffer.readString())
 }

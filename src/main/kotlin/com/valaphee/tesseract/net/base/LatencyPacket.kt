@@ -28,28 +28,27 @@ import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
-import com.valaphee.tesseract.net.Restrict
-import com.valaphee.tesseract.net.Restriction
 
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Serverbound)
-data class LocalPlayerAsInitializedPacket(
-    var runtimeEntityId: Long
+data class LatencyPacket(
+    var timestamp: Long = 0,
+    var fromServer: Boolean = false
 ) : Packet {
-    override val id get() = 0x71
+    override val id get() = 0x73
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarULong(runtimeEntityId)
+        buffer.writeLongLE(timestamp)
+        buffer.writeBoolean(fromServer)
     }
 
-    override fun handle(handler: PacketHandler) = handler.localPlayerAsInitialized(this)
+    override fun handle(handler: PacketHandler) = handler.latency(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object LocalPlayerAsInitializedPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = LocalPlayerAsInitializedPacket(buffer.readVarULong())
+object LatencyPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = LatencyPacket(buffer.readLongLE(), buffer.readBoolean())
 }

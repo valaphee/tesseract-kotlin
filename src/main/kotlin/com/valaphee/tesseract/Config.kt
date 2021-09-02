@@ -39,7 +39,7 @@ import java.util.regex.Pattern
 @Singleton
 @ProvidedBy(Config.Provider::class)
 data class Config(
-    var concurrency: Int = 0,
+    var concurrency: Int = Runtime.getRuntime().availableProcessors(),
     var address: InetSocketAddress = InetSocketAddress("0.0.0.0", 19132),
     var maximumPlayers: Int = 10,
     var serverName: String = "Tesseract",
@@ -55,6 +55,6 @@ data class Config(
         private val argument: Argument,
         @Named("config") private val objectMapper: ObjectMapper
     ) : com.google.inject.Provider<Config> {
-        override fun get() = if (argument.config.exists()) objectMapper.readValue(argument.config) else Config().also { objectMapper.writeValue(argument.config, it) }
+        override fun get() = (if (argument.config.exists()) objectMapper.readValue(argument.config) else Config()).also { objectMapper.writeValue(argument.config, it) }
     }
 }

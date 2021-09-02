@@ -103,7 +103,7 @@ abstract class Instance(
 
     protected val config: Config = injector.getInstance(Config::class.java)
 
-    private val executor = Executors.newFixedThreadPool(if (config.concurrency <= 0) Runtime.getRuntime().availableProcessors() else config.concurrency, ThreadFactoryBuilder().setNameFormat("world-%d").setDaemon(false).build())
+    private val executor = Executors.newFixedThreadPool(config.concurrency, ThreadFactoryBuilder().setNameFormat("world-%d").setDaemon(false).build())
     internal val coroutineScope = CoroutineScope(executor.asCoroutineDispatcher() + SupervisorJob() + CoroutineExceptionHandler { context, throwable -> log.error("Unhandled exception caught in $context", throwable) })
     private val worldEngine = WorldEngine(20.0f, coroutineScope.coroutineContext, telemetry.getTracer("tesseract"))
 

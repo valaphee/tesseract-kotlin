@@ -27,6 +27,7 @@ package com.valaphee.tesseract.actor
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 
@@ -34,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.Clientbound)
-data class RemoveEntityPacket(
+data class ActorRemovePacket(
     var uniqueEntityId: Long = 0
 ) : Packet {
     override val id get() = 0x0E
@@ -44,4 +45,11 @@ data class RemoveEntityPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.actorRemove(this)
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object ActorRemovePacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = ActorRemovePacket(buffer.readVarLong())
 }

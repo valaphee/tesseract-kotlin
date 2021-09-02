@@ -47,7 +47,7 @@ data class InputPacket(
     var playMode: PlayMode,
     var virtualRealityGazeDirection: Float3? = null,
     var tick: Long,
-    var delta: Float3
+    var positionDelta: Float3
 ) : Packet {
     enum class PlayMode {
         Normal,
@@ -113,7 +113,7 @@ data class InputPacket(
         if (playMode == PlayMode.VirtualReality) buffer.writeFloat3(virtualRealityGazeDirection!!)
         if (version >= 419) {
             buffer.writeVarULong(tick)
-            buffer.writeFloat3(delta)
+            buffer.writeFloat3(positionDelta)
         }
     }
 

@@ -22,19 +22,34 @@
  * SOFTWARE.
  */
 
+package com.valaphee.tesseract.actor.location
+
+import com.valaphee.foundry.math.Float3
+import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
+import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 
 /**
  * @author Kevin Ludwig
  */
-data class Experiment(
-    var name: String,
-    var enabled: Boolean
-)
+data class MotionPacket(
+    var runtimeEntityId: Long,
+    var motion: Float3
+) : Packet {
+    override val id get() = 0x28
 
-fun PacketBuffer.readExperiment(): Experiment = Experiment(readString(), readBoolean())
+    override fun write(buffer: PacketBuffer, version: Int) {
+        buffer.writeVarULong(runtimeEntityId)
+        buffer.writeFloat3(motion)
+    }
 
-fun PacketBuffer.writeExperiment(value: Experiment) {
-    writeString(value.name)
-    writeBoolean(value.enabled)
+    override fun handle(handler: PacketHandler) = handler.motion(this)
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object MotionPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = MotionPacket(buffer.readVarULong(), buffer.readFloat3())
 }

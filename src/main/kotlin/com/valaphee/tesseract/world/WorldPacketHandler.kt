@@ -119,7 +119,7 @@ class WorldPacketHandler(
 
         val settings = context.world.settings
         val environment = context.world.environment
-        connection.write(WorldPacket(player.id, player.id, GameMode.Default, player.position, player.rotation, 0, WorldPacket.BiomeType.Default, "plains", Dimension.Overworld, WorldPacket.Overworld, settings.gameMode, settings.difficulty, Int3.Zero, true, environment.time, WorldPacket.EducationEditionOffer.None, 0, false, "", environment.rainLevel, environment.thunderLevel, false, true, true, GamePublishMode.FriendsOfFriends, GamePublishMode.FriendsOfFriends, true, false, arrayOf(), arrayOf(), false, false, false, Rank.Operator, 4, false, false, false, false, false, false, false, "*", 16, 16, false, false, "Tesseract", "Tesseract", "00000000-0000-0000-0000-000000000000", false, WorldPacket.AuthoritativeMovement.Client, context.cycle, 0, null, null, null, Block.all.toTypedArray(), null, Item.all.toTypedArray(), "", true, 0, true))
+        connection.write(WorldPacket(player.id, player.id, GameMode.Default, player.position, player.rotation, 0, WorldPacket.BiomeType.Default, "plains", Dimension.Overworld, WorldPacket.Overworld, settings.gameMode, settings.difficulty, Int3.Zero, true, environment.time, WorldPacket.EducationEditionOffer.None, 0, false, "", environment.rainLevel, environment.thunderLevel, false, true, true, GamePublishMode.FriendsOfFriends, GamePublishMode.FriendsOfFriends, true, false, arrayOf(), arrayOf(), false, false, false, Rank.Operator, 4, false, false, false, false, false, false, false, "*", 16, 16, false, false, "Tesseract", "Tesseract", "00000000-0000-0000-0000-000000000000", false, WorldPacket.AuthoritativeMovement.Client, 0, true, context.cycle, 0, null, null, null, Block.all.toTypedArray(), null, Item.all.toTypedArray(), "", true, "Tesseract"))
 
         connection.write(biomeDefinitionsPacket)
         connection.write(entityIdentifiersPacket)
@@ -138,14 +138,14 @@ class WorldPacketHandler(
     }
 
     override fun other(packet: Packet) {
-        log.debug("{}: Unhandled packet: {}", packet)
+        log.debug("{}: Unhandled packet: {}", this, packet)
     }
 
     override fun text(packet: TextPacket) {
         if (packet.type != TextPacket.Type.Chat || packet.xboxUserId != player.authExtra.xboxUserId) return
 
         context.world.broadcast(packet)
-        chatLog.info("{}: {}", player.authExtra.userName, packet.message)
+        chatLog.info("{}: {}", this, packet.message)
     }
 
     override fun playerLocation(packet: PlayerLocationPacket) {
@@ -219,6 +219,8 @@ class WorldPacketHandler(
             playerSpawned = true
         }
     }
+
+    override fun toString() = authExtra.userName
 
     companion object {
         private val log: Logger = LogManager.getLogger(WorldPacketHandler::class.java)

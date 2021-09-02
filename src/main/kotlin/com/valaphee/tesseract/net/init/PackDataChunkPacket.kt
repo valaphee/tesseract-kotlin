@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.net.base
+package com.valaphee.tesseract.net.init
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -30,26 +30,44 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import io.netty.buffer.ByteBuf
+import java.util.UUID
 
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Serverbound)
-data class LocalPlayerAsInitializedPacket(
-    var runtimeEntityId: Long
+@Restrict(Restriction.Clientbound)
+data class PackDataChunkPacket(
+    var packId: UUID,
+    var packVersion: String?,
+    var chunkIndex: Long,
+    var progress: Long,
+    var data: ByteBuf
 ) : Packet {
-    override val id get() = 0x71
+    override val id get() = 0x53
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarULong(runtimeEntityId)
+        buffer.writeString("$packId${if (null == packVersion) "" else "_$packVersion"}")
+        buffer.writeIntLE(chunkIndex.toInt())
+        buffer.writeLongLE(progress)
+        buffer.writeVarUInt(data.readableBytes())
+        buffer.writeBytes(data)
     }
 
-    override fun handle(handler: PacketHandler) = handler.localPlayerAsInitialized(this)
+    override fun handle(handler: PacketHandler) = handler.packDataChunk(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object LocalPlayerAsInitializedPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = LocalPlayerAsInitializedPacket(buffer.readVarULong())
+object PackDataChunkPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int): PackDataChunkPacket {
+        val pack = buffer.readString().split("_".toRegex(), 2).toTypedArray()
+        val packId = UUID.fromString(pack[0])
+        val packVersion = if (pack.size == 2) pack[1] else null
+        val chunkIndex = buffer.readUnsignedIntLE()
+        val progress = buffer.readLongLE()
+        val data = buffer.readSlice(buffer.readVarUInt())
+        return PackDataChunkPacket(packId, packVersion, chunkIndex, progress, data)
+    }
 }

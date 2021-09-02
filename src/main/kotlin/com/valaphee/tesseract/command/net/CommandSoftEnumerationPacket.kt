@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.net.base
+package com.valaphee.tesseract.command.net
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -34,22 +34,32 @@ import com.valaphee.tesseract.net.Restriction
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Serverbound)
-data class LocalPlayerAsInitializedPacket(
-    var runtimeEntityId: Long
+@Restrict(Restriction.Clientbound)
+data class CommandSoftEnumerationPacket(
+    var action: Action,
+    var softEnumeration: Enumeration
 ) : Packet {
-    override val id get() = 0x71
-
-    override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarULong(runtimeEntityId)
+    enum class Action {
+        Add, Remove, Update
     }
 
-    override fun handle(handler: PacketHandler) = handler.localPlayerAsInitialized(this)
+    override val id get() = 0x72
+
+    override fun write(buffer: PacketBuffer, version: Int) {
+        buffer.writeEnumeration(softEnumeration)
+        buffer.writeByte(action.ordinal)
+    }
+
+    override fun handle(handler: PacketHandler) = handler.commandSoftEnumeration(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object LocalPlayerAsInitializedPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = LocalPlayerAsInitializedPacket(buffer.readVarULong())
+object CommandSoftEnumerationPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int): CommandSoftEnumerationPacket {
+        val softEnumeration = buffer.readEnumeration(true)
+        val action = CommandSoftEnumerationPacket.Action.values()[buffer.readUnsignedByte().toInt()]
+        return CommandSoftEnumerationPacket(action, softEnumeration)
+    }
 }

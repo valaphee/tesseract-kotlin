@@ -28,28 +28,27 @@ import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
-import com.valaphee.tesseract.net.Restrict
-import com.valaphee.tesseract.net.Restriction
 
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Serverbound)
-data class LocalPlayerAsInitializedPacket(
-    var runtimeEntityId: Long
+data class TickSyncPacket(
+    var requestTicks: Long = 0,
+    var responseTicks: Long = 0
 ) : Packet {
-    override val id get() = 0x71
+    override val id get() = 0x17
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarULong(runtimeEntityId)
+        buffer.writeLongLE(requestTicks)
+        buffer.writeLongLE(responseTicks)
     }
 
-    override fun handle(handler: PacketHandler) = handler.localPlayerAsInitialized(this)
+    override fun handle(handler: PacketHandler) = handler.tickSync(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object LocalPlayerAsInitializedPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = LocalPlayerAsInitializedPacket(buffer.readVarULong())
+object TickSyncPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = TickSyncPacket(buffer.readLongLE(), buffer.readLongLE())
 }

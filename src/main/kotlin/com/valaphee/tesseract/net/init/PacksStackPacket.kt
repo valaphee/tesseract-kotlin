@@ -24,14 +24,14 @@
 
 package com.valaphee.tesseract.net.init
 
-import Experiment
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
-import writeExperiment
+import com.valaphee.tesseract.world.Experiment
+import com.valaphee.tesseract.world.writeExperiment
 import java.util.UUID
 
 /**

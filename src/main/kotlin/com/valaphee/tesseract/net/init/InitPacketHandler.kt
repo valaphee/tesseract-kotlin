@@ -53,7 +53,7 @@ class InitPacketHandler(
     private var state: State? = null
     private lateinit var authExtra: AuthExtra
     private lateinit var user: User
-    private var cacheSupported = false
+    private var cacheSupported = true
 
     override fun initialize() {
         state = State.Handshake

@@ -24,12 +24,12 @@
 
 package com.valaphee.tesseract.world
 
-import Experiment
 import Rank
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.inventory.item.Item
+import com.valaphee.tesseract.inventory.item.stack.meta.Meta
 import com.valaphee.tesseract.net.GamePublishMode
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -37,12 +37,8 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
-import com.valaphee.tesseract.util.LittleEndianVarIntByteBufOutputStream
 import com.valaphee.tesseract.util.nbt.ListTag
-import com.valaphee.tesseract.util.nbt.NbtOutputStream
 import com.valaphee.tesseract.world.chunk.terrain.block.Block
-import readExperiment
-import writeExperiment
 
 /**
  * @author Kevin Ludwig
@@ -101,6 +97,8 @@ data class WorldPacket(
     var premiumWorldTemplateId: String,
     var trial: Boolean,
     var movementAuthoritative: AuthoritativeMovement,
+    var movementRewindHistory: Int,
+    var blockBreakingServerAuthoritative: Boolean,
     var tick: Long,
     var enchantmentSeed: Int,
     private val blocksData: ByteArray?,
@@ -111,8 +109,7 @@ data class WorldPacket(
     var items: Array<Item<*>>?,
     var multiplayerCorrelationId: String,
     var inventoriesServerAuthoritative: Boolean,
-    var movementRewindHistory: Int,
-    var blockBreakingServerAuthoritative: Boolean
+    var engine: String
 ) : Packet {
     enum class BiomeType {
         Default, UserDefined
@@ -216,10 +213,10 @@ data class WorldPacket(
                 buffer.writeVarUInt(it.size)
                 it.forEach {
                     buffer.writeString(it.key)
-                    NbtOutputStream(LittleEndianVarIntByteBufOutputStream(buffer)).use { stream -> stream.writeTag(it.component) }
+                    buffer.toNbtOutputStream().use { stream -> stream.writeTag(it.component) }
                 }
             }
-        } else blocksData?.let { buffer.writeBytes(it) } ?: NbtOutputStream(LittleEndianVarIntByteBufOutputStream(buffer)).use { it.writeTag(blocksTag) }
+        } else blocksData?.let { buffer.writeBytes(it) } ?: buffer.toNbtOutputStream().use { it.writeTag(blocksTag) }
         itemsData?.let { buffer.writeBytes(it) } ?: run {
             items!!.let {
                 buffer.writeVarUInt(it.size)
@@ -232,7 +229,7 @@ data class WorldPacket(
         }
         buffer.writeString(multiplayerCorrelationId)
         if (version >= 407) buffer.writeBoolean(inventoriesServerAuthoritative)
-        if (version >= 440) buffer.writeString("Tesseract")
+        if (version >= 440) buffer.writeString(engine)
     }
 
     override fun handle(handler: PacketHandler) = handler.world(this)
@@ -506,7 +503,24 @@ object WorldPacketReader : PacketReader {
         }
         val tick = buffer.readLongLE()
         val enchantmentSeed = buffer.readVarInt()
-        // TODO
-        return WorldPacket(uniqueEntityId, runtimeEntityId, gameMode, position, rotation, seed, biomeType, biomeName, dimension, generatorId, defaultGameMode, difficulty, defaultSpawn, achievementsDisabled, time, educationEditionOffer, educationModeId, educationFeaturesEnabled, educationProductId, rainLevel, thunderLevel, platformLockedContentConfirmed, multiplayerGame, broadcastingToLan, xboxLiveBroadcastMode, platformBroadcastMode, commandsEnabled, resourcePacksRequired, gameRules, experiments, experimentsPreviouslyToggled, bonusChestEnabled, startingWithMap, defaultPlayerPermission, serverChunkTickRange, behaviorPackLocked, resourcePackLocked, fromLockedWorldTemplate, usingMsaGamerTagsOnly, fromWorldTemplate, worldTemplateOptionLocked, onlySpawningV1Villagers, sversion, limitedWorldRadius, limitedWorldHeight, v2Nether, experimentalGameplay, levelId, worldName, premiumWorldTemplateId, trial, movementAuthoritative, tick, enchantmentSeed, null, null, null, null, null, null, "", false, movementRewindHistory, blockBreakingServerAuthoritative)
+        val blocks: ListTag?
+        val blocksComponent: Array<Block>?
+        if (version >= 419) {
+            blocks = null
+            blocksComponent = buffer.toNbtInputStream().use { stream -> Array(buffer.readVarUInt()) { Block(buffer.readString(), stream.readTag()!!.asCompoundTag()!!) } }
+        } else {
+            blocks = buffer.toNbtInputStream().use { it.readTag()!!.asListTag()!! }
+            blocksComponent = null
+        }
+        val items = Array<Item<*>>(buffer.readVarUInt()) {
+            val key = buffer.readString()
+            val id = buffer.readShortLE()
+            if (version >= 419) buffer.readBoolean()
+            Item(key, null, ::Meta)
+        }
+        val multiplayerCorrelationId = buffer.readString()
+        val inventoriesServerAuthoritative = buffer.readBoolean()
+        val engine = buffer.readString()
+        return WorldPacket(uniqueEntityId, runtimeEntityId, gameMode, position, rotation, seed, biomeType, biomeName, dimension, generatorId, defaultGameMode, difficulty, defaultSpawn, achievementsDisabled, time, educationEditionOffer, educationModeId, educationFeaturesEnabled, educationProductId, rainLevel, thunderLevel, platformLockedContentConfirmed, multiplayerGame, broadcastingToLan, xboxLiveBroadcastMode, platformBroadcastMode, commandsEnabled, resourcePacksRequired, gameRules, experiments, experimentsPreviouslyToggled, bonusChestEnabled, startingWithMap, defaultPlayerPermission, serverChunkTickRange, behaviorPackLocked, resourcePackLocked, fromLockedWorldTemplate, usingMsaGamerTagsOnly, fromWorldTemplate, worldTemplateOptionLocked, onlySpawningV1Villagers, sversion, limitedWorldRadius, limitedWorldHeight, v2Nether, experimentalGameplay, levelId, worldName, premiumWorldTemplateId, trial, movementAuthoritative, movementRewindHistory, blockBreakingServerAuthoritative, tick, enchantmentSeed, null, blocks, null, blocksComponent, null, items, multiplayerCorrelationId, inventoriesServerAuthoritative, engine)
     }
 }

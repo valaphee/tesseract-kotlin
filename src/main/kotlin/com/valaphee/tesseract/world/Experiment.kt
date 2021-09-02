@@ -22,34 +22,21 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.net.base
+package com.valaphee.tesseract.world
 
-import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
-import com.valaphee.tesseract.net.PacketHandler
-import com.valaphee.tesseract.net.PacketReader
-import com.valaphee.tesseract.net.Restrict
-import com.valaphee.tesseract.net.Restriction
 
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Serverbound)
-data class LocalPlayerAsInitializedPacket(
-    var runtimeEntityId: Long
-) : Packet {
-    override val id get() = 0x71
+data class Experiment(
+    var name: String,
+    var enabled: Boolean
+)
 
-    override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarULong(runtimeEntityId)
-    }
+fun PacketBuffer.readExperiment(): Experiment = Experiment(readString(), readBoolean())
 
-    override fun handle(handler: PacketHandler) = handler.localPlayerAsInitialized(this)
-}
-
-/**
- * @author Kevin Ludwig
- */
-object LocalPlayerAsInitializedPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = LocalPlayerAsInitializedPacket(buffer.readVarULong())
+fun PacketBuffer.writeExperiment(value: Experiment) {
+    writeString(value.name)
+    writeBoolean(value.enabled)
 }

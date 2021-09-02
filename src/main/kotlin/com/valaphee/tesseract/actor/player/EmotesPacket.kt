@@ -22,34 +22,53 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.net.base
+package com.valaphee.tesseract.actor.player
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
-import com.valaphee.tesseract.net.Restrict
-import com.valaphee.tesseract.net.Restriction
+import java.util.UUID
 
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Serverbound)
-data class LocalPlayerAsInitializedPacket(
-    var runtimeEntityId: Long
+data class EmotesPacket(
+    var runtimeEntityId: Long,
+    var pieceIds: Array<UUID>
 ) : Packet {
-    override val id get() = 0x71
+    override val id get() = 0x98
 
     override fun write(buffer: PacketBuffer, version: Int) {
         buffer.writeVarULong(runtimeEntityId)
+        buffer.writeVarUInt(pieceIds.size)
+        pieceIds.forEach { buffer.writeUuid(it) }
     }
 
-    override fun handle(handler: PacketHandler) = handler.localPlayerAsInitialized(this)
+    override fun handle(handler: PacketHandler) = handler.emotes(this)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as EmotesPacket
+
+        if (runtimeEntityId != other.runtimeEntityId) return false
+        if (!pieceIds.contentEquals(other.pieceIds)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = runtimeEntityId.hashCode()
+        result = 31 * result + pieceIds.contentHashCode()
+        return result
+    }
 }
 
 /**
  * @author Kevin Ludwig
  */
-object LocalPlayerAsInitializedPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = LocalPlayerAsInitializedPacket(buffer.readVarULong())
+object EmotesPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = EmotesPacket(buffer.readVarULong(), Array(buffer.readVarUInt()) { buffer.readUuid() })
 }

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.net.base
+package com.valaphee.tesseract.net.init
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -30,26 +30,36 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import java.util.UUID
 
 /**
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.Serverbound)
-data class LocalPlayerAsInitializedPacket(
-    var runtimeEntityId: Long
+data class PackDataChunkRequestPacket(
+    var packId: UUID,
+    var packVersion: String?,
+    var chunkIndex: Long
 ) : Packet {
-    override val id get() = 0x71
+    override val id get() = 0x54
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarULong(runtimeEntityId)
+        buffer.writeString("$packId${if (null == packVersion) "" else "_$packVersion"}")
+        buffer.writeIntLE(chunkIndex.toInt())
     }
 
-    override fun handle(handler: PacketHandler) = handler.localPlayerAsInitialized(this)
+    override fun handle(handler: PacketHandler) = handler.packDataChunkRequest(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object LocalPlayerAsInitializedPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = LocalPlayerAsInitializedPacket(buffer.readVarULong())
+object PackDataChunkRequestPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int): PackDataChunkRequestPacket {
+        val pack = buffer.readString().split("_".toRegex(), 2).toTypedArray()
+        val packId = UUID.fromString(pack[0])
+        val packVersion = if (pack.size == 2) pack[1] else null
+        val chunkIndex = buffer.readUnsignedIntLE()
+        return PackDataChunkRequestPacket(packId, packVersion, chunkIndex)
+    }
 }

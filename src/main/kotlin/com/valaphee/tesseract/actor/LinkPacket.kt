@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.net.base
+package com.valaphee.tesseract.actor
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -34,22 +34,22 @@ import com.valaphee.tesseract.net.Restriction
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Serverbound)
-data class LocalPlayerAsInitializedPacket(
-    var runtimeEntityId: Long
+@Restrict(Restriction.Clientbound)
+data class LinkPacket(
+    var link: Link
 ) : Packet {
-    override val id get() = 0x71
+    override val id get() = 0x29
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarULong(runtimeEntityId)
+        if (version >= 407) buffer.writeLink(link) else buffer.writeLinkPre407(link)
     }
 
-    override fun handle(handler: PacketHandler) = handler.localPlayerAsInitialized(this)
+    override fun handle(handler: PacketHandler) = handler.link(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object LocalPlayerAsInitializedPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = LocalPlayerAsInitializedPacket(buffer.readVarULong())
+object LinkPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = LinkPacket(if (version >= 407) buffer.readLink() else buffer.readLinkPre407())
 }
