@@ -25,6 +25,7 @@
 /**
  * @author Kevin Ludwig
  */
+// needs to be embedded
 enum class Rank {
     Visitor, Member, Operator, Custom
 }

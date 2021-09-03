@@ -33,7 +33,7 @@ import com.valaphee.tesseract.actor.location.LocationManager
 import com.valaphee.tesseract.actor.player.PlayerAddPacketizer
 import com.valaphee.tesseract.actor.player.PlayerLocationPacketizer
 import com.valaphee.tesseract.actor.player.PlayerType
-import com.valaphee.tesseract.actor.player.view.View
+import com.valaphee.tesseract.actor.player.view.RadialView
 import com.valaphee.tesseract.actor.player.view.ViewChunkPacketizer
 import com.valaphee.tesseract.net.Compressor
 import com.valaphee.tesseract.net.Connection
@@ -114,7 +114,7 @@ class ServerInstance(
         }
         register(PlayerType) {
             facets(
-                LocationManager::class.java, View::class.java, PlayerLocationPacketizer::class.java, // LocationManagerMessage(Move, MoveRotate, Rotate, Teleport)
+                LocationManager::class.java, RadialView::class.java, PlayerLocationPacketizer::class.java, // LocationManagerMessage(Move, MoveRotate, Rotate, Teleport)
                 ViewChunkPacketizer::class.java, // ViewChunk
                 BlockBreakProcessor::class.java // BlockBreak
             )
@@ -142,7 +142,7 @@ class ServerInstance(
                     } catch (_: ChannelException) {
                     }
                     config.setAllocator(PooledByteBufAllocator.DEFAULT).writeBufferWaterMark = childWriteBufferWaterMark
-                    (config as RakNet.Config).maxQueuedBytes = 16 * 1024 * 1024
+                    (config as RakNet.Config).maxQueuedBytes = 8 * 1024 * 1024
 
                     val connection = Connection()
                     connection.setHandler(InitPacketHandler(worldContext, connection).apply { injector.injectMembers(this) })

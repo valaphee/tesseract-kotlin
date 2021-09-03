@@ -24,6 +24,7 @@
 
 package com.valaphee.tesseract
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.module.SimpleModule
@@ -92,6 +93,7 @@ abstract class Instance(
                         .addDeserializer(Entity::class.java, entityDeserializer)
                 )
                 propertyNamingStrategy = PropertyNamingStrategies.LOWER_CASE
+                configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             })
             bind(this@Instance.javaClass).toInstance(this@Instance)
             bind(Provider::class.java).to(TesseractProvider::class.java)

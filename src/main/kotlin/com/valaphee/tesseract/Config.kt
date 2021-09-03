@@ -39,6 +39,7 @@ import java.util.regex.Pattern
 @Singleton
 @ProvidedBy(Config.Provider::class)
 data class Config(
+    var version: Int = 0,
     var concurrency: Int = Runtime.getRuntime().availableProcessors(),
     var address: InetSocketAddress = InetSocketAddress("0.0.0.0", 19132),
     var maximumPlayers: Int = 10,

@@ -484,7 +484,6 @@ object WorldPacketReader : PacketReader {
         }
         val levelId = buffer.readString()
         val worldName = buffer.readString()
-        println("$limitedWorldRadius $limitedWorldHeight $v2Nether $experimentalGameplay")
         val premiumWorldTemplateId = buffer.readString()
         val trial = buffer.readBoolean()
         val movementAuthoritative = when {

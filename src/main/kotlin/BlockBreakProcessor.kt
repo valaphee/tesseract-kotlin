@@ -48,6 +48,6 @@ class BlockBreakProcessor : BaseFacet<WorldContext, BlockBreak>(BlockBreak::clas
     companion object {
         val airId = BlockState.byKeyWithStates("minecraft:air").id
         val testId = BlockState.byKeyWithStates("minecraft:flowing_water[liquid_depth=0]").id
-        val test2Id = BlockState.byKeyWithStates("minecraft:sand").id
+        val test2Id = BlockState.byKeyWithStates("minecraft:stone").id
     }
 }

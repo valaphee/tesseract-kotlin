@@ -24,6 +24,7 @@
 
 package com.valaphee.tesseract
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -158,6 +159,7 @@ fun main(arguments: Array<String>) {
                 )
                 propertyNamingStrategy = PropertyNamingStrategies.KEBAB_CASE
                 enable(SerializationFeature.INDENT_OUTPUT)
+                configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             })
             bind(Argument::class.java).toInstance(argument)
         }

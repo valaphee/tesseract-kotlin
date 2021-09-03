@@ -113,11 +113,11 @@ object TextPacketReader : PacketReader {
         val message: String
         var arguments: Array<String>? = null
         when (type) {
-            TextPacket.Type.Chat, TextPacket.Type.Whisper, TextPacket.Type.Announcement, TextPacket.Type.ObjectWhisper -> {
+            TextPacket.Type.Chat, TextPacket.Type.Whisper, TextPacket.Type.Announcement -> {
                 sourceName = buffer.readString()
                 message = buffer.readString()
             }
-            TextPacket.Type.Raw, TextPacket.Type.Tip, TextPacket.Type.System, TextPacket.Type.Object -> message = buffer.readString()
+            TextPacket.Type.Raw, TextPacket.Type.Tip, TextPacket.Type.System, TextPacket.Type.Object, TextPacket.Type.ObjectWhisper -> message = buffer.readString()
             TextPacket.Type.Translation, TextPacket.Type.PopUp, TextPacket.Type.JukeboxPopUp -> {
                 message = buffer.readString()
                 arguments = Array(buffer.readVarUInt()) { buffer.readString() }

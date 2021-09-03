@@ -78,10 +78,10 @@ data class LoginPacket(
                 authJws.setHeader("alg", "ES384")
                 authJws.setHeader("x5u", base64Encoder.encodeToString(publicKey.encoded))
                 authJws.payload = JsonObject().apply {
-                    addProperty("exp", System.currentTimeMillis() + 31_536_000_000L)
+                    addProperty("exp", (System.currentTimeMillis() / 1_000L) + 31_536L)
                     add("extraData", JsonObject().apply(authExtra::toJson))
                     addProperty("identityPublicKey", base64Encoder.encodeToString(publicKey.encoded))
-                    addProperty("nbf", System.currentTimeMillis() - 21_600_000L)
+                    addProperty("nbf", (System.currentTimeMillis() / 1_000L) - 86_400L)
                 }.toString()
                 authJws.key = privateKey
                 add(authJws.compactSerialization)
