@@ -65,7 +65,6 @@ import io.netty.channel.WriteBufferWaterMark
 import io.netty.channel.epoll.EpollChannelOption
 import io.netty.channel.unix.UnixChannelOption
 import io.netty.handler.timeout.ReadTimeoutHandler
-import io.opentelemetry.api.OpenTelemetry
 import network.ycc.raknet.RakNet
 import network.ycc.raknet.pipeline.UserDataCodec
 import network.ycc.raknet.server.channel.RakNetServerChannel
@@ -79,9 +78,8 @@ import kotlin.concurrent.thread
  * @author Kevin Ludwig
  */
 class ServerInstance(
-    injector: Injector,
-    telemetry: OpenTelemetry
-) : Instance(injector, telemetry) {
+    injector: Injector
+) : Instance(injector) {
     private val parentGroup = underlyingNetworking.groupFactory(0, ThreadFactoryBuilder().setNameFormat("server-%d").build())
     private val childGroup = underlyingNetworking.groupFactory(0, ThreadFactoryBuilder().setNameFormat("server-c-%d").build())
 

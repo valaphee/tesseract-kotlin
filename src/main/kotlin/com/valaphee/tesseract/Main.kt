@@ -60,7 +60,6 @@ import com.valaphee.tesseract.world.chunk.terrain.block.Blocks
 import io.netty.buffer.ByteBufInputStream
 import io.netty.buffer.PooledByteBufAllocator
 import io.netty.buffer.Unpooled
-import io.opentelemetry.sdk.OpenTelemetrySdk
 import org.apache.logging.log4j.LogManager
 import java.io.IOException
 import java.io.InputStreamReader
@@ -83,7 +82,7 @@ fun main(arguments: Array<String>) {
         /_/    \___//____/ /____/ \___//_/    \__,_/ \___/ \__/  
     """.trimIndent())
     println("Java: ${System.getProperty("java.version")} in ${System.getProperty("java.home")}")
-    println("Java VM: ${System.getProperty("java.vm.name")}(${System.getProperty("java.vm.version")})")
+    println("Java VM: ${System.getProperty("java.vm.name")}, ${System.getProperty("java.vm.version")}")
     println("Java Runtime: ${Runtime.getRuntime().maxMemory() / (1024 * 1024)}MiB, ${Runtime.getRuntime().availableProcessors()} cores")
 
     initializeConsole()
@@ -167,16 +166,7 @@ fun main(arguments: Array<String>) {
         }
     })
 
-    val serverInstance = ServerInstance(
-        guice,
-        OpenTelemetrySdk.builder()
-            /*.setTracerProvider(
-                SdkTracerProvider.builder()
-                    .addSpanProcessor(BatchSpanProcessor.builder(JaegerGrpcSpanExporter.builder().build()).build())
-                    .build()
-            )*/
-            .buildAndRegisterGlobal()
-    )
+    val serverInstance = ServerInstance(guice)
     serverInstance.bind()
 
     val commandManager = guice.getInstance(CommandManager::class.java)

@@ -28,6 +28,7 @@ import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 
 /**
  * @author Kevin Ludwig
@@ -36,7 +37,7 @@ data class SoundEventPacketV2(
     var soundEvent: SoundEvent,
     var position: Float3,
     var extraData: Int,
-    var pitch: Int,
+    var identifier: String,
     var babySound: Boolean,
     var relativeVolumeDisabled: Boolean
 ) : Packet {
@@ -46,10 +47,17 @@ data class SoundEventPacketV2(
         buffer.writeByte(SoundEventPacket.soundEvents.getKey(soundEvent))
         buffer.writeFloat3(position)
         buffer.writeVarInt(extraData)
-        buffer.writeVarInt(pitch)
+        buffer.writeString(identifier)
         buffer.writeBoolean(babySound)
         buffer.writeBoolean(relativeVolumeDisabled)
     }
 
     override fun handle(handler: PacketHandler) = handler.soundEventV2(this)
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object SoundEventPacketV2Reader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = SoundEventPacketV2(SoundEventPacket.soundEvents[buffer.readUnsignedByte().toInt()], buffer.readFloat3(), buffer.readVarInt(), buffer.readString(), buffer.readBoolean(), buffer.readBoolean())
 }

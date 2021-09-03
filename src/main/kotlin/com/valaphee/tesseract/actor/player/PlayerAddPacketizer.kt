@@ -29,11 +29,10 @@ import com.valaphee.foundry.ecs.Pass
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
 import com.valaphee.foundry.math.Float3
-import com.valaphee.tesseract.actor.location.position
-import com.valaphee.tesseract.actor.location.rotation
+import com.valaphee.tesseract.actor.location.location
 import com.valaphee.tesseract.actor.metadata.metadata
 import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.broadcast
+import com.valaphee.tesseract.world.chunk.chunkBroadcast
 import com.valaphee.tesseract.world.entity.EntityAdd
 import com.valaphee.tesseract.world.filterType
 
@@ -43,7 +42,9 @@ import com.valaphee.tesseract.world.filterType
 class PlayerAddPacketizer : BaseFacet<WorldContext, EntityAdd>(EntityAdd::class) {
     override suspend fun receive(message: EntityAdd): Response {
         message.entities.filterType<PlayerType>().forEach {
-            message.context.world.broadcast(it, PlayerAddPacket(it.authExtra.userId, it.authExtra.userName, it.id, it.id, "", it.position, Float3.Zero, it.rotation, 0.0f, null, it.metadata, 0, emptyArray(), "", it.user.operatingSystem)) // TODO replace broadcast
+            val context = message.context
+            val location = it.location
+            context.world.chunkBroadcast(context, location.position, PlayerAddPacket(it.authExtra.userId, it.authExtra.userName, it.id, it.id, "", location.position, Float3.Zero, location.rotation, location.headRotationYaw, null, it.metadata, 0, emptyArray(), "", it.user.operatingSystem))
 
             return Consumed
         }

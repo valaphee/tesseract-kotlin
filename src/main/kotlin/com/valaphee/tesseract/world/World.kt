@@ -36,7 +36,7 @@ typealias World = EntityOfWorld<WorldType>
 
 fun EntityFactory<WorldContext>.world() = invoke(
     WorldType, setOf(
-        Settings(GameMode.Creative, Difficulty.Normal),
+        Settings(GameMode.Creative, Difficulty.Normal, mutableListOf(), mutableListOf()),
         Environment()
     )
 )

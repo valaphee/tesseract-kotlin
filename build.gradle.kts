@@ -42,6 +42,7 @@ plugins {
 repositories {
     mavenCentral()
     maven("https://repo.codemc.org/repository/maven-public")
+    maven("https://repo.aikar.co/nexus/content/groups/aikar/")
 }
 
 group = "com.valaphee"
@@ -57,8 +58,6 @@ dependencies {
     api("com.valaphee:foundry-math:1.3.0.0")
     implementation("commons-cli:commons-cli:1.4")
     implementation("io.grpc:grpc-netty:1.40.1")
-    api("io.opentelemetry:opentelemetry-api:1.5.0")
-    implementation("io.opentelemetry:opentelemetry-exporter-jaeger:1.5.0")
     api("io.netty:netty-buffer:4.1.67.Final")
     implementation("io.netty:netty-transport-native-epoll:4.1.67.Final:linux-x86_64")
     implementation("io.netty:netty-transport-native-kqueue:4.1.67.Final:osx-x86_64")
@@ -76,9 +75,12 @@ dependencies {
     api("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
     api("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.4")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.5.1-native-mt")
+    implementation("org.luaj:luaj-jse:3.0.1")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.0-M1")
     implementation("org.lz4:lz4-java:1.8.0")
     api("org.mozilla:rhino:1.7.13")
+    testImplementation("org.openjdk.jmh:jmh-core:1.32")
+    testImplementation("org.openjdk.jmh:jmh-generator-annprocess:1.32")
     compileOnly(kotlin("stdlib-jdk8"))
 }
 

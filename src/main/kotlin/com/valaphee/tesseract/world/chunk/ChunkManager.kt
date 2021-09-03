@@ -62,7 +62,7 @@ class ChunkManager @Inject constructor(
             for (requestedChunk in requestedChunksChannel) {
                 val (x, z) = requestedChunk
                 loadedChunksChannel.send((instance.worldContext.provider.loadChunk(encodePosition(x, z)) ?: instance.worldContext.entityFactory.chunk(requestedChunk, generator.generate(requestedChunk))).asMutableEntity().apply {
-                    addAttribute(Ticket())
+                    addAttribute(Actors())
                 })
             }
         }
@@ -91,7 +91,7 @@ class ChunkManager @Inject constructor(
             is ChunkAcquire -> {
                 val chunks = message.positions.map { chunks[it] }.filterNotNull()
                 if (chunks.isNotEmpty()) {
-                    message.usage.chunks = chunks.onEach { chunk -> message.source?.whenTypeIs<PlayerType> { chunk.players += it } }.toTypedArray()
+                    message.usage.chunks = chunks.onEach { chunk -> message.source?.whenTypeIs<PlayerType> { chunk.actors += it } }.toTypedArray()
                     message.source?.sendMessage(message.usage)
                 }
                 if (message.positions.size != chunks.size) instance.coroutineScope.launch {
@@ -109,12 +109,12 @@ class ChunkManager @Inject constructor(
             is ChunkRelease -> {
                 val chunksRemoved = message.positions.filter { chunkPosition ->
                     chunks.get(chunkPosition)?.let { chunk ->
-                        message.source?.whenTypeIs<PlayerType> { chunk.players -= it }
-                        chunk.players.isEmpty()
+                        message.source?.whenTypeIs<PlayerType> { chunk.actors -= it }
+                        chunk.actors.none { it.type == PlayerType }
                     } ?: false // TODO
                 }.map(chunks::remove)
                 context.provider.saveChunks(chunksRemoved.filter { it.terrain.modified })
-                context.world.removeEntities(context, message.source, *chunksRemoved.map { it.id }.toLongArray())
+                context.world.removeEntities(context, message.source, *chunksRemoved.toTypedArray())
             }
         }
 

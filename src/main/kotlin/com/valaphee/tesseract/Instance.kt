@@ -60,7 +60,6 @@ import io.netty.channel.kqueue.KQueueEventLoopGroup
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.DatagramChannel
 import io.netty.channel.socket.nio.NioDatagramChannel
-import io.opentelemetry.api.OpenTelemetry
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -74,8 +73,7 @@ import java.util.concurrent.ThreadFactory
  * @author Kevin Ludwig
  */
 abstract class Instance(
-    injector: Injector,
-    telemetry: OpenTelemetry
+    injector: Injector
 ) {
     private val entityDeserializer = EntityDeserializer()
 
@@ -105,7 +103,7 @@ abstract class Instance(
 
     private val executor = Executors.newFixedThreadPool(config.concurrency, ThreadFactoryBuilder().setNameFormat("world-%d").setDaemon(false).build())
     internal val coroutineScope = CoroutineScope(executor.asCoroutineDispatcher() + SupervisorJob() + CoroutineExceptionHandler { context, throwable -> log.error("Unhandled exception caught in $context", throwable) })
-    private val worldEngine = WorldEngine(20.0f, coroutineScope.coroutineContext, telemetry.getTracer("tesseract"))
+    private val worldEngine = WorldEngine(20.0f, coroutineScope.coroutineContext)
 
     @Suppress("LeakingThis")
     internal val worldContext = WorldContext(this.injector, coroutineScope, worldEngine, createEntityFactory().also { entityDeserializer.entityFactory = it }, this.injector.getInstance(Provider::class.java))

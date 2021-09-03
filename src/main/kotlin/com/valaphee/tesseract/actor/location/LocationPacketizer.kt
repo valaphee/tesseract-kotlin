@@ -34,7 +34,7 @@ import com.valaphee.foundry.math.Int3
 import com.valaphee.foundry.math.isZero
 import com.valaphee.tesseract.actor.ActorType
 import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.broadcast
+import com.valaphee.tesseract.world.chunk.chunkBroadcast
 import com.valaphee.tesseract.world.whenTypeIs
 
 /**
@@ -43,27 +43,26 @@ import com.valaphee.tesseract.world.whenTypeIs
 class LocationPacketizer : BaseFacet<WorldContext, LocationManagerMessage>(LocationManagerMessage::class, Location::class) {
     override suspend fun receive(message: LocationManagerMessage): Response {
         message.entity?.whenTypeIs<ActorType> {
-            message.context.world.broadcast(
-                when (message) {
-                    is Move -> {
-                        val (x, y, z) = it.position
-                        MoveRotatePacket(it.id, Int3.Zero, Float3(if (message.move.x.isZero()) Float.NaN else x, if (message.move.y.isZero()) Float.NaN else y, if (message.move.z.isZero()) Float.NaN else z), Float2(Float.NaN), Float.NaN, true, false, false)
-                    }
-                    is MoveRotate -> {
-                        val (x, y, z) = it.position
-                        val (yaw, pitch) = it.rotation
-                        MoveRotatePacket(it.id, Int3.Zero, Float3(if (message.move.x.isZero()) Float.NaN else x, if (message.move.y.isZero()) Float.NaN else y, if (message.move.z.isZero()) Float.NaN else z), Float2(pitch, yaw), Float.NaN, true, false, false)
-                    }
-                    is Rotate -> {
-                        val (yaw, pitch) = it.rotation
-                        MoveRotatePacket(it.id, Int3.Zero, Float3(Float.NaN), Float2(pitch, yaw), Float.NaN, true, false, false)
-                    }
-                    is Teleport -> {
-                        val (yaw, pitch) = it.rotation
-                        TeleportPacket(it.id, it.position, Float2(pitch, yaw), Float.NaN, true, false)
-                    }
+            val location = it.location
+            message.context.world.chunkBroadcast(message.context, location.position, when (message) {
+                is Move -> {
+                    val (x, y, z) = location.position
+                    MoveRotatePacket(it.id, Int3.Zero, Float3(if (message.move.x.isZero()) Float.NaN else x, if (message.move.y.isZero()) Float.NaN else y, if (message.move.z.isZero()) Float.NaN else z), Float2(Float.NaN), Float.NaN, true, false, false)
                 }
-            ) // TODO replace broadcast
+                is MoveRotate -> {
+                    val (x, y, z) = location.position
+                    val (yaw, pitch) = location.rotation
+                    MoveRotatePacket(it.id, Int3.Zero, Float3(if (message.move.x.isZero()) Float.NaN else x, if (message.move.y.isZero()) Float.NaN else y, if (message.move.z.isZero()) Float.NaN else z), Float2(pitch, yaw), Float.NaN, true, false, false)
+                }
+                is Rotate -> {
+                    val (yaw, pitch) = location.rotation
+                    MoveRotatePacket(it.id, Int3.Zero, Float3(Float.NaN), Float2(pitch, yaw), Float.NaN, true, false, false)
+                }
+                is Teleport -> {
+                    val (yaw, pitch) = location.rotation
+                    TeleportPacket(it.id, location.position, Float2(pitch, yaw), Float.NaN, true, false)
+                }
+            })
 
             return Consumed
         }

@@ -41,6 +41,6 @@ typealias Player = EntityOfWorld<PlayerType>
 
 fun EntityFactory<WorldContext>.player(position: Float3, rotation: Float2) = invoke(
     PlayerType, setOf(
-        Location(position, rotation)
+        Location(position, rotation, rotation.x)
     )
 )

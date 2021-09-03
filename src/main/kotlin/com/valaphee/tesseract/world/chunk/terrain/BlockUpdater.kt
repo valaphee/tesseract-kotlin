@@ -28,9 +28,9 @@ import com.valaphee.foundry.ecs.system.BaseBehavior
 import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.world.AnyEntityOfWorld
 import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.broadcast
 import com.valaphee.tesseract.world.chunk.ChunkType
 import com.valaphee.tesseract.world.chunk.Location
+import com.valaphee.tesseract.world.chunk.broadcast
 import com.valaphee.tesseract.world.chunk.position
 import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
 import com.valaphee.tesseract.world.whenTypeIs

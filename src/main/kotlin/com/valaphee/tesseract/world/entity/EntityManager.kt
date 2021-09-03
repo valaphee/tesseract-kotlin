@@ -36,7 +36,7 @@ class EntityManager : BaseFacet<WorldContext, EntityManagerMessage>(EntityManage
     override suspend fun receive(message: EntityManagerMessage): Response {
         when (message) {
             is EntityAdd -> message.entities.forEach { message.context.engine.addEntity(it) }
-            is EntityRemove -> message.entityIds.forEach { message.context.engine.findEntityOrNull(it)?.let(message.context.engine::removeEntity) }
+            is EntityRemove -> message.entities.forEach { message.context.engine.removeEntity(it) }
         }
 
         return Pass

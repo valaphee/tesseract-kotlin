@@ -27,6 +27,7 @@ package com.valaphee.tesseract.world
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 
@@ -36,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
 @Restrict(Restriction.Clientbound)
 data class SoundStopPacket(
     var sound: Sound? = null,
-    var soundName: String? = null
+    var soundKey: String? = null
 ) : Packet {
     constructor(sound: Sound) : this(sound, null)
 
@@ -45,8 +46,8 @@ data class SoundStopPacket(
     override val id get() = 0x57
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        val soundName = sound?.key ?: soundName
-        soundName?.let {
+        val soundKey = sound?.key ?: soundKey
+        soundKey?.let {
             buffer.writeString(it)
             buffer.writeBoolean(false)
         } ?: run {
@@ -56,4 +57,23 @@ data class SoundStopPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.soundStop(this)
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object SoundStopPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int): SoundStopPacket {
+        val soundKey = buffer.readString()
+        val sound: Sound?
+        val soundKey2: String?
+        if (!buffer.readBoolean()) {
+            sound = Sound.byKeyOrNull(soundKey)
+            soundKey2 = soundKey
+        } else {
+            sound = null
+            soundKey2 = null
+        }
+        return SoundStopPacket(sound, soundKey)
+    }
 }

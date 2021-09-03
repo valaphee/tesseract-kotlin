@@ -33,47 +33,46 @@ import kotlin.random.Random
  */
 class EnvironmentUpdater : BaseBehavior<WorldContext>(Environment::class) {
     override suspend fun update(entity: AnyEntityOfWorld, context: WorldContext): Boolean {
-        entity.whenTypeIs<WorldType> {
-            val environment = it.environment
+        val world = context.world
+        val environment = world.environment
 
-            environment.time++
+        environment.time++
 
-            fun isRaining() = environment.rainLevel > 0.0f
+        fun isRaining() = environment.rainLevel > 0.0f
 
-            fun setRaining(raining: Boolean) {
-                if (raining) {
-                    environment.rainLevel = 1.0f
-                    environment.rainTime = Random.nextInt(12000) + 12000
-                    it.broadcast(WorldEventPacket(WorldEventPacket.Event.StartRaining, Float3.Zero, environment.rainTime))
-                } else {
-                    environment.rainLevel = 0.0f
-                    environment.rainTime = Random.nextInt(168000) + 12000
-                    it.broadcast(WorldEventPacket(WorldEventPacket.Event.StopRaining, Float3.Zero, environment.rainTime))
-                }
+        fun setRaining(raining: Boolean) {
+            if (raining) {
+                environment.rainLevel = 1.0f
+                environment.rainTime = Random.nextInt(12000) + 12000
+                world.broadcast(WorldEventPacket(WorldEventPacket.Event.StartRaining, Float3.Zero, environment.rainTime))
+            } else {
+                environment.rainLevel = 0.0f
+                environment.rainTime = Random.nextInt(168000) + 12000
+                world.broadcast(WorldEventPacket(WorldEventPacket.Event.StopRaining, Float3.Zero, environment.rainTime))
             }
-
-            fun isThundering() = environment.thunderLevel > 0.0f
-
-            fun setThundering(thundering: Boolean) {
-                if (thundering) {
-                    if (!isRaining()) setRaining(true)
-
-                    environment.thunderLevel = 1.0f
-                    environment.thunderTime = Random.nextInt(12000) + 12000
-                    it.broadcast(WorldEventPacket(WorldEventPacket.Event.StartThunderstorm, Float3.Zero, environment.rainTime))
-                } else {
-                    environment.thunderLevel = 0.0f
-                    environment.thunderTime = Random.nextInt(168000) + 3600
-                    it.broadcast(WorldEventPacket(WorldEventPacket.Event.StopThunderstorm, Float3.Zero, environment.rainTime))
-                }
-            }
-
-            environment.rainTime--
-            if (environment.rainTime <= 0) setRaining(!isRaining())
-
-            environment.thunderTime--
-            if (environment.thunderTime <= 0) setThundering(!isThundering())
         }
+
+        fun isThundering() = environment.thunderLevel > 0.0f
+
+        fun setThundering(thundering: Boolean) {
+            if (thundering) {
+                if (!isRaining()) setRaining(true)
+
+                environment.thunderLevel = 1.0f
+                environment.thunderTime = Random.nextInt(12000) + 12000
+                world.broadcast(WorldEventPacket(WorldEventPacket.Event.StartThunderstorm, Float3.Zero, environment.rainTime))
+            } else {
+                environment.thunderLevel = 0.0f
+                environment.thunderTime = Random.nextInt(168000) + 3600
+                world.broadcast(WorldEventPacket(WorldEventPacket.Event.StopThunderstorm, Float3.Zero, environment.rainTime))
+            }
+        }
+
+        environment.rainTime--
+        if (environment.rainTime <= 0) setRaining(!isRaining())
+
+        environment.thunderTime--
+        if (environment.thunderTime <= 0) setThundering(!isThundering())
 
         return true
     }

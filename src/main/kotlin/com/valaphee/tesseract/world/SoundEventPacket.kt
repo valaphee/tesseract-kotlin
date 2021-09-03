@@ -28,6 +28,7 @@ import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
 
 /**
@@ -415,4 +416,11 @@ data class SoundEventPacket(
             defaultReturnValue(SoundEvent.Undefined)
         }
     }
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object SoundEventPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = SoundEventPacket(SoundEventPacket.soundEvents[buffer.readVarUInt()], buffer.readFloat3(), buffer.readVarInt(), buffer.readString(), buffer.readBoolean(), buffer.readBoolean())
 }

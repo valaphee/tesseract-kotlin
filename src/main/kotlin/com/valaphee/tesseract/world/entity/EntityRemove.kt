@@ -34,13 +34,14 @@ import com.valaphee.tesseract.world.WorldContext
 class EntityRemove(
     override val context: WorldContext,
     override val source: AnyEntityOfWorld?,
-    val entityIds: LongArray,
+    val entities: Array<AnyEntityOfWorld>
 ) : EntityManagerMessage {
     override val entity: AnyEntityOfWorld? get() = null
 }
 
-fun World.removeEntities(context: WorldContext, source: AnyEntityOfWorld?, vararg entityIds: Long) {
-    if (entityIds.isEmpty()) return
+fun World.removeEntities(context: WorldContext, source: AnyEntityOfWorld?, vararg entities: AnyEntityOfWorld) {
+    if (entities.isEmpty()) return
 
-    sendMessage(EntityRemove(context, source, entityIds))
+    @Suppress("UNCHECKED_CAST")
+    sendMessage(EntityRemove(context, source, entities as Array<AnyEntityOfWorld>))
 }

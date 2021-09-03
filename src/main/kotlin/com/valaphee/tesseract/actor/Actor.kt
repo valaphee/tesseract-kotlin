@@ -32,6 +32,4 @@ import com.valaphee.tesseract.world.EntityOfWorld
  */
 abstract class ActorType(key: String) : BaseEntityType(key, ActorTypeRegistry.idByKey(key).toLong())
 
-typealias Actor = EntityOfWorld<ActorType>
-
 typealias AnyActorOfWorld = EntityOfWorld<out ActorType>

@@ -30,13 +30,14 @@ import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
 import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.actor.attribute._attributes
+import com.valaphee.tesseract.actor.location.location
 import com.valaphee.tesseract.actor.location.position
-import com.valaphee.tesseract.actor.location.rotation
 import com.valaphee.tesseract.actor.metadata.metadata
 import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.broadcast
+import com.valaphee.tesseract.world.chunk.chunkBroadcast
 import com.valaphee.tesseract.world.entity.EntityAdd
 import com.valaphee.tesseract.world.entity.EntityManagerMessage
+import com.valaphee.tesseract.world.entity.EntityRemove
 import com.valaphee.tesseract.world.filterType
 
 /**
@@ -46,7 +47,14 @@ class ActorPacketizer : BaseFacet<WorldContext, EntityManagerMessage>(EntityMana
     override suspend fun receive(message: EntityManagerMessage): Response {
         when (message) {
             is EntityAdd -> message.entities.filterType<ActorType>().forEach {
-                message.context.world.broadcast(ActorAddPacket(it.id, it.id, it.type, it.position, Float3.Zero, it.rotation, 0.0f, it._attributes, it.metadata, emptyArray())) // TODO replace broadcast
+                val context = message.context
+                val location = it.location
+                context.world.chunkBroadcast(context, location.position, ActorAddPacket(it.id, it.id, it.type, location.position, Float3.Zero, location.rotation, location.headRotationYaw, it._attributes, it.metadata, emptyArray()))
+
+                return Consumed
+            }
+            is EntityRemove -> message.entities.filterType<ActorType>().forEach {
+                message.context.world.chunkBroadcast(message.context, it.position, ActorRemovePacket(it.id))
 
                 return Consumed
             }

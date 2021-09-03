@@ -28,6 +28,7 @@ import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 
@@ -52,4 +53,19 @@ data class SoundPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.sound(this)
+}
+
+
+/**
+ * @author Kevin Ludwig
+ */
+object SoundPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int): SoundPacket {
+        val soundKey = buffer.readString()
+        val sound = Sound.byKeyOrNull(soundKey)
+        val position = buffer.readInt3UnsignedY().toMutableFloat3().scale(1 / 8.0f)
+        val volume = buffer.readFloatLE()
+        val pitch = buffer.readFloatLE()
+        return SoundPacket(sound, soundKey, position, volume, pitch)
+    }
 }

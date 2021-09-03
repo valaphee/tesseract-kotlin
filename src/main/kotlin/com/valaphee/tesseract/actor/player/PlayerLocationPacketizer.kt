@@ -28,12 +28,12 @@ import com.valaphee.foundry.ecs.Consumed
 import com.valaphee.foundry.ecs.Pass
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
+import com.valaphee.tesseract.actor.ActorRemovePacket
 import com.valaphee.tesseract.actor.location.Location
 import com.valaphee.tesseract.actor.location.LocationManagerMessage
-import com.valaphee.tesseract.actor.location.position
-import com.valaphee.tesseract.actor.location.rotation
+import com.valaphee.tesseract.actor.location.location
 import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.broadcast
+import com.valaphee.tesseract.world.chunk.chunkBroadcast
 import com.valaphee.tesseract.world.whenTypeIs
 
 /**
@@ -42,7 +42,8 @@ import com.valaphee.tesseract.world.whenTypeIs
 class PlayerLocationPacketizer : BaseFacet<WorldContext, LocationManagerMessage>(LocationManagerMessage::class, Location::class) {
     override suspend fun receive(message: LocationManagerMessage): Response {
         message.entity?.whenTypeIs<PlayerType> {
-            message.context.world.broadcast(it, PlayerLocationPacket(it.id, it.position, it.rotation, 0.0f, PlayerLocationPacket.Mode.Normal, true, 0L, null, 0L)) // TODO replace broadcast
+            val location = it.location
+            message.context.world.chunkBroadcast(message.context, location.position, ActorRemovePacket(it.id), PlayerLocationPacket(it.id, location.position, location.rotation, location.headRotationYaw, PlayerLocationPacket.Mode.Normal, true, 0L, null, 0L))
 
             return Consumed
         }

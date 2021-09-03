@@ -151,6 +151,8 @@ interface PacketHandler : ProtocolHandler {
 
     fun motion(packet: MotionPacket) = other(packet)
 
+    fun link(packet: LinkPacket) = other(packet)
+
     fun windowOpen(packet: WindowOpenPacket) = other(packet)
 
     fun windowClose(packet: WindowClosePacket) = other(packet)
@@ -238,7 +240,4 @@ interface PacketHandler : ProtocolHandler {
     fun violation(packet: ViolationPacket) = other(packet)
 
     fun inputCorrect(packet: InputCorrectPacket) = other(packet)
-
-
-    fun link(packet: LinkPacket) = other(packet)
 }

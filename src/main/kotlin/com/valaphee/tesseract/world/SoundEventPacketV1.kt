@@ -28,7 +28,7 @@ import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
-import com.valaphee.tesseract.world.SoundEventPacket.Companion.soundEvents
+import com.valaphee.tesseract.net.PacketReader
 
 /**
  * @author Kevin Ludwig
@@ -44,7 +44,7 @@ data class SoundEventPacketV1(
     override val id get() = 0x18
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeByte(soundEvents.getKey(soundEvent))
+        buffer.writeByte(SoundEventPacket.soundEvents.getKey(soundEvent))
         buffer.writeFloat3(position)
         buffer.writeVarInt(extraData)
         buffer.writeVarInt(pitch)
@@ -53,4 +53,11 @@ data class SoundEventPacketV1(
     }
 
     override fun handle(handler: PacketHandler) = handler.soundEventV1(this)
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object SoundEventPacketV1Reader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = SoundEventPacketV1(SoundEventPacket.soundEvents[buffer.readUnsignedByte().toInt()], buffer.readFloat3(), buffer.readVarInt(), buffer.readVarInt(), buffer.readBoolean(), buffer.readBoolean())
 }

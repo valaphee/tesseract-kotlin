@@ -37,6 +37,8 @@ import com.valaphee.tesseract.actor.metadata.MetadataField
 import com.valaphee.tesseract.actor.metadata.MetadataPacket
 import com.valaphee.tesseract.actor.metadata.metadata
 import com.valaphee.tesseract.actor.player.AuthExtra
+import com.valaphee.tesseract.actor.player.EmotePacket
+import com.valaphee.tesseract.actor.player.InputPacket
 import com.valaphee.tesseract.actor.player.InteractPacket
 import com.valaphee.tesseract.actor.player.Player
 import com.valaphee.tesseract.actor.player.PlayerActionPacket
@@ -71,9 +73,11 @@ import com.valaphee.tesseract.net.Remote
 import com.valaphee.tesseract.net.base.CacheBlobStatusPacket
 import com.valaphee.tesseract.net.base.CacheBlobsPacket
 import com.valaphee.tesseract.net.base.TextPacket
+import com.valaphee.tesseract.net.base.ViolationPacket
 import com.valaphee.tesseract.net.init.StatusPacket
 import com.valaphee.tesseract.world.chunk.Chunk
 import com.valaphee.tesseract.world.chunk.ChunkRelease
+import com.valaphee.tesseract.world.chunk.chunkBroadcast
 import com.valaphee.tesseract.world.chunk.position
 import com.valaphee.tesseract.world.chunk.terrain.SectionCompact
 import com.valaphee.tesseract.world.chunk.terrain.block.Block
@@ -133,7 +137,7 @@ class WorldPacketHandler(
 
     override fun destroy() {
         context.world.sendMessage(ChunkRelease(context, player, player.findFacet(View::class).acquiredChunks))
-        context.world.removeEntities(context, null, player.id)
+        context.world.removeEntities(context, null, player)
         context.provider.savePlayer(authExtra.userId, player)
     }
 
@@ -187,7 +191,21 @@ class WorldPacketHandler(
         if (blobs.isNotEmpty()) connection.write(CacheBlobsPacket(blobs))
     }
 
+    override fun emote(packet: EmotePacket) {
+        if (packet.runtimeEntityId != player.id) return
+
+        context.world.chunkBroadcast(context, player.position, packet)
+    }
+
+    override fun input(packet: InputPacket) {
+        player.sendMessage(Teleport(context, player, player, packet.position, packet.rotation))
+    }
+
     override fun inventoryRequest(packet: InventoryRequestPacket) {
+    }
+
+    override fun violation(packet: ViolationPacket) {
+        log.debug("{}: Violation packet: {}", this, packet)
     }
 
     fun writeChunks(chunks: Array<Chunk>) {

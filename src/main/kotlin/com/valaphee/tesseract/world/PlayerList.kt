@@ -34,8 +34,6 @@ import com.valaphee.tesseract.actor.player.user
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.base.TextPacket
 import com.valaphee.tesseract.net.connection
-import com.valaphee.tesseract.world.chunk.Chunk
-import com.valaphee.tesseract.world.chunk.players
 import com.valaphee.tesseract.world.entity.EntityAdd
 import com.valaphee.tesseract.world.entity.EntityManagerMessage
 import com.valaphee.tesseract.world.entity.EntityRemove
@@ -64,7 +62,7 @@ class PlayerList : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMe
 
                 broadcastSystemMessage("${it.authExtra.userName} entered the world")
             }
-            is EntityRemove -> message.entityIds.map(players::remove).filterNotNull().forEach {
+            is EntityRemove -> message.entities.mapNotNull { players.remove(it.id) }.forEach {
                 broadcastSystemMessage("${it.authExtra.userName} exited the world")
                 broadcast(PlayerListPacket(PlayerListPacket.Action.Remove, arrayOf(PlayerListPacket.Entry(it.authExtra.userId))))
             }
@@ -94,9 +92,3 @@ fun World.broadcast(vararg packets: Packet) = findFacet(PlayerList::class).broad
 fun World.broadcast(source: Player, vararg packets: Packet) = findFacet(PlayerList::class).broadcast(source, *packets)
 
 fun World.broadcastSystemMessage(message: String) = findFacet(PlayerList::class).broadcastSystemMessage(message)
-
-@JvmName("chunkBroadcast")
-fun Chunk.broadcast(vararg packets: Packet) = players.forEach { packets.forEach(it.connection::write) }
-
-@JvmName("chunkBroadcast")
-fun Chunk.broadcast(source: Player, vararg packets: Packet) = players.forEach { if (it != source) packets.forEach(it.connection::write) }

@@ -25,15 +25,15 @@
 package com.valaphee.tesseract.world.chunk
 
 import com.valaphee.foundry.ecs.BaseAttribute
-import com.valaphee.tesseract.actor.player.Player
+import com.valaphee.tesseract.actor.AnyActorOfWorld
 import com.valaphee.tesseract.util.ecs.Runtime
 
 /**
  * @author Kevin Ludwig
  */
 @Runtime
-class Ticket : BaseAttribute() {
-    val players = mutableSetOf<Player>()
+class Actors : BaseAttribute() {
+    val actors = mutableSetOf<AnyActorOfWorld>()
 }
 
-val Chunk.players get() = findAttribute(Ticket::class).players
+val Chunk.actors get() = findAttribute(Actors::class).actors
