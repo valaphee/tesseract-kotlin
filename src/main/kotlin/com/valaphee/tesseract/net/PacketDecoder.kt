@@ -39,6 +39,7 @@ import com.valaphee.tesseract.command.net.CommandResponsePacketReader
 import com.valaphee.tesseract.command.net.CommandSoftEnumerationPacketReader
 import com.valaphee.tesseract.command.net.CommandsPacketReader
 import com.valaphee.tesseract.inventory.InventoryRequestPacketReader
+import com.valaphee.tesseract.inventory.InventoryTransactionPacketReader
 import com.valaphee.tesseract.inventory.WindowClosePacketReader
 import com.valaphee.tesseract.net.base.CacheBlobStatusPacketReader
 import com.valaphee.tesseract.net.base.CacheStatusPacketReader
@@ -119,7 +120,7 @@ class PacketDecoder(
             //this[0x1B] = ActorEventPacketReader
             //this[0x1C] =
             //this[0x1D] =
-            //this[0x1E] =
+            this[0x1E] = InventoryTransactionPacketReader
             //this[0x1F] =
             //this[0x20] =
             this[0x21] = InteractPacketReader

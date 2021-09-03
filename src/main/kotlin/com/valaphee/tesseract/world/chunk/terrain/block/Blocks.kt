@@ -138,7 +138,7 @@ private fun BlockUpdateList.setIfAir(x: Int, y: Int, z: Int, value: Int, updates
     if (get(x, y, z) == airId) {
         val position = encodePosition(x, y, z)
         changes[position] = value
-        if (updatesIn != -1) pending[position] = updatesIn
+        if (updatesIn != -1) changeData[position] = updatesIn
 
         return true
     }

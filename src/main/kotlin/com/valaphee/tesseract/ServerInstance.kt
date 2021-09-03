@@ -24,12 +24,12 @@
 
 package com.valaphee.tesseract
 
+import BlockBreakProcessor
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.google.inject.AbstractModule
 import com.google.inject.Injector
 import com.valaphee.tesseract.actor.ActorPacketizer
 import com.valaphee.tesseract.actor.location.LocationManager
-import com.valaphee.tesseract.actor.player.BlockBreakProcessor
 import com.valaphee.tesseract.actor.player.PlayerAddPacketizer
 import com.valaphee.tesseract.actor.player.PlayerLocationPacketizer
 import com.valaphee.tesseract.actor.player.PlayerType

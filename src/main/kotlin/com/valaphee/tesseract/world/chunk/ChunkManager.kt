@@ -37,7 +37,7 @@ import com.valaphee.tesseract.world.chunk.terrain.generator.Generator
 import com.valaphee.tesseract.world.chunk.terrain.terrain
 import com.valaphee.tesseract.world.entity.addEntities
 import com.valaphee.tesseract.world.entity.removeEntities
-import com.valaphee.tesseract.world.whenTypeIs
+import com.valaphee.tesseract.world.filter
 import it.unimi.dsi.fastutil.longs.Long2ObjectMaps
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import kotlinx.coroutines.CompletableDeferred
@@ -91,7 +91,7 @@ class ChunkManager @Inject constructor(
             is ChunkAcquire -> {
                 val chunks = message.positions.map { chunks[it] }.filterNotNull()
                 if (chunks.isNotEmpty()) {
-                    message.usage.chunks = chunks.onEach { chunk -> message.source?.whenTypeIs<PlayerType> { chunk.actors += it } }.toTypedArray()
+                    message.usage.chunks = chunks.onEach { chunk -> message.source?.filter<PlayerType> { chunk.actors += it } }.toTypedArray()
                     message.source?.sendMessage(message.usage)
                 }
                 if (message.positions.size != chunks.size) instance.coroutineScope.launch {
@@ -109,7 +109,7 @@ class ChunkManager @Inject constructor(
             is ChunkRelease -> {
                 val chunksRemoved = message.positions.filter { chunkPosition ->
                     chunks.get(chunkPosition)?.let { chunk ->
-                        message.source?.whenTypeIs<PlayerType> { chunk.actors -= it }
+                        message.source?.filter<PlayerType> { chunk.actors -= it }
                         chunk.actors.none { it.type == PlayerType }
                     } ?: false // TODO
                 }.map(chunks::remove)

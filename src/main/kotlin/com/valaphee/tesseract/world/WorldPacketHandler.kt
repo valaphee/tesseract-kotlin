@@ -25,6 +25,7 @@
 package com.valaphee.tesseract.world
 
 import Rank
+import breakBlock
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
@@ -45,7 +46,6 @@ import com.valaphee.tesseract.actor.player.PlayerActionPacket
 import com.valaphee.tesseract.actor.player.PlayerLocationPacket
 import com.valaphee.tesseract.actor.player.User
 import com.valaphee.tesseract.actor.player.authExtra
-import com.valaphee.tesseract.actor.player.breakBlock
 import com.valaphee.tesseract.actor.player.player
 import com.valaphee.tesseract.actor.player.view.ChunkPacket
 import com.valaphee.tesseract.actor.player.view.View
@@ -59,9 +59,9 @@ import com.valaphee.tesseract.entityIdentifiersPacket
 import com.valaphee.tesseract.inventory.Inventory
 import com.valaphee.tesseract.inventory.InventoryAttribute
 import com.valaphee.tesseract.inventory.InventoryRequestPacket
+import com.valaphee.tesseract.inventory.InventoryTransactionPacket
 import com.valaphee.tesseract.inventory.WindowClosePacket
 import com.valaphee.tesseract.inventory.WindowType
-import com.valaphee.tesseract.inventory.inventory
 import com.valaphee.tesseract.inventory.item.Item
 import com.valaphee.tesseract.inventory.recipe.RecipesPacket
 import com.valaphee.tesseract.net.Connection
@@ -75,6 +75,7 @@ import com.valaphee.tesseract.net.base.CacheBlobsPacket
 import com.valaphee.tesseract.net.base.TextPacket
 import com.valaphee.tesseract.net.base.ViolationPacket
 import com.valaphee.tesseract.net.init.StatusPacket
+import com.valaphee.tesseract.util.math.Direction
 import com.valaphee.tesseract.world.chunk.Chunk
 import com.valaphee.tesseract.world.chunk.ChunkRelease
 import com.valaphee.tesseract.world.chunk.chunkBroadcast
@@ -89,6 +90,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import net.jpountz.xxhash.XXHashFactory
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import placeBlock
 
 /**
  * @author Kevin Ludwig
@@ -158,12 +160,18 @@ class WorldPacketHandler(
         player.sendMessage(Teleport(context, player, player, packet.position, packet.rotation))
     }
 
+    override fun inventoryTransaction(packet: InventoryTransactionPacket) {
+        packet.position?.let {
+            context.world.placeBlock(context, player, it + Direction.values()[packet.auxInt].axis)
+        }
+    }
+
     override fun interact(packet: InteractPacket) {
         when (packet.action) {
             InteractPacket.Action.OpenInventory -> {
                 if (packet.runtimeEntityId != player.id) return
 
-                player.inventory.open(player)
+                //player.openWindow(player.inventory)
             }
         }
     }
@@ -174,7 +182,9 @@ class WorldPacketHandler(
         }
     }
 
-    override fun windowClose(packet: WindowClosePacket) {}
+    override fun windowClose(packet: WindowClosePacket) {
+        //player.closeWindow(packet.windowId)
+    }
 
     override fun viewDistanceRequest(packet: ViewDistanceRequestPacket) {
         connection.write(ViewDistancePacket(player.findFacet(View::class).apply { distance = packet.distance }.distance))

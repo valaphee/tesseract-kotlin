@@ -22,30 +22,32 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.player
-
-import com.valaphee.foundry.math.Int3
-import com.valaphee.tesseract.world.World
+import com.valaphee.foundry.ecs.Pass
+import com.valaphee.foundry.ecs.Response
+import com.valaphee.foundry.ecs.system.BaseFacet
 import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.chunk.Chunk
-import com.valaphee.tesseract.world.chunk.ChunkAcquire
-import com.valaphee.tesseract.world.chunk.ChunkUsage
-import com.valaphee.tesseract.world.chunk.encodePosition
+import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
+import com.valaphee.tesseract.world.chunk.terrain.terrain
 
 /**
  * @author Kevin Ludwig
  */
-class BlockBreak(
-    override val context: WorldContext,
-    override val source: Player,
-    val position: Int3
-) : ChunkUsage {
-    override val entity get() = source
+// just for experimenting, currently, as there are no inventories implemented
+class BlockBreakProcessor : BaseFacet<WorldContext, BlockBreak>(BlockBreak::class) {
+    override suspend fun receive(message: BlockBreak): Response {
+        val (x, y, z) = message.position
+        if (message.place) {
+            message.chunks.first().terrain.blockUpdates[x, y, z] = test2Id
+        } else {
+            message.chunks.first().terrain.blockUpdates[x, y, z, -1] = airId
+        }
 
-    override lateinit var chunks: Array<Chunk>
-}
+        return Pass
+    }
 
-fun World.breakBlock(context: WorldContext, source: Player, position: Int3) {
-    val (x, y, z) = position
-    sendMessage(ChunkAcquire(context, source, longArrayOf(encodePosition(x shr 4, z shr 4)), BlockBreak(context, source, Int3(x and 0xF, y and 0xFF, z and 0xF))))
+    companion object {
+        val airId = BlockState.byKeyWithStates("minecraft:air").id
+        val testId = BlockState.byKeyWithStates("minecraft:flowing_water[liquid_depth=0]").id
+        val test2Id = BlockState.byKeyWithStates("minecraft:sand").id
+    }
 }

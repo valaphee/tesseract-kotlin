@@ -53,6 +53,7 @@ import com.valaphee.tesseract.inventory.InventoryContentPacket
 import com.valaphee.tesseract.inventory.InventoryRequestPacket
 import com.valaphee.tesseract.inventory.InventoryResponsePacket
 import com.valaphee.tesseract.inventory.InventorySlotPacket
+import com.valaphee.tesseract.inventory.InventoryTransactionPacket
 import com.valaphee.tesseract.inventory.WindowClosePacket
 import com.valaphee.tesseract.inventory.WindowOpenPacket
 import com.valaphee.tesseract.inventory.WindowPropertyPacket
@@ -142,6 +143,8 @@ interface PacketHandler : ProtocolHandler {
     fun worldEvent(packet: WorldEventPacket) = other(packet)
 
     fun attributes(packet: AttributesPacket) = other(packet)
+
+    fun inventoryTransaction(packet: InventoryTransactionPacket) = other(packet)
 
     fun interact(packet: InteractPacket) = other(packet)
 

@@ -38,7 +38,7 @@ import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.ChunkAcquire
 import com.valaphee.tesseract.world.chunk.ChunkRelease
 import com.valaphee.tesseract.world.chunk.encodePosition
-import com.valaphee.tesseract.world.whenTypeIs
+import com.valaphee.tesseract.world.filter
 import it.unimi.dsi.fastutil.longs.LongArrayList
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet
 import java.lang.Integer.min
@@ -62,7 +62,7 @@ class View @Inject constructor(
         }
 
     override suspend fun receive(message: LocationManagerMessage): Response {
-        message.entity?.whenTypeIs<PlayerType> {
+        message.entity?.filter<PlayerType> {
             val position = it.position.toInt3()
             val chunkX = position.x shr 4
             val chunkZ = position.z shr 4

@@ -81,9 +81,6 @@ fun main(arguments: Array<String>) {
         _  /   /  __/(__  )_(__  )/  __/  /   / /_/ // /__ / /_  
         /_/    \___//____/ /____/ \___//_/    \__,_/ \___/ \__/  
     """.trimIndent())
-    println("Java: ${System.getProperty("java.version")} in ${System.getProperty("java.home")}")
-    println("Java VM: ${System.getProperty("java.vm.name")}, ${System.getProperty("java.vm.version")}")
-    println("Java Runtime: ${Runtime.getRuntime().maxMemory() / (1024 * 1024)}MiB, ${Runtime.getRuntime().availableProcessors()} cores")
 
     initializeConsole()
     initializeLogging()

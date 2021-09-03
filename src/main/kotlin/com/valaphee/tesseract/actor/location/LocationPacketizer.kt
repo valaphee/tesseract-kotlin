@@ -35,14 +35,14 @@ import com.valaphee.foundry.math.isZero
 import com.valaphee.tesseract.actor.ActorType
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.chunkBroadcast
-import com.valaphee.tesseract.world.whenTypeIs
+import com.valaphee.tesseract.world.filter
 
 /**
  * @author Kevin Ludwig
  */
 class LocationPacketizer : BaseFacet<WorldContext, LocationManagerMessage>(LocationManagerMessage::class, Location::class) {
     override suspend fun receive(message: LocationManagerMessage): Response {
-        message.entity?.whenTypeIs<ActorType> {
+        message.entity?.filter<ActorType> {
             val location = it.location
             message.context.world.chunkBroadcast(message.context, location.position, when (message) {
                 is Move -> {

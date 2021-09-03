@@ -27,9 +27,8 @@ package com.valaphee.tesseract.world
 import com.valaphee.foundry.ecs.Engine
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
@@ -79,7 +78,7 @@ class WorldEngine(
                     while (cycles.hasNext()) {
                         context.cycle++
                         context.cycleDelta = cycles.next()
-                        entityById.values.filter { it.needsUpdate }.map { async { it.update(context) } }.awaitAll()
+                        entityById.values.filter { it.needsUpdate }.map { launch { runCatching { it.update(context) } } }.joinAll()
                     }
                     watchdog.update(clock.realTime)
                 }

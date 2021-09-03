@@ -75,7 +75,6 @@ dependencies {
     api("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
     api("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.4")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.5.1-native-mt")
-    implementation("org.luaj:luaj-jse:3.0.1")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.0-M1")
     implementation("org.lz4:lz4-java:1.8.0")
     api("org.mozilla:rhino:1.7.13")

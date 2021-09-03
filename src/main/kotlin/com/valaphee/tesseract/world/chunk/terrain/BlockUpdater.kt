@@ -25,26 +25,37 @@
 package com.valaphee.tesseract.world.chunk.terrain
 
 import com.valaphee.foundry.ecs.system.BaseBehavior
+import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.world.AnyEntityOfWorld
 import com.valaphee.tesseract.world.WorldContext
+import com.valaphee.tesseract.world.WorldEventPacket
 import com.valaphee.tesseract.world.chunk.ChunkType
 import com.valaphee.tesseract.world.chunk.Location
 import com.valaphee.tesseract.world.chunk.broadcast
 import com.valaphee.tesseract.world.chunk.position
 import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
-import com.valaphee.tesseract.world.whenTypeIs
+import com.valaphee.tesseract.world.filter
 
 /**
  * @author Kevin Ludwig
  */
 class BlockUpdater : BaseBehavior<WorldContext>(Location::class, Terrain::class) {
     override suspend fun update(entity: AnyEntityOfWorld, context: WorldContext): Boolean {
-        entity.whenTypeIs<ChunkType> {
+        entity.filter<ChunkType> {
             val (chunkX, chunkZ) = it.position
             val terrain = it.terrain
             val blockStorage = terrain.blockStorage
             val blockUpdates = terrain.blockUpdates
+            val blockUpdateData = blockUpdates.changeData
+            blockUpdateData.filterValues { it < 0 }.forEach { (position, data) ->
+                val (x, y, z) = decodePosition(position)
+                when (data) {
+                    -1 -> it.broadcast(WorldEventPacket(WorldEventPacket.Event.ParticleDestroyBlock, Float3(chunkX * 16.0f + x, y.toFloat(), chunkZ * 16.0f + z), blockStorage[x, y, z]))
+                }
+                blockUpdateData.remove(position)
+            }
+
             val blockUpdateChanges = blockUpdates.changes
             if (blockUpdateChanges.isNotEmpty()) {
                 it.broadcast(*blockUpdateChanges.map { (position, value) ->
@@ -57,12 +68,12 @@ class BlockUpdater : BaseBehavior<WorldContext>(Location::class, Terrain::class)
             }
 
             val cycle = context.cycle.toInt()
-            blockUpdates.pending.clone().forEach {
+            blockUpdateData.filterValues { it >= 0 }.forEach {
                 if (cycle and it.value == 0) {
                     val (x, y, z) = decodePosition(it.key)
                     val blockState = BlockState.byId(blockStorage[x, y, z])
                     blockState.block.onUpdate?.invoke(blockUpdates, x, y, z, blockState)
-                    blockUpdates.pending.remove(it.key)
+                    blockUpdateData.remove(it.key)
                 }
             }
         }

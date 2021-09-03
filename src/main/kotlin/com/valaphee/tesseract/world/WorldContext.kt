@@ -60,7 +60,7 @@ inline fun <reified T : EntityType> Array<AnyEntityOfWorld>.filterType() = filte
 @Suppress("UNCHECKED_CAST")
 inline fun <reified T : EntityType> Iterable<AnyEntityOfWorld>.filterType() = filter { T::class.isSuperclassOf(it.type::class) }.toList() as List<Entity<T, WorldContext>>
 
-inline fun <reified T : EntityType> AnyEntityOfWorld.whenTypeIs(`do`: (Entity<T, WorldContext>) -> Unit) {
+inline fun <reified T : EntityType> AnyEntityOfWorld.filter(`do`: (Entity<T, WorldContext>) -> Unit) {
     if (this.type::class.isSubclassOf(T::class)) {
         @Suppress("UNCHECKED_CAST")
         `do`(this as Entity<T, WorldContext>)
