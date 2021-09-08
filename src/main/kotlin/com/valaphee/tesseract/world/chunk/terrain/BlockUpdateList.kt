@@ -26,74 +26,44 @@ package com.valaphee.tesseract.world.chunk.terrain
 
 import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
+import it.unimi.dsi.fastutil.shorts.Short2IntOpenHashMap
 
 /**
  * @author Kevin Ludwig
  */
 class BlockUpdateList(
-    center: ChunkBlockUpdateList
+    private val cartesian: ReadWriteCartesian
 ) : ReadWriteCartesian {
-    internal val chunks = arrayOfNulls<ChunkBlockUpdateList>(9)
+    val changes = Short2IntOpenHashMap()
+    val memory = Short2IntOpenHashMap()
 
-    init {
-        val (_, _, index) = indexAndOffsetOf(0, 0)
-        chunks[index] = center
-    }
-
-    /**
-     * Gets a block in its already updated state
-     *
-     * @param x x coordinate relative to the chunk (-16-31)
-     * @param y y coordinate relative to the chunk (0-255)
-     * @param z z coordinate relative to the chunk (-16-31)
-     */
     override fun get(x: Int, y: Int, z: Int): Int {
-        val (offsetX, offsetZ, index) = indexAndOffsetOf(x, z)
-        return chunks[index]?.get(x + offsetX, y, z + offsetZ) ?: borderId
+        val key = encodePosition(x, y, z)
+        return if (changes.containsKey(key)) changes.get(key) else cartesian[x, y, z]
     }
 
-    /**
-     * Schedules a block change for the next cycle
-     *
-     * @param x x coordinate relative to the chunk (-16-31)
-     * @param y y coordinate relative to the chunk (0-255)
-     * @param z z coordinate relative to the chunk (-16-31)
-     * @param value new value of the block
-     */
     override fun set(x: Int, y: Int, z: Int, value: Int) = set(x, y, z, 0b1, value)
 
-    /**
-     * Schedules a block change for the next cycle
-     *
-     * @param x x coordinate relative to the chunk (-16-31)
-     * @param y y coordinate relative to the chunk (0-255)
-     * @param z z coordinate relative to the chunk (-16-31)
-     * @param value new value of the block
-     */
     operator fun set(x: Int, y: Int, z: Int, data: Int, value: Int) {
-        val (offsetX, offsetZ, index) = indexAndOffsetOf(x, z)
-        chunks[index]?.set(x + offsetX, y, z + offsetZ, data, value)
+        if (cartesian[x, y, z] != value) {
+            val position = encodePosition(x, y, z)
+            changes[position] = value
+            if (data != 0) this.memory[position] = data
+        }
     }
 
-    private fun indexAndOffsetOf(x: Int, z: Int) = when {
-        x < 0 -> when {
-            z < 0 -> Int3(BlockStorage.XZSize, BlockStorage.XZSize, 4)
-            z >= BlockStorage.XZSize -> Int3(BlockStorage.XZSize, -BlockStorage.XZSize, 5)
-            else -> Int3(BlockStorage.XZSize, 0, 0)
-        }
-        x >= BlockStorage.XZSize -> when {
-            z < 0 -> Int3(-BlockStorage.XZSize, BlockStorage.XZSize, 6)
-            z >= BlockStorage.XZSize -> Int3(-BlockStorage.XZSize, -BlockStorage.XZSize, 7)
-            else -> Int3(-BlockStorage.XZSize, 0, 2)
-        }
-        else -> when {
-            z < 0 -> Int3(0, BlockStorage.XZSize, 1)
-            z >= BlockStorage.XZSize -> Int3(0, -BlockStorage.XZSize, 3)
-            else -> Int3(0, 0, 8)
-        }
+    fun setData(x: Int, y: Int, z: Int, data: Int) {
+        this.memory[encodePosition(x, y, z)] = data
     }
 
     companion object {
-        private val borderId = BlockState.byKeyWithStates("minecraft:stone").id
+        private val airId = BlockState.byKeyWithStates("minecraft:air").id
     }
+}
+
+fun encodePosition(x: Int, y: Int, z: Int) = ((x shl 12) or (z shl 8) or y).toShort()
+
+fun decodePosition(position: Short): Int3 {
+    val positionInt = position.toInt()
+    return Int3((positionInt shr 12) and 0xF, positionInt and 0xFF, (positionInt shr 8) and 0xF)
 }

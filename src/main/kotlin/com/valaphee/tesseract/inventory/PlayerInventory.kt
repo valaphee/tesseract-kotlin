@@ -22,26 +22,12 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk.terrain
-
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.valaphee.foundry.ecs.BaseAttribute
-import com.valaphee.tesseract.world.chunk.Chunk
+package com.valaphee.tesseract.inventory
 
 /**
  * @author Kevin Ludwig
  */
-class Terrain(
-    val blockStorage: BlockStorage,
-    @JsonIgnore var modified: Boolean = false
-) : BaseAttribute() {
-    @JsonIgnore val blockUpdates = BlockUpdateList(blockStorage)
+class PlayerInventory : Inventory(WindowType.Inventory) {
+    var hotbarSlot = 0
+    val stackInHand get() = content[hotbarSlot]
 }
-
-val Chunk.blockStorage get() = findAttribute(Terrain::class).blockStorage
-
-var Chunk.modified
-    get() = findAttribute(Terrain::class).modified
-    set(value) {
-        findAttribute(Terrain::class).modified = value
-    }

@@ -123,8 +123,8 @@ data class InventoryTransactionPacket(
     }
 
     companion object ActionId {
-        const val ItemUsePlace = 0
-        const val ItemUseUse = 1
+        const val ItemUseBlock = 0
+        const val ItemUseAir = 1
         const val ItemUseDestroy = 2
         const val ItemUseOnEntityInteract = 0
         const val ItemUseOnEntityAttack = 1

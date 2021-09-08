@@ -22,27 +22,44 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.player.view
+package com.valaphee.tesseract.actor.player.interact
 
 import com.valaphee.foundry.ecs.Consumed
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
-import com.valaphee.tesseract.net.connection
 import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.WorldPacketHandler
-import com.valaphee.tesseract.world.chunk.actors
+import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
+import com.valaphee.tesseract.world.chunk.terrain.blockUpdates
 
 /**
  * @author Kevin Ludwig
  */
-class ViewChunkPacketizer : BaseFacet<WorldContext, ViewChunk>(ViewChunk::class) {
-    override suspend fun receive(message: ViewChunk): Response {
-        message.chunks.forEach { it.actors += message.source } // TODO
+class ChunkInteractManager :  BaseFacet<WorldContext, ChunkInteractManagerMessage>(ChunkInteractManagerMessage::class){
+    override suspend fun receive(message: ChunkInteractManagerMessage): Response {
+        require(message.chunks.size == 1)
 
-        val connection = message.source.connection
-        connection.write(ChunkPublishPacket(message.center, message.radius shl 4))
-        (connection.handler as WorldPacketHandler).writeChunks(message.chunks)
+        val chunk = message.chunks.first()
+        when (message) {
+            is BlockBreak -> {
+                val (x, y, z) = message.position
+                chunk.blockUpdates[x, y, z, -1] = airId
+            }
+            is BlockUse -> {
+                val (x, y, z) = message.position
+                message.stackInHand?.let {
+                    if (it.blockRuntimeId != 0) {
+                        val (xOffset, yOffset, zOffset) = message.direction.axis
+                        chunk.blockUpdates[x + xOffset, y + yOffset, z + zOffset] = it.blockRuntimeId
+                    }
+                    it.item.onUseBlock?.invoke(message.source, chunk.blockUpdates, x, y, z, message.direction, it)
+                }
+            }
+        }
 
         return Consumed
+    }
+
+    companion object {
+        val airId = BlockState.byKeyWithStates("minecraft:air").id
     }
 }

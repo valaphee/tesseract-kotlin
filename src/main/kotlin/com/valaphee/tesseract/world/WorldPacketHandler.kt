@@ -25,11 +25,11 @@
 package com.valaphee.tesseract.world
 
 import Rank
-import breakBlock
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.actor.location.Teleport
+import com.valaphee.tesseract.actor.location.location
 import com.valaphee.tesseract.actor.location.position
 import com.valaphee.tesseract.actor.location.rotation
 import com.valaphee.tesseract.actor.metadata.Flag
@@ -45,8 +45,11 @@ import com.valaphee.tesseract.actor.player.Player
 import com.valaphee.tesseract.actor.player.PlayerActionPacket
 import com.valaphee.tesseract.actor.player.PlayerLocationPacket
 import com.valaphee.tesseract.actor.player.User
+import com.valaphee.tesseract.actor.player.WindowManager
 import com.valaphee.tesseract.actor.player.authExtra
 import com.valaphee.tesseract.actor.player.closeWindow
+import com.valaphee.tesseract.actor.player.interact.breakBlock
+import com.valaphee.tesseract.actor.player.interact.useBlock
 import com.valaphee.tesseract.actor.player.openWindow
 import com.valaphee.tesseract.actor.player.player
 import com.valaphee.tesseract.actor.player.view.ChunkPacket
@@ -58,12 +61,11 @@ import com.valaphee.tesseract.command.net.CommandPacket
 import com.valaphee.tesseract.command.net.Origin
 import com.valaphee.tesseract.creativeInventoryPacket
 import com.valaphee.tesseract.entityIdentifiersPacket
-import com.valaphee.tesseract.inventory.Inventory
 import com.valaphee.tesseract.inventory.InventoryHolder
 import com.valaphee.tesseract.inventory.InventoryRequestPacket
 import com.valaphee.tesseract.inventory.InventoryTransactionPacket
+import com.valaphee.tesseract.inventory.PlayerInventory
 import com.valaphee.tesseract.inventory.WindowClosePacket
-import com.valaphee.tesseract.inventory.WindowType
 import com.valaphee.tesseract.inventory.inventory
 import com.valaphee.tesseract.inventory.item.Item
 import com.valaphee.tesseract.inventory.recipe.RecipesPacket
@@ -93,7 +95,6 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import net.jpountz.xxhash.XXHashFactory
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import placeBlock
 
 /**
  * @author Kevin Ludwig
@@ -114,7 +115,7 @@ class WorldPacketHandler(
         user.appearance.id = "0"
 
         player = (context.provider.loadPlayer(authExtra.userId) ?: context.entityFactory.player(Float3(0.0f, 100.0f, 0.0f), Float2.Zero)).asMutableEntity().apply {
-            addAttribute(Remote(connection))
+            addAttribute(Remote(this@WorldPacketHandler.connection))
             addAttribute(this@WorldPacketHandler.authExtra)
             addAttribute(this@WorldPacketHandler.user)
             addAttribute(Metadata().apply {
@@ -123,7 +124,8 @@ class WorldPacketHandler(
                     Flag.HasGravity
                 )
             })
-            addAttribute(InventoryHolder(Inventory(WindowType.Inventory)))
+            addAttribute(InventoryHolder(PlayerInventory()))
+            addAttribute(WindowManager())
         }.also { context.world.addEntities(context, null, it) }
 
         val settings = context.world.settings
@@ -164,8 +166,17 @@ class WorldPacketHandler(
     }
 
     override fun inventoryTransaction(packet: InventoryTransactionPacket) {
-        packet.position?.let {
-            context.world.placeBlock(context, player, it + Direction.values()[packet.auxInt].axis)
+        when (packet.type) {
+            InventoryTransactionPacket.Type.ItemUse -> {
+                player.sendMessage(Teleport(context, player, player, packet.fromPosition!!, player.location.rotation))
+                val stackInHand = player.inventory<PlayerInventory>().apply { hotbarSlot = packet.hotbarSlot }.stackInHand
+                if (packet.stackInHand == stackInHand) when (packet.actionId) {
+                    InventoryTransactionPacket.ItemUseBlock -> context.world.useBlock(context, player, packet.position!!, Direction.values()[packet.auxInt], stackInHand)
+                }
+            }
+            InventoryTransactionPacket.Type.ItemUseOnEntity -> {
+                player.sendMessage(Teleport(context, player, player, packet.fromPosition!!, player.location.rotation))
+            }
         }
     }
 
@@ -174,7 +185,7 @@ class WorldPacketHandler(
             InteractPacket.Action.OpenInventory -> {
                 if (packet.runtimeEntityId != player.id) return
 
-                player.openWindow(player.inventory)
+                player.openWindow(player.inventory())
             }
         }
     }
@@ -215,6 +226,16 @@ class WorldPacketHandler(
     }
 
     override fun inventoryRequest(packet: InventoryRequestPacket) {
+        packet.requests.forEach {
+            it.actions.forEach {
+                when (it.type) {
+                    InventoryRequestPacket.ActionType.CraftResultsDeprecated -> {
+                        val playerInventory = player.inventory<PlayerInventory>()
+                        playerInventory.setSlot(playerInventory.hotbarSlot, it.result!!.first())
+                    }
+                }
+            }
+        }
     }
 
     override fun violation(packet: ViolationPacket) {

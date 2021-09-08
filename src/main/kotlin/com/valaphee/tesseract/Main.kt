@@ -40,6 +40,7 @@ import com.valaphee.tesseract.actor.ActorTypeRegistry
 import com.valaphee.tesseract.command.CommandManager
 import com.valaphee.tesseract.inventory.CreativeInventoryPacket
 import com.valaphee.tesseract.inventory.item.Item
+import com.valaphee.tesseract.inventory.item.Items
 import com.valaphee.tesseract.inventory.item.stack.Stack
 import com.valaphee.tesseract.net.init.BiomeDefinitionsPacket
 import com.valaphee.tesseract.net.init.EntityIdentifiersPacket
@@ -111,6 +112,7 @@ fun main(arguments: Array<String>) {
     run {
         gson.newJsonReader(InputStreamReader(clazz.getResourceAsStream("/runtime_item_states.json")!!)).use { (gson.fromJson(it, JsonArray::class.java) as JsonArray).map { it.asJsonObject }.forEach { Item.register(it.getString("name"), it.getInt("id")) } }
         log.info("Items found: {}", Item.all.size)
+        Items.populate()
     }
 
     run {

@@ -25,7 +25,7 @@
 package com.valaphee.tesseract.world.chunk.terrain.block
 
 import com.valaphee.tesseract.util.nbt.CompoundTag
-import com.valaphee.tesseract.world.chunk.terrain.BlockUpdateList
+import com.valaphee.tesseract.world.chunk.terrain.PropagationBlockUpdateList
 
 /**
  * @author Kevin Ludwig
@@ -71,4 +71,4 @@ class Block(
     }
 }
 
-typealias OnUpdate = (BlockUpdateList, Int, Int, Int, BlockState) -> Unit
+typealias OnUpdate = (blockUpdates: PropagationBlockUpdateList, x: Int, y: Int, z: Int, blockState: BlockState) -> Unit

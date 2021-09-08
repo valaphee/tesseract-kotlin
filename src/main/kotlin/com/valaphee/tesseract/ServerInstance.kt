@@ -24,7 +24,6 @@
 
 package com.valaphee.tesseract
 
-import BlockBreakProcessor
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.google.inject.AbstractModule
 import com.google.inject.Injector
@@ -33,6 +32,7 @@ import com.valaphee.tesseract.actor.location.LocationManager
 import com.valaphee.tesseract.actor.player.PlayerAddPacketizer
 import com.valaphee.tesseract.actor.player.PlayerLocationPacketizer
 import com.valaphee.tesseract.actor.player.PlayerType
+import com.valaphee.tesseract.actor.player.interact.ChunkInteractManager
 import com.valaphee.tesseract.actor.player.view.RadialExpansionView
 import com.valaphee.tesseract.actor.player.view.ViewChunkPacketizer
 import com.valaphee.tesseract.net.Compressor
@@ -116,7 +116,7 @@ class ServerInstance(
             facets(
                 LocationManager::class.java, RadialExpansionView::class.java, PlayerLocationPacketizer::class.java /* consumes */, // LocationManagerMessage
                 ViewChunkPacketizer::class.java /* consumes */, // ViewChunk
-                BlockBreakProcessor::class.java,
+                ChunkInteractManager::class.java /* consumes */, // ChunkInteractManagerMessage
             )
         }
     }

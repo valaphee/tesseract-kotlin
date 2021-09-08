@@ -65,5 +65,18 @@ internal class FloatTagImpl(
         string.append(value).append('f')
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as FloatTagImpl
+
+        if (value != other.value) return false
+
+        return true
+    }
+
+    override fun hashCode() = value.hashCode()
+
     override fun toString() = StringBuilder().apply(this::print).toString()
 }

@@ -42,5 +42,5 @@ fun Player.openWindow(inventory: Inventory) {
 }
 
 fun Player.closeWindow(windowId: Int, serverside: Boolean = true) {
-    findAttribute(WindowManager::class).inventoryById[windowId]?.close(this, windowId, serverside)
+    findAttribute(WindowManager::class).inventoryById[windowId]?.close(this, serverside)
 }

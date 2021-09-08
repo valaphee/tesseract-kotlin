@@ -72,5 +72,22 @@ internal class LongArrayTagImpl(
         } ?: string.append(']')
     }
 
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as LongArrayTagImpl
+
+        if (value != null) {
+            if (other.value == null) return false
+            if (!value.contentEquals(other.value)) return false
+        } else if (other.value != null) return false
+
+        return true
+    }
+
+    override fun hashCode() = value?.contentHashCode() ?: 0
+
     override fun toString() = StringBuilder().apply(this::print).toString()
 }

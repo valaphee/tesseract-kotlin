@@ -44,7 +44,7 @@ data class InventoryRequestPacket(
     var requests: Array<Request>
 ) : Packet {
     enum class ActionType {
-        Take, Put, Swap, Drop, Destroy, Consume, Create, LabTableCombine, BeaconPayment, MineBlock, CraftRecipe, CraftRecipeAuto, CraftCreative, CraftRecipeOptional, CraftNonImplementedDeprecated, CraftResultsDeprecated
+        Move, Place, Swap, Drop, Destroy, Consume, Create, LabTableCombine, BeaconPayment, MineBlock, CraftRecipe, CraftRecipeAuto, CraftCreative, CraftRecipeOptional, CraftNonImplementedDeprecated, CraftResultsDeprecated
     }
 
     data class Action(
@@ -136,16 +136,22 @@ data class InventoryRequestPacket(
             buffer.writeVarUInt(it.actions.size)
             it.actions.forEach {
                 @Suppress("NON_EXHAUSTIVE_WHEN") when (it.type) {
-                    ActionType.Take, ActionType.Put -> {
+                    ActionType.Move, ActionType.Place -> {
                         buffer.writeByte(it.count)
                         buffer.writeByte(it.sourceSlotType!!.ordinal)
                         buffer.writeByte(it.sourceSlotId)
                         buffer.writeVarInt(it.sourceNetId)
+                        buffer.writeByte(it.destinationSlotType!!.ordinal)
+                        buffer.writeByte(it.destinationSlotId)
+                        buffer.writeVarInt(it.destinationNetId)
                     }
                     ActionType.Swap -> {
                         buffer.writeByte(it.sourceSlotType!!.ordinal)
                         buffer.writeByte(it.sourceSlotId)
                         buffer.writeVarInt(it.sourceNetId)
+                        buffer.writeByte(it.destinationSlotType!!.ordinal)
+                        buffer.writeByte(it.destinationSlotId)
+                        buffer.writeVarInt(it.destinationNetId)
                     }
                     ActionType.Drop -> {
                         buffer.writeByte(it.count)
@@ -159,30 +165,27 @@ data class InventoryRequestPacket(
                         buffer.writeByte(it.sourceSlotType!!.ordinal)
                         buffer.writeByte(it.sourceSlotId)
                         buffer.writeVarInt(it.sourceNetId)
-                        buffer.writeByte(it.destinationSlotType!!.ordinal)
-                        buffer.writeByte(it.destinationSlotId)
-                        buffer.writeVarInt(it.destinationNetId)
                     }
                     ActionType.Create -> buffer.writeByte(it.sourceSlotId)
                     ActionType.BeaconPayment -> {
                         buffer.writeVarInt(it.auxInt)
                         buffer.writeVarInt(it.auxInt2)
                     }
-                    ActionType.CraftRecipe, ActionType.CraftCreative -> buffer.writeVarInt(it.auxInt)
+                    ActionType.CraftRecipe, ActionType.CraftCreative -> buffer.writeVarUInt(it.auxInt)
                     ActionType.CraftRecipeAuto -> {
-                        buffer.writeVarInt(it.auxInt)
+                        buffer.writeVarUInt(it.auxInt)
                         if (version >= 448) buffer.writeByte(it.auxInt2)
                     }
                     ActionType.CraftRecipeOptional -> {
                         buffer.writeVarUInt(it.auxInt)
                         buffer.writeIntLE(it.auxInt2)
                     }
-                    ActionType.CraftResultsDeprecated -> {
+                    ActionType.CraftNonImplementedDeprecated, ActionType.CraftResultsDeprecated -> {
                         it.result!!.let {
                             buffer.writeVarUInt(it.size)
                             it.forEach { if (version >= 431) buffer.writeStackInstance(it) else buffer.writeStackPre431(it) }
                         }
-                        buffer.writeByte(it.auxInt)
+                        buffer.writeByte(it.count)
                     }
                 }
             }
@@ -216,7 +219,7 @@ object InventoryRequestPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int) = InventoryRequestPacket(Array(buffer.readVarUInt()) {
         InventoryRequestPacket.Request(buffer.readVarInt(), Array(buffer.readVarUInt()) {
             when (val actionType = InventoryRequestPacket.ActionType.values()[buffer.readByte().toInt()]) {
-                InventoryRequestPacket.ActionType.Take, InventoryRequestPacket.ActionType.Put -> InventoryRequestPacket.Action(null, actionType, buffer.readByte().toInt(), WindowSlotType.values()[buffer.readByte().toInt()], buffer.readByte().toInt(), buffer.readVarInt(), false, WindowSlotType.values()[buffer.readByte().toInt()], buffer.readByte().toInt(), buffer.readVarInt(), 0, 0, 0)
+                InventoryRequestPacket.ActionType.Move, InventoryRequestPacket.ActionType.Place -> InventoryRequestPacket.Action(null, actionType, buffer.readByte().toInt(), WindowSlotType.values()[buffer.readByte().toInt()], buffer.readByte().toInt(), buffer.readVarInt(), false, WindowSlotType.values()[buffer.readByte().toInt()], buffer.readByte().toInt(), buffer.readVarInt(), 0, 0, 0)
                 InventoryRequestPacket.ActionType.Swap -> InventoryRequestPacket.Action(null, actionType, 0, WindowSlotType.values()[buffer.readByte().toInt()], buffer.readByte().toInt(), buffer.readVarInt(), false, WindowSlotType.values()[buffer.readByte().toInt()], buffer.readByte().toInt(), buffer.readVarInt(), 0, 0, 0)
                 InventoryRequestPacket.ActionType.Drop -> InventoryRequestPacket.Action(null, actionType, buffer.readByte().toInt(), WindowSlotType.values()[buffer.readByte().toInt()], buffer.readByte().toInt(), buffer.readVarInt(), buffer.readBoolean(), null, 0, 0, 0, 0, 0)
                 InventoryRequestPacket.ActionType.Destroy, InventoryRequestPacket.ActionType.Consume -> InventoryRequestPacket.Action(null, actionType, buffer.readByte().toInt(), WindowSlotType.values()[buffer.readByte().toInt()], buffer.readByte().toInt(), buffer.readVarInt(), false, null, 0, 0, 0, 0, 0)

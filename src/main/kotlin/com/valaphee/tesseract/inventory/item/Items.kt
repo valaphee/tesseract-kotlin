@@ -22,32 +22,20 @@
  * SOFTWARE.
  */
 
-import com.valaphee.foundry.ecs.Pass
-import com.valaphee.foundry.ecs.Response
-import com.valaphee.foundry.ecs.system.BaseFacet
-import com.valaphee.tesseract.world.WorldContext
+package com.valaphee.tesseract.inventory.item
+
 import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
-import com.valaphee.tesseract.world.chunk.terrain.fastBlockUpdates
 
 /**
  * @author Kevin Ludwig
  */
-// just for experimenting, currently, as there are no inventories implemented
-class BlockBreakProcessor : BaseFacet<WorldContext, BlockBreak>(BlockBreak::class) {
-    override suspend fun receive(message: BlockBreak): Response {
-        val (x, y, z) = message.position
-        if (message.place) {
-            message.chunks.first().fastBlockUpdates[x, y, z] = testId
-        } else {
-            message.chunks.first().fastBlockUpdates[x, y, z, -1] = airId
+object Items {
+    fun populate() {
+        fun bucketEmptyAndFill(id: Int): OnUseBlock = { _, blockUpdates, x, y, z, direction, _ ->
+            val (xOffset, yOffset, zOffset) = direction.axis
+            blockUpdates[x + xOffset, y + yOffset, z + zOffset] = id
         }
-
-        return Pass
-    }
-
-    companion object {
-        val airId = BlockState.byKeyWithStates("minecraft:air").id
-        val testId = BlockState.byKeyWithStates("minecraft:flowing_water[liquid_depth=0]").id
-        val test2Id = BlockState.byKeyWithStates("minecraft:stone").id
+        Item.byKeyOrNull("minecraft:water_bucket")?.apply { BlockState.byKeyWithStatesOrNull("minecraft:flowing_water[liquid_depth=0]")?.id?.let { onUseBlock = bucketEmptyAndFill(it) } }
+        Item.byKeyOrNull("minecraft:lava_bucket")?.apply { BlockState.byKeyWithStatesOrNull("minecraft:flowing_lava[liquid_depth=0]")?.id?.let { onUseBlock = bucketEmptyAndFill(it) } }
     }
 }

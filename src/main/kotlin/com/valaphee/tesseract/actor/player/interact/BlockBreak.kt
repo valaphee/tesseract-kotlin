@@ -22,26 +22,30 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk.terrain
+package com.valaphee.tesseract.actor.player.interact
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.valaphee.foundry.ecs.BaseAttribute
+import com.valaphee.foundry.math.Int3
+import com.valaphee.tesseract.actor.player.Player
+import com.valaphee.tesseract.world.World
+import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.Chunk
+import com.valaphee.tesseract.world.chunk.ChunkAcquire
+import com.valaphee.tesseract.world.chunk.encodePosition
 
 /**
  * @author Kevin Ludwig
  */
-class Terrain(
-    val blockStorage: BlockStorage,
-    @JsonIgnore var modified: Boolean = false
-) : BaseAttribute() {
-    @JsonIgnore val blockUpdates = BlockUpdateList(blockStorage)
+class BlockBreak(
+    override val context: WorldContext,
+    override val source: Player,
+    val position: Int3,
+) : ChunkInteractManagerMessage {
+    override val entity get() = source
+
+    override lateinit var chunks: Array<Chunk>
 }
 
-val Chunk.blockStorage get() = findAttribute(Terrain::class).blockStorage
-
-var Chunk.modified
-    get() = findAttribute(Terrain::class).modified
-    set(value) {
-        findAttribute(Terrain::class).modified = value
-    }
+fun World.breakBlock(context: WorldContext, source: Player, position: Int3) {
+    val (x, y, z) = position
+    sendMessage(ChunkAcquire(context, source, longArrayOf(encodePosition(x shr 4, z shr 4)), BlockBreak(context, source, Int3(x and 0xF, y and 0xFF, z and 0xF))))
+}

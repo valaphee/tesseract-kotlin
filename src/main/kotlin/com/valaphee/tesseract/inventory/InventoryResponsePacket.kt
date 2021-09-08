@@ -64,7 +64,73 @@ data class InventoryResponsePacket(
     }
 
     enum class ResponseStatus {
-        Ok, Error
+        Ok,
+        Error,
+        InvalidRequestActionType,
+        ActionRequestNotAllowed,
+        ScreenHandlerEndRequestFailed,
+        ItemRequestActionHandlerCommitFailed,
+        InvalidRequestCraftActionType,
+        InvalidCraftRequest,
+        InvalidCraftRequestScreen,
+        InvalidCraftResult,
+        InvalidCraftResultIndex,
+        InvalidCraftResultItem,
+        InvalidItemNetId,
+        MissingCreatedOutputContainer,
+        FailedToSetCreatedItemOutputSlot,
+        RequestAlreadyInProgress,
+        FailedToInitSparseContainer,
+        ResultTransferFailed,
+        ExpectedItemSlotNotFullyConsumed,
+        ExpectedAnywhereItemNotFullyConsumed,
+        ItemAlreadyConsumedFromSlot,
+        ConsumedTooMuchFromSlot,
+        MismatchSlotExpectedConsumedItem,
+        MismatchSlotExpectedConsumedItemNetIdVariant,
+        FailedToMatchExpectedSlotConsumedItem,
+        FailedToMatchExpectedAllowedAnywhereConsumedItem,
+        ConsumedItemOutOfAllowedSlotRange,
+        ConsumedItemNotAllowed,
+        PlayerNotInCreativeMode,
+        InvalidExperimentalRecipeRequest,
+        FailedToCraftCreative,
+        FailedToGetLevelRecipe,
+        FailedToFindReceiptByNetId,
+        MismatchedCraftingSize,
+        MissingInputSparseContainer,
+        MismatchedRecipeForInputGridItems,
+        EmptyCraftResults,
+        FailedToEnchant,
+        MissingInputItem,
+        InsufficientPlayerLevelToEnchant,
+        MissingMaterialItem,
+        MissingActor,
+        UnknownPrimaryEffect,
+        PrimaryEffectOutOfRange,
+        PrimaryEffectUnavailable,
+        SecondaryEffectOutOfRange,
+        SecondaryEffectUnavailable,
+        DstContainerEqualToCreatedOutputContainer,
+        DstContainerAndSlotEqualToSrcContainerAndSlot,
+        FailedToValidateSrcSlot,
+        FailedToValidateDstSlot,
+        InvalidAdjustedAmount,
+        InvalidItemSetType,
+        InvalidTransferAmount,
+        CannotSwapItem,
+        CannotPlaceItem,
+        UnhandledItemSetType,
+        InvalidRemovedAmount,
+        InvalidRegion,
+        CannotDropItem,
+        CannotDestroyItem,
+        InvalidSourceContainer,
+        ItemNotConsumed,
+        InvalidNumCrafts,
+        InvalidCraftResultStackSize,
+        CannotRemoveItem,
+        CannotConsumeItem
     }
 
     data class ResponseWindow(
@@ -107,7 +173,7 @@ data class InventoryResponsePacket(
             if (version >= 419) buffer.writeByte(it.status.ordinal) else buffer.writeBoolean(
                 when (it.status) {
                     ResponseStatus.Ok -> true
-                    ResponseStatus.Error -> false
+                    else -> false
                 }
             )
             buffer.writeVarInt(it.requestId)

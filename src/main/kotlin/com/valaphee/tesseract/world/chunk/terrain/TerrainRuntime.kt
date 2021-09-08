@@ -33,9 +33,9 @@ import com.valaphee.tesseract.world.chunk.Chunk
  */
 @Runtime
 class TerrainRuntime(
-    center: ChunkBlockUpdateList
+    center: BlockUpdateList
 ) : BaseAttribute() {
-    val blockUpdates = BlockUpdateList(center)
+    val blockUpdates = PropagationBlockUpdateList(center)
 }
 
 val Chunk.blockUpdates get() = findAttribute(TerrainRuntime::class).blockUpdates

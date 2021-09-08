@@ -28,33 +28,50 @@ import com.valaphee.tesseract.actor.location.position
 import com.valaphee.tesseract.actor.player.Player
 import com.valaphee.tesseract.inventory.item.stack.Stack
 import com.valaphee.tesseract.net.connection
+import java.util.Arrays
+import kotlin.math.min
 
 /**
  * @author Kevin Ludwig
  */
-class Inventory(
+open class Inventory(
     val type: WindowType,
-    private val content: Array<Stack<*>?>
+    protected val content: Array<Stack<*>?>
 ) {
-    private val viewers = mutableSetOf<Player>()
+    private val sessions = mutableMapOf<Player, Int>()
 
     constructor(type: WindowType, size: Int = type.size) : this(type, arrayOfNulls(size))
 
-    fun setContent(content: Array<Stack<*>?>): Unit = TODO()
+    fun setContent(content: Array<Stack<*>?>) {
+        System.arraycopy(content, 0, this.content, 0, min(content.size, this.content.size))
+    }
+
+    fun getSlot(slotId: Int) = content[slotId]
 
     fun setSlot(slotId: Int, stack: Stack<*>?) {
         content[slotId] = stack
+        writeSlot(slotId)
     }
 
-    fun open(who: Player, windowId: Int) {
-        viewers += who
+    fun clear() {
+        Arrays.fill(content, null)
+        writeContent()
+    }
 
+    fun open(who: Player, windowId: Int) = sessions.putIfAbsent(who, windowId) ?: run {
         who.connection.write(WindowOpenPacket(windowId, type, who.position.toInt3(), who.id))
+        windowId
     }
 
-    fun close(who: Player, windowId: Int, serverside: Boolean) {
-        viewers -= who
+    fun close(who: Player, serverside: Boolean) {
+        sessions.remove(who)?.let { who.connection.write(WindowClosePacket(it, serverside)) }
+    }
 
-        who.connection.write(WindowClosePacket(windowId, serverside))
+    fun writeSlot(slotId: Int) {
+        sessions.keys.forEach { it.connection.write(InventorySlotPacket(0, slotId, content[slotId])) }
+    }
+
+    fun writeContent() {
+        sessions.keys.forEach { it.connection.write(InventoryContentPacket(0, content)) }
     }
 }

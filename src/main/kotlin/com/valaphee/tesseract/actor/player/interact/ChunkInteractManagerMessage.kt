@@ -22,26 +22,11 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk.terrain
+package com.valaphee.tesseract.actor.player.interact
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.valaphee.foundry.ecs.BaseAttribute
-import com.valaphee.tesseract.world.chunk.Chunk
+import com.valaphee.tesseract.world.chunk.ChunkUsage
 
 /**
  * @author Kevin Ludwig
  */
-class Terrain(
-    val blockStorage: BlockStorage,
-    @JsonIgnore var modified: Boolean = false
-) : BaseAttribute() {
-    @JsonIgnore val blockUpdates = BlockUpdateList(blockStorage)
-}
-
-val Chunk.blockStorage get() = findAttribute(Terrain::class).blockStorage
-
-var Chunk.modified
-    get() = findAttribute(Terrain::class).modified
-    set(value) {
-        findAttribute(Terrain::class).modified = value
-    }
+interface ChunkInteractManagerMessage : ChunkUsage

@@ -33,9 +33,9 @@ import com.valaphee.tesseract.Config
 import com.valaphee.tesseract.ServerInstance
 import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.world.WorldContext
+import com.valaphee.tesseract.world.chunk.terrain.Terrain
 import com.valaphee.tesseract.world.chunk.terrain.TerrainRuntime
 import com.valaphee.tesseract.world.chunk.terrain.blockUpdates
-import com.valaphee.tesseract.world.chunk.terrain.fastBlockUpdates
 import com.valaphee.tesseract.world.chunk.terrain.generator.Generator
 import com.valaphee.tesseract.world.chunk.terrain.modified
 import com.valaphee.tesseract.world.entity.addEntities
@@ -67,7 +67,7 @@ class ChunkManager @Inject constructor(
             for (requestedChunk in requestedChunksChannel) {
                 val (x, z) = requestedChunk
                 loadedChunksChannel.send((instance.worldContext.provider.loadChunk(encodePosition(x, z)) ?: instance.worldContext.entityFactory.chunk(requestedChunk, generator.generate(requestedChunk))).asMutableEntity().apply {
-                    addAttribute(TerrainRuntime(fastBlockUpdates))
+                    addAttribute(TerrainRuntime(findAttribute(Terrain::class).blockUpdates))
                     addAttribute(Actors())
                 })
             }
@@ -87,39 +87,39 @@ class ChunkManager @Inject constructor(
                 val (x, z) = loadedChunk.position
                 chunks[encodePosition(x, z)] = loadedChunk
 
-                val blockUpdates = loadedChunk.blockUpdates
-                val fastBlockUpdates = loadedChunk.fastBlockUpdates
+                val propagationBlockUpdates = loadedChunk.blockUpdates
+                val blockUpdates = loadedChunk.findAttribute(Terrain::class).blockUpdates
                 chunks[encodePosition(x - 1, z + 0)]?.let {
-                    blockUpdates.chunks[0] = it.fastBlockUpdates
-                    it.blockUpdates.chunks[2] = fastBlockUpdates
+                    propagationBlockUpdates.chunks[0] = it.findAttribute(Terrain::class).blockUpdates
+                    it.blockUpdates.chunks[2] = blockUpdates
                 }
                 chunks[encodePosition(x + 0, z - 1)]?.let {
-                    blockUpdates.chunks[1] = it.fastBlockUpdates
-                    it.blockUpdates.chunks[3] = fastBlockUpdates
+                    propagationBlockUpdates.chunks[1] = it.findAttribute(Terrain::class).blockUpdates
+                    it.blockUpdates.chunks[3] = blockUpdates
                 }
                 chunks[encodePosition(x + 1, z + 0)]?.let {
-                    blockUpdates.chunks[2] = it.fastBlockUpdates
-                    it.blockUpdates.chunks[0] = fastBlockUpdates
+                    propagationBlockUpdates.chunks[2] = it.findAttribute(Terrain::class).blockUpdates
+                    it.blockUpdates.chunks[0] = blockUpdates
                 }
                 chunks[encodePosition(x + 0, z + 1)]?.let {
-                    blockUpdates.chunks[3] = it.fastBlockUpdates
-                    it.blockUpdates.chunks[1] = fastBlockUpdates
+                    propagationBlockUpdates.chunks[3] = it.findAttribute(Terrain::class).blockUpdates
+                    it.blockUpdates.chunks[1] = blockUpdates
                 }
                 chunks[encodePosition(x - 1, z - 1)]?.let {
-                    blockUpdates.chunks[4] = it.fastBlockUpdates
-                    it.blockUpdates.chunks[7] = fastBlockUpdates
+                    propagationBlockUpdates.chunks[4] = it.findAttribute(Terrain::class).blockUpdates
+                    it.blockUpdates.chunks[7] = blockUpdates
                 }
                 chunks[encodePosition(x - 1, z + 1)]?.let {
-                    blockUpdates.chunks[5] = it.fastBlockUpdates
-                    it.blockUpdates.chunks[6] = fastBlockUpdates
+                    propagationBlockUpdates.chunks[5] = it.findAttribute(Terrain::class).blockUpdates
+                    it.blockUpdates.chunks[6] = blockUpdates
                 }
                 chunks[encodePosition(x + 1, z - 1)]?.let {
-                    blockUpdates.chunks[6] = it.fastBlockUpdates
-                    it.blockUpdates.chunks[5] = fastBlockUpdates
+                    propagationBlockUpdates.chunks[6] = it.findAttribute(Terrain::class).blockUpdates
+                    it.blockUpdates.chunks[5] = blockUpdates
                 }
                 chunks[encodePosition(x + 1, z + 1)]?.let {
-                    blockUpdates.chunks[7] = it.fastBlockUpdates
-                    it.blockUpdates.chunks[4] = fastBlockUpdates
+                    propagationBlockUpdates.chunks[7] = it.findAttribute(Terrain::class).blockUpdates
+                    it.blockUpdates.chunks[4] = blockUpdates
                 }
 
                 requestedChunks.remove(loadedChunk.position)!!.forEach { it.awaiting.complete(loadedChunk) }
@@ -133,7 +133,7 @@ class ChunkManager @Inject constructor(
             is ChunkAcquire -> {
                 val chunks = message.positions.map { chunks[it] }.filterNotNull()
                 if (chunks.isNotEmpty()) {
-                    message.usage.chunks = chunks.onEach { chunk -> message.source?.filter<PlayerType> { chunk.actors += it } }.toTypedArray()
+                    message.usage.chunks = chunks.toTypedArray()
                     message.source?.sendMessage(message.usage)
                 }
                 if (message.positions.size != chunks.size) instance.coroutineScope.launch {
