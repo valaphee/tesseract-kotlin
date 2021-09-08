@@ -36,12 +36,16 @@ import com.valaphee.tesseract.world.chunk.ChunkAcquire
 import com.valaphee.tesseract.world.chunk.ChunkRelease
 import com.valaphee.tesseract.world.chunk.encodePosition
 import com.valaphee.tesseract.world.filter
-import it.unimi.dsi.fastutil.longs.LongArrayList
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet
 import kotlin.math.acos
 import kotlin.math.cos
 import kotlin.math.sin
 
 /**
+ * View which expands and publishes from the center of the player.
+ * For optimal use, distance should not exceed 25 chunks, otherwise client performance
+ * is worse than with [RadialView].
+ *
  * @author Kevin Ludwig
  */
 class RadialExpansionView @Inject constructor(
@@ -58,21 +62,22 @@ class RadialExpansionView @Inject constructor(
             if (!this::lastChunkPosition.isInitialized || lastChunkPosition != chunkPosition) {
                 lastChunkPosition = chunkPosition
 
-                val chunksInView = LongArrayList()
+                val chunksInView = LongOpenHashSet()
                 repeat(distance + 1) { distance ->
-                    val chunksInDistance = LongArrayList()
+                    val chunksInDistance = LongOpenHashSet()
                     val minAngle = acos(1.0f - 1.0f / distance)
                     var angle = 0.0f
                     while (angle <= 360.0f) {
-                        val chunk = encodePosition((chunkX + distance * cos(angle)).toInt(),  (chunkZ + distance * sin(angle)).toInt())
-                        chunksInDistance.add(chunk)
-                        chunksInView.add(chunk)
+                        chunksInDistance.add(encodePosition((chunkX + distance * cos(angle)).toInt(), (chunkZ + distance * sin(angle)).toInt()))
                         angle += minAngle
                     }
 
                     val chunksToAcquire = chunksInDistance.filterNot(_acquiredChunks::contains)
-                    _acquiredChunks.addAll(chunksToAcquire)
-                    message.context.world.sendMessage(ChunkAcquire(message.context, player, chunksToAcquire.toLongArray(), ViewChunk(message.context, player, position, distance)))
+                    if (chunksToAcquire.isNotEmpty()) {
+                        _acquiredChunks.addAll(chunksToAcquire)
+                        message.context.world.sendMessage(ChunkAcquire(message.context, player, chunksToAcquire.toLongArray(), ViewChunk(message.context, player, position, distance)))
+                    }
+                    chunksInView.addAll(chunksInDistance)
                 }
                 val chunksToRelease = _acquiredChunks.filterNot(chunksInView::contains)
                 if (chunksToRelease.isNotEmpty()) {

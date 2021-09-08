@@ -33,7 +33,7 @@ import com.valaphee.tesseract.actor.location.LocationManager
 import com.valaphee.tesseract.actor.player.PlayerAddPacketizer
 import com.valaphee.tesseract.actor.player.PlayerLocationPacketizer
 import com.valaphee.tesseract.actor.player.PlayerType
-import com.valaphee.tesseract.actor.player.view.RadialView
+import com.valaphee.tesseract.actor.player.view.RadialExpansionView
 import com.valaphee.tesseract.actor.player.view.ViewChunkPacketizer
 import com.valaphee.tesseract.net.Compressor
 import com.valaphee.tesseract.net.Connection
@@ -100,23 +100,23 @@ class ServerInstance(
     override fun createEntityFactory() = super.createEntityFactory().apply {
         register(WorldType) {
             behaviors(
-                EnvironmentUpdater::class.java
+                EnvironmentUpdater::class.java,
             )
             facets(
-                EntityManager::class.java, PlayerList::class.java, PlayerAddPacketizer::class.java, ActorPacketizer::class.java, // EntityManagerMessage(EntityAdd, EntityRemove)
-                ChunkManager::class.java // ChunkManagerMessage(ChunkAcquire, ChunkRelease)
+                EntityManager::class.java, PlayerList::class.java, PlayerAddPacketizer::class.java /* consumes */, ActorPacketizer::class.java /* consumes */, // EntityManagerMessage
+                ChunkManager::class.java /* consumes */, // receives ChunkManagerMessage
             )
         }
         register(ChunkType) {
             behaviors(
-                BlockUpdater::class.java
+                BlockUpdater::class.java,
             )
         }
         register(PlayerType) {
             facets(
-                LocationManager::class.java, RadialView::class.java, PlayerLocationPacketizer::class.java, // LocationManagerMessage(Move, MoveRotate, Rotate, Teleport)
-                ViewChunkPacketizer::class.java, // ViewChunk
-                BlockBreakProcessor::class.java // BlockBreak
+                LocationManager::class.java, RadialExpansionView::class.java, PlayerLocationPacketizer::class.java /* consumes */, // LocationManagerMessage
+                ViewChunkPacketizer::class.java /* consumes */, // ViewChunk
+                BlockBreakProcessor::class.java,
             )
         }
     }
@@ -142,7 +142,7 @@ class ServerInstance(
                     } catch (_: ChannelException) {
                     }
                     config.setAllocator(PooledByteBufAllocator.DEFAULT).writeBufferWaterMark = childWriteBufferWaterMark
-                    (config as RakNet.Config).maxQueuedBytes = 8 * 1024 * 1024
+                    (config as RakNet.Config).maxQueuedBytes = this@ServerInstance.config.maximumQueuedBytes
 
                     val connection = Connection()
                     connection.setHandler(InitPacketHandler(worldContext, connection).apply { injector.injectMembers(this) })

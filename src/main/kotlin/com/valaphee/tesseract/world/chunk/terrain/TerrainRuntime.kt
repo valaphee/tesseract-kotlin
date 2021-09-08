@@ -22,18 +22,20 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.inventory
+package com.valaphee.tesseract.world.chunk.terrain
 
 import com.valaphee.foundry.ecs.BaseAttribute
-import com.valaphee.tesseract.actor.AnyActorOfWorld
 import com.valaphee.tesseract.util.ecs.Runtime
+import com.valaphee.tesseract.world.chunk.Chunk
 
 /**
  * @author Kevin Ludwig
  */
 @Runtime
-class InventoryAttribute(
-    val inventory: Inventory
-) : BaseAttribute()
+class TerrainRuntime(
+    center: ChunkBlockUpdateList
+) : BaseAttribute() {
+    val blockUpdates = BlockUpdateList(center)
+}
 
-val AnyActorOfWorld.inventory get() = findAttribute(InventoryAttribute::class).inventory
+val Chunk.blockUpdates get() = findAttribute(TerrainRuntime::class).blockUpdates

@@ -44,19 +44,18 @@ class BlockUpdater : BaseBehavior<WorldContext>(Location::class, Terrain::class)
     override suspend fun update(entity: AnyEntityOfWorld, context: WorldContext): Boolean {
         entity.filter<ChunkType> {
             val (chunkX, chunkZ) = it.position
-            val terrain = it.terrain
-            val blockStorage = terrain.blockStorage
-            val blockUpdates = terrain.blockUpdates
-            val blockUpdateData = blockUpdates.changeData
-            blockUpdateData.filterValues { it < 0 }.forEach { (position, data) ->
+            val blockStorage = it.blockStorage
+            val fastBlockUpdates = it.fastBlockUpdates
+            val blockUpdateMemory = fastBlockUpdates.memory
+            blockUpdateMemory.filterValues { it < 0 }.forEach { (position, data) ->
                 val (x, y, z) = decodePosition(position)
                 when (data) {
                     -1 -> it.broadcast(WorldEventPacket(WorldEventPacket.Event.ParticleDestroyBlock, Float3(chunkX * 16.0f + x, y.toFloat(), chunkZ * 16.0f + z), blockStorage[x, y, z]))
                 }
-                blockUpdateData.remove(position)
+                blockUpdateMemory.remove(position)
             }
 
-            val blockUpdateChanges = blockUpdates.changes
+            val blockUpdateChanges = fastBlockUpdates.changes
             if (blockUpdateChanges.isNotEmpty()) {
                 it.broadcast(*blockUpdateChanges.map { (position, value) ->
                     val (x, y, z) = decodePosition(position)
@@ -64,16 +63,17 @@ class BlockUpdater : BaseBehavior<WorldContext>(Location::class, Terrain::class)
                     BlockUpdatePacket(Int3((chunkX * BlockStorage.XZSize) + x, y, (chunkZ * BlockStorage.XZSize) + z), value, BlockUpdatePacket.Flag.All, 0)
                 }.toTypedArray())
                 blockUpdateChanges.clear()
-                terrain.modified = true
+                it.modified = true
             }
 
             val cycle = context.cycle.toInt()
-            blockUpdateData.filterValues { it >= 0 }.forEach {
-                if (cycle and it.value == 0) {
-                    val (x, y, z) = decodePosition(it.key)
+            val blockUpdates = it.blockUpdates
+            blockUpdateMemory.filterValues { it > 0 }.forEach { (position, data) ->
+                if (cycle and data == 0) {
+                    val (x, y, z) = decodePosition(position)
                     val blockState = BlockState.byId(blockStorage[x, y, z])
                     blockState.block.onUpdate?.invoke(blockUpdates, x, y, z, blockState)
-                    blockUpdateData.remove(it.key)
+                    blockUpdateMemory.remove(position)
                 }
             }
         }

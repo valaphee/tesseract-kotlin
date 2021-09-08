@@ -170,7 +170,7 @@ object SectionSerializer : JsonSerializer<Section>() {
 /**
  * @author Kevin Ludwig
  */
-class SectionDeserializer : JsonDeserializer<Section>() {
+object SectionDeserializer : JsonDeserializer<Section>() {
     override fun deserialize(parser: JsonParser, context: DeserializationContext): Section {
         var buffer: PacketBuffer? = null
         try {

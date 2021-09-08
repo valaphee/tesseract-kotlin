@@ -24,6 +24,14 @@
 
 package com.valaphee.tesseract.inventory.item.stack
 
+import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.JsonDeserializer
+import com.fasterxml.jackson.databind.JsonSerializer
+import com.fasterxml.jackson.databind.SerializerProvider
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.valaphee.tesseract.inventory.item.Item
 import com.valaphee.tesseract.inventory.item.stack.meta.Meta
 import com.valaphee.tesseract.net.PacketBuffer
@@ -42,8 +50,9 @@ import com.valaphee.tesseract.util.nbt.NbtOutputStream
 /**
  * @author Kevin Ludwig
  */
-@Suppress("DataClassPrivateConstructor")
-data class Stack<T : Meta> private constructor(
+@JsonSerialize(using = StackSerializer::class)
+@JsonDeserialize(using = StackDeserializer::class)
+class Stack<T : Meta> private constructor(
     val item: Item<T>,
     var subId: Int,
     var count: Int,
@@ -97,6 +106,28 @@ data class Stack<T : Meta> private constructor(
         result = 31 * result + (meta?.hashCode() ?: 0)
         return result
     }
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object StackSerializer : JsonSerializer<Stack<*>?>() {
+    override fun serialize(value: Stack<*>?, generator: JsonGenerator, provider: SerializerProvider) {
+        value?.let {
+            generator.writeStartObject()
+            generator.writeStringField("Name", it.item.key)
+            if (it.subId != 0) generator.writeNumberField("Damage", it.subId)
+            if (it.count != 1) generator.writeNumberField("Count", it.count)
+            generator.writeEndObject()
+        } ?: generator.writeNull()
+    }
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object StackDeserializer : JsonDeserializer<Stack<*>?>() {
+    override fun deserialize(parser: JsonParser, context: DeserializationContext) = TODO()
 }
 
 fun CompoundTag.asStack() = Stack(

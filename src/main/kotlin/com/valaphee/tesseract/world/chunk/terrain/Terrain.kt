@@ -35,7 +35,15 @@ class Terrain(
     val blockStorage: BlockStorage,
     @JsonIgnore var modified: Boolean = false
 ) : BaseAttribute() {
-    @JsonIgnore val blockUpdates = BlockUpdateList(blockStorage)
+    @JsonIgnore val blockUpdates = ChunkBlockUpdateList(blockStorage)
 }
 
-val Chunk.terrain get() = findAttribute(Terrain::class)
+val Chunk.blockStorage get() = findAttribute(Terrain::class).blockStorage
+
+var Chunk.modified
+    get() = findAttribute(Terrain::class).modified
+    set(value) {
+        findAttribute(Terrain::class).modified = value
+    }
+
+val Chunk.fastBlockUpdates get() = findAttribute(Terrain::class).blockUpdates

@@ -24,37 +24,16 @@
 
 package com.valaphee.tesseract.inventory
 
-import com.valaphee.tesseract.actor.location.position
-import com.valaphee.tesseract.actor.player.Player
-import com.valaphee.tesseract.inventory.item.stack.Stack
-import com.valaphee.tesseract.net.connection
+import com.valaphee.foundry.ecs.BaseAttribute
+import com.valaphee.tesseract.actor.AnyActorOfWorld
+import com.valaphee.tesseract.util.ecs.Runtime
 
 /**
  * @author Kevin Ludwig
  */
-class Inventory(
-    val type: WindowType,
-    private val content: Array<Stack<*>?>
-) {
-    private val viewers = mutableSetOf<Player>()
+@Runtime
+class InventoryHolder(
+    val inventory: Inventory
+) : BaseAttribute()
 
-    constructor(type: WindowType, size: Int = type.size) : this(type, arrayOfNulls(size))
-
-    fun setContent(content: Array<Stack<*>?>): Unit = TODO()
-
-    fun setSlot(slotId: Int, stack: Stack<*>?) {
-        content[slotId] = stack
-    }
-
-    fun open(who: Player, windowId: Int) {
-        viewers += who
-
-        who.connection.write(WindowOpenPacket(windowId, type, who.position.toInt3(), who.id))
-    }
-
-    fun close(who: Player, windowId: Int, serverside: Boolean) {
-        viewers -= who
-
-        who.connection.write(WindowClosePacket(windowId, serverside))
-    }
-}
+val AnyActorOfWorld.inventory get() = findAttribute(InventoryHolder::class).inventory

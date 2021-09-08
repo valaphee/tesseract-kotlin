@@ -43,6 +43,7 @@ data class Config(
     var concurrency: Int = Runtime.getRuntime().availableProcessors(),
     var address: InetSocketAddress = InetSocketAddress("0.0.0.0", 19132),
     var maximumPlayers: Int = 10,
+    var maximumQueuedBytes: Int = 8 * 1024 * 1024,
     var serverName: String = "Tesseract",
     var timeout: Int = 30_000,
     var compressionLevel: Int = 7,

@@ -27,7 +27,7 @@ import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
-import com.valaphee.tesseract.world.chunk.terrain.terrain
+import com.valaphee.tesseract.world.chunk.terrain.fastBlockUpdates
 
 /**
  * @author Kevin Ludwig
@@ -37,9 +37,9 @@ class BlockBreakProcessor : BaseFacet<WorldContext, BlockBreak>(BlockBreak::clas
     override suspend fun receive(message: BlockBreak): Response {
         val (x, y, z) = message.position
         if (message.place) {
-            message.chunks.first().terrain.blockUpdates[x, y, z] = test2Id
+            message.chunks.first().fastBlockUpdates[x, y, z] = testId
         } else {
-            message.chunks.first().terrain.blockUpdates[x, y, z, -1] = airId
+            message.chunks.first().fastBlockUpdates[x, y, z, -1] = airId
         }
 
         return Pass

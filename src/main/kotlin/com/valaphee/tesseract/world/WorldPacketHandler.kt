@@ -46,6 +46,8 @@ import com.valaphee.tesseract.actor.player.PlayerActionPacket
 import com.valaphee.tesseract.actor.player.PlayerLocationPacket
 import com.valaphee.tesseract.actor.player.User
 import com.valaphee.tesseract.actor.player.authExtra
+import com.valaphee.tesseract.actor.player.closeWindow
+import com.valaphee.tesseract.actor.player.openWindow
 import com.valaphee.tesseract.actor.player.player
 import com.valaphee.tesseract.actor.player.view.ChunkPacket
 import com.valaphee.tesseract.actor.player.view.View
@@ -57,11 +59,12 @@ import com.valaphee.tesseract.command.net.Origin
 import com.valaphee.tesseract.creativeInventoryPacket
 import com.valaphee.tesseract.entityIdentifiersPacket
 import com.valaphee.tesseract.inventory.Inventory
-import com.valaphee.tesseract.inventory.InventoryAttribute
+import com.valaphee.tesseract.inventory.InventoryHolder
 import com.valaphee.tesseract.inventory.InventoryRequestPacket
 import com.valaphee.tesseract.inventory.InventoryTransactionPacket
 import com.valaphee.tesseract.inventory.WindowClosePacket
 import com.valaphee.tesseract.inventory.WindowType
+import com.valaphee.tesseract.inventory.inventory
 import com.valaphee.tesseract.inventory.item.Item
 import com.valaphee.tesseract.inventory.recipe.RecipesPacket
 import com.valaphee.tesseract.net.Connection
@@ -82,7 +85,7 @@ import com.valaphee.tesseract.world.chunk.chunkBroadcast
 import com.valaphee.tesseract.world.chunk.position
 import com.valaphee.tesseract.world.chunk.terrain.SectionCompact
 import com.valaphee.tesseract.world.chunk.terrain.block.Block
-import com.valaphee.tesseract.world.chunk.terrain.terrain
+import com.valaphee.tesseract.world.chunk.terrain.blockStorage
 import com.valaphee.tesseract.world.entity.addEntities
 import com.valaphee.tesseract.world.entity.removeEntities
 import io.netty.buffer.Unpooled
@@ -120,7 +123,7 @@ class WorldPacketHandler(
                     Flag.HasGravity
                 )
             })
-            addAttribute(InventoryAttribute(Inventory(WindowType.Inventory)))
+            addAttribute(InventoryHolder(Inventory(WindowType.Inventory)))
         }.also { context.world.addEntities(context, null, it) }
 
         val settings = context.world.settings
@@ -171,7 +174,7 @@ class WorldPacketHandler(
             InteractPacket.Action.OpenInventory -> {
                 if (packet.runtimeEntityId != player.id) return
 
-                //player.openWindow(player.inventory)
+                player.openWindow(player.inventory)
             }
         }
     }
@@ -183,7 +186,7 @@ class WorldPacketHandler(
     }
 
     override fun windowClose(packet: WindowClosePacket) {
-        //player.closeWindow(packet.windowId)
+        player.closeWindow(packet.windowId, false)
     }
 
     override fun viewDistanceRequest(packet: ViewDistanceRequestPacket) {
@@ -221,7 +224,7 @@ class WorldPacketHandler(
     fun writeChunks(chunks: Array<Chunk>) {
         chunks.forEach {
             if (caching) {
-                val blockStorage = it.terrain.blockStorage
+                val blockStorage = it.blockStorage
                 var sectionCount = blockStorage.sections.size - 1
                 while (sectionCount >= 0 && blockStorage.sections[sectionCount].empty) sectionCount--
                 sectionCount++
@@ -239,7 +242,7 @@ class WorldPacketHandler(
                     }
                 }
                 connection.write(ChunkPacket(it.position, blockStorage, blobIds))
-            } else connection.write(ChunkPacket(it.position, it.terrain.blockStorage))
+            } else connection.write(ChunkPacket(it.position, it.blockStorage))
         }
 
         if (!playerSpawned) {

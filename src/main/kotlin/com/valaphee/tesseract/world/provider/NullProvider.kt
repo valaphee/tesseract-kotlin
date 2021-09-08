@@ -24,6 +24,7 @@
 
 package com.valaphee.tesseract.world.provider
 
+import com.google.inject.Singleton
 import com.valaphee.tesseract.actor.player.Player
 import com.valaphee.tesseract.world.World
 import com.valaphee.tesseract.world.chunk.Chunk
@@ -32,7 +33,8 @@ import java.util.UUID
 /**
  * @author Kevin Ludwig
  */
-object NullProvider : Provider {
+@Singleton
+class NullProvider : Provider {
     override fun loadWorld(): World? = null
 
     override fun saveWorld(world: World) = Unit
