@@ -49,7 +49,7 @@ import kotlin.math.sin
  * @author Kevin Ludwig
  */
 class RadialExpansionView @Inject constructor(
-    config: Config
+    config: Config.Instance
 ) : View(config) {
     private lateinit var lastChunkPosition: Int2
 

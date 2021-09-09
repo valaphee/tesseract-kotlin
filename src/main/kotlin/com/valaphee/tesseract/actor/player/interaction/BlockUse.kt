@@ -22,10 +22,13 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.player.interact
+package com.valaphee.tesseract.actor.player.interaction
 
+import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.actor.player.Player
+import com.valaphee.tesseract.inventory.item.stack.Stack
+import com.valaphee.tesseract.util.math.Direction
 import com.valaphee.tesseract.world.World
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.Chunk
@@ -35,17 +38,20 @@ import com.valaphee.tesseract.world.chunk.encodePosition
 /**
  * @author Kevin Ludwig
  */
-class BlockBreak(
+class BlockUse(
     override val context: WorldContext,
     override val source: Player,
     val position: Int3,
-) : ChunkInteractManagerMessage {
+    val direction: Direction,
+    val clickPosition: Float3,
+    val stackInHand: Stack<*>?
+) : ChunkInteractionManagerMessage {
     override val entity get() = source
 
     override lateinit var chunks: Array<Chunk>
 }
 
-fun World.breakBlock(context: WorldContext, source: Player, position: Int3) {
+fun World.useBlock(context: WorldContext, source: Player, position: Int3, direction: Direction, clickPosition: Float3, stackInHand: Stack<*>?) {
     val (x, y, z) = position
-    sendMessage(ChunkAcquire(context, source, longArrayOf(encodePosition(x shr 4, z shr 4)), BlockBreak(context, source, Int3(x and 0xF, y and 0xFF, z and 0xF))))
+    sendMessage(ChunkAcquire(context, source, longArrayOf(encodePosition(x shr 4, z shr 4)), BlockUse(context, source, Int3(x and 0xF, y and 0xFF, z and 0xF), direction, clickPosition, stackInHand)))
 }

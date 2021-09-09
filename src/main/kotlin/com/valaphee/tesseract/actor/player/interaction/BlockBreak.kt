@@ -22,11 +22,30 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.player.interact
+package com.valaphee.tesseract.actor.player.interaction
 
-import com.valaphee.tesseract.world.chunk.ChunkUsage
+import com.valaphee.foundry.math.Int3
+import com.valaphee.tesseract.actor.player.Player
+import com.valaphee.tesseract.world.World
+import com.valaphee.tesseract.world.WorldContext
+import com.valaphee.tesseract.world.chunk.Chunk
+import com.valaphee.tesseract.world.chunk.ChunkAcquire
+import com.valaphee.tesseract.world.chunk.encodePosition
 
 /**
  * @author Kevin Ludwig
  */
-interface ChunkInteractManagerMessage : ChunkUsage
+class BlockBreak(
+    override val context: WorldContext,
+    override val source: Player,
+    val position: Int3,
+) : ChunkInteractionManagerMessage {
+    override val entity get() = source
+
+    override lateinit var chunks: Array<Chunk>
+}
+
+fun World.breakBlock(context: WorldContext, source: Player, position: Int3) {
+    val (x, y, z) = position
+    sendMessage(ChunkAcquire(context, source, longArrayOf(encodePosition(x shr 4, z shr 4)), BlockBreak(context, source, Int3(x and 0xF, y and 0xFF, z and 0xF))))
+}

@@ -22,33 +22,29 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.player
+package com.valaphee.tesseract.actor.insentient
 
-import com.valaphee.foundry.ecs.Consumed
-import com.valaphee.foundry.ecs.Pass
-import com.valaphee.foundry.ecs.Response
-import com.valaphee.foundry.ecs.system.BaseFacet
+import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
-import com.valaphee.tesseract.actor.location.location
-import com.valaphee.tesseract.actor.metadata.metadata
+import com.valaphee.tesseract.actor.ActorType
+import com.valaphee.tesseract.actor.attribute.Attributes
+import com.valaphee.tesseract.actor.location.Location
+import com.valaphee.tesseract.actor.metadata.Metadata
+import com.valaphee.tesseract.util.ecs.EntityFactory
+import com.valaphee.tesseract.world.EntityOfWorld
 import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.chunk.chunkBroadcast
-import com.valaphee.tesseract.world.entity.EntityAdd
-import com.valaphee.tesseract.world.filterType
 
 /**
  * @author Kevin Ludwig
  */
-class PlayerAddPacketizer : BaseFacet<WorldContext, EntityAdd>(EntityAdd::class) {
-    override suspend fun receive(message: EntityAdd): Response {
-        message.entities.filterType<PlayerType>().forEach {
-            val context = message.context
-            val location = it.location
-            context.world.chunkBroadcast(context, location.position, PlayerAddPacket(it.authExtra.userId, it.authExtra.userName, it.id, it.id, "", location.position, Float3.Zero, location.rotation, location.headRotationYaw, null, it.metadata, 0, emptyArray(), "", it.user.operatingSystem))
+object ChickenType : ActorType("minecraft:chicken")
 
-            return Consumed
-        }
+typealias Chicken = EntityOfWorld<ChickenType>
 
-        return Pass
-    }
-}
+fun EntityFactory<WorldContext>.chicken(position: Float3, rotation: Float2) = invoke(
+    ChickenType, setOf(
+        Location(position, rotation, rotation.x),
+        Metadata(),
+        Attributes()
+    )
+)

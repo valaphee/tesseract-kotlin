@@ -24,11 +24,13 @@
 
 package com.valaphee.tesseract.inventory.item
 
+import com.valaphee.foundry.math.Float3
+import com.valaphee.foundry.math.Int2
 import com.valaphee.tesseract.actor.player.Player
-import com.valaphee.tesseract.inventory.item.stack.Stack
 import com.valaphee.tesseract.inventory.item.stack.meta.Meta
 import com.valaphee.tesseract.util.math.Direction
 import com.valaphee.tesseract.util.nbt.CompoundTag
+import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.terrain.PropagationBlockUpdateList
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 
@@ -41,6 +43,7 @@ class Item<T : Meta> constructor(
     val meta: () -> T
 ) {
     var id = 0
+    var onUse: OnUse? = null
     var onUseBlock: OnUseBlock? = null
 
     init {
@@ -90,4 +93,6 @@ class Item<T : Meta> constructor(
     }
 }
 
-typealias OnUseBlock = (player: Player, blockUpdates: PropagationBlockUpdateList, x: Int, y: Int, z: Int, direction: Direction, stack: Stack<*>) -> Unit
+typealias OnUse = (context: WorldContext, player: Player) -> Unit
+
+typealias OnUseBlock = (context: WorldContext, player: Player, chunk: Int2, blockUpdates: PropagationBlockUpdateList, x: Int, y: Int, z: Int, direction: Direction, clickPosition: Float3) -> Unit

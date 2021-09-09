@@ -53,7 +53,7 @@ import kotlinx.coroutines.selects.select
  */
 class ChunkManager @Inject constructor(
     private val instance: ServerInstance,
-    config: Config,
+    config: Config.Instance,
     private val generator: Generator
 ) : BaseFacet<WorldContext, ChunkManagerMessage>(ChunkManagerMessage::class) {
     private val chunks = Long2ObjectMaps.synchronize(Long2ObjectOpenHashMap<Chunk>())
@@ -150,18 +150,20 @@ class ChunkManager @Inject constructor(
                         chunk.actors.none { it.type == PlayerType }
                     } ?: false // TODO
                 }.map(chunks::remove)
-                context.provider.saveChunks(chunksRemoved.filter { it.modified }.onEach {
-                    val (x, z) = it.position
-                    chunks[encodePosition(x - 1, z + 0)]?.let { it.blockUpdates.chunks[2] = null }
-                    chunks[encodePosition(x + 0, z - 1)]?.let { it.blockUpdates.chunks[3] = null }
-                    chunks[encodePosition(x + 1, z + 0)]?.let { it.blockUpdates.chunks[0] = null }
-                    chunks[encodePosition(x + 0, z + 1)]?.let { it.blockUpdates.chunks[1] = null }
-                    chunks[encodePosition(x - 1, z - 1)]?.let { it.blockUpdates.chunks[7] = null }
-                    chunks[encodePosition(x - 1, z + 1)]?.let { it.blockUpdates.chunks[6] = null }
-                    chunks[encodePosition(x + 1, z - 1)]?.let { it.blockUpdates.chunks[5] = null }
-                    chunks[encodePosition(x + 1, z + 1)]?.let { it.blockUpdates.chunks[4] = null }
-                })
-                context.world.removeEntities(context, message.source, *chunksRemoved.toTypedArray())
+                if (chunksRemoved.isNotEmpty()) {
+                    context.provider.saveChunks(chunksRemoved.filter { it.modified }.onEach {
+                        val (x, z) = it.position
+                        chunks[encodePosition(x - 1, z + 0)]?.let { it.blockUpdates.chunks[2] = null }
+                        chunks[encodePosition(x + 0, z - 1)]?.let { it.blockUpdates.chunks[3] = null }
+                        chunks[encodePosition(x + 1, z + 0)]?.let { it.blockUpdates.chunks[0] = null }
+                        chunks[encodePosition(x + 0, z + 1)]?.let { it.blockUpdates.chunks[1] = null }
+                        chunks[encodePosition(x - 1, z - 1)]?.let { it.blockUpdates.chunks[7] = null }
+                        chunks[encodePosition(x - 1, z + 1)]?.let { it.blockUpdates.chunks[6] = null }
+                        chunks[encodePosition(x + 1, z - 1)]?.let { it.blockUpdates.chunks[5] = null }
+                        chunks[encodePosition(x + 1, z + 1)]?.let { it.blockUpdates.chunks[4] = null }
+                    })
+                    context.world.removeEntities(context, message.source, *chunksRemoved.toTypedArray())
+                }
             }
         }
 

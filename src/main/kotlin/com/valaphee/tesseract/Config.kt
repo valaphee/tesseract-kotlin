@@ -40,19 +40,54 @@ import java.util.regex.Pattern
 @ProvidedBy(Config.Provider::class)
 data class Config(
     var version: Int = 0,
-    var concurrency: Int = Runtime.getRuntime().availableProcessors(),
-    var address: InetSocketAddress = InetSocketAddress("0.0.0.0", 19132),
-    var maximumPlayers: Int = 10,
-    var maximumQueuedBytes: Int = 8 * 1024 * 1024,
-    var serverName: String = "Tesseract",
-    var timeout: Int = 30_000,
-    var compressionLevel: Int = 7,
-    var verification: Boolean = true,
-    var userNamePattern: Pattern = Pattern.compile("^[a-zA-Z0-9_-]{3,16}\$"),
-    var encryption: Boolean = true,
-    var caching: Boolean = false,
-    var maximumViewDistance: Int = 32
+    var instance: Instance = Instance()
 ) {
+    @ProvidedBy(Instance.Provider::class)
+    data class Instance(
+        var concurrency: Int = Runtime.getRuntime().availableProcessors(),
+        var watchdog: Watchdog = Watchdog(),
+        var listener: Listener = Listener(),
+        var maximumPlayers: Int = 10,
+        var maximumViewDistance: Int = 32
+    ) {
+        @ProvidedBy(Watchdog.Provider::class)
+        data class Watchdog(
+            var enabled: Boolean = true,
+            var timeout: Long = 30_000L
+        ) {
+            class Provider @Inject constructor(
+                private val config: Instance
+            ) : com.google.inject.Provider<Watchdog> {
+                override fun get() = config.watchdog
+            }
+        }
+
+        @ProvidedBy(Listener.Provider::class)
+        data class Listener(
+            var address: InetSocketAddress = InetSocketAddress("0.0.0.0", 19132),
+            var maximumQueuedBytes: Int = 8 * 1024 * 1024,
+            var serverName: String = "Tesseract",
+            var timeout: Int = 30_000,
+            var compressionLevel: Int = 7,
+            var verification: Boolean = true,
+            var userNamePattern: Pattern = Pattern.compile("^[a-zA-Z0-9_-]{3,16}\$"),
+            var encryption: Boolean = true,
+            var caching: Boolean = false
+        ) {
+            class Provider @Inject constructor(
+                private val config: Instance
+            ) : com.google.inject.Provider<Listener> {
+                override fun get() = config.listener
+            }
+        }
+
+        class Provider @Inject constructor(
+            private val config: Config
+        ) : com.google.inject.Provider<Instance> {
+            override fun get() = config.instance
+        }
+    }
+
     class Provider @Inject constructor(
         private val argument: Argument,
         @Named("config") private val objectMapper: ObjectMapper

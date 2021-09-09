@@ -35,7 +35,7 @@ import it.unimi.dsi.fastutil.longs.LongOpenHashSet
  * @author Kevin Ludwig
  */
 abstract class View(
-    private val config: Config
+    private val config: Config.Instance
 ) : BaseFacet<WorldContext, LocationManagerMessage>(LocationManagerMessage::class, Location::class) {
     protected val _acquiredChunks = LongOpenHashSet()
     val acquiredChunks: LongArray get() = _acquiredChunks.toLongArray()

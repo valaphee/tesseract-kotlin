@@ -51,11 +51,11 @@ fun Chunk.broadcast(vararg packets: Packet) = actors.filterType<PlayerType>().fo
 fun Chunk.broadcast(source: Player, vararg packets: Packet) = actors.filterType<PlayerType>().forEach { if (it != source) packets.forEach(it.connection::write) }
 
 fun World.chunkBroadcast(context: WorldContext, position: Float3, vararg packets: Packet) {
-    val (x, y, z) = position.toInt3()
-    sendMessage(ChunkAcquire(context, null, longArrayOf(encodePosition(x shr 4, z shr 4)), Broadcast(context, null, packets)))
+    val (x, _, z) = position.toInt3()
+    sendMessage(ChunkAcquire(context, context.world, longArrayOf(encodePosition(x shr 4, z shr 4)), Broadcast(context, null, packets)))
 }
 
 fun World.chunkBroadcast(context: WorldContext, source: Player, position: Float3, vararg packets: Packet) {
-    val (x, y, z) = position.toInt3()
-    sendMessage(ChunkAcquire(context, source, longArrayOf(encodePosition(x shr 4, z shr 4)), Broadcast(context, source, packets)))
+    val (x, _, z) = position.toInt3()
+    sendMessage(ChunkAcquire(context, context.world, longArrayOf(encodePosition(x shr 4, z shr 4)), Broadcast(context, source, packets)))
 }

@@ -28,23 +28,37 @@ import com.valaphee.foundry.ecs.Consumed
 import com.valaphee.foundry.ecs.Pass
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
-import com.valaphee.tesseract.actor.location.Location
-import com.valaphee.tesseract.actor.location.LocationManagerMessage
+import com.valaphee.foundry.math.Float3
+import com.valaphee.tesseract.actor.ActorRemovePacket
 import com.valaphee.tesseract.actor.location.location
+import com.valaphee.tesseract.actor.location.position
+import com.valaphee.tesseract.actor.metadata.metadata
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.chunkBroadcast
+import com.valaphee.tesseract.world.entity.EntityAdd
+import com.valaphee.tesseract.world.entity.EntityManagerMessage
+import com.valaphee.tesseract.world.entity.EntityRemove
 import com.valaphee.tesseract.world.filter
 
 /**
  * @author Kevin Ludwig
  */
-class PlayerLocationPacketizer : BaseFacet<WorldContext, LocationManagerMessage>(LocationManagerMessage::class, Location::class) {
-    override suspend fun receive(message: LocationManagerMessage): Response {
-        message.entity?.filter<PlayerType> {
-            val location = it.location
-            message.context.world.chunkBroadcast(message.context, it, location.position, PlayerLocationPacket(it.id, location.position, location.rotation, location.headRotationYaw, PlayerLocationPacket.Mode.Normal, true, 0L, null, 0L))
+class PlayerPacketizer : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMessage::class) {
+    override suspend fun receive(message: EntityManagerMessage): Response {
+        when (message) {
+            is EntityAdd -> message.entities.first().filter<PlayerType> {
+                val context = message.context
+                val location = it.location
+                context.world.chunkBroadcast(context, it, location.position, PlayerAddPacket(it.authExtra.userId, it.authExtra.userName, it.id, it.id, "", location.position, Float3.Zero, location.rotation, location.headRotationYaw, null, it.metadata, 0, emptyArray(), "", it.user.operatingSystem))
 
-            return Consumed
+                return Consumed
+            }
+            is EntityRemove -> message.entities.first().filter<PlayerType> {
+                val context = message.context
+                context.world.chunkBroadcast(context, it, it.position, ActorRemovePacket(it.id))
+
+                return Consumed
+            }
         }
 
         return Pass

@@ -43,7 +43,7 @@ import it.unimi.dsi.fastutil.longs.LongArrayList
  * @author Kevin Ludwig
  */
 class RadialView @Inject constructor(
-    config: Config
+    config: Config.Instance
 ) : View(config) {
     private lateinit var lastChunkPosition: Int2
 

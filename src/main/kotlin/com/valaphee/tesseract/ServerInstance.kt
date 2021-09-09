@@ -29,10 +29,10 @@ import com.google.inject.AbstractModule
 import com.google.inject.Injector
 import com.valaphee.tesseract.actor.ActorPacketizer
 import com.valaphee.tesseract.actor.location.LocationManager
-import com.valaphee.tesseract.actor.player.PlayerAddPacketizer
 import com.valaphee.tesseract.actor.player.PlayerLocationPacketizer
+import com.valaphee.tesseract.actor.player.PlayerPacketizer
 import com.valaphee.tesseract.actor.player.PlayerType
-import com.valaphee.tesseract.actor.player.interact.ChunkInteractManager
+import com.valaphee.tesseract.actor.player.interaction.ChunkInteractionManager
 import com.valaphee.tesseract.actor.player.view.RadialExpansionView
 import com.valaphee.tesseract.actor.player.view.ViewChunkPacketizer
 import com.valaphee.tesseract.net.Compressor
@@ -48,6 +48,7 @@ import com.valaphee.tesseract.world.EnvironmentUpdater
 import com.valaphee.tesseract.world.PlayerList
 import com.valaphee.tesseract.world.WorldType
 import com.valaphee.tesseract.world.broadcast
+import com.valaphee.tesseract.world.chunk.ChunkBroadcaster
 import com.valaphee.tesseract.world.chunk.ChunkManager
 import com.valaphee.tesseract.world.chunk.ChunkType
 import com.valaphee.tesseract.world.chunk.terrain.BlockUpdater
@@ -103,8 +104,9 @@ class ServerInstance(
                 EnvironmentUpdater::class.java,
             )
             facets(
-                EntityManager::class.java, PlayerList::class.java, PlayerAddPacketizer::class.java /* consumes */, ActorPacketizer::class.java /* consumes */, // EntityManagerMessage
-                ChunkManager::class.java /* consumes */, // receives ChunkManagerMessage
+                EntityManager::class.java, PlayerList::class.java, PlayerPacketizer::class.java /* consumes */, ActorPacketizer::class.java /* consumes */, // EntityManagerMessage
+                ChunkManager::class.java /* consumes */, // ChunkManagerMessage
+                ChunkBroadcaster::class.java /* consumes */, // Broadcast
             )
         }
         register(ChunkType) {
@@ -116,7 +118,7 @@ class ServerInstance(
             facets(
                 LocationManager::class.java, RadialExpansionView::class.java, PlayerLocationPacketizer::class.java /* consumes */, // LocationManagerMessage
                 ViewChunkPacketizer::class.java /* consumes */, // ViewChunk
-                ChunkInteractManager::class.java /* consumes */, // ChunkInteractManagerMessage
+                ChunkInteractionManager::class.java /* consumes */, // ChunkInteractManagerMessage
             )
         }
     }
@@ -126,12 +128,11 @@ class ServerInstance(
         val serverBootstrap = ServerBootstrap()
             .group(parentGroup, childGroup)
             .channelFactory(ChannelFactory { RakNetServerChannel(underlyingNetworking.datagramChannel) })
-            .option(RakNet.MAX_CONNECTIONS, config.maximumPlayers)
             .handler(object : ChannelInitializer<Channel>() {
                 override fun initChannel(channel: Channel) {
                     channel.config().writeBufferWaterMark = writeBufferWaterMark
 
-                    channel.pipeline().addLast(UnconnectedPingHandler(config))
+                    channel.pipeline().addLast(UnconnectedPingHandler(config, worldContext.world.findFacet(PlayerList::class)))
                 }
             })
             .childHandler(object : ChannelInitializer<Channel>() {
@@ -142,12 +143,12 @@ class ServerInstance(
                     } catch (_: ChannelException) {
                     }
                     config.setAllocator(PooledByteBufAllocator.DEFAULT).writeBufferWaterMark = childWriteBufferWaterMark
-                    (config as RakNet.Config).maxQueuedBytes = this@ServerInstance.config.maximumQueuedBytes
+                    (config as RakNet.Config).maxQueuedBytes = this@ServerInstance.config.listener.maximumQueuedBytes
 
                     val connection = Connection()
                     connection.setHandler(InitPacketHandler(worldContext, connection).apply { injector.injectMembers(this) })
                     channel.pipeline()
-                        .addFirst("ta-timeout", ReadTimeoutHandler(this@ServerInstance.config.timeout))
+                        .addFirst("ta-timeout", ReadTimeoutHandler(this@ServerInstance.config.listener.timeout))
                         .addLast(UserDataCodec.NAME, userDataCodec)
                         .addLast(Compressor.NAME, Compressor())
                         .addLast(Decompressor.NAME, Decompressor())
@@ -172,10 +173,10 @@ class ServerInstance(
             repeat(Runtime.getRuntime().availableProcessors()) {
                 serverBootstrap.clone()
                     .option(ChannelOption.RCVBUF_ALLOCATOR, AdaptiveRecvByteBufAllocator(4 * 1024, 64 * 1024, 256 * 1024))
-                    .bind(config.address)
+                    .bind(config.listener.address)
                     .addListener(channelFutureListener)
             }
-        } else serverBootstrap.bind(config.address).addListener(channelFutureListener)
+        } else serverBootstrap.bind(config.listener.address).addListener(channelFutureListener)
     }
 
     override fun destroy() {

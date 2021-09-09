@@ -101,11 +101,11 @@ abstract class Instance(
         }
     }, getModule())
 
-    protected val config: Config = injector.getInstance(Config::class.java)
+    protected val config: Config.Instance = injector.getInstance(Config.Instance::class.java)
 
     private val executor = Executors.newFixedThreadPool(config.concurrency, ThreadFactoryBuilder().setNameFormat("world-%d").setDaemon(false).build())
     internal val coroutineScope = CoroutineScope(executor.asCoroutineDispatcher() + SupervisorJob() + CoroutineExceptionHandler { context, throwable -> log.error("Unhandled exception caught in $context", throwable) })
-    private val worldEngine = WorldEngine(20.0f, coroutineScope.coroutineContext)
+    private val worldEngine = WorldEngine(config, 20.0f, coroutineScope.coroutineContext)
 
     @Suppress("LeakingThis")
     internal val worldContext = WorldContext(this.injector, coroutineScope, worldEngine, createEntityFactory().also { entityDeserializer.entityFactory = it }, this.injector.getInstance(Provider::class.java))

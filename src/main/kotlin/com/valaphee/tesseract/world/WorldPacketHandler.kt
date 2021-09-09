@@ -48,8 +48,8 @@ import com.valaphee.tesseract.actor.player.User
 import com.valaphee.tesseract.actor.player.WindowManager
 import com.valaphee.tesseract.actor.player.authExtra
 import com.valaphee.tesseract.actor.player.closeWindow
-import com.valaphee.tesseract.actor.player.interact.breakBlock
-import com.valaphee.tesseract.actor.player.interact.useBlock
+import com.valaphee.tesseract.actor.player.interaction.breakBlock
+import com.valaphee.tesseract.actor.player.interaction.useBlock
 import com.valaphee.tesseract.actor.player.openWindow
 import com.valaphee.tesseract.actor.player.player
 import com.valaphee.tesseract.actor.player.view.ChunkPacket
@@ -171,7 +171,8 @@ class WorldPacketHandler(
                 player.sendMessage(Teleport(context, player, player, packet.fromPosition!!, player.location.rotation))
                 val stackInHand = player.inventory<PlayerInventory>().apply { hotbarSlot = packet.hotbarSlot }.stackInHand
                 if (packet.stackInHand == stackInHand) when (packet.actionId) {
-                    InventoryTransactionPacket.ItemUseBlock -> context.world.useBlock(context, player, packet.position!!, Direction.values()[packet.auxInt], stackInHand)
+                    InventoryTransactionPacket.ItemUseBlock -> context.world.useBlock(context, player, packet.position!!, Direction.values()[packet.auxInt], packet.clickPosition!!, stackInHand)
+                    InventoryTransactionPacket.ItemUseAir -> stackInHand?.item?.onUse?.invoke(context, player)
                 }
             }
             InventoryTransactionPacket.Type.ItemUseOnEntity -> {

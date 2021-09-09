@@ -38,7 +38,7 @@ import com.valaphee.tesseract.world.chunk.chunkBroadcast
 import com.valaphee.tesseract.world.entity.EntityAdd
 import com.valaphee.tesseract.world.entity.EntityManagerMessage
 import com.valaphee.tesseract.world.entity.EntityRemove
-import com.valaphee.tesseract.world.filterType
+import com.valaphee.tesseract.world.filter
 
 /**
  * @author Kevin Ludwig
@@ -46,15 +46,16 @@ import com.valaphee.tesseract.world.filterType
 class ActorPacketizer : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMessage::class) {
     override suspend fun receive(message: EntityManagerMessage): Response {
         when (message) {
-            is EntityAdd -> message.entities.filterType<ActorType>().forEach {
+            is EntityAdd -> message.entities.first().filter<ActorType> {
                 val context = message.context
                 val location = it.location
                 context.world.chunkBroadcast(context, location.position, ActorAddPacket(it.id, it.id, it.type, location.position, Float3.Zero, location.rotation, location.headRotationYaw, it._attributes, it.metadata, emptyArray()))
 
                 return Consumed
             }
-            is EntityRemove -> message.entities.filterType<ActorType>().forEach {
-                message.context.world.chunkBroadcast(message.context, it.position, ActorRemovePacket(it.id))
+            is EntityRemove -> message.entities.first().filter<ActorType> {
+                val context = message.context
+                context.world.chunkBroadcast(context, it.position, ActorRemovePacket(it.id))
 
                 return Consumed
             }

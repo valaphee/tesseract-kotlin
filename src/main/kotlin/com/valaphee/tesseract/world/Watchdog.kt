@@ -24,32 +24,39 @@
 
 package com.valaphee.tesseract.world
 
+import com.valaphee.tesseract.Config
 import com.valaphee.tesseract.defaultSystemErr
 import com.valaphee.tesseract.terminal
 import com.valaphee.tesseract.util.center
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 import java.lang.management.ManagementFactory
 
 /**
  * @author Kevin Ludwig
  */
-class Watchdog : Thread("watchdog") {
+class Watchdog(
+    private val config: Config.Instance.Watchdog
+) : Thread("watchdog") {
     private var last = 0L
 
     var paused = false
 
     override fun start() {
-        last = System.currentTimeMillis()
+        if (config.enabled) {
+            last = System.currentTimeMillis()
 
-        super.start()
+            super.start()
+        }
+    }
+
+    override fun interrupt() {
+        if (config.enabled) super.interrupt()
     }
 
     override fun run() {
         try {
             while (true) {
                 val delta = System.currentTimeMillis() - last
-                if (last != 0L && delta > timeout && !paused) {
+                if (last != 0L && delta > config.timeout && !paused) {
                     defaultSystemErr.println("Engine has stopped working")
                     defaultSystemErr.println()
                     val threads = ManagementFactory.getThreadMXBean().dumpAllThreads(true, true)
@@ -69,7 +76,7 @@ class Watchdog : Thread("watchdog") {
                     }
                     Runtime.getRuntime().halt(1)
                 }
-                sleep(timeout)
+                sleep(config.timeout)
             }
         } catch (ignore: InterruptedException) {
         }
@@ -77,10 +84,5 @@ class Watchdog : Thread("watchdog") {
 
     fun update(time: Long) {
         last = time
-    }
-
-    companion object {
-        private const val timeout = 10000L
-        private val log: Logger = LogManager.getLogger(Watchdog::class.java)
     }
 }

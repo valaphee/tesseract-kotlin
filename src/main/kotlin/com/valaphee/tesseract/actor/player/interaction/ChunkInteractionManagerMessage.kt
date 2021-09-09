@@ -22,34 +22,11 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.player.interact
+package com.valaphee.tesseract.actor.player.interaction
 
-import com.valaphee.foundry.math.Int3
-import com.valaphee.tesseract.actor.player.Player
-import com.valaphee.tesseract.inventory.item.stack.Stack
-import com.valaphee.tesseract.util.math.Direction
-import com.valaphee.tesseract.world.World
-import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.chunk.Chunk
-import com.valaphee.tesseract.world.chunk.ChunkAcquire
-import com.valaphee.tesseract.world.chunk.encodePosition
+import com.valaphee.tesseract.world.chunk.ChunkUsage
 
 /**
  * @author Kevin Ludwig
  */
-class BlockUse(
-    override val context: WorldContext,
-    override val source: Player,
-    val position: Int3,
-    val direction: Direction,
-    val stackInHand: Stack<*>?
-) : ChunkInteractManagerMessage {
-    override val entity get() = source
-
-    override lateinit var chunks: Array<Chunk>
-}
-
-fun World.useBlock(context: WorldContext, source: Player, position: Int3, direction: Direction, stackInHand: Stack<*>?) {
-    val (x, y, z) = position
-    sendMessage(ChunkAcquire(context, source, longArrayOf(encodePosition(x shr 4, z shr 4)), BlockUse(context, source, Int3(x and 0xF, y and 0xFF, z and 0xF), direction, stackInHand)))
-}
+interface ChunkInteractionManagerMessage : ChunkUsage

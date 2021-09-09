@@ -24,18 +24,23 @@
 
 package com.valaphee.tesseract.inventory.item
 
+import com.valaphee.foundry.math.Float2
+import com.valaphee.foundry.math.Float3
+import com.valaphee.tesseract.actor.insentient.chicken
 import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
+import com.valaphee.tesseract.world.entity.addEntities
 
 /**
  * @author Kevin Ludwig
  */
 object Items {
     fun populate() {
-        fun bucketEmptyAndFill(id: Int): OnUseBlock = { _, blockUpdates, x, y, z, direction, _ ->
+        fun bucketEmptyAndFill(id: Int): OnUseBlock = { _, _, _, blockUpdates, x, y, z, direction, _ ->
             val (xOffset, yOffset, zOffset) = direction.axis
             blockUpdates[x + xOffset, y + yOffset, z + zOffset] = id
         }
         Item.byKeyOrNull("minecraft:water_bucket")?.apply { BlockState.byKeyWithStatesOrNull("minecraft:flowing_water[liquid_depth=0]")?.id?.let { onUseBlock = bucketEmptyAndFill(it) } }
         Item.byKeyOrNull("minecraft:lava_bucket")?.apply { BlockState.byKeyWithStatesOrNull("minecraft:flowing_lava[liquid_depth=0]")?.id?.let { onUseBlock = bucketEmptyAndFill(it) } }
+        Item.byKeyOrNull("minecraft:chicken_spawn_egg")?.apply { onUseBlock = { context, player, chunk, _, x, y, z, _, clickPosition -> context.world.addEntities(context, player, context.entityFactory.chicken(Float3(x + chunk.x * 16 + clickPosition.x, y + clickPosition.y, z + chunk.y * 16 + clickPosition.z), Float2.Zero)) } }
     }
 }

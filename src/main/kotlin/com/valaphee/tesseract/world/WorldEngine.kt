@@ -25,6 +25,7 @@
 package com.valaphee.tesseract.world
 
 import com.valaphee.foundry.ecs.Engine
+import com.valaphee.tesseract.Config
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -36,6 +37,7 @@ import kotlin.coroutines.CoroutineContext
  * @author Kevin Ludwig
  */
 class WorldEngine(
+    config: Config.Instance,
     cyclesPerSecond: Float = 50.0f,
     override val coroutineContext: CoroutineContext
 ) : Engine<WorldContext>, CoroutineScope {
@@ -43,7 +45,7 @@ class WorldEngine(
     var stopped = false
         private set
 
-    private val watchdog = Watchdog()
+    private val watchdog = Watchdog(config.watchdog)
 
     private val clock = Clock()
     private val sleep = (1_000L / cyclesPerSecond).toLong()
@@ -78,7 +80,7 @@ class WorldEngine(
                     while (cycles.hasNext()) {
                         context.cycle++
                         context.cycleDelta = cycles.next()
-                        entityById.values.filter { it.needsUpdate }.map { launch { runCatching { it.update(context) } } }.joinAll()
+                        entityById.values.filter { it.needsUpdate }.map { launch { runCatching { it.update(context) }.onFailure { it.printStackTrace() } } }.joinAll()
                     }
                     watchdog.update(clock.realTime)
                 }

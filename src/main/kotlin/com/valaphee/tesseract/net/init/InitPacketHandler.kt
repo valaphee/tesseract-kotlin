@@ -47,7 +47,7 @@ class InitPacketHandler(
     private val worldContext: WorldContext,
     private val connection: Connection
 ) : PacketHandler {
-    @Inject private lateinit var config: Config
+    @Inject private lateinit var config: Config.Instance.Listener
     @Inject private lateinit var keyPair: KeyPair
 
     private var state: State? = null

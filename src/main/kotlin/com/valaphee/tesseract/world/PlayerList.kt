@@ -71,6 +71,8 @@ class PlayerList : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMe
         return Pass
     }
 
+    val playerCount get() = players.size
+
     fun broadcast(vararg packets: Packet) = players.values.forEach { packets.forEach(it.connection::write) }
 
     fun broadcast(source: Player, vararg packets: Packet) = players.values.forEach { if (it != source) packets.forEach(it.connection::write) }

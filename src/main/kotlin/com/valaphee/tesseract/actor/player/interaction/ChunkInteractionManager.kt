@@ -22,31 +22,43 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.player
+package com.valaphee.tesseract.actor.player.interaction
 
 import com.valaphee.foundry.ecs.Consumed
-import com.valaphee.foundry.ecs.Pass
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
-import com.valaphee.tesseract.actor.location.Location
-import com.valaphee.tesseract.actor.location.LocationManagerMessage
-import com.valaphee.tesseract.actor.location.location
 import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.chunk.chunkBroadcast
-import com.valaphee.tesseract.world.filter
+import com.valaphee.tesseract.world.chunk.position
+import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
+import com.valaphee.tesseract.world.chunk.terrain.blockUpdates
 
 /**
  * @author Kevin Ludwig
  */
-class PlayerLocationPacketizer : BaseFacet<WorldContext, LocationManagerMessage>(LocationManagerMessage::class, Location::class) {
-    override suspend fun receive(message: LocationManagerMessage): Response {
-        message.entity?.filter<PlayerType> {
-            val location = it.location
-            message.context.world.chunkBroadcast(message.context, it, location.position, PlayerLocationPacket(it.id, location.position, location.rotation, location.headRotationYaw, PlayerLocationPacket.Mode.Normal, true, 0L, null, 0L))
-
-            return Consumed
+class ChunkInteractionManager :  BaseFacet<WorldContext, ChunkInteractionManagerMessage>(ChunkInteractionManagerMessage::class){
+    override suspend fun receive(message: ChunkInteractionManagerMessage): Response {
+        val chunk = message.chunks.first()
+        when (message) {
+            is BlockBreak -> {
+                val (x, y, z) = message.position
+                chunk.blockUpdates[x, y, z, -1] = airId
+            }
+            is BlockUse -> {
+                val (x, y, z) = message.position
+                message.stackInHand?.let {
+                    if (it.blockRuntimeId != 0) {
+                        val (xOffset, yOffset, zOffset) = message.direction.axis
+                        chunk.blockUpdates[x + xOffset, y + yOffset, z + zOffset] = it.blockRuntimeId
+                    }
+                    it.item.onUseBlock?.invoke(message.context, message.source, chunk.position, chunk.blockUpdates, x, y, z, message.direction, message.clickPosition)
+                }
+            }
         }
 
-        return Pass
+        return Consumed
+    }
+
+    companion object {
+        val airId = BlockState.byKeyWithStates("minecraft:air").id
     }
 }
