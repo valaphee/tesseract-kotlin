@@ -22,26 +22,26 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.location.physic
+package com.valaphee.tesseract.data.entity
 
-import com.valaphee.foundry.ecs.system.BaseBehavior
-import com.valaphee.tesseract.actor.ActorType
-import com.valaphee.tesseract.actor.location.Move
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.valaphee.tesseract.data.Component
-import com.valaphee.tesseract.world.AnyEntityOfWorld
-import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.filter
+import com.valaphee.tesseract.data.ComponentKeyDeserializer
+import com.valaphee.tesseract.data.ComponentKeySerializer
+import com.valaphee.tesseract.data.Data
+import com.valaphee.tesseract.data.Keyed
 
 /**
  * @author Kevin Ludwig
  */
-@Component("tesseract:physic")
-class Physic : BaseBehavior<WorldContext>() {
-    override suspend fun update(entity: AnyEntityOfWorld, context: WorldContext): Boolean {
-        entity.filter<ActorType> {
-            it.receiveMessage(Move(context, it, it.motion))
-        }
-
-        return true
-    }
-}
+@Component("tesseract:entity_type")
+open class EntityTypeData(
+    override var key: String,
+    @JsonSerialize(keyUsing = ComponentKeySerializer::class)
+    @JsonDeserialize(keyUsing = ComponentKeyDeserializer::class)
+    var behaviors: Map<Class<*>, Map<String, Any>>,
+    @JsonSerialize(keyUsing = ComponentKeySerializer::class)
+    @JsonDeserialize(keyUsing = ComponentKeyDeserializer::class)
+    var facets: Map<Class<*>, Map<String, Any>>
+) : Data, Keyed

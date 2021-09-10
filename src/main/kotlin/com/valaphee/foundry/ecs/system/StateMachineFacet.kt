@@ -42,7 +42,6 @@ class StateMachineFacet<C : Context, P : Message<C>>(
     override val messageType: KClass<P>,
     initialState: Facet<C, out P>
 ) : Facet<C, P> {
-    override val id get() = currentState.id
     override val mandatoryAttributes get() = currentState.mandatoryAttributes
 
     var currentState = initialState

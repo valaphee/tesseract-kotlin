@@ -32,6 +32,5 @@ import kotlin.reflect.KClass
  * @author Kevin Ludwig
  */
 interface System<C : Context> {
-    val id: Long
     val mandatoryAttributes: Set<KClass<out Attribute>>
 }

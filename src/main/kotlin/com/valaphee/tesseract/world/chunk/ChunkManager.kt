@@ -32,6 +32,7 @@ import com.valaphee.foundry.math.Int2
 import com.valaphee.tesseract.Config
 import com.valaphee.tesseract.ServerInstance
 import com.valaphee.tesseract.actor.player.PlayerType
+import com.valaphee.tesseract.data.Component
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.terrain.Terrain
 import com.valaphee.tesseract.world.chunk.terrain.TerrainRuntime
@@ -51,6 +52,7 @@ import kotlinx.coroutines.selects.select
 /**
  * @author Kevin Ludwig
  */
+@Component("tesseract:chunk_manager")
 class ChunkManager @Inject constructor(
     private val instance: ServerInstance,
     config: Config.Instance,

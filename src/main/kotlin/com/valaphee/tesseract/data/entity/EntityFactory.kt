@@ -22,26 +22,34 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.location.physic
+package com.valaphee.tesseract.data.entity
 
-import com.valaphee.foundry.ecs.system.BaseBehavior
-import com.valaphee.tesseract.actor.ActorType
-import com.valaphee.tesseract.actor.location.Move
-import com.valaphee.tesseract.data.Component
-import com.valaphee.tesseract.world.AnyEntityOfWorld
-import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.filter
+import com.google.inject.Inject
+import com.google.inject.Injector
+import com.valaphee.foundry.ecs.Attribute
+import com.valaphee.foundry.ecs.Context
+import com.valaphee.foundry.ecs.entity.DefaultEntity
+import com.valaphee.foundry.ecs.entity.Entity
+import com.valaphee.foundry.ecs.entity.EntityType
+import com.valaphee.foundry.ecs.system.Behavior
+import com.valaphee.foundry.ecs.system.FacetWithContext
+import kotlin.random.Random
 
 /**
  * @author Kevin Ludwig
  */
-@Component("tesseract:physic")
-class Physic : BaseBehavior<WorldContext>() {
-    override suspend fun update(entity: AnyEntityOfWorld, context: WorldContext): Boolean {
-        entity.filter<ActorType> {
-            it.receiveMessage(Move(context, it, it.motion))
-        }
-
-        return true
+class EntityFactory<C : Context> @Inject constructor(
+    private val injector: Injector,
+    private val entityTypes: Map<String, out EntityTypeData>
+) {
+    operator fun <T : EntityType> invoke(type: T, attributes: Set<Attribute>, id: Long = Random.nextLong()): Entity<T, C> {
+        val entityType = entityTypes[type.key]
+        return DefaultEntity(type, attributes, entityType?.behaviors?.keys?.map {
+            @Suppress("UNCHECKED_CAST")
+            injector.getInstance(it) as Behavior<C>
+        }?.toSet() ?: emptySet(), entityType?.facets?.keys?.map {
+            @Suppress("UNCHECKED_CAST")
+            injector.getInstance(it) as FacetWithContext<C>
+        }?.toSet() ?: emptySet(), id)
     }
 }

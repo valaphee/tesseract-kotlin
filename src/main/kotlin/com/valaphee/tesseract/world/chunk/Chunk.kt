@@ -35,7 +35,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.valaphee.foundry.ecs.BaseAttribute
 import com.valaphee.foundry.ecs.entity.BaseEntityType
 import com.valaphee.foundry.math.Int2
-import com.valaphee.tesseract.util.ecs.EntityFactory
+import com.valaphee.tesseract.data.entity.EntityFactory
 import com.valaphee.tesseract.world.EntityOfWorld
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.terrain.Terrain

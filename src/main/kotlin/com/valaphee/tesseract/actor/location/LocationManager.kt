@@ -24,19 +24,19 @@
 
 package com.valaphee.tesseract.actor.location
 
-import com.google.inject.Singleton
 import com.valaphee.foundry.ecs.Pass
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
 import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.actor.ActorType
+import com.valaphee.tesseract.data.Component
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.filter
 
 /**
  * @author Kevin Ludwig
  */
-@Singleton
+@Component("tesseract:location_manager")
 class LocationManager : BaseFacet<WorldContext, LocationManagerMessage>(LocationManagerMessage::class, Location::class) {
     override suspend fun receive(message: LocationManagerMessage): Response {
         message.entity?.filter<ActorType> {

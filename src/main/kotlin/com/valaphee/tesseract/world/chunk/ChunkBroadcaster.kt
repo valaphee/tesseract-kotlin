@@ -28,6 +28,7 @@ import com.valaphee.foundry.ecs.Consumed
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
 import com.valaphee.tesseract.actor.player.PlayerType
+import com.valaphee.tesseract.data.Component
 import com.valaphee.tesseract.net.connection
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.filterType
@@ -35,6 +36,7 @@ import com.valaphee.tesseract.world.filterType
 /**
  * @author Kevin Ludwig
  */
+@Component("tesseract:chunk_broadcaster")
 class ChunkBroadcaster : BaseFacet<WorldContext, Broadcast>(Broadcast::class) {
     override suspend fun receive(message: Broadcast): Response {
         val source = message.source

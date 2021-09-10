@@ -26,11 +26,13 @@ package com.valaphee.tesseract.world
 
 import com.valaphee.foundry.ecs.system.BaseBehavior
 import com.valaphee.foundry.math.Float3
+import com.valaphee.tesseract.data.Component
 import kotlin.random.Random
 
 /**
  * @author Kevin Ludwig
  */
+@Component("tesseract:environment_updater")
 class EnvironmentUpdater : BaseBehavior<WorldContext>(Environment::class) {
     override suspend fun update(entity: AnyEntityOfWorld, context: WorldContext): Boolean {
         val world = context.world

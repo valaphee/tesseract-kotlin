@@ -22,26 +22,36 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.location.physic
+package com.valaphee.tesseract.data
 
-import com.valaphee.foundry.ecs.system.BaseBehavior
-import com.valaphee.tesseract.actor.ActorType
-import com.valaphee.tesseract.actor.location.Move
-import com.valaphee.tesseract.data.Component
-import com.valaphee.tesseract.world.AnyEntityOfWorld
-import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.filter
+import java.net.InetSocketAddress
+import java.util.regex.Pattern
 
 /**
  * @author Kevin Ludwig
  */
-@Component("tesseract:physic")
-class Physic : BaseBehavior<WorldContext>() {
-    override suspend fun update(entity: AnyEntityOfWorld, context: WorldContext): Boolean {
-        entity.filter<ActorType> {
-            it.receiveMessage(Move(context, it, it.motion))
-        }
+@Component("tesseract:config")
+class Config(
+    var concurrency: Int = Runtime.getRuntime().availableProcessors(),
+    var watchdog: Watchdog = Watchdog(),
+    var listener: Listener = Listener(),
+    var maximumPlayers: Int = 10,
+    var maximumViewDistance: Int = 32
+) : Data {
+    class Watchdog(
+        var enabled: Boolean = true,
+        var timeout: Long = 30_000L
+    )
 
-        return true
-    }
+    class Listener(
+        var address: InetSocketAddress = InetSocketAddress("0.0.0.0", 19132),
+        var maximumQueuedBytes: Int = 8 * 1024 * 1024,
+        var serverName: String = "Tesseract",
+        var timeout: Int = 30_000,
+        var compressionLevel: Int = 7,
+        var verification: Boolean = true,
+        var userNamePattern: Pattern = Pattern.compile("^[a-zA-Z0-9_-]{3,16}\$"),
+        var encryption: Boolean = true,
+        var caching: Boolean = false
+    )
 }

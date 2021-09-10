@@ -50,14 +50,17 @@ val gitVersion: groovy.lang.Closure<String> by extra
 version = gitVersion()
 
 dependencies {
+    implementation("com.fasterxml.jackson.module:jackson-module-guice:2.12.5")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-smile:2.12.5")
     implementation("com.google.code.gson:gson:2.8.8")
     implementation("com.google.inject:guice:5.0.1")
+    implementation("com.google.inject.extensions:guice-assistedinject:5.0.1")
     implementation("com.hazelcast:hazelcast-all:4.2.2")
     implementation("com.valaphee:foundry-databind:1.3.0.0")
     implementation("com.valaphee:foundry-math:1.3.0.0")
     implementation("commons-cli:commons-cli:1.4")
+    implementation("io.github.classgraph:classgraph:4.8.114")
     implementation("io.netty:netty-buffer:4.1.67.Final")
     implementation("io.netty:netty-transport-native-epoll:4.1.67.Final:linux-x86_64")
     implementation("io.netty:netty-transport-native-kqueue:4.1.67.Final:osx-x86_64")

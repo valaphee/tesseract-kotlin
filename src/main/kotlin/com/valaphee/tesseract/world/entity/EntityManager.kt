@@ -27,11 +27,13 @@ package com.valaphee.tesseract.world.entity
 import com.valaphee.foundry.ecs.Pass
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
+import com.valaphee.tesseract.data.Component
 import com.valaphee.tesseract.world.WorldContext
 
 /**
  * @author Kevin Ludwig
  */
+@Component("tesseract:entity_manager")
 class EntityManager : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMessage::class) {
     override suspend fun receive(message: EntityManagerMessage): Response {
         when (message) {

@@ -1,0 +1,20 @@
+{
+  "tesseract:entity_type": {
+    "key": "tesseract:world",
+    "behaviors": {
+      "tesseract:environment_updater": {}
+    },
+    "facets": {
+      /*EntityManagerMessage*/
+      "tesseract:entity_manager": {},
+      "tesseract:player_list": {},
+      "tesseract:player_packetizer": {},
+      "tesseract:stack_add_packetizer": {},
+      "tesseract:actor_packetizer": {},
+      /*ChunkManagerMessage*/
+      "tesseract:chunk_manager": {},
+      /*Broadcast*/
+      "tesseract:chunk_broadcaster": {}
+    }
+  }
+}

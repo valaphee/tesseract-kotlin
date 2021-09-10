@@ -31,6 +31,7 @@ import com.valaphee.foundry.ecs.system.BaseFacet
 import com.valaphee.tesseract.actor.location.Location
 import com.valaphee.tesseract.actor.location.LocationManagerMessage
 import com.valaphee.tesseract.actor.location.location
+import com.valaphee.tesseract.data.Component
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.chunkBroadcast
 import com.valaphee.tesseract.world.filter
@@ -38,6 +39,7 @@ import com.valaphee.tesseract.world.filter
 /**
  * @author Kevin Ludwig
  */
+@Component("tesseract:player_location_packetizer")
 class PlayerLocationPacketizer : BaseFacet<WorldContext, LocationManagerMessage>(LocationManagerMessage::class, Location::class) {
     override suspend fun receive(message: LocationManagerMessage): Response {
         message.entity?.filter<PlayerType> {

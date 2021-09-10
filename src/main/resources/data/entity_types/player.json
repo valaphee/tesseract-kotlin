@@ -1,0 +1,16 @@
+{
+  "tesseract:entity_type": {
+    "key": "minecraft:player",
+    "behaviors": {},
+    "facets": {
+      /*LocationManagerMessage*/
+      "tesseract:location_manager": {},
+      "tesseract:radial_expansion_view": {},
+      "tesseract:player_location_packetizer": {},
+      /*ViewChunk*/
+      "tesseract:view_chunk_packetizer": {},
+      /*ChunkInteractManagerMessage*/
+      "tesseract:chunk_interaction_manager": {}
+    }
+  }
+}

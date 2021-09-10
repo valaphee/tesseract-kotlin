@@ -29,7 +29,6 @@ import com.valaphee.foundry.ecs.Context
 import com.valaphee.foundry.ecs.Message
 import com.valaphee.foundry.ecs.Pass
 import com.valaphee.foundry.ecs.Response
-import java.util.concurrent.atomic.AtomicLong
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 
@@ -54,16 +53,11 @@ typealias FacetWithContext<C> = Facet<out C, out Message<out C>>
 abstract class BaseFacet<C : Context, P : Message<C>>(
     override val messageType: KClass<P>,
     vararg mandatoryAttribute: KClass<out Attribute>,
-    override val id: Long = nextId.getAndIncrement()
 ) : Facet<C, P> {
     override val mandatoryAttributes = mandatoryAttribute.toSet()
 
     @Suppress("UNCHECKED_CAST")
     override suspend fun tryReceive(message: Message<C>) = if (message::class.isSubclassOf(messageType)) receive(message as P) else Pass
-
-    companion object {
-        internal val nextId = AtomicLong()
-    }
 }
 
 /**
@@ -74,7 +68,6 @@ class CompositeFacet<C : Context, P : Message<C>>(
     private val children: Set<Facet<C, P>>,
     override val messageType: KClass<P>,
     override val mandatoryAttributes: Set<KClass<out Attribute>> = children.flatMap { it.mandatoryAttributes }.toSet(),
-    override val id: Long = BaseFacet.nextId.getAndIncrement(),
 ) : Facet<C, P> {
     override suspend fun receive(message: P) = tryReceive(message)
 

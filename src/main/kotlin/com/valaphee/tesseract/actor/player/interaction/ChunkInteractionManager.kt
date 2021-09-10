@@ -27,6 +27,7 @@ package com.valaphee.tesseract.actor.player.interaction
 import com.valaphee.foundry.ecs.Consumed
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
+import com.valaphee.tesseract.data.Component
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.position
 import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
@@ -36,6 +37,7 @@ import com.valaphee.tesseract.world.chunk.terrain.blockUpdates
 /**
  * @author Kevin Ludwig
  */
+@Component("tesseract:chunk_interaction_manager")
 class ChunkInteractionManager :  BaseFacet<WorldContext, ChunkInteractionManagerMessage>(ChunkInteractionManagerMessage::class){
     override suspend fun receive(message: ChunkInteractionManagerMessage): Response {
         val chunk = message.chunks.first()

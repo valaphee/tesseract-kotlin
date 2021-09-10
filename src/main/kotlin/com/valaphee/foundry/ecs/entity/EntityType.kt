@@ -25,7 +25,6 @@
 package com.valaphee.foundry.ecs.entity
 
 import com.valaphee.foundry.ecs.Attribute
-import com.valaphee.foundry.ecs.BaseAttribute
 
 /**
  * @author Kevin Ludwig
@@ -39,7 +38,7 @@ interface EntityType : Attribute {
  */
 abstract class BaseEntityType(
     override val key: String,
-    override val id: Long = BaseAttribute.nextId.getAndIncrement(),
+    val id: Long = 0L,
 ) : EntityType {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

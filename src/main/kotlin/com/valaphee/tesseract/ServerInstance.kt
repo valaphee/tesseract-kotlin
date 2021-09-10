@@ -27,18 +27,6 @@ package com.valaphee.tesseract
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.google.inject.AbstractModule
 import com.google.inject.Injector
-import com.valaphee.tesseract.actor.ActorPacketizer
-import com.valaphee.tesseract.actor.location.LocationManager
-import com.valaphee.tesseract.actor.location.LocationPacketizer
-import com.valaphee.tesseract.actor.location.physic.Physic
-import com.valaphee.tesseract.actor.player.PlayerLocationPacketizer
-import com.valaphee.tesseract.actor.player.PlayerPacketizer
-import com.valaphee.tesseract.actor.player.PlayerType
-import com.valaphee.tesseract.actor.player.interaction.ChunkInteractionManager
-import com.valaphee.tesseract.actor.player.view.RadialExpansionView
-import com.valaphee.tesseract.actor.player.view.ViewChunkPacketizer
-import com.valaphee.tesseract.actor.stack.StackAddPacketizer
-import com.valaphee.tesseract.actor.stack.StackType
 import com.valaphee.tesseract.net.Compressor
 import com.valaphee.tesseract.net.Connection
 import com.valaphee.tesseract.net.Decompressor
@@ -48,15 +36,8 @@ import com.valaphee.tesseract.net.UnconnectedPingHandler
 import com.valaphee.tesseract.net.base.DisconnectPacket
 import com.valaphee.tesseract.net.init.InitPacketHandler
 import com.valaphee.tesseract.util.generateKeyPair
-import com.valaphee.tesseract.world.EnvironmentUpdater
 import com.valaphee.tesseract.world.PlayerList
-import com.valaphee.tesseract.world.WorldType
 import com.valaphee.tesseract.world.broadcast
-import com.valaphee.tesseract.world.chunk.ChunkBroadcaster
-import com.valaphee.tesseract.world.chunk.ChunkManager
-import com.valaphee.tesseract.world.chunk.ChunkType
-import com.valaphee.tesseract.world.chunk.terrain.BlockUpdater
-import com.valaphee.tesseract.world.entity.EntityManager
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.buffer.PooledByteBufAllocator
 import io.netty.channel.AdaptiveRecvByteBufAllocator
@@ -99,39 +80,6 @@ class ServerInstance(
     override fun getModule() = object : AbstractModule() {
         override fun configure() {
             bind(KeyPair::class.java).toInstance(generateKeyPair())
-        }
-    }
-
-    override fun createEntityFactory() = super.createEntityFactory().apply {
-        register(WorldType) {
-            behaviors(
-                EnvironmentUpdater::class.java,
-            )
-            facets(
-                EntityManager::class.java, PlayerList::class.java, PlayerPacketizer::class.java /* consumes */, StackAddPacketizer::class.java /* consumes */, ActorPacketizer::class.java /* consumes */, // EntityManagerMessage
-                ChunkManager::class.java /* consumes */, // ChunkManagerMessage
-                ChunkBroadcaster::class.java /* consumes */, // Broadcast
-            )
-        }
-        register(ChunkType) {
-            behaviors(
-                BlockUpdater::class.java,
-            )
-        }
-        register(PlayerType) {
-            facets(
-                LocationManager::class.java, RadialExpansionView::class.java, PlayerLocationPacketizer::class.java /* consumes */, // LocationManagerMessage
-                ViewChunkPacketizer::class.java /* consumes */, // ViewChunk
-                ChunkInteractionManager::class.java /* consumes */, // ChunkInteractManagerMessage
-            )
-        }
-        register(StackType) {
-            behaviors(
-                Physic::class.java
-            )
-            facets(
-                LocationManager::class.java, LocationPacketizer::class.java // LocationManagerMessage
-            )
         }
     }
 

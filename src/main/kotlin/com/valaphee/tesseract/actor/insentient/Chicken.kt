@@ -30,7 +30,7 @@ import com.valaphee.tesseract.actor.ActorType
 import com.valaphee.tesseract.actor.attribute.Attributes
 import com.valaphee.tesseract.actor.location.Location
 import com.valaphee.tesseract.actor.metadata.Metadata
-import com.valaphee.tesseract.util.ecs.EntityFactory
+import com.valaphee.tesseract.data.entity.EntityFactory
 import com.valaphee.tesseract.world.EntityOfWorld
 import com.valaphee.tesseract.world.WorldContext
 

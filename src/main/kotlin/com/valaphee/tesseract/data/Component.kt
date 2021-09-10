@@ -22,26 +22,11 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.location.physic
-
-import com.valaphee.foundry.ecs.system.BaseBehavior
-import com.valaphee.tesseract.actor.ActorType
-import com.valaphee.tesseract.actor.location.Move
-import com.valaphee.tesseract.data.Component
-import com.valaphee.tesseract.world.AnyEntityOfWorld
-import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.filter
+package com.valaphee.tesseract.data
 
 /**
  * @author Kevin Ludwig
  */
-@Component("tesseract:physic")
-class Physic : BaseBehavior<WorldContext>() {
-    override suspend fun update(entity: AnyEntityOfWorld, context: WorldContext): Boolean {
-        entity.filter<ActorType> {
-            it.receiveMessage(Move(context, it, it.motion))
-        }
-
-        return true
-    }
-}
+annotation class Component(
+    val value: String
+)

@@ -31,6 +31,7 @@ import com.valaphee.tesseract.actor.player.Player
 import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.actor.player.authExtra
 import com.valaphee.tesseract.actor.player.user
+import com.valaphee.tesseract.data.Component
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.base.TextPacket
 import com.valaphee.tesseract.net.connection
@@ -44,6 +45,7 @@ import org.apache.logging.log4j.Logger
 /**
  * @author Kevin Ludwig
  */
+@Component("tesseract:player_list")
 class PlayerList : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMessage::class) {
     private val players = Long2ObjectOpenHashMap<Player>()
 

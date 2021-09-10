@@ -27,6 +27,7 @@ package com.valaphee.tesseract.world.chunk.terrain
 import com.valaphee.foundry.ecs.system.BaseBehavior
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
+import com.valaphee.tesseract.data.Component
 import com.valaphee.tesseract.world.AnyEntityOfWorld
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.WorldEventPacket
@@ -40,6 +41,7 @@ import com.valaphee.tesseract.world.filter
 /**
  * @author Kevin Ludwig
  */
+@Component("tesseract:block_updater")
 class BlockUpdater : BaseBehavior<WorldContext>(Location::class, Terrain::class) {
     override suspend fun update(entity: AnyEntityOfWorld, context: WorldContext): Boolean {
         entity.filter<ChunkType> {

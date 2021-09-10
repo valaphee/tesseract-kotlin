@@ -25,7 +25,7 @@
 package com.valaphee.tesseract.world
 
 import com.valaphee.foundry.ecs.entity.BaseEntityType
-import com.valaphee.tesseract.util.ecs.EntityFactory
+import com.valaphee.tesseract.data.entity.EntityFactory
 
 /**
  * @author Kevin Ludwig

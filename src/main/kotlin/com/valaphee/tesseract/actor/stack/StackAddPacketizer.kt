@@ -31,6 +31,7 @@ import com.valaphee.foundry.ecs.system.BaseFacet
 import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.actor.location.location
 import com.valaphee.tesseract.actor.metadata.metadata
+import com.valaphee.tesseract.data.Component
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.chunkBroadcast
 import com.valaphee.tesseract.world.entity.EntityAdd
@@ -39,6 +40,7 @@ import com.valaphee.tesseract.world.filter
 /**
  * @author Kevin Ludwig
  */
+@Component("tesseract:stack_add_packetizer")
 class StackAddPacketizer : BaseFacet<WorldContext, EntityAdd>(EntityAdd::class) {
     override suspend fun receive(message: EntityAdd): Response {
         message.entities.first().filter<StackType> {

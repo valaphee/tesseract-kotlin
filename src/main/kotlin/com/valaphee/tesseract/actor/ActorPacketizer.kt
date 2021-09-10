@@ -33,6 +33,7 @@ import com.valaphee.tesseract.actor.attribute._attributes
 import com.valaphee.tesseract.actor.location.location
 import com.valaphee.tesseract.actor.location.position
 import com.valaphee.tesseract.actor.metadata.metadata
+import com.valaphee.tesseract.data.Component
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.chunkBroadcast
 import com.valaphee.tesseract.world.entity.EntityAdd
@@ -43,6 +44,7 @@ import com.valaphee.tesseract.world.filter
 /**
  * @author Kevin Ludwig
  */
+@Component("tesseract:actor_packetizer")
 class ActorPacketizer : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMessage::class) {
     override suspend fun receive(message: EntityManagerMessage): Response {
         when (message) {

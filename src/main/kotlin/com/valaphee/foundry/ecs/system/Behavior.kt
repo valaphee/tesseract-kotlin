@@ -28,7 +28,6 @@ import com.valaphee.foundry.ecs.Attribute
 import com.valaphee.foundry.ecs.Context
 import com.valaphee.foundry.ecs.entity.Entity
 import com.valaphee.foundry.ecs.entity.EntityType
-import java.util.concurrent.atomic.AtomicLong
 import kotlin.reflect.KClass
 
 /**
@@ -47,13 +46,8 @@ interface Behavior<C : Context> : System<C> {
  */
 abstract class BaseBehavior<C : Context>(
     vararg mandatoryAttribute: KClass<out Attribute>,
-    override val id: Long = nextId.getAndIncrement()
 ) : Behavior<C> {
     override val mandatoryAttributes = mandatoryAttribute.toSet()
-
-    companion object {
-        internal val nextId = AtomicLong()
-    }
 }
 
 /**

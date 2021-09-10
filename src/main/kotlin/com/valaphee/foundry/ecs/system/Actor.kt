@@ -43,8 +43,7 @@ interface Actor<T : EntityType, C : Context, P : Message<C>> : Facet<C, P>, Beha
  */
 abstract class BaseActor<C : Context, P : Message<C>>(
     messageType: KClass<P>,
-    vararg mandatoryAttribute: KClass<out Attribute>,
-    override val id: Long = nextId.getAndIncrement()
+    vararg mandatoryAttribute: KClass<out Attribute>
 ) : BaseFacet<C, P>(messageType), Behavior<C> {
     override val mandatoryAttributes = mandatoryAttribute.toSet()
 

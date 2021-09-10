@@ -1,0 +1,13 @@
+{
+  "tesseract:entity_type": {
+    "key": "minecraft:item",
+    "behaviors": {
+      "tesseract:physic": {}
+    },
+    "facets": {
+      /*LocationManagerMessage*/
+      "tesseract:location_manager": {},
+      "tesseract:location_packetizer": {}
+    }
+  }
+}

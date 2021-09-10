@@ -32,6 +32,7 @@ import com.valaphee.tesseract.Config
 import com.valaphee.tesseract.actor.location.LocationManagerMessage
 import com.valaphee.tesseract.actor.location.position
 import com.valaphee.tesseract.actor.player.PlayerType
+import com.valaphee.tesseract.data.Component
 import com.valaphee.tesseract.world.chunk.ChunkAcquire
 import com.valaphee.tesseract.world.chunk.ChunkRelease
 import com.valaphee.tesseract.world.chunk.encodePosition
@@ -48,6 +49,7 @@ import kotlin.math.sin
  *
  * @author Kevin Ludwig
  */
+@Component("tesseract:radial_expansion_view")
 class RadialExpansionView @Inject constructor(
     config: Config.Instance
 ) : View(config) {

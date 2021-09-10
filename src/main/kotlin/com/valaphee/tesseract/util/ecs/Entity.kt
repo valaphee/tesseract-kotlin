@@ -34,6 +34,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.valaphee.foundry.ecs.Attribute
 import com.valaphee.foundry.ecs.entity.Entity
 import com.valaphee.foundry.ecs.entity.EntityType
+import com.valaphee.tesseract.data.entity.EntityFactory
 import com.valaphee.tesseract.world.WorldContext
 import kotlin.reflect.full.hasAnnotation
 

@@ -27,6 +27,7 @@ package com.valaphee.tesseract.actor.player.view
 import com.valaphee.foundry.ecs.Consumed
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
+import com.valaphee.tesseract.data.Component
 import com.valaphee.tesseract.net.connection
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.WorldPacketHandler
@@ -35,6 +36,7 @@ import com.valaphee.tesseract.world.chunk.actors
 /**
  * @author Kevin Ludwig
  */
+@Component("tesseract:view_chunk_packetizer")
 class ViewChunkPacketizer : BaseFacet<WorldContext, ViewChunk>(ViewChunk::class) {
     override suspend fun receive(message: ViewChunk): Response {
         message.chunks.forEach { it.actors += message.source } // TODO
