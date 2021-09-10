@@ -28,7 +28,8 @@ import com.valaphee.tesseract.actor.ActorAddPacket
 import com.valaphee.tesseract.actor.ActorRemovePacket
 import com.valaphee.tesseract.actor.LinkPacket
 import com.valaphee.tesseract.actor.attribute.AttributesPacket
-import com.valaphee.tesseract.actor.location.MotionPacket
+import com.valaphee.tesseract.actor.stack.StackAddPacket
+import com.valaphee.tesseract.actor.location.physic.MotionPacket
 import com.valaphee.tesseract.actor.location.MoveRotatePacket
 import com.valaphee.tesseract.actor.location.TeleportPacket
 import com.valaphee.tesseract.actor.metadata.MetadataPacket
@@ -129,6 +130,8 @@ interface PacketHandler : ProtocolHandler {
     fun actorAdd(packet: ActorAddPacket) = other(packet)
 
     fun actorRemove(packet: ActorRemovePacket) = other(packet)
+
+    fun stackAdd(packet: StackAddPacket) = other(packet)
 
     fun teleport(packet: TeleportPacket) = other(packet)
 

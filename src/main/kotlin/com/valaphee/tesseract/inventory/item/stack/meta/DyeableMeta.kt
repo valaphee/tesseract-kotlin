@@ -22,32 +22,25 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.location
+package com.valaphee.tesseract.inventory.item.stack.meta
 
-import com.valaphee.foundry.ecs.BaseAttribute
-import com.valaphee.foundry.math.Float2
-import com.valaphee.foundry.math.Float3
-import com.valaphee.tesseract.actor.AnyActorOfWorld
+import com.valaphee.tesseract.util.getIntOrNull
+import com.valaphee.tesseract.util.nbt.CompoundTag
 
 /**
  * @author Kevin Ludwig
  */
-class Location(
-    var position: Float3,
-    var rotation: Float2 = Float2.Zero,
-    var headRotationYaw: Float = 0.0f
-) : BaseAttribute()
-
-val AnyActorOfWorld.location get() = findAttribute(Location::class)
-
-var AnyActorOfWorld.position
-    get() = findAttribute(Location::class).position
-    set(value) {
-        findAttribute(Location::class).also { it.position = value }
+class DyeableMeta(
+    name: String? = null,
+    lore: List<String>? = null,
+    damage: Int = 0,
+    repairCost: Int = 0,
+    var color: Int? = null
+) : Meta(name, lore, damage, repairCost) {
+    override fun fromTag(tag: CompoundTag) {
+        super.fromTag(tag)
+        color = tag.getIntOrNull("customColor")
     }
 
-var AnyActorOfWorld.rotation
-    get() = findAttribute(Location::class).rotation
-    set(value) {
-        findAttribute(Location::class).also { it.rotation = value }
-    }
+    override fun toTag() = super.toTag().apply { color?.let { setInt("customColor", it) } }
+}

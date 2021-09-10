@@ -30,6 +30,7 @@ import com.valaphee.foundry.ecs.system.BaseFacet
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.position
 import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
+import com.valaphee.tesseract.world.chunk.terrain.blockStorage
 import com.valaphee.tesseract.world.chunk.terrain.blockUpdates
 
 /**
@@ -45,12 +46,12 @@ class ChunkInteractionManager :  BaseFacet<WorldContext, ChunkInteractionManager
             }
             is BlockUse -> {
                 val (x, y, z) = message.position
-                message.stackInHand?.let {
+                val blockState = BlockState.byId(chunk.blockStorage[x, y, z])
+                if (blockState.id != airId) blockState.block.onUse?.invoke(message.context, message.source, chunk.blockUpdates, x, y, z, message.direction, message.clickPosition) ?: message.stackInHand?.let {
                     if (it.blockRuntimeId != 0) {
                         val (xOffset, yOffset, zOffset) = message.direction.axis
                         chunk.blockUpdates[x + xOffset, y + yOffset, z + zOffset] = it.blockRuntimeId
-                    }
-                    it.item.onUseBlock?.invoke(message.context, message.source, chunk.position, chunk.blockUpdates, x, y, z, message.direction, message.clickPosition)
+                    } else it.item.onUseBlock?.invoke(message.context, message.source, chunk.position, chunk.blockUpdates, x, y, z, message.direction, message.clickPosition)
                 }
             }
         }

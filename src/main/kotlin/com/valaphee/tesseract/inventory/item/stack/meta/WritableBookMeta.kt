@@ -22,32 +22,30 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.location
+package com.valaphee.tesseract.inventory.item.stack.meta
 
-import com.valaphee.foundry.ecs.BaseAttribute
-import com.valaphee.foundry.math.Float2
-import com.valaphee.foundry.math.Float3
-import com.valaphee.tesseract.actor.AnyActorOfWorld
+import com.valaphee.tesseract.util.getListTagOrNull
+import com.valaphee.tesseract.util.getString
+import com.valaphee.tesseract.util.nbt.CompoundTag
+import com.valaphee.tesseract.util.nbt.compoundTag
+import com.valaphee.tesseract.util.nbt.listTag
 
 /**
  * @author Kevin Ludwig
  */
-class Location(
-    var position: Float3,
-    var rotation: Float2 = Float2.Zero,
-    var headRotationYaw: Float = 0.0f
-) : BaseAttribute()
-
-val AnyActorOfWorld.location get() = findAttribute(Location::class)
-
-var AnyActorOfWorld.position
-    get() = findAttribute(Location::class).position
-    set(value) {
-        findAttribute(Location::class).also { it.position = value }
+open class WritableBookMeta(
+    name: String? = null,
+    lore: List<String>? = null,
+    damage: Int = 0,
+    repairCost: Int = 0,
+    var pages: List<String>? = null
+) : Meta(name, lore, damage, repairCost) {
+    override fun fromTag(tag: CompoundTag) {
+        super.fromTag(tag)
+        pages = tag.getListTagOrNull("pages")?.let { it.toList().map { it.asCompoundTag()!!.getString("text") } }
     }
 
-var AnyActorOfWorld.rotation
-    get() = findAttribute(Location::class).rotation
-    set(value) {
-        findAttribute(Location::class).also { it.rotation = value }
+    override fun toTag() = super.toTag().apply {
+        pages?.let { this["pages"] = listTag().apply { it.forEach { put(compoundTag().apply { setString("text", it) }) } } }
     }
+}

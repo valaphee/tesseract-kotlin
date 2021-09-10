@@ -22,34 +22,35 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.location
+package com.valaphee.tesseract.inventory.item.stack.meta
 
-import com.valaphee.foundry.math.Float3
-import com.valaphee.tesseract.net.Packet
-import com.valaphee.tesseract.net.PacketBuffer
-import com.valaphee.tesseract.net.PacketHandler
-import com.valaphee.tesseract.net.PacketReader
+import com.valaphee.tesseract.util.getIntOrNull
+import com.valaphee.tesseract.util.getStringOrNull
+import com.valaphee.tesseract.util.nbt.CompoundTag
 
 /**
  * @author Kevin Ludwig
  */
-data class MotionPacket(
-    var runtimeEntityId: Long,
-    var motion: Float3
-) : Packet {
-    override val id get() = 0x28
-
-    override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarULong(runtimeEntityId)
-        buffer.writeFloat3(motion)
+class WrittenBookMeta(
+    name: String? = null,
+    lore: List<String>? = null,
+    damage: Int = 0,
+    repairCost: Int = 0,
+    pages: List<String>? = null,
+    var title: String? = null,
+    var author: String? = null,
+    var generation: Int = 0,
+) : WritableBookMeta(name, lore, damage, repairCost, pages) {
+    override fun fromTag(tag: CompoundTag) {
+        super.fromTag(tag)
+        title = tag.getStringOrNull("title")
+        author = tag.getStringOrNull("author")
+        generation = tag.getIntOrNull("generation") ?: 0
     }
 
-    override fun handle(handler: PacketHandler) = handler.motion(this)
-}
-
-/**
- * @author Kevin Ludwig
- */
-object MotionPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = MotionPacket(buffer.readVarULong(), buffer.readFloat3())
+    override fun toTag() = super.toTag().apply {
+        title?.let { setString("title", it) }
+        author?.let { setString("author", it) }
+        setInt("generation", generation)
+    }
 }

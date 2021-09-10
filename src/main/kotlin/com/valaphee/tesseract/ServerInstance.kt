@@ -29,12 +29,16 @@ import com.google.inject.AbstractModule
 import com.google.inject.Injector
 import com.valaphee.tesseract.actor.ActorPacketizer
 import com.valaphee.tesseract.actor.location.LocationManager
+import com.valaphee.tesseract.actor.location.LocationPacketizer
+import com.valaphee.tesseract.actor.location.physic.Physic
 import com.valaphee.tesseract.actor.player.PlayerLocationPacketizer
 import com.valaphee.tesseract.actor.player.PlayerPacketizer
 import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.actor.player.interaction.ChunkInteractionManager
 import com.valaphee.tesseract.actor.player.view.RadialExpansionView
 import com.valaphee.tesseract.actor.player.view.ViewChunkPacketizer
+import com.valaphee.tesseract.actor.stack.StackAddPacketizer
+import com.valaphee.tesseract.actor.stack.StackType
 import com.valaphee.tesseract.net.Compressor
 import com.valaphee.tesseract.net.Connection
 import com.valaphee.tesseract.net.Decompressor
@@ -104,7 +108,7 @@ class ServerInstance(
                 EnvironmentUpdater::class.java,
             )
             facets(
-                EntityManager::class.java, PlayerList::class.java, PlayerPacketizer::class.java /* consumes */, ActorPacketizer::class.java /* consumes */, // EntityManagerMessage
+                EntityManager::class.java, PlayerList::class.java, PlayerPacketizer::class.java /* consumes */, StackAddPacketizer::class.java /* consumes */, ActorPacketizer::class.java /* consumes */, // EntityManagerMessage
                 ChunkManager::class.java /* consumes */, // ChunkManagerMessage
                 ChunkBroadcaster::class.java /* consumes */, // Broadcast
             )
@@ -119,6 +123,14 @@ class ServerInstance(
                 LocationManager::class.java, RadialExpansionView::class.java, PlayerLocationPacketizer::class.java /* consumes */, // LocationManagerMessage
                 ViewChunkPacketizer::class.java /* consumes */, // ViewChunk
                 ChunkInteractionManager::class.java /* consumes */, // ChunkInteractManagerMessage
+            )
+        }
+        register(StackType) {
+            behaviors(
+                Physic::class.java
+            )
+            facets(
+                LocationManager::class.java, LocationPacketizer::class.java // LocationManagerMessage
             )
         }
     }

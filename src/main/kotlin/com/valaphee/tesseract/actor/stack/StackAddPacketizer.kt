@@ -22,32 +22,33 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.location
+package com.valaphee.tesseract.actor.stack
 
-import com.valaphee.foundry.ecs.BaseAttribute
-import com.valaphee.foundry.math.Float2
+import com.valaphee.foundry.ecs.Consumed
+import com.valaphee.foundry.ecs.Pass
+import com.valaphee.foundry.ecs.Response
+import com.valaphee.foundry.ecs.system.BaseFacet
 import com.valaphee.foundry.math.Float3
-import com.valaphee.tesseract.actor.AnyActorOfWorld
+import com.valaphee.tesseract.actor.location.location
+import com.valaphee.tesseract.actor.metadata.metadata
+import com.valaphee.tesseract.world.WorldContext
+import com.valaphee.tesseract.world.chunk.chunkBroadcast
+import com.valaphee.tesseract.world.entity.EntityAdd
+import com.valaphee.tesseract.world.filter
 
 /**
  * @author Kevin Ludwig
  */
-class Location(
-    var position: Float3,
-    var rotation: Float2 = Float2.Zero,
-    var headRotationYaw: Float = 0.0f
-) : BaseAttribute()
+class StackAddPacketizer : BaseFacet<WorldContext, EntityAdd>(EntityAdd::class) {
+    override suspend fun receive(message: EntityAdd): Response {
+        message.entities.first().filter<StackType> {
+            val context = message.context
+            val location = it.location
+            context.world.chunkBroadcast(context, location.position, StackAddPacket(it.id, it.id, it.stack, location.position, Float3.Zero, it.metadata, false))
 
-val AnyActorOfWorld.location get() = findAttribute(Location::class)
+            return Consumed
+        }
 
-var AnyActorOfWorld.position
-    get() = findAttribute(Location::class).position
-    set(value) {
-        findAttribute(Location::class).also { it.position = value }
+        return Pass
     }
-
-var AnyActorOfWorld.rotation
-    get() = findAttribute(Location::class).rotation
-    set(value) {
-        findAttribute(Location::class).also { it.rotation = value }
-    }
+}

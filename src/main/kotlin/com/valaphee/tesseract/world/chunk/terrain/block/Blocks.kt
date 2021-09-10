@@ -121,5 +121,9 @@ object Blocks {
         }
         Block.byKeyOrNull("minecraft:sand")?.apply { onUpdate = fallingMovement }
         Block.byKeyOrNull("minecraft:gravel")?.apply { onUpdate = fallingMovement }
+
+        Block.byKeyOrNull("minecraft:crafting_table")?.apply {
+            onUse = { _, _, _, _, _, _, _, _ -> }
+        }
     }
 }

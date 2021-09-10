@@ -32,8 +32,8 @@ import com.valaphee.tesseract.util.ecs.Runtime
  * @author Kevin Ludwig
  */
 @Runtime
-class InventoryHolder<T : Inventory>(
-    val inventory: T
+class InventoryWrapper<T : Inventory>(
+    val value: T
 ) : BaseAttribute()
 
-inline fun <reified T : Inventory> AnyActorOfWorld.inventory() = findAttribute(InventoryHolder::class).inventory as T
+inline fun <reified T : Inventory> AnyActorOfWorld.inventory() = findAttribute(InventoryWrapper::class).value as T

@@ -24,7 +24,11 @@
 
 package com.valaphee.tesseract.world.chunk.terrain.block
 
+import com.valaphee.foundry.math.Float3
+import com.valaphee.tesseract.actor.player.Player
+import com.valaphee.tesseract.util.math.Direction
 import com.valaphee.tesseract.util.nbt.CompoundTag
+import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.terrain.PropagationBlockUpdateList
 
 /**
@@ -34,6 +38,7 @@ class Block(
     val key: String,
     val component: CompoundTag? = null
 ) {
+    var onUse: OnUse? = null
     var onUpdate: OnUpdate? = null
 
     override fun equals(other: Any?): Boolean {
@@ -70,5 +75,7 @@ class Block(
         val all get() = byKey.values
     }
 }
+
+typealias OnUse = (context: WorldContext, player: Player, blockUpdates: PropagationBlockUpdateList, x: Int, y: Int, z: Int, direction: Direction, clickPosition: Float3) -> Unit
 
 typealias OnUpdate = (blockUpdates: PropagationBlockUpdateList, x: Int, y: Int, z: Int, blockState: BlockState) -> Unit

@@ -22,32 +22,34 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.location
+package com.valaphee.tesseract.actor.location.physic
 
-import com.valaphee.foundry.ecs.BaseAttribute
-import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
-import com.valaphee.tesseract.actor.AnyActorOfWorld
+import com.valaphee.tesseract.net.Packet
+import com.valaphee.tesseract.net.PacketBuffer
+import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 
 /**
  * @author Kevin Ludwig
  */
-class Location(
-    var position: Float3,
-    var rotation: Float2 = Float2.Zero,
-    var headRotationYaw: Float = 0.0f
-) : BaseAttribute()
+data class MotionPacket(
+    var runtimeEntityId: Long,
+    var motion: Float3
+) : Packet {
+    override val id get() = 0x28
 
-val AnyActorOfWorld.location get() = findAttribute(Location::class)
-
-var AnyActorOfWorld.position
-    get() = findAttribute(Location::class).position
-    set(value) {
-        findAttribute(Location::class).also { it.position = value }
+    override fun write(buffer: PacketBuffer, version: Int) {
+        buffer.writeVarULong(runtimeEntityId)
+        buffer.writeFloat3(motion)
     }
 
-var AnyActorOfWorld.rotation
-    get() = findAttribute(Location::class).rotation
-    set(value) {
-        findAttribute(Location::class).also { it.rotation = value }
-    }
+    override fun handle(handler: PacketHandler) = handler.motion(this)
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object MotionPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = MotionPacket(buffer.readVarULong(), buffer.readFloat3())
+}

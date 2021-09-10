@@ -24,7 +24,7 @@
 
 package com.valaphee.tesseract.net
 
-import com.valaphee.tesseract.actor.location.MotionPacketReader
+import com.valaphee.tesseract.actor.location.physic.MotionPacketReader
 import com.valaphee.tesseract.actor.player.EmotePacketReader
 import com.valaphee.tesseract.actor.player.EmotesPacketReader
 import com.valaphee.tesseract.actor.player.InputPacketReader

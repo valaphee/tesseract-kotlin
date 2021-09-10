@@ -43,7 +43,6 @@ class Item<T : Meta> constructor(
     val meta: () -> T
 ) {
     var id = 0
-    var onUse: OnUse? = null
     var onUseBlock: OnUseBlock? = null
 
     init {
@@ -92,7 +91,5 @@ class Item<T : Meta> constructor(
             set(value) = byId.defaultReturnValue(value)
     }
 }
-
-typealias OnUse = (context: WorldContext, player: Player) -> Unit
 
 typealias OnUseBlock = (context: WorldContext, player: Player, chunk: Int2, blockUpdates: PropagationBlockUpdateList, x: Int, y: Int, z: Int, direction: Direction, clickPosition: Float3) -> Unit

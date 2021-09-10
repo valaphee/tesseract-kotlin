@@ -22,32 +22,24 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.location
+package com.valaphee.tesseract.actor.location.physic
 
-import com.valaphee.foundry.ecs.BaseAttribute
-import com.valaphee.foundry.math.Float2
-import com.valaphee.foundry.math.Float3
-import com.valaphee.tesseract.actor.AnyActorOfWorld
+import com.valaphee.foundry.ecs.system.BaseBehavior
+import com.valaphee.tesseract.actor.ActorType
+import com.valaphee.tesseract.actor.location.Move
+import com.valaphee.tesseract.world.AnyEntityOfWorld
+import com.valaphee.tesseract.world.WorldContext
+import com.valaphee.tesseract.world.filter
 
 /**
  * @author Kevin Ludwig
  */
-class Location(
-    var position: Float3,
-    var rotation: Float2 = Float2.Zero,
-    var headRotationYaw: Float = 0.0f
-) : BaseAttribute()
+class Physic : BaseBehavior<WorldContext>() {
+    override suspend fun update(entity: AnyEntityOfWorld, context: WorldContext): Boolean {
+        entity.filter<ActorType> {
+            it.receiveMessage(Move(context, it, it.motion))
+        }
 
-val AnyActorOfWorld.location get() = findAttribute(Location::class)
-
-var AnyActorOfWorld.position
-    get() = findAttribute(Location::class).position
-    set(value) {
-        findAttribute(Location::class).also { it.position = value }
+        return true
     }
-
-var AnyActorOfWorld.rotation
-    get() = findAttribute(Location::class).rotation
-    set(value) {
-        findAttribute(Location::class).also { it.rotation = value }
-    }
+}

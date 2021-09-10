@@ -22,32 +22,21 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.location
+package com.valaphee.tesseract.actor.location.physic
 
 import com.valaphee.foundry.ecs.BaseAttribute
-import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.actor.AnyActorOfWorld
 
 /**
  * @author Kevin Ludwig
  */
-class Location(
-    var position: Float3,
-    var rotation: Float2 = Float2.Zero,
-    var headRotationYaw: Float = 0.0f
+class Motion(
+    var value: Float3,
 ) : BaseAttribute()
 
-val AnyActorOfWorld.location get() = findAttribute(Location::class)
-
-var AnyActorOfWorld.position
-    get() = findAttribute(Location::class).position
+var AnyActorOfWorld.motion
+    get() = findAttribute(Motion::class).value
     set(value) {
-        findAttribute(Location::class).also { it.position = value }
-    }
-
-var AnyActorOfWorld.rotation
-    get() = findAttribute(Location::class).rotation
-    set(value) {
-        findAttribute(Location::class).also { it.rotation = value }
+        findAttribute(Motion::class).also { it.value = value }
     }

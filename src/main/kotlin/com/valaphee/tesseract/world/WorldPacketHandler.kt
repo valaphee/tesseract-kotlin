@@ -61,9 +61,9 @@ import com.valaphee.tesseract.command.net.CommandPacket
 import com.valaphee.tesseract.command.net.Origin
 import com.valaphee.tesseract.creativeInventoryPacket
 import com.valaphee.tesseract.entityIdentifiersPacket
-import com.valaphee.tesseract.inventory.InventoryHolder
 import com.valaphee.tesseract.inventory.InventoryRequestPacket
 import com.valaphee.tesseract.inventory.InventoryTransactionPacket
+import com.valaphee.tesseract.inventory.InventoryWrapper
 import com.valaphee.tesseract.inventory.PlayerInventory
 import com.valaphee.tesseract.inventory.WindowClosePacket
 import com.valaphee.tesseract.inventory.inventory
@@ -124,7 +124,7 @@ class WorldPacketHandler(
                     Flag.HasGravity
                 )
             })
-            addAttribute(InventoryHolder(PlayerInventory()))
+            addAttribute(InventoryWrapper(PlayerInventory()))
             addAttribute(WindowManager())
         }.also { context.world.addEntities(context, null, it) }
 
@@ -172,7 +172,6 @@ class WorldPacketHandler(
                 val stackInHand = player.inventory<PlayerInventory>().apply { hotbarSlot = packet.hotbarSlot }.stackInHand
                 if (packet.stackInHand == stackInHand) when (packet.actionId) {
                     InventoryTransactionPacket.ItemUseBlock -> context.world.useBlock(context, player, packet.position!!, Direction.values()[packet.auxInt], packet.clickPosition!!, stackInHand)
-                    InventoryTransactionPacket.ItemUseAir -> stackInHand?.item?.onUse?.invoke(context, player)
                 }
             }
             InventoryTransactionPacket.Type.ItemUseOnEntity -> {
