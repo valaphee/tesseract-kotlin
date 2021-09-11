@@ -24,7 +24,7 @@
 
 package com.valaphee.tesseract.net
 
-import com.valaphee.tesseract.Config
+import com.valaphee.tesseract.data.Config
 import com.valaphee.tesseract.world.GameMode
 import com.valaphee.tesseract.world.PlayerList
 import io.netty.channel.ChannelFutureListener
@@ -41,7 +41,7 @@ import java.net.InetSocketAddress
  * @author Kevin Ludwig
  */
 class UnconnectedPingHandler(
-    private val config: Config.Instance,
+    private val config: Config,
     private val playerList: PlayerList
 ) : UdpPacketHandler<UnconnectedPing>(UnconnectedPing::class.java) {
     override fun handle(context: ChannelHandlerContext, address: InetSocketAddress, packet: UnconnectedPing) {

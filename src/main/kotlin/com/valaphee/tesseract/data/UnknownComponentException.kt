@@ -22,20 +22,17 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk.terrain
-
-import com.valaphee.foundry.ecs.BaseAttribute
-import com.valaphee.tesseract.data.entity.Runtime
-import com.valaphee.tesseract.world.chunk.Chunk
+package com.valaphee.tesseract.data
 
 /**
  * @author Kevin Ludwig
  */
-@Runtime
-class TerrainRuntime(
-    center: BlockUpdateList
-) : BaseAttribute() {
-    val blockUpdates = PropagationBlockUpdateList(center)
-}
+class UnknownComponentException : Exception {
+    constructor() : super()
 
-val Chunk.blockUpdates get() = findAttribute(TerrainRuntime::class).blockUpdates
+    constructor(message: String) : super(message)
+
+    constructor(message: String, cause: Throwable) : super(message, cause)
+
+    constructor(cause: Throwable) : super(cause)
+}

@@ -22,20 +22,37 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk.terrain
+package com.valaphee.tesseract.data.locale
 
-import com.valaphee.foundry.ecs.BaseAttribute
-import com.valaphee.tesseract.data.entity.Runtime
-import com.valaphee.tesseract.world.chunk.Chunk
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.valaphee.tesseract.data.Component
+import com.valaphee.tesseract.data.Data
+import com.valaphee.tesseract.data.Keyed
+import java.text.MessageFormat
+import java.util.regex.Pattern
 
 /**
  * @author Kevin Ludwig
  */
-@Runtime
-class TerrainRuntime(
-    center: BlockUpdateList
-) : BaseAttribute() {
-    val blockUpdates = PropagationBlockUpdateList(center)
-}
+@Component("tesseract:locale")
+class LocaleData(
+    override var key: String,
+    var entries: Map<String, String>
+) : Data, Keyed {
+    @JsonIgnore
+    private val formats = mutableMapOf<String, MessageFormat>()
 
-val Chunk.blockUpdates get() = findAttribute(TerrainRuntime::class).blockUpdates
+    operator fun get(key: String) = entries[key]
+
+    fun format(key: String, vararg arguments: Any?) = this[key]?.let {
+        (formats[key] ?: (try {
+            MessageFormat(it)
+        } catch (_: IllegalArgumentException) {
+            MessageFormat(pattern.matcher(it).replaceAll("\\[$1\\]"))
+        }).also { formats[key] = it }).format(arguments)
+    } ?: key
+
+    companion object {
+        private val pattern = Pattern.compile("\\{(\\D*?)}")
+    }
+}

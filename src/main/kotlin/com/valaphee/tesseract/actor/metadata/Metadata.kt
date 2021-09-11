@@ -28,7 +28,7 @@ import com.valaphee.foundry.ecs.BaseAttribute
 import com.valaphee.tesseract.actor.AnyActorOfWorld
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
-import com.valaphee.tesseract.util.ecs.Runtime
+import com.valaphee.tesseract.data.entity.Runtime
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 
 /**

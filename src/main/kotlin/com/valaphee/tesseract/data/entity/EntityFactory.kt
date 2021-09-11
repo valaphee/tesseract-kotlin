@@ -40,7 +40,7 @@ import kotlin.random.Random
  */
 class EntityFactory<C : Context> @Inject constructor(
     private val injector: Injector,
-    private val entityTypes: Map<String, out EntityTypeData>
+    private val entityTypes: Map<String, @JvmSuppressWildcards EntityTypeData>
 ) {
     operator fun <T : EntityType> invoke(type: T, attributes: Set<Attribute>, id: Long = Random.nextLong()): Entity<T, C> {
         val entityType = entityTypes[type.key]

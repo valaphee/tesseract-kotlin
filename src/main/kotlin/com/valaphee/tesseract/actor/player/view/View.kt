@@ -25,9 +25,9 @@
 package com.valaphee.tesseract.actor.player.view
 
 import com.valaphee.foundry.ecs.system.BaseFacet
-import com.valaphee.tesseract.Config
 import com.valaphee.tesseract.actor.location.Location
 import com.valaphee.tesseract.actor.location.LocationManagerMessage
+import com.valaphee.tesseract.data.Config
 import com.valaphee.tesseract.world.WorldContext
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet
 
@@ -35,7 +35,7 @@ import it.unimi.dsi.fastutil.longs.LongOpenHashSet
  * @author Kevin Ludwig
  */
 abstract class View(
-    private val config: Config.Instance
+    private val config: Config
 ) : BaseFacet<WorldContext, LocationManagerMessage>(LocationManagerMessage::class, Location::class) {
     protected val _acquiredChunks = LongOpenHashSet()
     val acquiredChunks: LongArray get() = _acquiredChunks.toLongArray()

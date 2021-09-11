@@ -26,7 +26,7 @@ package com.valaphee.tesseract.actor.player
 
 import com.valaphee.foundry.ecs.BaseAttribute
 import com.valaphee.tesseract.inventory.Inventory
-import com.valaphee.tesseract.util.ecs.Runtime
+import com.valaphee.tesseract.data.entity.Runtime
 
 /**
  * @author Kevin Ludwig

@@ -22,20 +22,15 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk.terrain
+package com.valaphee.tesseract.util.nbs
 
-import com.valaphee.foundry.ecs.BaseAttribute
-import com.valaphee.tesseract.data.entity.Runtime
-import com.valaphee.tesseract.world.chunk.Chunk
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap
 
 /**
  * @author Kevin Ludwig
  */
-@Runtime
-class TerrainRuntime(
-    center: BlockUpdateList
-) : BaseAttribute() {
-    val blockUpdates = PropagationBlockUpdateList(center)
-}
-
-val Chunk.blockUpdates get() = findAttribute(TerrainRuntime::class).blockUpdates
+class Layer(
+    var name: String,
+    var volume: Float,
+    val notes: Int2ObjectMap<Note>
+)

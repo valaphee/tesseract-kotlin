@@ -60,7 +60,7 @@ object ComponentKeyResolver : TypeIdResolverBase() {
 
     override fun idFromValueAndType(value: Any, suggestedType: Class<*>) = idFromValue(value)
 
-    override fun typeFromId(context: DatabindContext, key: String) = ComponentRegistry.byKeyOrNull(key)?.let { context.constructType(it) }
+    override fun typeFromId(context: DatabindContext, key: String) = ComponentRegistry.byKeyOrNull(key)?.let { context.constructType(it) } ?: throw UnknownComponentException(key)
 
     override fun getMechanism() = JsonTypeInfo.Id.NAME
 }
@@ -70,7 +70,7 @@ object ComponentKeyResolver : TypeIdResolverBase() {
  */
 object ComponentKeySerializer : JsonSerializer<Class<*>>() {
     override fun serialize(value: Class<*>, generator: JsonGenerator, provider: SerializerProvider) {
-        generator.writeFieldName(ComponentRegistry.byValueOrNull(value))
+        ComponentRegistry.byValueOrNull(value)?.let { generator.writeFieldName(it) } ?: throw UnknownComponentException(value.toString())
     }
 }
 
@@ -78,5 +78,5 @@ object ComponentKeySerializer : JsonSerializer<Class<*>>() {
  * @author Kevin Ludwig
  */
 object ComponentKeyDeserializer : KeyDeserializer() {
-    override fun deserializeKey(key: String, context: DeserializationContext) = ComponentRegistry.byKeyOrNull(key)
+    override fun deserializeKey(key: String, context: DeserializationContext) = ComponentRegistry.byKeyOrNull(key) ?: throw UnknownComponentException(key)
 }

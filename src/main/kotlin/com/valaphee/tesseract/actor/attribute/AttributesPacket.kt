@@ -35,9 +35,9 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.Clientbound)
 data class AttributesPacket(
-    var runtimeEntityId: Long = 0,
-    val attributes: Attributes = Attributes(),
-    var tick: Long = 0
+    var runtimeEntityId: Long,
+    val attributes: Attributes,
+    var tick: Long
 ) : Packet {
     override val id get() = 0x1D
 

@@ -29,24 +29,20 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.dataformat.smile.SmileFactory
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.google.inject.AbstractModule
 import com.google.inject.Injector
 import com.google.inject.Module
-import com.google.inject.TypeLiteral
 import com.google.inject.name.Names
 import com.valaphee.foundry.ecs.entity.Entity
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
-import com.valaphee.tesseract.data.ComponentRegistry
-import com.valaphee.tesseract.data.Data
+import com.valaphee.tesseract.data.Config
+import com.valaphee.tesseract.data.DataModule
+import com.valaphee.tesseract.data.entity.EntityDeserializer
 import com.valaphee.tesseract.data.entity.EntityFactory
-import com.valaphee.tesseract.data.entity.EntityTypeData
-import com.valaphee.tesseract.util.ecs.EntityDeserializer
-import com.valaphee.tesseract.util.ecs.EntitySerializer
+import com.valaphee.tesseract.data.entity.EntitySerializer
 import com.valaphee.tesseract.util.jackson.Float2Deserializer
 import com.valaphee.tesseract.util.jackson.Float2Serializer
 import com.valaphee.tesseract.util.jackson.Float3Deserializer
@@ -57,7 +53,6 @@ import com.valaphee.tesseract.world.chunk.terrain.generator.Generator
 import com.valaphee.tesseract.world.chunk.terrain.generator.normal.NormalGenerator
 import com.valaphee.tesseract.world.provider.Provider
 import com.valaphee.tesseract.world.provider.TesseractProvider
-import io.github.classgraph.ClassGraph
 import io.netty.channel.EventLoopGroup
 import io.netty.channel.epoll.Epoll
 import io.netty.channel.epoll.EpollDatagramChannel
@@ -105,18 +100,10 @@ abstract class Instance(
             bind(this@Instance.javaClass).toInstance(this@Instance)
             bind(Provider::class.java).to(TesseractProvider::class.java)
             bind(Generator::class.java).toInstance(/*FlatGenerator("minecraft:bedrock,3*minecraft:stone,52*minecraft:sandstone;minecraft:desert")*/NormalGenerator(0))
-
-            ComponentRegistry.scan()
-            ClassGraph().acceptPaths("data").scan().use {
-                val objectMapper = jacksonObjectMapper()
-                objectMapper.enable(com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_COMMENTS)
-                val data = it.allResources.map { resource -> objectMapper.readValue<Data>(resource.url) }
-                bind(object : TypeLiteral<Map<String, EntityTypeData>>() {}).toInstance(data.filterIsInstance<EntityTypeData>().associateBy { it.key })
-            }
         }
-    }, getModule())
+    }, getModule(), DataModule(injector.getInstance(Argument::class.java)))
 
-    protected val config: Config.Instance = injector.getInstance(Config.Instance::class.java)
+    protected val config: Config = this.injector.getInstance(Config::class.java)
 
     private val executor = Executors.newFixedThreadPool(config.concurrency, ThreadFactoryBuilder().setNameFormat("world-%d").setDaemon(false).build())
     internal val coroutineScope = CoroutineScope(executor.asCoroutineDispatcher() + SupervisorJob() + CoroutineExceptionHandler { context, throwable -> log.error("Unhandled exception caught in $context", throwable) })

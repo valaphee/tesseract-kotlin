@@ -22,20 +22,18 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk.terrain
+package com.valaphee.tesseract.data.locale
 
-import com.valaphee.foundry.ecs.BaseAttribute
-import com.valaphee.tesseract.data.entity.Runtime
-import com.valaphee.tesseract.world.chunk.Chunk
+import com.google.inject.Inject
+import java.util.Locale
 
 /**
  * @author Kevin Ludwig
  */
-@Runtime
-class TerrainRuntime(
-    center: BlockUpdateList
-) : BaseAttribute() {
-    val blockUpdates = PropagationBlockUpdateList(center)
-}
+class I18n @Inject constructor(
+    private val locales: Map<String, @JvmSuppressWildcards LocaleData>
+) {
+    private val default = locales["tesseract:en_us"] ?: locales.values.first()
 
-val Chunk.blockUpdates get() = findAttribute(TerrainRuntime::class).blockUpdates
+    operator fun get(locale: Locale) = locales["tesseract:${locale.toLanguageTag().replace('-', '_')}"] ?: default
+}

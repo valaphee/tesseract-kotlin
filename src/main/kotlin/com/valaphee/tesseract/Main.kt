@@ -24,18 +24,11 @@
 
 package com.valaphee.tesseract
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.PropertyNamingStrategies
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.inject.AbstractModule
 import com.google.inject.Guice
-import com.google.inject.name.Names
 import com.valaphee.tesseract.actor.ActorTypeRegistry
 import com.valaphee.tesseract.command.CommandManager
 import com.valaphee.tesseract.inventory.CreativeInventoryPacket
@@ -53,8 +46,6 @@ import com.valaphee.tesseract.util.getJsonArray
 import com.valaphee.tesseract.util.getListTag
 import com.valaphee.tesseract.util.getString
 import com.valaphee.tesseract.util.getStringOrNull
-import com.valaphee.tesseract.util.jackson.PatternDeserializer
-import com.valaphee.tesseract.util.jackson.PatternSerializer
 import com.valaphee.tesseract.util.nbt.NbtInputStream
 import com.valaphee.tesseract.world.chunk.terrain.block.Block
 import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
@@ -67,7 +58,6 @@ import java.io.IOException
 import java.io.InputStreamReader
 import java.lang.invoke.MethodHandles
 import java.util.Base64
-import java.util.regex.Pattern
 import kotlin.concurrent.thread
 
 lateinit var biomeDefinitionsPacket: BiomeDefinitionsPacket
@@ -152,17 +142,6 @@ fun main(arguments: Array<String>) {
 
     val guice = Guice.createInjector(object : AbstractModule() {
         override fun configure() {
-            bind(ObjectMapper::class.java).annotatedWith(Names.named("config")).toInstance(ObjectMapper().apply {
-                registerKotlinModule()
-                registerModule(
-                    SimpleModule()
-                        .addSerializer(Pattern::class.java, PatternSerializer)
-                        .addDeserializer(Pattern::class.java, PatternDeserializer)
-                )
-                propertyNamingStrategy = PropertyNamingStrategies.KEBAB_CASE
-                enable(SerializationFeature.INDENT_OUTPUT)
-                configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            })
             bind(Argument::class.java).toInstance(argument)
         }
     })

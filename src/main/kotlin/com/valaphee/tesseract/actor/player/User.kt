@@ -27,7 +27,7 @@ package com.valaphee.tesseract.actor.player
 import com.google.gson.JsonObject
 import com.valaphee.foundry.ecs.BaseAttribute
 import com.valaphee.tesseract.util.address
-import com.valaphee.tesseract.util.ecs.Runtime
+import com.valaphee.tesseract.data.entity.Runtime
 import com.valaphee.tesseract.util.getBoolOrNull
 import com.valaphee.tesseract.util.getIntOrNull
 import com.valaphee.tesseract.util.getLong

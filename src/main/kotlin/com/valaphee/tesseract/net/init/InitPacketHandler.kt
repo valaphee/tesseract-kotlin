@@ -25,9 +25,9 @@
 package com.valaphee.tesseract.net.init
 
 import com.google.inject.Inject
-import com.valaphee.tesseract.Config
 import com.valaphee.tesseract.actor.player.AuthExtra
 import com.valaphee.tesseract.actor.player.User
+import com.valaphee.tesseract.data.Config
 import com.valaphee.tesseract.net.Connection
 import com.valaphee.tesseract.net.EncryptionInitializer
 import com.valaphee.tesseract.net.Packet
@@ -47,7 +47,7 @@ class InitPacketHandler(
     private val worldContext: WorldContext,
     private val connection: Connection
 ) : PacketHandler {
-    @Inject private lateinit var config: Config.Instance.Listener
+    @Inject private lateinit var config: Config
     @Inject private lateinit var keyPair: KeyPair
 
     private var state: State? = null
@@ -85,7 +85,7 @@ class InitPacketHandler(
         connection.protocolVersion = packet.protocolVersion
         authExtra = packet.authExtra
         user = packet.user
-        if (config.verification && !packet.verified) {
+        if (config.listener.verification && !packet.verified) {
             state = State.Finished
 
             log.warn("{}: Could not be verified", this)
@@ -93,7 +93,7 @@ class InitPacketHandler(
 
             return
         }
-        if (!config.userNamePattern.matcher(authExtra.userName).matches()) {
+        if (!config.listener.userNamePattern.matcher(authExtra.userName).matches()) {
             state = State.Finished
 
             log.warn("{}: Has an invalid name", this)
@@ -102,7 +102,7 @@ class InitPacketHandler(
             return
         }
 
-        if (config.encryption) {
+        if (config.listener.encryption) {
             state = State.Encryption
 
             val encryptionInitializer = EncryptionInitializer(keyPair, packet.publicKey, connection.protocolVersion >= 431)
@@ -135,7 +135,7 @@ class InitPacketHandler(
             PacksResponsePacket.Status.Completed -> {
                 state = State.Finished
 
-                connection.setHandler(WorldPacketHandler(worldContext, connection, authExtra, user, config.caching && cacheSupported))
+                connection.setHandler(WorldPacketHandler(worldContext, connection, authExtra, user, config.listener.caching && cacheSupported))
             }
         }
     }

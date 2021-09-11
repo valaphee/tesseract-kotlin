@@ -24,6 +24,7 @@
 
 package com.valaphee.tesseract.world
 
+import com.google.inject.Inject
 import com.valaphee.foundry.ecs.Pass
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
@@ -32,6 +33,7 @@ import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.actor.player.authExtra
 import com.valaphee.tesseract.actor.player.user
 import com.valaphee.tesseract.data.Component
+import com.valaphee.tesseract.data.locale.I18n
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.base.TextPacket
 import com.valaphee.tesseract.net.connection
@@ -41,12 +43,15 @@ import com.valaphee.tesseract.world.entity.EntityRemove
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.util.Locale
 
 /**
  * @author Kevin Ludwig
  */
 @Component("tesseract:player_list")
-class PlayerList : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMessage::class) {
+class PlayerList @Inject constructor(
+    private val i18n: I18n
+) : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMessage::class) {
     private val players = Long2ObjectOpenHashMap<Player>()
 
     override suspend fun receive(message: EntityManagerMessage): Response {
@@ -62,10 +67,11 @@ class PlayerList : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMe
                     PlayerListPacket.Entry(authExtra.userId, it.id, authExtra.userName, authExtra.xboxUserId, "", user.operatingSystem, user.appearance, false, false)
                 }.toTypedArray()))
 
-                broadcastSystemMessage("${it.authExtra.userName} entered the world")
+                println("${Locale.ENGLISH.toLanguageTag()}")
+                broadcastSystemMessage(i18n[Locale.US].format("player_list.player_add", it.authExtra.userName))
             }
             is EntityRemove -> message.entities.mapNotNull { players.remove(it.id) }.forEach {
-                broadcastSystemMessage("${it.authExtra.userName} exited the world")
+                broadcastSystemMessage(i18n[Locale.US].format("player_list.player_remove", it.authExtra.userName))
                 broadcast(PlayerListPacket(PlayerListPacket.Action.Remove, arrayOf(PlayerListPacket.Entry(it.authExtra.userId))))
             }
         }

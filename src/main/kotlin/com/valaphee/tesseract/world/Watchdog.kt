@@ -24,7 +24,7 @@
 
 package com.valaphee.tesseract.world
 
-import com.valaphee.tesseract.Config
+import com.valaphee.tesseract.data.Config
 import com.valaphee.tesseract.defaultSystemErr
 import com.valaphee.tesseract.terminal
 import com.valaphee.tesseract.util.center
@@ -34,7 +34,7 @@ import java.lang.management.ManagementFactory
  * @author Kevin Ludwig
  */
 class Watchdog(
-    private val config: Config.Instance.Watchdog
+    private val config: Config.Watchdog
 ) : Thread("watchdog") {
     private var last = 0L
 

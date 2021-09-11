@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.util.ecs
+package com.valaphee.tesseract.data.entity
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
@@ -34,7 +34,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.valaphee.foundry.ecs.Attribute
 import com.valaphee.foundry.ecs.entity.Entity
 import com.valaphee.foundry.ecs.entity.EntityType
-import com.valaphee.tesseract.data.entity.EntityFactory
 import com.valaphee.tesseract.world.WorldContext
 import kotlin.reflect.full.hasAnnotation
 
@@ -46,8 +45,6 @@ object EntitySerializer : JsonSerializer<Entity<*, *>>() {
         generator.writeStartObject()
         generator.writeNumberField("id", value.id)
         generator.writeObjectField("attributes", value.attributes.filter { !it::class.hasAnnotation<Runtime>() }.associateBy { it::class.qualifiedName }.toMap())
-        /*generator.writeObjectField("behaviors", value.behaviors.map { it::class.qualifiedName })
-        generator.writeObjectField("facets", value.facets.map { it::class.qualifiedName })*/
         generator.writeEndObject()
     }
 }

@@ -28,11 +28,11 @@ import com.google.inject.Inject
 import com.valaphee.foundry.ecs.Pass
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.math.Int2
-import com.valaphee.tesseract.Config
 import com.valaphee.tesseract.actor.location.LocationManagerMessage
 import com.valaphee.tesseract.actor.location.position
 import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.data.Component
+import com.valaphee.tesseract.data.Config
 import com.valaphee.tesseract.world.chunk.ChunkAcquire
 import com.valaphee.tesseract.world.chunk.ChunkRelease
 import com.valaphee.tesseract.world.chunk.encodePosition
@@ -51,7 +51,7 @@ import kotlin.math.sin
  */
 @Component("tesseract:radial_expansion_view")
 class RadialExpansionView @Inject constructor(
-    config: Config.Instance
+    config: Config
 ) : View(config) {
     private lateinit var lastChunkPosition: Int2
 

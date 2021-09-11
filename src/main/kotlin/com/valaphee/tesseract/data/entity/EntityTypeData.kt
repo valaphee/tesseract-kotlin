@@ -36,7 +36,7 @@ import com.valaphee.tesseract.data.Keyed
  * @author Kevin Ludwig
  */
 @Component("tesseract:entity_type")
-open class EntityTypeData(
+class EntityTypeData(
     override var key: String,
     @JsonSerialize(keyUsing = ComponentKeySerializer::class)
     @JsonDeserialize(keyUsing = ComponentKeyDeserializer::class)

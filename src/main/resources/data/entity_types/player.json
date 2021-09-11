@@ -5,7 +5,7 @@
     "facets": {
       /*LocationManagerMessage*/
       "tesseract:location_manager": {},
-      "tesseract:radial_expansion_view": {},
+      "tesseract:radial_view": {},
       "tesseract:player_location_packetizer": {},
       /*ViewChunk*/
       "tesseract:view_chunk_packetizer": {},

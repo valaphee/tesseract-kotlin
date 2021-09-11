@@ -25,7 +25,7 @@
 package com.valaphee.tesseract.world
 
 import com.valaphee.foundry.ecs.Engine
-import com.valaphee.tesseract.Config
+import com.valaphee.tesseract.data.Config
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -37,7 +37,7 @@ import kotlin.coroutines.CoroutineContext
  * @author Kevin Ludwig
  */
 class WorldEngine(
-    config: Config.Instance,
+    config: Config,
     cyclesPerSecond: Float = 50.0f,
     override val coroutineContext: CoroutineContext
 ) : Engine<WorldContext>, CoroutineScope {

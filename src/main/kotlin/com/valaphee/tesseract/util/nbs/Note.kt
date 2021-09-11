@@ -22,10 +22,12 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.util.ecs
+package com.valaphee.tesseract.util.nbs
 
 /**
  * @author Kevin Ludwig
  */
-@Target(AnnotationTarget.CLASS)
-annotation class Runtime
+class Note(
+    val instrument: Int,
+    val pitch: Int
+)
