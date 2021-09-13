@@ -74,6 +74,6 @@ object SoundStopPacketReader : PacketReader {
             sound = null
             soundKey2 = null
         }
-        return SoundStopPacket(sound, soundKey)
+        return SoundStopPacket(sound, soundKey2)
     }
 }

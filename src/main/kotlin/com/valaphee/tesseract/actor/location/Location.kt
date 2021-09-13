@@ -34,20 +34,11 @@ import com.valaphee.tesseract.actor.AnyActorOfWorld
  */
 class Location(
     var position: Float3,
+    var velocity: Float3 = Float3.Zero,
     var rotation: Float2 = Float2.Zero,
-    var headRotationYaw: Float = 0.0f
-) : BaseAttribute()
+    var headRotationYaw: Float = 0.0f,
+) : BaseAttribute() {
+    var onGround = false
+}
 
 val AnyActorOfWorld.location get() = findAttribute(Location::class)
-
-var AnyActorOfWorld.position
-    get() = findAttribute(Location::class).position
-    set(value) {
-        findAttribute(Location::class).also { it.position = value }
-    }
-
-var AnyActorOfWorld.rotation
-    get() = findAttribute(Location::class).rotation
-    set(value) {
-        findAttribute(Location::class).also { it.rotation = value }
-    }

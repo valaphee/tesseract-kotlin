@@ -116,12 +116,12 @@ open class LittleEndianByteBufInputStream constructor(
         if (available == 0) return null
         if (lineBuffer != null) lineBuffer!!.setLength(0)
         loop@ do {
-            val character = buffer.readUnsignedByte().toChar()
+            val character = buffer.readUnsignedByte().toInt().toChar()
             available--
             when (character) {
                 '\n' -> break@loop
                 '\r' -> {
-                    if (available > 0 && '\n' == buffer.getUnsignedByte(buffer.readerIndex()).toChar()) buffer.skipBytes(1)
+                    if (available > 0 && '\n' == buffer.getUnsignedByte(buffer.readerIndex()).toInt().toChar()) buffer.skipBytes(1)
                     break@loop
                 }
                 else -> {

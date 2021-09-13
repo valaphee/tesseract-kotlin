@@ -27,7 +27,6 @@ package com.valaphee.tesseract.actor.stack
 import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.actor.ActorType
 import com.valaphee.tesseract.actor.location.Location
-import com.valaphee.tesseract.actor.location.physic.Motion
 import com.valaphee.tesseract.actor.metadata.Metadata
 import com.valaphee.tesseract.data.entity.EntityFactory
 import com.valaphee.tesseract.world.EntityOfWorld
@@ -40,10 +39,9 @@ object StackType : ActorType("minecraft:item")
 
 typealias Stack = EntityOfWorld<StackType>
 
-fun EntityFactory<WorldContext>.stack(position: Float3, motion: Float3, stack: com.valaphee.tesseract.inventory.item.stack.Stack<*>?) = invoke(
+fun EntityFactory<WorldContext>.stack(position: Float3, velocity: Float3, stack: com.valaphee.tesseract.inventory.item.stack.Stack<*>?) = invoke(
     StackType, setOf(
-        Location(position),
-        Motion(motion),
+        Location(position, velocity),
         Metadata(),
         StackWrapper(stack)
     )

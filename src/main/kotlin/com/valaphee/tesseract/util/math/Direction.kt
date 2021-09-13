@@ -25,8 +25,13 @@
 package com.valaphee.tesseract.util.math
 
 import com.valaphee.foundry.math.Float2
+import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
+import com.valaphee.foundry.math.MutableFloat3
+import com.valaphee.foundry.math.toRad
 import java.util.EnumMap
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * @author Kevin Ludwig
@@ -132,4 +137,11 @@ fun Float2.toDirection(withVertical: Boolean = false): Direction {
         135 <= yaw && yaw < 225 -> Direction.South
         else -> Direction.West
     }
+}
+
+fun Float2.toDirectionVector(): MutableFloat3 {
+    val pitch = x.toRad()
+    val yaw = y.toRad()
+    val xz = cos(pitch)
+    return MutableFloat3(-xz * sin(yaw), -sin(pitch), xz * cos(yaw)).normalize()
 }

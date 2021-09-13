@@ -29,8 +29,6 @@ import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.actor.location.Teleport
 import com.valaphee.tesseract.actor.location.location
-import com.valaphee.tesseract.actor.location.position
-import com.valaphee.tesseract.actor.location.rotation
 import com.valaphee.tesseract.actor.metadata.Flag
 import com.valaphee.tesseract.actor.metadata.Metadata
 import com.valaphee.tesseract.actor.metadata.MetadataField
@@ -57,6 +55,7 @@ import com.valaphee.tesseract.actor.player.view.View
 import com.valaphee.tesseract.actor.player.view.ViewDistancePacket
 import com.valaphee.tesseract.actor.player.view.ViewDistanceRequestPacket
 import com.valaphee.tesseract.actor.player.windowManager
+import com.valaphee.tesseract.actor.stack.stack
 import com.valaphee.tesseract.biomeDefinitionsPacket
 import com.valaphee.tesseract.command.net.CommandPacket
 import com.valaphee.tesseract.command.net.Origin
@@ -84,6 +83,7 @@ import com.valaphee.tesseract.net.base.TextPacket
 import com.valaphee.tesseract.net.base.ViolationPacket
 import com.valaphee.tesseract.net.init.StatusPacket
 import com.valaphee.tesseract.util.math.Direction
+import com.valaphee.tesseract.util.math.toDirectionVector
 import com.valaphee.tesseract.world.chunk.Chunk
 import com.valaphee.tesseract.world.chunk.ChunkRelease
 import com.valaphee.tesseract.world.chunk.chunkBroadcast
@@ -133,7 +133,8 @@ class WorldPacketHandler(
 
         val settings = context.world.settings
         val environment = context.world.environment
-        connection.write(WorldPacket(player.id, player.id, GameMode.Default, player.position, player.rotation, 0, WorldPacket.BiomeType.Default, "plains", Dimension.Overworld, WorldPacket.Overworld, settings.gameMode, settings.difficulty, Int3.Zero, true, environment.time, WorldPacket.EducationEditionOffer.None, 0, false, "", environment.rainLevel, environment.thunderLevel, false, true, true, GamePublishMode.FriendsOfFriends, GamePublishMode.FriendsOfFriends, true, false, settings.gameRules.toTypedArray(), settings.experiments.toTypedArray(), false, false, false, Rank.Operator, 4, false, false, false, false, false, false, false, "*", 16, 16, false, false, "Tesseract", "Tesseract", "00000000-0000-0000-0000-000000000000", false, WorldPacket.AuthoritativeMovement.Client, 0, true, context.cycle, 0, null, null, null, emptyArray(), null, Item.all.toTypedArray(), "", true, "Tesseract"))
+        val location = player.location
+        connection.write(WorldPacket(player.id, player.id, GameMode.Default, location.position, location.rotation, 0, WorldPacket.BiomeType.Default, "plains", Dimension.Overworld, WorldPacket.Overworld, settings.gameMode, settings.difficulty, Int3.Zero, true, environment.time, WorldPacket.EducationEditionOffer.None, 0, false, "", environment.rainLevel, environment.thunderLevel, false, true, true, GamePublishMode.FriendsOfFriends, GamePublishMode.FriendsOfFriends, true, false, settings.gameRules.toTypedArray(), settings.experiments.toTypedArray(), false, false, false, Rank.Operator, 4, false, false, false, false, false, false, false, "*", 16, 16, false, false, "Tesseract", "Tesseract", "00000000-0000-0000-0000-000000000000", false, WorldPacket.AuthoritativeMovement.Client, 0, true, context.cycle, 0, null, null, null, emptyArray(), null, Item.all.toTypedArray(), "", true, "Tesseract"))
 
         connection.write(biomeDefinitionsPacket)
         connection.write(entityIdentifiersPacket)
@@ -142,7 +143,7 @@ class WorldPacketHandler(
 
         connection.write(MetadataPacket(player.id, player.metadata, 0))
 
-        player.sendMessage(Teleport(context, player, player, player.position, player.rotation)) // notify view
+        player.sendMessage(Teleport(context, player, player, location.position, location.rotation)) // notify view
     }
 
     override fun destroy() {
@@ -221,7 +222,7 @@ class WorldPacketHandler(
     override fun emote(packet: EmotePacket) {
         if (packet.runtimeEntityId != player.id) return
 
-        context.world.chunkBroadcast(context, player.position, packet)
+        context.world.chunkBroadcast(context, player.location.position, packet)
     }
 
     override fun input(packet: InputPacket) {
@@ -241,6 +242,13 @@ class WorldPacketHandler(
                         val destinationStack = destinationInventory.getSlot(destinationSlotId)
                         sourceInventory.setSlot(sourceSlotId, destinationStack)
                         destinationInventory.setSlot(destinationSlotId, sourceStack)
+                    }
+                    InventoryRequestPacket.ActionType.Drop -> {
+                        val (sourceInventory, sourceSlotId) = windowManager.select(it.sourceSlotType!!, it.sourceSlotId)
+                        val sourceStack = sourceInventory.getSlot(sourceSlotId)
+                        sourceInventory.setSlot(sourceSlotId, null)
+                        val location = player.location
+                        context.world.addEntities(context, player, context.entityFactory.stack(location.position, location.rotation.toDirectionVector().scale(0.4f), sourceStack))
                     }
                     InventoryRequestPacket.ActionType.Destroy -> {
                         val (sourceInventory, sourceSlotId) = windowManager.select(it.sourceSlotType!!, it.sourceSlotId)

@@ -28,10 +28,8 @@ import com.valaphee.foundry.ecs.Consumed
 import com.valaphee.foundry.ecs.Pass
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
-import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.actor.ActorRemovePacket
 import com.valaphee.tesseract.actor.location.location
-import com.valaphee.tesseract.actor.location.position
 import com.valaphee.tesseract.actor.metadata.metadata
 import com.valaphee.tesseract.data.Component
 import com.valaphee.tesseract.world.WorldContext
@@ -51,13 +49,13 @@ class PlayerPacketizer : BaseFacet<WorldContext, EntityManagerMessage>(EntityMan
             is EntityAdd -> message.entities.first().filter<PlayerType> {
                 val context = message.context
                 val location = it.location
-                context.world.chunkBroadcast(context, it, location.position, PlayerAddPacket(it.authExtra.userId, it.authExtra.userName, it.id, it.id, "", location.position, Float3.Zero, location.rotation, location.headRotationYaw, null, it.metadata, 0, emptyArray(), "", it.user.operatingSystem))
+                context.world.chunkBroadcast(context, it, location.position, PlayerAddPacket(it.authExtra.userId, it.authExtra.userName, it.id, it.id, "", location.position, location.velocity, location.rotation, location.headRotationYaw, null, it.metadata, 0, emptyArray(), "", it.user.operatingSystem))
 
                 return Consumed
             }
             is EntityRemove -> message.entities.first().filter<PlayerType> {
                 val context = message.context
-                context.world.chunkBroadcast(context, it, it.position, ActorRemovePacket(it.id))
+                context.world.chunkBroadcast(context, it, it.location.position, ActorRemovePacket(it.id))
 
                 return Consumed
             }

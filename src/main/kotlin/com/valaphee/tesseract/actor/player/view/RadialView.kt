@@ -29,7 +29,7 @@ import com.valaphee.foundry.ecs.Pass
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.math.Int2
 import com.valaphee.tesseract.actor.location.LocationManagerMessage
-import com.valaphee.tesseract.actor.location.position
+import com.valaphee.tesseract.actor.location.location
 import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.data.Component
 import com.valaphee.tesseract.data.Config
@@ -51,7 +51,7 @@ class RadialView @Inject constructor(
 
     override suspend fun receive(message: LocationManagerMessage): Response {
         message.entity?.filter<PlayerType> { player ->
-            val position = player.position.toInt3()
+            val position = player.location.position.toInt3()
             val chunkX = position.x shr 4
             val chunkZ = position.z shr 4
             val chunkPosition = Int2(chunkX, chunkZ)

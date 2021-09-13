@@ -42,6 +42,7 @@ import com.valaphee.tesseract.world.chunk.terrain.modified
 import com.valaphee.tesseract.world.entity.addEntities
 import com.valaphee.tesseract.world.entity.removeEntities
 import com.valaphee.tesseract.world.filter
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap
 import it.unimi.dsi.fastutil.longs.Long2ObjectMaps
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import kotlinx.coroutines.CompletableDeferred
@@ -135,22 +136,28 @@ class ChunkManager @Inject constructor(
             is ChunkAcquire -> {
                 val chunks = message.positions.map { chunks[it] }.filterNotNull()
                 if (chunks.isNotEmpty()) {
+                    message.source?.filter<PlayerType> { chunks.forEach { chunk -> chunk.actors += it } }
+
                     message.usage.chunks = chunks.toTypedArray()
                     message.source?.sendMessage(message.usage)
                 }
                 if (message.positions.size != chunks.size) instance.coroutineScope.launch {
                     val loadedChunks = message.positions.filterNot(this@ChunkManager.chunks::containsKey).map { AwaitedChunk(decodePosition(it)).also { awaitedChunksChannel.send(it) }.awaiting.await() }.toTypedArray()
                     context.world.addEntities(context, message.source, *loadedChunks)
+
+                    message.source?.filter<PlayerType> { loadedChunks.forEach { chunk -> chunk.actors += it } }
+
                     message.usage.chunks = loadedChunks
                     message.source?.sendMessage(message.usage)
                 }
             }
             is ChunkRelease -> {
                 val chunksRemoved = message.positions.filter { chunkPosition ->
-                    chunks[chunkPosition]?.let { chunk ->
+                    chunks[chunkPosition]!!.let { chunk ->
                         message.source?.filter<PlayerType> { chunk.actors -= it }
+
                         chunk.actors.none { it.type == PlayerType }
-                    } ?: false // TODO
+                    }
                 }.map(chunks::remove)
                 if (chunksRemoved.isNotEmpty()) {
                     context.provider.saveChunks(chunksRemoved.filter { it.modified }.onEach {
@@ -172,7 +179,7 @@ class ChunkManager @Inject constructor(
         return Consumed
     }
 
-    private inner class AwaitedChunk(
+    private class AwaitedChunk(
         val position: Int2,
         val awaiting: CompletableDeferred<Chunk> = CompletableDeferred()
     )

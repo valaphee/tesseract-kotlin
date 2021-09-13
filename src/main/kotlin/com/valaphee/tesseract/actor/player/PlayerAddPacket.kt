@@ -51,7 +51,7 @@ data class PlayerAddPacket(
     var runtimeEntityId: Long,
     var platformChatId: String,
     var position: Float3,
-    var motion: Float3,
+    var velocity: Float3,
     var rotation: Float2,
     var headRotationYaw: Float,
     var stackInHand: Stack<*>?,
@@ -74,7 +74,7 @@ data class PlayerAddPacket(
         buffer.writeVarULong(runtimeEntityId)
         buffer.writeString(platformChatId)
         buffer.writeFloat3(position)
-        buffer.writeFloat3(motion)
+        buffer.writeFloat3(velocity)
         buffer.writeFloat2(rotation)
         buffer.writeFloatLE(headRotationYaw)
         if (version >= 431) buffer.writeStack(stackInHand) else buffer.writeStackPre431(stackInHand)
@@ -109,7 +109,7 @@ data class PlayerAddPacket(
         if (runtimeEntityId != other.runtimeEntityId) return false
         if (platformChatId != other.platformChatId) return false
         if (position != other.position) return false
-        if (motion != other.motion) return false
+        if (velocity != other.velocity) return false
         if (rotation != other.rotation) return false
         if (headRotationYaw != other.headRotationYaw) return false
         if (stackInHand != other.stackInHand) return false
@@ -129,7 +129,7 @@ data class PlayerAddPacket(
         result = 31 * result + runtimeEntityId.hashCode()
         result = 31 * result + platformChatId.hashCode()
         result = 31 * result + position.hashCode()
-        result = 31 * result + motion.hashCode()
+        result = 31 * result + velocity.hashCode()
         result = 31 * result + rotation.hashCode()
         result = 31 * result + headRotationYaw.hashCode()
         result = 31 * result + (stackInHand?.hashCode() ?: 0)

@@ -88,7 +88,7 @@ open class LittleEndianByteBufOutputStream(
     }
 
     override fun writeChars(value: String) {
-        value.indices.forEach { buffer.writeChar(value[it].toInt()) }
+        value.indices.forEach { buffer.writeChar(value[it].code) }
     }
 
     override fun writeUTF(value: String) {

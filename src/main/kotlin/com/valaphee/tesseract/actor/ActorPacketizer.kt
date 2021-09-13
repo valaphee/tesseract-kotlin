@@ -28,10 +28,11 @@ import com.valaphee.foundry.ecs.Consumed
 import com.valaphee.foundry.ecs.Pass
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
-import com.valaphee.foundry.math.Float3
+import com.valaphee.tesseract.actor.attribute.Attributes
 import com.valaphee.tesseract.actor.attribute._attributes
+import com.valaphee.tesseract.actor.location.Location
 import com.valaphee.tesseract.actor.location.location
-import com.valaphee.tesseract.actor.location.position
+import com.valaphee.tesseract.actor.metadata.Metadata
 import com.valaphee.tesseract.actor.metadata.metadata
 import com.valaphee.tesseract.data.Component
 import com.valaphee.tesseract.world.WorldContext
@@ -45,19 +46,19 @@ import com.valaphee.tesseract.world.filter
  * @author Kevin Ludwig
  */
 @Component("tesseract:actor_packetizer")
-class ActorPacketizer : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMessage::class) {
+class ActorPacketizer : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMessage::class, Location::class, Metadata::class, Attributes::class) {
     override suspend fun receive(message: EntityManagerMessage): Response {
         when (message) {
             is EntityAdd -> message.entities.first().filter<ActorType> {
                 val context = message.context
                 val location = it.location
-                context.world.chunkBroadcast(context, location.position, ActorAddPacket(it.id, it.id, it.type, location.position, Float3.Zero, location.rotation, location.headRotationYaw, it._attributes, it.metadata, emptyArray()))
+                context.world.chunkBroadcast(context, location.position, ActorAddPacket(it.id, it.id, it.type, location.position, location.velocity, location.rotation, location.headRotationYaw, it._attributes, it.metadata, emptyArray()))
 
                 return Consumed
             }
             is EntityRemove -> message.entities.first().filter<ActorType> {
                 val context = message.context
-                context.world.chunkBroadcast(context, it.position, ActorRemovePacket(it.id))
+                context.world.chunkBroadcast(context, it.location.position, ActorRemovePacket(it.id))
 
                 return Consumed
             }

@@ -40,16 +40,17 @@ import com.valaphee.tesseract.world.filter
 class LocationManager : BaseFacet<WorldContext, LocationManagerMessage>(LocationManagerMessage::class, Location::class) {
     override suspend fun receive(message: LocationManagerMessage): Response {
         message.entity?.filter<ActorType> {
+            val location = it.location
             when (message) {
-                is Move -> it.position += message.move.toMutableFloat3().rotate(it.rotation.y, Float3.YAxis)
+                is Move -> location.position += message.move.toMutableFloat3().rotate(location.rotation.y, Float3.YAxis)
                 is MoveRotate -> {
-                    it.rotation = message.rotation
-                    it.position += message.move.toMutableFloat3().rotate(it.rotation.y, Float3.YAxis)
+                    location.rotation = message.rotation
+                    location.position += message.move.toMutableFloat3().rotate(location.rotation.y, Float3.YAxis)
                 }
-                is Rotate -> it.rotation = message.rotation
+                is Rotate -> location.rotation = message.rotation
                 is Teleport -> {
-                    it.position = message.position
-                    it.rotation = message.rotation
+                    location.position = message.position
+                    location.rotation = message.rotation
                 }
             }
         }

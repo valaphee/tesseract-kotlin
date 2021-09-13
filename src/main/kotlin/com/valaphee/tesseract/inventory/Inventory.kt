@@ -24,7 +24,7 @@
 
 package com.valaphee.tesseract.inventory
 
-import com.valaphee.tesseract.actor.location.position
+import com.valaphee.tesseract.actor.location.location
 import com.valaphee.tesseract.actor.player.Player
 import com.valaphee.tesseract.inventory.item.stack.Stack
 import com.valaphee.tesseract.net.connection
@@ -59,7 +59,7 @@ open class Inventory(
     }
 
     fun open(who: Player, windowId: Int) = sessions.putIfAbsent(who, windowId) ?: run {
-        who.connection.write(WindowOpenPacket(windowId, type, who.position.toInt3(), who.id))
+        who.connection.write(WindowOpenPacket(windowId, type, who.location.position.toInt3(), who.id))
         windowId
     }
 

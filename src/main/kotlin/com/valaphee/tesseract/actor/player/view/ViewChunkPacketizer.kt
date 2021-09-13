@@ -31,7 +31,6 @@ import com.valaphee.tesseract.data.Component
 import com.valaphee.tesseract.net.connection
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.WorldPacketHandler
-import com.valaphee.tesseract.world.chunk.actors
 
 /**
  * @author Kevin Ludwig
@@ -39,8 +38,6 @@ import com.valaphee.tesseract.world.chunk.actors
 @Component("tesseract:view_chunk_packetizer")
 class ViewChunkPacketizer : BaseFacet<WorldContext, ViewChunk>(ViewChunk::class) {
     override suspend fun receive(message: ViewChunk): Response {
-        message.chunks.forEach { it.actors += message.source } // TODO
-
         val connection = message.source.connection
         connection.write(ChunkPublishPacket(message.center, message.radius shl 4))
         (connection.handler as WorldPacketHandler).writeChunks(message.chunks)

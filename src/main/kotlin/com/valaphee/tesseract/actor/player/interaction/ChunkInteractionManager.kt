@@ -33,7 +33,6 @@ import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.position
 import com.valaphee.tesseract.world.chunk.terrain.blockStorage
 import com.valaphee.tesseract.world.chunk.terrain.blockUpdates
-import kotlin.system.measureNanoTime
 
 /**
  * @author Kevin Ludwig
@@ -52,12 +51,10 @@ class ChunkInteractionManager :  BaseFacet<WorldContext, ChunkInteractionManager
                 val blockState = BlockState.byId(chunk.blockStorage[x, y, z])
                 if (blockState.id != airId) {
                     if (blockState.block?.onUse(message.context, message.source, chunk.blockUpdates, x, y, z, message.direction, message.clickPosition) != true) message.stackInHand?.let {
-                        println(measureNanoTime {
-                            if (it.item.item?.onUseBlock(message.context, message.source, chunk.position, chunk.blockUpdates, x, y, z, message.direction, message.clickPosition) != true && it.blockRuntimeId != 0) {
-                                val (xOffset, yOffset, zOffset) = message.direction.axis
-                                chunk.blockUpdates[x + xOffset, y + yOffset, z + zOffset] = it.blockRuntimeId
-                            }
-                        })
+                        if (it.item.item?.onUseBlock(message.context, message.source, chunk.position, chunk.blockUpdates, x, y, z, message.direction, message.clickPosition) != true && it.blockRuntimeId != 0) {
+                            val (xOffset, yOffset, zOffset) = message.direction.axis
+                            chunk.blockUpdates[x + xOffset, y + yOffset, z + zOffset] = it.blockRuntimeId
+                        }
                     }
                 }
             }

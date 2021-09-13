@@ -43,7 +43,7 @@ typealias Chicken = EntityOfWorld<ChickenType>
 
 fun EntityFactory<WorldContext>.chicken(position: Float3, rotation: Float2) = invoke(
     ChickenType, setOf(
-        Location(position, rotation, rotation.x),
+        Location(position, Float3.Zero, rotation, rotation.x),
         Metadata(),
         Attributes()
     )

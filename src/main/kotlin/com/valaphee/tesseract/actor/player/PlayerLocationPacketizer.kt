@@ -44,7 +44,7 @@ class PlayerLocationPacketizer : BaseFacet<WorldContext, LocationManagerMessage>
     override suspend fun receive(message: LocationManagerMessage): Response {
         message.entity?.filter<PlayerType> {
             val location = it.location
-            message.context.world.chunkBroadcast(message.context, it, location.position, PlayerLocationPacket(it.id, location.position, location.rotation, location.headRotationYaw, PlayerLocationPacket.Mode.Normal, true, 0L, null, 0L))
+            message.context.world.chunkBroadcast(message.context, it, location.position, PlayerLocationPacket(it.id, location.position, location.rotation, location.headRotationYaw, PlayerLocationPacket.Mode.Normal, location.onGround, 0L, null, 0L))
 
             return Consumed
         }

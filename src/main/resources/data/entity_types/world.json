@@ -6,9 +6,9 @@
 
       /*EntityManagerMessage*/
       "tesseract:entity_manager": {},
+      "tesseract:stack_add_packetizer": {},
       "tesseract:player_list": {},
       "tesseract:player_packetizer": {},
-      "tesseract:stack_add_packetizer": {},
       "tesseract:actor_packetizer": {},
       /*ChunkManagerMessage*/
       "tesseract:chunk_manager": {},

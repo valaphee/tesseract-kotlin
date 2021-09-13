@@ -24,7 +24,7 @@
 
 package com.valaphee.tesseract.net
 
-import com.valaphee.tesseract.actor.location.physic.MotionPacketReader
+import com.valaphee.tesseract.actor.location.VelocityPacketReader
 import com.valaphee.tesseract.actor.player.EmotePacketReader
 import com.valaphee.tesseract.actor.player.EmotesPacketReader
 import com.valaphee.tesseract.actor.player.InputPacketReader
@@ -130,7 +130,7 @@ class PacketDecoder(
             //this[0x25] =
             //this[0x26] =
             //this[0x27] =
-            this[0x28] = MotionPacketReader
+            this[0x28] = VelocityPacketReader
             //this[0x29] =
             //this[0x2A] =
             //this[0x2B] =

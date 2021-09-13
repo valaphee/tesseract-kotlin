@@ -22,26 +22,34 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.location.physic
+package com.valaphee.tesseract.actor.location
 
-import com.valaphee.foundry.ecs.system.BaseBehavior
-import com.valaphee.tesseract.actor.ActorType
-import com.valaphee.tesseract.actor.location.Move
-import com.valaphee.tesseract.data.Component
-import com.valaphee.tesseract.world.AnyEntityOfWorld
-import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.filter
+import com.valaphee.foundry.math.Float3
+import com.valaphee.tesseract.net.Packet
+import com.valaphee.tesseract.net.PacketBuffer
+import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 
 /**
  * @author Kevin Ludwig
  */
-@Component("tesseract:physic")
-class Physic : BaseBehavior<WorldContext>() {
-    override suspend fun update(entity: AnyEntityOfWorld, context: WorldContext): Boolean {
-        entity.filter<ActorType> {
-            it.receiveMessage(Move(context, it, it.motion))
-        }
+data class VelocityPacket(
+    var runtimeEntityId: Long,
+    var velocity: Float3
+) : Packet {
+    override val id get() = 0x28
 
-        return true
+    override fun write(buffer: PacketBuffer, version: Int) {
+        buffer.writeVarULong(runtimeEntityId)
+        buffer.writeFloat3(velocity)
     }
+
+    override fun handle(handler: PacketHandler) = handler.velocity(this)
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object VelocityPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = VelocityPacket(buffer.readVarULong(), buffer.readFloat3())
 }

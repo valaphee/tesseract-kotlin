@@ -44,7 +44,7 @@ data class StackAddPacket(
     var runtimeEntityId: Long,
     var stack: Stack<*>?,
     var position: Float3,
-    var motion: Float3,
+    var velocity: Float3,
     var metadata: Metadata,
     var fromFishing: Boolean
 ) : Packet {
@@ -55,7 +55,7 @@ data class StackAddPacket(
         buffer.writeVarULong(runtimeEntityId)
         if (version >= 431) buffer.writeStack(stack) else buffer.writeStackPre431(stack)
         buffer.writeFloat3(position)
-        buffer.writeFloat3(motion)
+        buffer.writeFloat3(velocity)
         metadata.writeToBuffer(buffer)
         buffer.writeBoolean(fromFishing)
     }

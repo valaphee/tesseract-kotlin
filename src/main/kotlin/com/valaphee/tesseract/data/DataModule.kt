@@ -37,13 +37,10 @@ import com.google.inject.util.Types
 import com.valaphee.tesseract.Argument
 import com.valaphee.tesseract.data.block.Block
 import com.valaphee.tesseract.data.block.BlockState
-import com.valaphee.tesseract.data.block.BlockWrapper
 import com.valaphee.tesseract.data.item.Item
-import com.valaphee.tesseract.data.item.ItemWrapper
 import io.github.classgraph.ClassGraph
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import org.graalvm.polyglot.Context
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmName
 
@@ -57,16 +54,14 @@ class DataModule(
         ComponentRegistry.scan()
 
         ClassGraph().enableClassInfo().enableAnnotationInfo().scan().use {
+            val index = Index::class.jvmName
             it.allClasses.forEach {
-                if (it.hasAnnotation(Index::class.jvmName)) when (val entry = Class.forName(it.name).kotlin.primaryConstructor!!.call()) {
-                    is Block -> BlockState.byKey(entry.key).forEach { it.block = entry }
-                    is Item -> com.valaphee.tesseract.inventory.item.Item.byKey(entry.key).item = entry
+                if (it.hasAnnotation(index)) when (val data = Class.forName(it.name).kotlin.primaryConstructor!!.call()) {
+                    is Block -> BlockState.byKey(data.key).forEach { it.block = data }
+                    is Item -> com.valaphee.tesseract.inventory.item.Item.byKey(data.key).item = data
                 }
             }
         }
-        val context = Context.newBuilder("js")
-            .allowAllAccess(true)
-            .build()
         val objectMapper = jacksonObjectMapper().apply {
             propertyNamingStrategy = PropertyNamingStrategies.KEBAB_CASE
             enable(SerializationFeature.INDENT_OUTPUT)
@@ -78,17 +73,6 @@ class DataModule(
                 .map {
                     val url = it.url
                     when (url.file.substring(url.file.lastIndexOf('.') + 1)) {
-                        "js" -> {
-                            context.eval("js", url.readText())?.let {
-                                val firstMemberKey = it.memberKeys.first()
-                                val firstMember = it.getMember(firstMemberKey)
-                                when (firstMemberKey) {
-                                    "tesseract:block" -> BlockWrapper(firstMember)
-                                    "tesseract:item" -> ItemWrapper(firstMember)
-                                    else -> throw UnknownComponentException(firstMemberKey)
-                                }
-                            } ?: TODO()
-                        }
                         "json" -> {
                             @Suppress("UNCHECKED_CAST")
                             objectMapper.readValue<Data>(url)

@@ -28,7 +28,6 @@ import com.valaphee.foundry.ecs.Consumed
 import com.valaphee.foundry.ecs.Pass
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
-import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.actor.location.location
 import com.valaphee.tesseract.actor.metadata.metadata
 import com.valaphee.tesseract.data.Component
@@ -46,7 +45,7 @@ class StackAddPacketizer : BaseFacet<WorldContext, EntityAdd>(EntityAdd::class) 
         message.entities.first().filter<StackType> {
             val context = message.context
             val location = it.location
-            context.world.chunkBroadcast(context, location.position, StackAddPacket(it.id, it.id, it.stack, location.position, Float3.Zero, it.metadata, false))
+            context.world.chunkBroadcast(context, location.position, StackAddPacket(it.id, it.id, it.stack, location.position, location.velocity, it.metadata, false))
 
             return Consumed
         }

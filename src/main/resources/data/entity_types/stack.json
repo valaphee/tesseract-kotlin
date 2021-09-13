@@ -2,8 +2,6 @@
   "tesseract:entity_type": {
     "key": "minecraft:item",
     "components": {
-      "tesseract:physic": {},
-
       /*LocationManagerMessage*/
       "tesseract:location_manager": {},
       "tesseract:location_packetizer": {}
