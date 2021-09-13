@@ -22,19 +22,28 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.data
+package com.valaphee.tesseract.data.item
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonTypeInfo
-import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver
+import com.valaphee.foundry.math.Float3
+import com.valaphee.foundry.math.Int2
+import com.valaphee.tesseract.actor.player.Player
+import com.valaphee.tesseract.data.block.BlockState
+import com.valaphee.tesseract.util.math.Direction
+import com.valaphee.tesseract.world.WorldContext
+import com.valaphee.tesseract.world.chunk.terrain.PropagationBlockUpdateList
 
 /**
  * @author Kevin Ludwig
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonTypeInfo(
-    use = JsonTypeInfo.Id.NAME,
-    include = JsonTypeInfo.As.WRAPPER_OBJECT
-)
-@JsonTypeIdResolver(ComponentKeyResolver::class)
-interface Data
+abstract class Bucket(
+    block: String
+) : Item {
+    private val blockId = BlockState.byKeyWithStates("$block[liquid_depth=0]").id
+
+    override fun onUseBlock(context: WorldContext, player: Player, chunk: Int2, blockUpdates: PropagationBlockUpdateList, x: Int, y: Int, z: Int, direction: Direction, clickPosition: Float3): Boolean {
+        val (xOffset, yOffset, zOffset) = direction.axis
+        blockUpdates[x + xOffset, y + yOffset, z + zOffset] = blockId
+
+        return true
+    }
+}

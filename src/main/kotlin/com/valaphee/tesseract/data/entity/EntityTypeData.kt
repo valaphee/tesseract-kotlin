@@ -31,17 +31,15 @@ import com.valaphee.tesseract.data.ComponentKeyDeserializer
 import com.valaphee.tesseract.data.ComponentKeySerializer
 import com.valaphee.tesseract.data.Data
 import com.valaphee.tesseract.data.Keyed
+import kotlin.reflect.KClass
 
 /**
  * @author Kevin Ludwig
  */
 @Component("tesseract:entity_type")
 class EntityTypeData(
-    override var key: String,
+    override val key: String,
     @JsonSerialize(keyUsing = ComponentKeySerializer::class)
     @JsonDeserialize(keyUsing = ComponentKeyDeserializer::class)
-    var behaviors: Map<Class<*>, Map<String, Any>>,
-    @JsonSerialize(keyUsing = ComponentKeySerializer::class)
-    @JsonDeserialize(keyUsing = ComponentKeyDeserializer::class)
-    var facets: Map<Class<*>, Map<String, Any>>
+    val components: Map<KClass<*>, Map<String, Any>>,
 ) : Data, Keyed

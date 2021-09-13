@@ -1,8 +1,7 @@
 {
   "tesseract:entity_type": {
     "key": "minecraft:player",
-    "behaviors": {},
-    "facets": {
+    "components": {
       /*LocationManagerMessage*/
       "tesseract:location_manager": {},
       "tesseract:radial_view": {},

@@ -22,19 +22,21 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.data
+package com.valaphee.tesseract.data.recipe
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonTypeInfo
-import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver
+import com.valaphee.tesseract.data.Component
+import com.valaphee.tesseract.data.Data
+import com.valaphee.tesseract.data.Keyed
+import com.valaphee.tesseract.inventory.item.stack.Stack
 
 /**
  * @author Kevin Ludwig
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonTypeInfo(
-    use = JsonTypeInfo.Id.NAME,
-    include = JsonTypeInfo.As.WRAPPER_OBJECT
-)
-@JsonTypeIdResolver(ComponentKeyResolver::class)
-interface Data
+@Component("tesseract:recipe_shapeless")
+class ShapelessRecipeData(
+    override val key: String,
+    val tags: Array<String>,
+    val ingredients: Array<Stack<*>>,
+    val priority: Int = 0,
+    val result: Stack<*>
+) : Data, Keyed

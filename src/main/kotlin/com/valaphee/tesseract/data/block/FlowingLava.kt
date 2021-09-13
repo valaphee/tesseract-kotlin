@@ -22,10 +22,14 @@
  * SOFTWARE.
  */
 
+package com.valaphee.tesseract.data.block
+
+import com.valaphee.tesseract.data.Index
+
 /**
  * @author Kevin Ludwig
  */
-// needs to be embedded
-enum class Rank {
-    Visitor, Member, Operator, Custom
+@Index
+class FlowingLava : FlowingBlock(0b111) {
+    override val key get() = "minecraft:flowing_lava"
 }

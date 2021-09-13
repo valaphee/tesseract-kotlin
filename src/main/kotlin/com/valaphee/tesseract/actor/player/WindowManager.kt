@@ -25,22 +25,46 @@
 package com.valaphee.tesseract.actor.player
 
 import com.valaphee.foundry.ecs.BaseAttribute
-import com.valaphee.tesseract.inventory.Inventory
 import com.valaphee.tesseract.data.entity.Runtime
+import com.valaphee.tesseract.inventory.Inventory
+import com.valaphee.tesseract.inventory.OneSlotInventory
+import com.valaphee.tesseract.inventory.PlayerInventory
+import com.valaphee.tesseract.inventory.UiInventory
+import com.valaphee.tesseract.inventory.WindowId
+import com.valaphee.tesseract.inventory.WindowSlotType
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 
 /**
  * @author Kevin Ludwig
  */
 @Runtime
-class WindowManager : BaseAttribute() {
-    val inventoryById = mutableMapOf<Int, Inventory>()
+class WindowManager(
+    playerInventory: PlayerInventory
+) : BaseAttribute() {
+    val inventories: Int2ObjectMap<Inventory> = Int2ObjectOpenHashMap<Inventory>().apply {
+        this[WindowId.CraftingResult] = OneSlotInventory()
+        this[WindowId.Inventory] = playerInventory
+        this[WindowId.Ui] = UiInventory()
+    }
+
+    fun select(slotType: WindowSlotType, slotId: Int): Pair<Inventory, Int> {
+        return when (slotType) {
+            WindowSlotType.HotbarAndInventory, WindowSlotType.Hotbar, WindowSlotType.Inventory -> inventories[WindowId.Inventory] to slotId
+            WindowSlotType.Cursor -> inventories[WindowId.Ui] to 0
+            WindowSlotType.CreativeOutput -> inventories[WindowId.CraftingResult] to 0
+            else -> TODO()
+        }
+    }
 }
 
+val Player.windowManager get() = findAttribute(WindowManager::class)
+
 fun Player.openWindow(inventory: Inventory) {
-    findAttribute(WindowManager::class).inventoryById[0] = inventory
+    findAttribute(WindowManager::class).inventories[0] = inventory
     inventory.open(this, 0)
 }
 
 fun Player.closeWindow(windowId: Int, serverside: Boolean = true) {
-    findAttribute(WindowManager::class).inventoryById[windowId]?.close(this, serverside)
+    findAttribute(WindowManager::class).inventories[windowId]?.close(this, serverside)
 }

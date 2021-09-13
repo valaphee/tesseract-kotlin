@@ -22,19 +22,14 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.data
+package com.valaphee.tesseract.data.block
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonTypeInfo
-import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver
+import com.valaphee.tesseract.data.Index
 
 /**
  * @author Kevin Ludwig
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonTypeInfo(
-    use = JsonTypeInfo.Id.NAME,
-    include = JsonTypeInfo.As.WRAPPER_OBJECT
-)
-@JsonTypeIdResolver(ComponentKeyResolver::class)
-interface Data
+@Index
+class FlowingWater : FlowingBlock(0b11) {
+    override val key get() = "minecraft:flowing_water"
+}

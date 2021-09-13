@@ -34,33 +34,33 @@ import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase
 import com.google.common.collect.HashBiMap
 import io.github.classgraph.ClassGraph
-import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
 /**
  * @author Kevin Ludwig
  */
 object ComponentRegistry {
-    private val byKey = HashBiMap.create<String, Class<*>>()
+    private val byKey = HashBiMap.create<String, KClass<*>>()
 
     fun scan() {
-        ClassGraph().enableClassInfo().enableAnnotationInfo().scan().use { byKey.putAll(it.getClassesWithAnnotation(Component::class.jvmName).associate { it.getAnnotationInfo(Component::class.jvmName).parameterValues.getValue("value") as String to Class.forName(it.name) }) }
+        ClassGraph().enableClassInfo().enableAnnotationInfo().scan().use { byKey.putAll(it.getClassesWithAnnotation(Component::class.jvmName).associate { it.getAnnotationInfo(Component::class.jvmName).parameterValues.getValue("value") as String to Class.forName(it.name).kotlin }) }
     }
 
     fun byKeyOrNull(key: String) = byKey[key]
 
-    fun byValueOrNull(value: Class<*>) = byKey.inverse()[value]
+    fun byValueOrNull(value: KClass<*>) = byKey.inverse()[value]
 }
 
 /**
  * @author Kevin Ludwig
  */
 object ComponentKeyResolver : TypeIdResolverBase() {
-    override fun idFromValue(value: Any) = value::class.findAnnotation<Component>()!!.value
+    override fun idFromValue(value: Any) = ComponentRegistry.byValueOrNull(value::class) ?: throw UnknownComponentException(value::class.jvmName)
 
     override fun idFromValueAndType(value: Any, suggestedType: Class<*>) = idFromValue(value)
 
-    override fun typeFromId(context: DatabindContext, key: String) = ComponentRegistry.byKeyOrNull(key)?.let { context.constructType(it) } ?: throw UnknownComponentException(key)
+    override fun typeFromId(context: DatabindContext, key: String) = ComponentRegistry.byKeyOrNull(key)?.let { context.constructType(it.java) } ?: throw UnknownComponentException(key)
 
     override fun getMechanism() = JsonTypeInfo.Id.NAME
 }
@@ -68,8 +68,8 @@ object ComponentKeyResolver : TypeIdResolverBase() {
 /**
  * @author Kevin Ludwig
  */
-object ComponentKeySerializer : JsonSerializer<Class<*>>() {
-    override fun serialize(value: Class<*>, generator: JsonGenerator, provider: SerializerProvider) {
+object ComponentKeySerializer : JsonSerializer<KClass<*>>() {
+    override fun serialize(value: KClass<*>, generator: JsonGenerator, provider: SerializerProvider) {
         ComponentRegistry.byValueOrNull(value)?.let { generator.writeFieldName(it) } ?: throw UnknownComponentException(value.toString())
     }
 }

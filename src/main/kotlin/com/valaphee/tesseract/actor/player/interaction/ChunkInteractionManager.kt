@@ -28,11 +28,12 @@ import com.valaphee.foundry.ecs.Consumed
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
 import com.valaphee.tesseract.data.Component
+import com.valaphee.tesseract.data.block.BlockState
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.position
-import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
 import com.valaphee.tesseract.world.chunk.terrain.blockStorage
 import com.valaphee.tesseract.world.chunk.terrain.blockUpdates
+import kotlin.system.measureNanoTime
 
 /**
  * @author Kevin Ludwig
@@ -49,11 +50,15 @@ class ChunkInteractionManager :  BaseFacet<WorldContext, ChunkInteractionManager
             is BlockUse -> {
                 val (x, y, z) = message.position
                 val blockState = BlockState.byId(chunk.blockStorage[x, y, z])
-                if (blockState.id != airId) blockState.block.onUse?.invoke(message.context, message.source, chunk.blockUpdates, x, y, z, message.direction, message.clickPosition) ?: message.stackInHand?.let {
-                    if (it.blockRuntimeId != 0) {
-                        val (xOffset, yOffset, zOffset) = message.direction.axis
-                        chunk.blockUpdates[x + xOffset, y + yOffset, z + zOffset] = it.blockRuntimeId
-                    } else it.item.onUseBlock?.invoke(message.context, message.source, chunk.position, chunk.blockUpdates, x, y, z, message.direction, message.clickPosition)
+                if (blockState.id != airId) {
+                    if (blockState.block?.onUse(message.context, message.source, chunk.blockUpdates, x, y, z, message.direction, message.clickPosition) != true) message.stackInHand?.let {
+                        println(measureNanoTime {
+                            if (it.item.item?.onUseBlock(message.context, message.source, chunk.position, chunk.blockUpdates, x, y, z, message.direction, message.clickPosition) != true && it.blockRuntimeId != 0) {
+                                val (xOffset, yOffset, zOffset) = message.direction.axis
+                                chunk.blockUpdates[x + xOffset, y + yOffset, z + zOffset] = it.blockRuntimeId
+                            }
+                        })
+                    }
                 }
             }
         }

@@ -41,10 +41,10 @@ class LocationManager : BaseFacet<WorldContext, LocationManagerMessage>(Location
     override suspend fun receive(message: LocationManagerMessage): Response {
         message.entity?.filter<ActorType> {
             when (message) {
-                is Move -> it.position += message.move.toMutableFloat3().rotate(it.rotation.x, Float3.YAxis)
+                is Move -> it.position += message.move.toMutableFloat3().rotate(it.rotation.y, Float3.YAxis)
                 is MoveRotate -> {
                     it.rotation = message.rotation
-                    it.position += message.move.toMutableFloat3().rotate(it.rotation.x, Float3.YAxis)
+                    it.position += message.move.toMutableFloat3().rotate(it.rotation.y, Float3.YAxis)
                 }
                 is Rotate -> it.rotation = message.rotation
                 is Teleport -> {

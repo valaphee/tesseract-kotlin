@@ -33,7 +33,7 @@ import java.util.Locale
 class I18n @Inject constructor(
     private val locales: Map<String, @JvmSuppressWildcards LocaleData>
 ) {
-    private val default = locales["tesseract:en_us"] ?: locales.values.first()
+    val default = locales["tesseract:en_us"] ?: locales.values.first()
 
     operator fun get(locale: Locale) = locales["tesseract:${locale.toLanguageTag().replace('-', '_')}"] ?: default
 }

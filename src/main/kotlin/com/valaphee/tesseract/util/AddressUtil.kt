@@ -32,6 +32,9 @@ fun address(string: CharSequence, defaultPort: Int): InetSocketAddress? {
     return null
 }
 
+/**
+ * @author Kevin Ludwig
+ */
 private interface Converter {
     fun to(addressWithPort: CharSequence, defaultPort: Int): InetSocketAddress?
 }

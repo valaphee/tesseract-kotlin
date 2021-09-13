@@ -27,19 +27,19 @@ package com.valaphee.tesseract.world.chunk.terrain.generator
 import com.valaphee.foundry.math.Int2
 import com.valaphee.tesseract.world.chunk.terrain.BlockStorage
 import com.valaphee.tesseract.world.chunk.terrain.Terrain
-import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
+import com.valaphee.tesseract.data.block.BlockState
 
 /**
  * @author Kevin Ludwig
  */
 class FlatGenerator(
-    string: String
+    settingsString: String
 ) : Generator {
     private val column: Array<Int>
 
     init {
         val column = mutableListOf<BlockState>()
-        val settings = string.split(';')
+        val settings = settingsString.split(';')
         settings[0].split(',').forEach {
             val heightStart = it.indexOf('*')
             val layer = BlockState.byKeyWithStatesOrNull(it.substring(if (heightStart == -1) 0 else heightStart + 1)) ?: air

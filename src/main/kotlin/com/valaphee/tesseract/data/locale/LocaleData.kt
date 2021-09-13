@@ -36,8 +36,8 @@ import java.util.regex.Pattern
  */
 @Component("tesseract:locale")
 class LocaleData(
-    override var key: String,
-    var entries: Map<String, String>
+    override val key: String,
+    val entries: Map<String, String>
 ) : Data, Keyed {
     @JsonIgnore
     private val formats = mutableMapOf<String, MessageFormat>()

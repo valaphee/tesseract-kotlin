@@ -22,19 +22,9 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.data
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonTypeInfo
-import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver
+package com.valaphee.tesseract.inventory
 
 /**
  * @author Kevin Ludwig
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonTypeInfo(
-    use = JsonTypeInfo.Id.NAME,
-    include = JsonTypeInfo.As.WRAPPER_OBJECT
-)
-@JsonTypeIdResolver(ComponentKeyResolver::class)
-interface Data
+class UiInventory : Inventory(WindowType.None, 51)

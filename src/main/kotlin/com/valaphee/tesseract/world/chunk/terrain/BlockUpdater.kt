@@ -28,6 +28,7 @@ import com.valaphee.foundry.ecs.system.BaseBehavior
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.data.Component
+import com.valaphee.tesseract.data.block.BlockState
 import com.valaphee.tesseract.world.AnyEntityOfWorld
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.WorldEventPacket
@@ -35,7 +36,6 @@ import com.valaphee.tesseract.world.chunk.ChunkType
 import com.valaphee.tesseract.world.chunk.Location
 import com.valaphee.tesseract.world.chunk.broadcast
 import com.valaphee.tesseract.world.chunk.position
-import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
 import com.valaphee.tesseract.world.filter
 
 /**
@@ -75,7 +75,7 @@ class BlockUpdater : BaseBehavior<WorldContext>(Location::class, Terrain::class)
                 if (cycle and data == 0) {
                     val (x, y, z) = decodePosition(position)
                     val blockState = BlockState.byId(blockStorage[x, y, z])
-                    blockState.block.onUpdate?.invoke(propagationBlockUpdates, x, y, z, blockState)
+                    blockState.block?.onUpdate(propagationBlockUpdates, x, y, z, blockState)
                     blockUpdateMemory.remove(position)
                 }
             }

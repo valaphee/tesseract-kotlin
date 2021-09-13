@@ -1,10 +1,9 @@
 {
   "tesseract:entity_type": {
     "key": "tesseract:world",
-    "behaviors": {
-      "tesseract:environment_updater": {}
-    },
-    "facets": {
+    "components": {
+      "tesseract:environment_updater": {},
+
       /*EntityManagerMessage*/
       "tesseract:entity_manager": {},
       "tesseract:player_list": {},

@@ -35,7 +35,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.util.NibbleArray
 import com.valaphee.tesseract.util.nibbleArray
-import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
+import com.valaphee.tesseract.data.block.BlockState
 import io.netty.buffer.Unpooled
 
 /**

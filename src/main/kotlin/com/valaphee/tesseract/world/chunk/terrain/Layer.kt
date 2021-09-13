@@ -28,7 +28,7 @@ import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.util.getCompoundTag
 import com.valaphee.tesseract.util.getString
 import com.valaphee.tesseract.util.nbt.compoundTag
-import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
+import com.valaphee.tesseract.data.block.BlockState
 import it.unimi.dsi.fastutil.ints.IntArrayList
 import it.unimi.dsi.fastutil.ints.IntList
 

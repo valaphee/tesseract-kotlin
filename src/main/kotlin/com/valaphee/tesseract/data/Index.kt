@@ -22,12 +22,9 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.util.nbs
+package com.valaphee.tesseract.data
 
 /**
  * @author Kevin Ludwig
  */
-class Note(
-    val instrument: Int,
-    val pitch: Int
-)
+annotation class Index

@@ -24,7 +24,6 @@
 
 package com.valaphee.tesseract.world
 
-import Rank
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
@@ -44,6 +43,7 @@ import com.valaphee.tesseract.actor.player.InteractPacket
 import com.valaphee.tesseract.actor.player.Player
 import com.valaphee.tesseract.actor.player.PlayerActionPacket
 import com.valaphee.tesseract.actor.player.PlayerLocationPacket
+import com.valaphee.tesseract.actor.player.Rank
 import com.valaphee.tesseract.actor.player.User
 import com.valaphee.tesseract.actor.player.WindowManager
 import com.valaphee.tesseract.actor.player.authExtra
@@ -56,16 +56,19 @@ import com.valaphee.tesseract.actor.player.view.ChunkPacket
 import com.valaphee.tesseract.actor.player.view.View
 import com.valaphee.tesseract.actor.player.view.ViewDistancePacket
 import com.valaphee.tesseract.actor.player.view.ViewDistanceRequestPacket
+import com.valaphee.tesseract.actor.player.windowManager
 import com.valaphee.tesseract.biomeDefinitionsPacket
 import com.valaphee.tesseract.command.net.CommandPacket
 import com.valaphee.tesseract.command.net.Origin
 import com.valaphee.tesseract.creativeInventoryPacket
 import com.valaphee.tesseract.entityIdentifiersPacket
 import com.valaphee.tesseract.inventory.InventoryRequestPacket
+import com.valaphee.tesseract.inventory.InventoryResponsePacket
 import com.valaphee.tesseract.inventory.InventoryTransactionPacket
 import com.valaphee.tesseract.inventory.InventoryWrapper
 import com.valaphee.tesseract.inventory.PlayerInventory
 import com.valaphee.tesseract.inventory.WindowClosePacket
+import com.valaphee.tesseract.inventory.WindowId
 import com.valaphee.tesseract.inventory.inventory
 import com.valaphee.tesseract.inventory.item.Item
 import com.valaphee.tesseract.inventory.recipe.RecipesPacket
@@ -86,7 +89,6 @@ import com.valaphee.tesseract.world.chunk.ChunkRelease
 import com.valaphee.tesseract.world.chunk.chunkBroadcast
 import com.valaphee.tesseract.world.chunk.position
 import com.valaphee.tesseract.world.chunk.terrain.SectionCompact
-import com.valaphee.tesseract.world.chunk.terrain.block.Block
 import com.valaphee.tesseract.world.chunk.terrain.blockStorage
 import com.valaphee.tesseract.world.entity.addEntities
 import com.valaphee.tesseract.world.entity.removeEntities
@@ -124,13 +126,14 @@ class WorldPacketHandler(
                     Flag.HasGravity
                 )
             })
-            addAttribute(InventoryWrapper(PlayerInventory()))
-            addAttribute(WindowManager())
+            val inventory = PlayerInventory()
+            addAttribute(InventoryWrapper(inventory))
+            addAttribute(WindowManager(inventory))
         }.also { context.world.addEntities(context, null, it) }
 
         val settings = context.world.settings
         val environment = context.world.environment
-        connection.write(WorldPacket(player.id, player.id, GameMode.Default, player.position, player.rotation, 0, WorldPacket.BiomeType.Default, "plains", Dimension.Overworld, WorldPacket.Overworld, settings.gameMode, settings.difficulty, Int3.Zero, true, environment.time, WorldPacket.EducationEditionOffer.None, 0, false, "", environment.rainLevel, environment.thunderLevel, false, true, true, GamePublishMode.FriendsOfFriends, GamePublishMode.FriendsOfFriends, true, false, settings.gameRules.toTypedArray(), settings.experiments.toTypedArray(), false, false, false, Rank.Operator, 4, false, false, false, false, false, false, false, "*", 16, 16, false, false, "Tesseract", "Tesseract", "00000000-0000-0000-0000-000000000000", false, WorldPacket.AuthoritativeMovement.Client, 0, true, context.cycle, 0, null, null, null, Block.all.toTypedArray(), null, Item.all.toTypedArray(), "", true, "Tesseract"))
+        connection.write(WorldPacket(player.id, player.id, GameMode.Default, player.position, player.rotation, 0, WorldPacket.BiomeType.Default, "plains", Dimension.Overworld, WorldPacket.Overworld, settings.gameMode, settings.difficulty, Int3.Zero, true, environment.time, WorldPacket.EducationEditionOffer.None, 0, false, "", environment.rainLevel, environment.thunderLevel, false, true, true, GamePublishMode.FriendsOfFriends, GamePublishMode.FriendsOfFriends, true, false, settings.gameRules.toTypedArray(), settings.experiments.toTypedArray(), false, false, false, Rank.Operator, 4, false, false, false, false, false, false, false, "*", 16, 16, false, false, "Tesseract", "Tesseract", "00000000-0000-0000-0000-000000000000", false, WorldPacket.AuthoritativeMovement.Client, 0, true, context.cycle, 0, null, null, null, emptyArray(), null, Item.all.toTypedArray(), "", true, "Tesseract"))
 
         connection.write(biomeDefinitionsPacket)
         connection.write(entityIdentifiersPacket)
@@ -226,16 +229,31 @@ class WorldPacketHandler(
     }
 
     override fun inventoryRequest(packet: InventoryRequestPacket) {
+        val windowManager = player.windowManager
+        val responses = mutableListOf<InventoryResponsePacket.Response>()
         packet.requests.forEach {
             it.actions.forEach {
                 when (it.type) {
+                    InventoryRequestPacket.ActionType.Move, InventoryRequestPacket.ActionType.Place, InventoryRequestPacket.ActionType.Swap -> {
+                        val (sourceInventory, sourceSlotId) = windowManager.select(it.sourceSlotType!!, it.sourceSlotId)
+                        val (destinationInventory, destinationSlotId) = windowManager.select(it.destinationSlotType!!, it.destinationSlotId)
+                        val sourceStack = sourceInventory.getSlot(sourceSlotId)
+                        val destinationStack = destinationInventory.getSlot(destinationSlotId)
+                        sourceInventory.setSlot(sourceSlotId, destinationStack)
+                        destinationInventory.setSlot(destinationSlotId, sourceStack)
+                    }
+                    InventoryRequestPacket.ActionType.Destroy -> {
+                        val (sourceInventory, sourceSlotId) = windowManager.select(it.sourceSlotType!!, it.sourceSlotId)
+                        sourceInventory.setSlot(sourceSlotId, null)
+                    }
                     InventoryRequestPacket.ActionType.CraftResultsDeprecated -> {
-                        val playerInventory = player.inventory<PlayerInventory>()
-                        playerInventory.setSlot(playerInventory.hotbarSlot, it.result!!.first())
+                        windowManager.inventories[WindowId.CraftingResult].setSlot(0, it.result!!.first())
                     }
                 }
             }
+            //responses += InventoryResponsePacket.Response(InventoryResponsePacket.ResponseStatus.Ok, it.requestId, emptyArray())
         }
+        connection.write(InventoryResponsePacket(responses.toTypedArray()))
     }
 
     override fun violation(packet: ViolationPacket) {

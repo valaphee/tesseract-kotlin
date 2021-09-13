@@ -22,15 +22,14 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.util.nbs
+package com.valaphee.tesseract.data.item
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap
+import com.valaphee.tesseract.data.Index
 
 /**
  * @author Kevin Ludwig
  */
-class Layer(
-    var name: String,
-    var volume: Float,
-    val notes: Int2ObjectMap<Note>
-)
+@Index
+class WaterBucket : Bucket("minecraft:flowing_water") {
+    override val key get() = "minecraft:water_bucket"
+}

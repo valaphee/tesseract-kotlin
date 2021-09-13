@@ -43,7 +43,6 @@ import com.valaphee.tesseract.world.entity.EntityRemove
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.util.Locale
 
 /**
  * @author Kevin Ludwig
@@ -67,11 +66,11 @@ class PlayerList @Inject constructor(
                     PlayerListPacket.Entry(authExtra.userId, it.id, authExtra.userName, authExtra.xboxUserId, "", user.operatingSystem, user.appearance, false, false)
                 }.toTypedArray()))
 
-                println("${Locale.ENGLISH.toLanguageTag()}")
-                broadcastSystemMessage(i18n[Locale.US].format("player_list.player_add", it.authExtra.userName))
+                broadcastSystemMessage(i18n.default.format("player_list.player_add", it.authExtra.userName))
             }
             is EntityRemove -> message.entities.mapNotNull { players.remove(it.id) }.forEach {
-                broadcastSystemMessage(i18n[Locale.US].format("player_list.player_remove", it.authExtra.userName))
+                broadcastSystemMessage(i18n.default.format("player_list.player_remove", it.authExtra.userName))
+
                 broadcast(PlayerListPacket(PlayerListPacket.Action.Remove, arrayOf(PlayerListPacket.Entry(it.authExtra.userId))))
             }
         }

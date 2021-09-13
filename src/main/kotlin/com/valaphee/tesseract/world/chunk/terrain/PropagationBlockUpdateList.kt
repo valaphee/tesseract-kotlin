@@ -25,7 +25,7 @@
 package com.valaphee.tesseract.world.chunk.terrain
 
 import com.valaphee.foundry.math.Int3
-import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
+import com.valaphee.tesseract.data.block.BlockState
 
 /**
  * @author Kevin Ludwig

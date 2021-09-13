@@ -22,19 +22,14 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.data
+package com.valaphee.tesseract.data.item
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonTypeInfo
-import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver
+import com.valaphee.tesseract.data.Index
 
 /**
  * @author Kevin Ludwig
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
-@JsonTypeInfo(
-    use = JsonTypeInfo.Id.NAME,
-    include = JsonTypeInfo.As.WRAPPER_OBJECT
-)
-@JsonTypeIdResolver(ComponentKeyResolver::class)
-interface Data
+@Index
+class LavaBucket : Bucket("minecraft:flowing_lava") {
+    override val key get() = "minecraft:lava_bucket"
+}

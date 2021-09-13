@@ -28,5 +28,5 @@ package com.valaphee.tesseract.net
  * @author Kevin Ludwig
  */
 enum class Restriction {
-    Clientbound, Serverbound, OncePerUpdate
+    Clientbound, Serverbound, OncePerCycle
 }

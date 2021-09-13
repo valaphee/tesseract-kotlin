@@ -1,9 +1,8 @@
 {
   "tesseract:entity_type": {
     "key": "tesseract:chunk",
-    "behaviors": {
+    "components": {
       "tesseract:block_updater": {}
-    },
-    "facets": {}
+    }
   }
 }

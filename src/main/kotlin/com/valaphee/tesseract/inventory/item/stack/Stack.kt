@@ -28,6 +28,7 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -115,9 +116,9 @@ object StackSerializer : JsonSerializer<Stack<*>?>() {
     override fun serialize(value: Stack<*>?, generator: JsonGenerator, provider: SerializerProvider) {
         value?.let {
             generator.writeStartObject()
-            generator.writeStringField("Name", it.item.key)
-            if (it.subId != 0) generator.writeNumberField("Damage", it.subId)
-            if (it.count != 1) generator.writeNumberField("Count", it.count)
+            generator.writeStringField("item", it.item.key)
+            if (it.subId != 0) generator.writeNumberField("data", it.subId)
+            if (it.count != 1) generator.writeNumberField("count", it.count)
             generator.writeEndObject()
         } ?: generator.writeNull()
     }
@@ -127,7 +128,12 @@ object StackSerializer : JsonSerializer<Stack<*>?>() {
  * @author Kevin Ludwig
  */
 object StackDeserializer : JsonDeserializer<Stack<*>?>() {
-    override fun deserialize(parser: JsonParser, context: DeserializationContext) = TODO()
+    override fun deserialize(parser: JsonParser, context: DeserializationContext): Stack<*>? {
+        val node = parser.readValueAsTree<JsonNode>()
+        return if (node.isNull) null else {
+            Stack(Item.byKeyOrNull(node["item"].asText()) as Item<*>, node["data"]?.asInt() ?: 0, node["count"]?.asInt() ?: 1)
+        }
+    }
 }
 
 fun CompoundTag.asStack() = Stack(

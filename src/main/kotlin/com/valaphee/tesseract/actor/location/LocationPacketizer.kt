@@ -53,17 +53,10 @@ class LocationPacketizer : BaseFacet<WorldContext, LocationManagerMessage>(Locat
                 }
                 is MoveRotate -> {
                     val (x, y, z) = location.position
-                    val (yaw, pitch) = location.rotation
-                    MoveRotatePacket(it.id, Int3.Zero, Float3(if (message.move.x.isZero()) Float.NaN else x, if (message.move.y.isZero()) Float.NaN else y, if (message.move.z.isZero()) Float.NaN else z), Float2(pitch, yaw), Float.NaN, true, false, false)
+                    MoveRotatePacket(it.id, Int3.Zero, Float3(if (message.move.x.isZero()) Float.NaN else x, if (message.move.y.isZero()) Float.NaN else y, if (message.move.z.isZero()) Float.NaN else z), location.rotation, Float.NaN, true, false, false)
                 }
-                is Rotate -> {
-                    val (yaw, pitch) = location.rotation
-                    MoveRotatePacket(it.id, Int3.Zero, Float3(Float.NaN), Float2(pitch, yaw), Float.NaN, true, false, false)
-                }
-                is Teleport -> {
-                    val (yaw, pitch) = location.rotation
-                    TeleportPacket(it.id, location.position, Float2(pitch, yaw), Float.NaN, true, false)
-                }
+                is Rotate -> MoveRotatePacket(it.id, Int3.Zero, Float3(Float.NaN), location.rotation, Float.NaN, true, false, false)
+                is Teleport -> TeleportPacket(it.id, location.position, location.rotation, Float.NaN, true, false)
             })
 
             return Consumed

@@ -31,9 +31,9 @@ import com.google.inject.AbstractModule
 import com.google.inject.Guice
 import com.valaphee.tesseract.actor.ActorTypeRegistry
 import com.valaphee.tesseract.command.CommandManager
+import com.valaphee.tesseract.data.block.BlockState
 import com.valaphee.tesseract.inventory.CreativeInventoryPacket
 import com.valaphee.tesseract.inventory.item.Item
-import com.valaphee.tesseract.inventory.item.Items
 import com.valaphee.tesseract.inventory.item.stack.Stack
 import com.valaphee.tesseract.net.init.BiomeDefinitionsPacket
 import com.valaphee.tesseract.net.init.EntityIdentifiersPacket
@@ -47,9 +47,6 @@ import com.valaphee.tesseract.util.getListTag
 import com.valaphee.tesseract.util.getString
 import com.valaphee.tesseract.util.getStringOrNull
 import com.valaphee.tesseract.util.nbt.NbtInputStream
-import com.valaphee.tesseract.world.chunk.terrain.block.Block
-import com.valaphee.tesseract.world.chunk.terrain.block.BlockState
-import com.valaphee.tesseract.world.chunk.terrain.block.Blocks
 import io.netty.buffer.ByteBufInputStream
 import io.netty.buffer.PooledByteBufAllocator
 import io.netty.buffer.Unpooled
@@ -93,16 +90,12 @@ fun main(arguments: Array<String>) {
             buffer.release()
         }
         BlockState.finish()
-        Block.finish()
-        Blocks.populate()
-        log.info("Blocks found: {}", Block.all.size)
         log.info("Block states found: {}", BlockState.all.size)
     }
 
     run {
         gson.newJsonReader(InputStreamReader(clazz.getResourceAsStream("/runtime_item_states.json")!!)).use { (gson.fromJson(it, JsonArray::class.java) as JsonArray).map { it.asJsonObject }.forEach { Item.register(it.getString("name"), it.getInt("id")) } }
         log.info("Items found: {}", Item.all.size)
-        Items.populate()
     }
 
     run {

@@ -22,60 +22,30 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk.terrain.block
+package com.valaphee.tesseract.data.block
 
 import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.actor.player.Player
+import com.valaphee.tesseract.data.Component
 import com.valaphee.tesseract.util.math.Direction
-import com.valaphee.tesseract.util.nbt.CompoundTag
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.terrain.PropagationBlockUpdateList
+import org.graalvm.polyglot.Value
 
 /**
  * @author Kevin Ludwig
  */
-class Block(
-    val key: String,
-    val component: CompoundTag? = null
-) {
-    var onUse: OnUse? = null
-    var onUpdate: OnUpdate? = null
+@Component("tesseract:block")
+class BlockWrapper(
+    polyglot: Value
+) : Block {
+    override val key: String = polyglot.getMember("key").asString()
+    private val onUse = polyglot.getMember("on_use")
+    private val onUpdate = polyglot.getMember("on_update")
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+    override fun onUse(context: WorldContext, player: Player, blockUpdates: PropagationBlockUpdateList, x: Int, y: Int, z: Int, direction: Direction, clickPosition: Float3) = onUse?.executeVoid(context, player, blockUpdates, x, y, z, direction, clickPosition)?.run { true } ?: false
 
-        other as Block
-
-        if (key != other.key) return false
-
-        return true
-    }
-
-    override fun hashCode() = key.hashCode()
-
-    override fun toString() = key
-
-    companion object {
-        private val byKey = mutableMapOf<String, Block>()
-        private var finished = false
-
-        fun finish() {
-            check(!finished) { "Already finished" }
-
-            finished = true
-            BlockState.all.groupBy { it.key }.forEach { (key, states) ->
-                val block = Block(key).also { byKey[key] = it }
-                states.forEach { it.block = block }
-            }
-        }
-
-        fun byKeyOrNull(key: String) = byKey[key]
-
-        val all get() = byKey.values
+    override fun onUpdate(blockUpdates: PropagationBlockUpdateList, x: Int, y: Int, z: Int, blockState: BlockState) {
+        onUpdate?.executeVoid(blockUpdates, x, y, z, blockState)
     }
 }
-
-typealias OnUse = (context: WorldContext, player: Player, blockUpdates: PropagationBlockUpdateList, x: Int, y: Int, z: Int, direction: Direction, clickPosition: Float3) -> Unit
-
-typealias OnUpdate = (blockUpdates: PropagationBlockUpdateList, x: Int, y: Int, z: Int, blockState: BlockState) -> Unit

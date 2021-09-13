@@ -68,10 +68,10 @@ open class Inventory(
     }
 
     fun writeSlot(slotId: Int) {
-        sessions.keys.forEach { it.connection.write(InventorySlotPacket(0, slotId, content[slotId])) }
+        sessions.forEach { (player, windowId) -> player.connection.write(InventorySlotPacket(windowId, slotId, content[slotId])) }
     }
 
     fun writeContent() {
-        sessions.keys.forEach { it.connection.write(InventoryContentPacket(0, content)) }
+        sessions.forEach { (player, windowId) -> player.connection.write(InventoryContentPacket(windowId, content)) }
     }
 }

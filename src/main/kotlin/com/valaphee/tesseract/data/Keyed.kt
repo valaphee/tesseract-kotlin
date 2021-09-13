@@ -28,5 +28,5 @@ package com.valaphee.tesseract.data
  * @author Kevin Ludwig
  */
 interface Keyed {
-    var key: String
+    val key: String
 }

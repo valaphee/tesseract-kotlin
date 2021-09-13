@@ -35,9 +35,17 @@ import com.google.inject.TypeLiteral
 import com.google.inject.binder.AnnotatedBindingBuilder
 import com.google.inject.util.Types
 import com.valaphee.tesseract.Argument
+import com.valaphee.tesseract.data.block.Block
+import com.valaphee.tesseract.data.block.BlockState
+import com.valaphee.tesseract.data.block.BlockWrapper
+import com.valaphee.tesseract.data.item.Item
+import com.valaphee.tesseract.data.item.ItemWrapper
 import io.github.classgraph.ClassGraph
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.graalvm.polyglot.Context
+import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.jvmName
 
 /**
  * @author Kevin Ludwig
@@ -48,6 +56,17 @@ class DataModule(
     override fun configure() {
         ComponentRegistry.scan()
 
+        ClassGraph().enableClassInfo().enableAnnotationInfo().scan().use {
+            it.allClasses.forEach {
+                if (it.hasAnnotation(Index::class.jvmName)) when (val entry = Class.forName(it.name).kotlin.primaryConstructor!!.call()) {
+                    is Block -> BlockState.byKey(entry.key).forEach { it.block = entry }
+                    is Item -> com.valaphee.tesseract.inventory.item.Item.byKey(entry.key).item = entry
+                }
+            }
+        }
+        val context = Context.newBuilder("js")
+            .allowAllAccess(true)
+            .build()
         val objectMapper = jacksonObjectMapper().apply {
             propertyNamingStrategy = PropertyNamingStrategies.KEBAB_CASE
             enable(SerializationFeature.INDENT_OUTPUT)
@@ -57,16 +76,29 @@ class DataModule(
         ClassGraph().acceptPaths("data").scan().use {
             val (keyed, other) = it.allResources
                 .map {
-                    try {
-                        @Suppress("UNCHECKED_CAST")
-                        objectMapper.readValue<Data>(it.url)
-                    } catch (ex: Exception) {
-                        log.error(it.url, ex)
+                    val url = it.url
+                    when (url.file.substring(url.file.lastIndexOf('.') + 1)) {
+                        "js" -> {
+                            context.eval("js", url.readText())?.let {
+                                val firstMemberKey = it.memberKeys.first()
+                                val firstMember = it.getMember(firstMemberKey)
+                                when (firstMemberKey) {
+                                    "tesseract:block" -> BlockWrapper(firstMember)
+                                    "tesseract:item" -> ItemWrapper(firstMember)
+                                    else -> throw UnknownComponentException(firstMemberKey)
+                                }
+                            } ?: TODO()
+                        }
+                        "json" -> {
+                            @Suppress("UNCHECKED_CAST")
+                            objectMapper.readValue<Data>(url)
+                        }
+                        else -> TODO()
                     }
                 }
                 .partition { it is Keyed }
             keyed.filterIsInstance<Keyed>()
-                .groupBy { ComponentRegistry.byValueOrNull(it::class.java) }
+                .groupBy { ComponentRegistry.byValueOrNull(it::class) }
                 .forEach { (key, value) ->
                     key?.let {
                         @Suppress("UNCHECKED_CAST")

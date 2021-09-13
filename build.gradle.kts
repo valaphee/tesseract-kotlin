@@ -24,12 +24,6 @@
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-buildscript {
-    dependencies {
-        classpath("com.guardsquare:proguard-gradle:7.2.0-beta2")
-    }
-}
-
 plugins {
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("com.palantir.git-version") version "0.12.3"
@@ -42,7 +36,6 @@ plugins {
 repositories {
     mavenCentral()
     maven("https://repo.codemc.org/repository/maven-public")
-    maven("https://repo.aikar.co/nexus/content/groups/aikar/")
 }
 
 group = "com.valaphee"
@@ -54,27 +47,30 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-smile:2.12.5")
     implementation("com.google.code.gson:gson:2.8.8")
-    implementation("com.google.inject:guice:5.0.1")
+    api("com.google.inject:guice:5.0.1")
     implementation("com.google.inject.extensions:guice-assistedinject:5.0.1")
     implementation("com.hazelcast:hazelcast-all:4.2.2")
-    implementation("com.valaphee:foundry-databind:1.3.0.0")
-    implementation("com.valaphee:foundry-math:1.3.0.0")
+    api("com.valaphee:foundry-databind:1.3.0.0")
+    api("com.valaphee:foundry-math:1.3.0.0")
     implementation("commons-cli:commons-cli:1.4")
     implementation("io.github.classgraph:classgraph:4.8.114")
-    implementation("io.netty:netty-buffer:4.1.67.Final")
+    api("io.netty:netty-buffer:4.1.67.Final")
     implementation("io.netty:netty-transport-native-epoll:4.1.67.Final:linux-x86_64")
     implementation("io.netty:netty-transport-native-kqueue:4.1.67.Final:osx-x86_64")
     implementation("io.netty:netty-codec-http2:4.1.67.Final")
-    implementation("it.unimi.dsi:fastutil:8.5.4")
+    api("it.unimi.dsi:fastutil:8.5.4")
     implementation("jline:jline:2.14.6")
     implementation("network.ycc:netty-raknet-client:0.8-SNAPSHOT")
     implementation("network.ycc:netty-raknet-server:0.8-SNAPSHOT")
-    implementation("org.apache.logging.log4j:log4j-core:2.14.1")
+    api("org.apache.logging.log4j:log4j-core:2.14.1")
     implementation("org.apache.logging.log4j:log4j-iostreams:2.14.1")
     implementation("org.apache.logging.log4j:log4j-jul:2.14.1")
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.14.1")
     implementation("org.bitbucket.b_c:jose4j:0.7.9")
     implementation("org.fusesource.leveldbjni:leveldbjni-all:1.8")
+    implementation("org.graalvm.js:js:21.2.0")
+    implementation("org.graalvm.sdk:graal-sdk:21.2.0")
+    implementation("org.graalvm.truffle:truffle-api:21.2.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
     implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.5.2-native-mt")

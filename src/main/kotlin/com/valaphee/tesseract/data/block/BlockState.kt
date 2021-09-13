@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk.terrain.block
+package com.valaphee.tesseract.data.block
 
 import com.valaphee.tesseract.util.nbt.CompoundTag
 import com.valaphee.tesseract.util.nbt.TagType
@@ -44,7 +44,7 @@ class BlockState(
         }
     }
     var id = 0
-    lateinit var block: Block
+    var block: Block? = null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

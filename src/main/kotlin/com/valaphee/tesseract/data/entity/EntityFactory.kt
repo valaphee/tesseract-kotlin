@@ -29,27 +29,37 @@ import com.google.inject.Injector
 import com.valaphee.foundry.ecs.Attribute
 import com.valaphee.foundry.ecs.Context
 import com.valaphee.foundry.ecs.entity.DefaultEntity
-import com.valaphee.foundry.ecs.entity.Entity
 import com.valaphee.foundry.ecs.entity.EntityType
 import com.valaphee.foundry.ecs.system.Behavior
+import com.valaphee.foundry.ecs.system.Facet
 import com.valaphee.foundry.ecs.system.FacetWithContext
 import kotlin.random.Random
+import kotlin.reflect.KClass
+import kotlin.reflect.full.isSubclassOf
 
 /**
  * @author Kevin Ludwig
  */
 class EntityFactory<C : Context> @Inject constructor(
     private val injector: Injector,
-    private val entityTypes: Map<String, @JvmSuppressWildcards EntityTypeData>
+    data: Map<String, @JvmSuppressWildcards EntityTypeData>
 ) {
-    operator fun <T : EntityType> invoke(type: T, attributes: Set<Attribute>, id: Long = Random.nextLong()): Entity<T, C> {
-        val entityType = entityTypes[type.key]
-        return DefaultEntity(type, attributes, entityType?.behaviors?.keys?.map {
-            @Suppress("UNCHECKED_CAST")
-            injector.getInstance(it) as Behavior<C>
-        }?.toSet() ?: emptySet(), entityType?.facets?.keys?.map {
-            @Suppress("UNCHECKED_CAST")
-            injector.getInstance(it) as FacetWithContext<C>
-        }?.toSet() ?: emptySet(), id)
+    private val behaviorClassesByType = mutableMapOf<String, List<KClass<*>>>()
+    private val facetClassesByType = mutableMapOf<String, List<KClass<*>>>()
+
+    init {
+        data.forEach { (key, data) ->
+            val (behaviors, others) = data.components.keys.partition { it.isSubclassOf(Behavior::class) }
+            behaviorClassesByType[key] = behaviors
+            facetClassesByType[key] = others.filter { it.isSubclassOf(Facet::class) }
+        }
     }
+
+    operator fun <T : EntityType> invoke(type: T, attributes: Set<Attribute>, id: Long = Random.nextLong()) = DefaultEntity(type, attributes, behaviorClassesByType[type.key]?.map {
+        @Suppress("UNCHECKED_CAST")
+        injector.getInstance(it.java) as Behavior<C>
+    }?.toSet() ?: emptySet(), facetClassesByType[type.key]?.map {
+        @Suppress("UNCHECKED_CAST")
+        injector.getInstance(it.java) as FacetWithContext<C>
+    }?.toSet() ?: emptySet(), id)
 }
