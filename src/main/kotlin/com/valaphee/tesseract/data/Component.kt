@@ -27,6 +27,7 @@ package com.valaphee.tesseract.data
 /**
  * @author Kevin Ludwig
  */
+@Target(AnnotationTarget.CLASS)
 annotation class Component(
     val value: String
 )

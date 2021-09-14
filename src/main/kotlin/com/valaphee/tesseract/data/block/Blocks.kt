@@ -22,10 +22,15 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.data
+package com.valaphee.tesseract.data.block
 
 /**
  * @author Kevin Ludwig
  */
-@Target(AnnotationTarget.CLASS)
-annotation class Index
+object Blocks {
+    private val transparentIds = BlockState.all.filter { it.block?.transparent == true }.map { it.id }
+
+    val airId = BlockState.byKeyWithStates("minecraft:air").id
+
+    fun isTransparent(id: Int) = transparentIds.contains(id)
+}

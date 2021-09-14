@@ -22,10 +22,24 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.data
+package com.valaphee.tesseract.util.math
 
-/**
- * @author Kevin Ludwig
- */
-@Target(AnnotationTarget.CLASS)
-annotation class Index
+fun floor(value: Double): Int {
+    val valueInt = value.toInt()
+    return if (value >= valueInt) valueInt else valueInt - 1
+}
+
+fun ceil(value: Double): Int {
+    val valueInt = (value + 1).toInt()
+    return if (value >= valueInt) valueInt else valueInt - 1
+}
+
+fun floor(value: Float): Int {
+    val valueInt = value.toInt()
+    return if (value >= valueInt) valueInt else valueInt - 1
+}
+
+fun ceil(value: Float): Int {
+    val valueInt = (value + 1).toInt()
+    return if (value >= valueInt) valueInt else valueInt - 1
+}

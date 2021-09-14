@@ -36,6 +36,8 @@ import com.valaphee.tesseract.world.chunk.terrain.PropagationBlockUpdateList
  * @author Kevin Ludwig
  */
 interface Block : Data, Keyed {
+    val transparent get() = false
+
     fun onUse(context: WorldContext, player: Player, blockUpdates: PropagationBlockUpdateList, x: Int, y: Int, z: Int, direction: Direction, clickPosition: Float3) = false
 
     fun onUpdate(blockUpdates: PropagationBlockUpdateList, x: Int, y: Int, z: Int, blockState: BlockState) = Unit

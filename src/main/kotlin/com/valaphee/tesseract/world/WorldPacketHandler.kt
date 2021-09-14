@@ -175,7 +175,7 @@ class WorldPacketHandler(
                 player.sendMessage(Teleport(context, player, player, packet.fromPosition!!, player.location.rotation))
                 val stackInHand = player.inventory<PlayerInventory>().apply { hotbarSlot = packet.hotbarSlot }.stackInHand
                 if (packet.stackInHand == stackInHand) when (packet.actionId) {
-                    InventoryTransactionPacket.ItemUseBlock -> context.world.useBlock(context, player, packet.position!!, Direction.values()[packet.auxInt], packet.clickPosition!!, stackInHand)
+                    InventoryTransactionPacket.ItemUseBlock -> context.world.useBlock(context, player, packet.position!!, Direction.fromIndex(packet.auxInt), packet.clickPosition!!, stackInHand)
                 }
             }
             InventoryTransactionPacket.Type.ItemUseOnEntity -> {

@@ -22,10 +22,16 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.data
+package com.valaphee.tesseract.data.block
+
+import com.valaphee.tesseract.data.Index
 
 /**
  * @author Kevin Ludwig
  */
-@Target(AnnotationTarget.CLASS)
-annotation class Index
+@Index
+class Air : Block {
+    override val key get() = "minecraft:air"
+
+    override val transparent get() = true
+}

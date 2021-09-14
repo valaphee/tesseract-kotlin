@@ -25,11 +25,11 @@
 package com.valaphee.tesseract.util.math
 
 import com.valaphee.foundry.math.Float2
-import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
 import com.valaphee.foundry.math.MutableFloat3
 import com.valaphee.foundry.math.toRad
 import java.util.EnumMap
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -73,6 +73,7 @@ enum class Direction(
     }
 
     companion object {
+        private val horizontals = arrayOf(South, West, North, East)
         private val opposite = EnumMap<Direction, Direction>(Direction::class.java).apply {
             this[North] = South
             this[South] = North
@@ -117,25 +118,10 @@ enum class Direction(
             this[Down] = West
             this[East] = Down
         }
-    }
-}
 
-fun Float2.toDirection(withVertical: Boolean = false): Direction {
-    if (withVertical) {
-        if (x < -60) return Direction.Down
-        else if (x > 60) return Direction.Up
-    }
+        fun fromIndex(index: Int) = values()[abs(index % values().size)]
 
-    var yaw = y
-    yaw -= 90
-    yaw %= 360
-    if (yaw < 0) yaw += 360
-
-    return when {
-        (0 <= yaw && yaw < 45) || (315 <= yaw && yaw < 360) -> Direction.North
-        45 <= yaw && yaw < 135 -> Direction.East
-        135 <= yaw && yaw < 225 -> Direction.South
-        else -> Direction.West
+        fun fromHorizontalIndex(index: Int) = horizontals[abs(index % horizontals.size)]
     }
 }
 
@@ -145,3 +131,5 @@ fun Float2.toDirectionVector(): MutableFloat3 {
     val xz = cos(pitch)
     return MutableFloat3(-xz * sin(yaw), -sin(pitch), xz * cos(yaw)).normalize()
 }
+
+fun Float2.toHorizontalDirection() = Direction.fromHorizontalIndex(floor((y * 4.0f / 360.0f) + 0.5) and 0b11)

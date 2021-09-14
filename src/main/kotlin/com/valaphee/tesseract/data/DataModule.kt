@@ -53,7 +53,7 @@ class DataModule(
     override fun configure() {
         ComponentRegistry.scan()
 
-        ClassGraph().enableClassInfo().enableAnnotationInfo().scan().use {
+        ClassGraph().acceptPackages(this::class.java.packageName).enableClassInfo().enableAnnotationInfo().scan().use {
             val index = Index::class.jvmName
             it.allClasses.forEach {
                 if (it.hasAnnotation(index)) when (val data = Class.forName(it.name).kotlin.primaryConstructor!!.call()) {
@@ -62,6 +62,7 @@ class DataModule(
                 }
             }
         }
+
         val objectMapper = jacksonObjectMapper().apply {
             propertyNamingStrategy = PropertyNamingStrategies.KEBAB_CASE
             enable(SerializationFeature.INDENT_OUTPUT)
@@ -72,12 +73,12 @@ class DataModule(
             val (keyed, other) = it.allResources
                 .map {
                     val url = it.url
-                    when (url.file.substring(url.file.lastIndexOf('.') + 1)) {
+                    when (val extension = url.file.substring(url.file.lastIndexOf('.') + 1)) {
                         "json" -> {
                             @Suppress("UNCHECKED_CAST")
                             objectMapper.readValue<Data>(url)
                         }
-                        else -> TODO()
+                        else -> TODO(extension)
                     }
                 }
                 .partition { it is Keyed }

@@ -37,11 +37,13 @@ abstract class FlowingBlock(
 ) : Block {
     private val masses = BlockState.byKey(key).associate { it.id to 7 - it.properties["liquid_depth"] as Int }.filterValues { it >= 0 }
 
+    override val transparent get() = true
+
     override fun onUpdate(blockUpdates: PropagationBlockUpdateList, x: Int, y: Int, z: Int, blockState: BlockState) {
         var mass = masses[blockState.id]!! + 1
 
         val fallingState = blockUpdates[x, y - 1, z]
-        (if (fallingState == airId) -1 else masses[fallingState])?.let {
+        (if (fallingState == Blocks.airId) -1 else masses[fallingState])?.let {
             val newMass = min((it + 1) + mass, masses.size)
             mass -= newMass - (it + 1)
             blockUpdates[x, y - 1, z, viscosity] = masses.entries.elementAt(masses.size - newMass).key
@@ -51,7 +53,7 @@ abstract class FlowingBlock(
         repeat(/*liquidMoves / 3*/8) {
             val offset = it * 3
             val flowingState = blockUpdates[x + flowingMoves[offset], y + flowingMoves[offset + 1], z + flowingMoves[offset + 2]]
-            if (flowingState == airId) flowingMasses[offset] = 0
+            if (flowingState == Blocks.airId) flowingMasses[offset] = 0
             else masses[flowingState]?.let { if (it < mass) flowingMasses[offset] = it + 1 }
         }
         while (flowingMasses.isNotEmpty() && mass != 0) {
@@ -68,13 +70,11 @@ abstract class FlowingBlock(
             }
         }
 
-        if (mass == 0) blockUpdates[x, y, z, 0] = airId
+        if (mass == 0) blockUpdates[x, y, z, 0] = Blocks.airId
         else blockUpdates[x, y, z, if (flowingMasses.isEmpty()) 0 else viscosity] = masses.entries.elementAt(masses.size - mass).key
     }
 
     companion object {
-        private val airId = BlockState.byKeyWithStates("minecraft:air").id
-
         private val flowingMoves = intArrayOf(
             -1,  0,  0,
              0,  0, -1,
