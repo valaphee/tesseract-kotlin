@@ -26,7 +26,6 @@ package com.valaphee.tesseract.world
 
 import com.valaphee.foundry.ecs.Engine
 import com.valaphee.tesseract.data.Config
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
@@ -51,17 +50,15 @@ class WorldEngine(
     private val sleep = (1_000L / cyclesPerSecond).toLong()
     private var lastSleep = sleep
 
-    private val entityById = Long2ObjectOpenHashMap<AnyEntityOfWorld>()
+    private val entities = mutableSetOf<AnyEntityOfWorld>()
 
     override fun addEntity(entity: AnyEntityOfWorld) {
-        synchronized(entityById) { entityById.put(entity.id, entity) }
+        entities += entity
     }
 
     override fun removeEntity(entity: AnyEntityOfWorld) {
-        synchronized(entityById) { entityById.remove(entity.id) }
+        entities -= entity
     }
-
-    override fun findEntityOrNull(id: Long): AnyEntityOfWorld? = synchronized(entityById) { entityById[id] }
 
     override fun run(context: WorldContext) {
         launch {
@@ -80,7 +77,7 @@ class WorldEngine(
                     while (cycles.hasNext()) {
                         context.cycle++
                         context.cycleDelta = cycles.next()
-                        entityById.values.filter { it.needsUpdate }.map { launch { runCatching { it.update(context) }.onFailure { it.printStackTrace() } } }.joinAll()
+                        entities.filter { it.needsUpdate }.map { launch { runCatching { it.update(context) }.onFailure { it.printStackTrace() } } }.joinAll()
                     }
                     watchdog.update(clock.realTime)
                 }

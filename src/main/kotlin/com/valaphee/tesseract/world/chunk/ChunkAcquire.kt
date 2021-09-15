@@ -34,7 +34,7 @@ class ChunkAcquire(
     context: WorldContext,
     source: AnyEntityOfWorld?,
     positions: LongArray,
-    val usage: ChunkUsage
+    val usage: ChunkUsage?
 ) : ChunkManagerMessage(context, source, positions) {
     override val entity: AnyEntityOfWorld? get() = null
 }

@@ -39,9 +39,9 @@ object StackType : ActorType("minecraft:item")
 
 typealias Stack = EntityOfWorld<StackType>
 
-fun EntityFactory<WorldContext>.stack(position: Float3, velocity: Float3, stack: com.valaphee.tesseract.inventory.item.stack.Stack<*>?) = invoke(
+fun EntityFactory<WorldContext>.stack(position: Float3, inertia: Float3, stack: com.valaphee.tesseract.inventory.item.stack.Stack<*>?) = invoke(
     StackType, setOf(
-        Location(position, velocity),
+        Location(position, inertia),
         Metadata(),
         StackWrapper(stack)
     )

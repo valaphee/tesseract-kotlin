@@ -22,12 +22,26 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.entity
+package com.valaphee.tesseract.actor
 
-import com.valaphee.foundry.ecs.Message
-import com.valaphee.tesseract.world.WorldContext
+import com.valaphee.foundry.ecs.BaseAttribute
+import com.valaphee.tesseract.actor.attribute._attributes
+import com.valaphee.tesseract.actor.location.location
+import com.valaphee.tesseract.actor.metadata.metadata
+import com.valaphee.tesseract.data.Component
+import com.valaphee.tesseract.net.Packet
 
 /**
  * @author Kevin Ludwig
  */
-interface EntityManagerMessage : Message<WorldContext>
+@Component("tesseract:actor_packet_factory")
+open class ActorPacketFactory : BaseAttribute() {
+    open fun addPacket(actor: AnyActorOfWorld): Packet {
+        val location = actor.location
+        return ActorAddPacket(actor.id, actor.id, actor.type, location.position, location.velocity, location.rotation, location.headRotationYaw, actor._attributes, actor.metadata, emptyArray())
+    }
+}
+
+fun AnyActorOfWorld.addPacket() = findAttribute(ActorPacketFactory::class).addPacket(this)
+
+fun AnyActorOfWorld.removePacket() = ActorRemovePacket(this.id)

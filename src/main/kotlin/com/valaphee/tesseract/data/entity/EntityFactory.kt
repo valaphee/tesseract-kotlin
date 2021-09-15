@@ -24,6 +24,7 @@
 
 package com.valaphee.tesseract.data.entity
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.inject.Inject
 import com.google.inject.Injector
 import com.valaphee.foundry.ecs.Attribute
@@ -42,20 +43,24 @@ import kotlin.reflect.full.isSubclassOf
  */
 class EntityFactory<C : Context> @Inject constructor(
     private val injector: Injector,
+    objectMapper: ObjectMapper,
     data: Map<String, @JvmSuppressWildcards EntityTypeData>
 ) {
+    private val attributesByType = mutableMapOf<String, Set<Attribute>>()
     private val behaviorClassesByType = mutableMapOf<String, List<KClass<*>>>()
     private val facetClassesByType = mutableMapOf<String, List<KClass<*>>>()
 
     init {
         data.forEach { (key, data) ->
-            val (behaviors, others) = data.components.keys.partition { it.isSubclassOf(Behavior::class) }
-            behaviorClassesByType[key] = behaviors
-            facetClassesByType[key] = others.filter { it.isSubclassOf(Facet::class) }
+            val (attributes, others) = data.components.entries.partition { it.key.isSubclassOf(Attribute::class) }
+            attributesByType[key] = attributes.map { objectMapper.readValue(objectMapper.writeValueAsString(it.value), it.key.java) as Attribute }.toSet() // TODO
+            val (behaviors, others2) = others.partition { it.key.isSubclassOf(Behavior::class) }
+            behaviorClassesByType[key] = behaviors.map { it.key }
+            facetClassesByType[key] = others2.filter { it.key.isSubclassOf(Facet::class) }.map { it.key }
         }
     }
 
-    operator fun <T : EntityType> invoke(type: T, attributes: Set<Attribute>, id: Long = Random.nextLong()) = DefaultEntity(type, attributes, behaviorClassesByType[type.key]?.map {
+    operator fun <T : EntityType> invoke(type: T, attributes: Set<Attribute>, id: Long = Random.nextLong()) = DefaultEntity(type, attributesByType[type.key]?.let { it + attributes } ?: attributes, behaviorClassesByType[type.key]?.map {
         @Suppress("UNCHECKED_CAST")
         injector.getInstance(it.java) as Behavior<C>
     }?.toSet() ?: emptySet(), facetClassesByType[type.key]?.map {

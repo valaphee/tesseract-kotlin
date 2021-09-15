@@ -22,34 +22,28 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.stack
+package com.valaphee.tesseract.world.chunk
 
-import com.valaphee.foundry.ecs.Consumed
-import com.valaphee.foundry.ecs.Pass
-import com.valaphee.foundry.ecs.Response
-import com.valaphee.foundry.ecs.system.BaseFacet
+import com.valaphee.tesseract.actor.AnyActorOfWorld
 import com.valaphee.tesseract.actor.location.location
-import com.valaphee.tesseract.actor.metadata.metadata
-import com.valaphee.tesseract.data.Component
+import com.valaphee.tesseract.world.AnyEntityOfWorld
+import com.valaphee.tesseract.world.World
 import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.chunk.chunkBroadcast
-import com.valaphee.tesseract.world.entity.EntityAdd
-import com.valaphee.tesseract.world.filter
 
 /**
  * @author Kevin Ludwig
  */
-@Component("tesseract:stack_add_packetizer")
-class StackAddPacketizer : BaseFacet<WorldContext, EntityAdd>(EntityAdd::class) {
-    override suspend fun receive(message: EntityAdd): Response {
-        message.entities.first().filter<StackType> {
-            val context = message.context
-            val location = it.location
-            context.world.chunkBroadcast(context, location.position, StackAddPacket(it.id, it.id, it.stack, location.position, location.velocity, it.metadata, false))
+class ChunkActorRemove(
+    context: WorldContext,
+    source: AnyEntityOfWorld?,
+    position: Long,
+    val actor: AnyActorOfWorld
+) : ChunkManagerMessage(context, source, longArrayOf(position)) {
+    override val entity: AnyEntityOfWorld? get() = null
+}
 
-            return Consumed
-        }
+fun World.removeActor(context: WorldContext, actor: AnyActorOfWorld) {
+    val (x, _, z) = actor.location.position.toInt3()
 
-        return Pass
-    }
+    sendMessage(ChunkActorRemove(context, null, encodePosition(x shr 4, z shr 4), actor))
 }

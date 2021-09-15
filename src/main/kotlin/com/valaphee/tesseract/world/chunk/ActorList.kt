@@ -22,25 +22,22 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.entity
+package com.valaphee.tesseract.world.chunk
 
-import com.valaphee.foundry.ecs.Pass
-import com.valaphee.foundry.ecs.Response
-import com.valaphee.foundry.ecs.system.BaseFacet
-import com.valaphee.tesseract.data.Component
-import com.valaphee.tesseract.world.WorldContext
+import com.valaphee.foundry.ecs.BaseAttribute
+import com.valaphee.tesseract.actor.AnyActorOfWorld
+import com.valaphee.tesseract.actor.player.Player
+import com.valaphee.tesseract.data.entity.Runtime
 
 /**
  * @author Kevin Ludwig
  */
-@Component("tesseract:entity_manager")
-class EntityManager : BaseFacet<WorldContext, EntityManagerMessage>(EntityManagerMessage::class) {
-    override suspend fun receive(message: EntityManagerMessage): Response {
-        when (message) {
-            is EntityAdd -> message.entities.forEach { message.context.engine.addEntity(it) }
-            is EntityRemove -> message.entities.forEach { message.context.engine.removeEntity(it) }
-        }
-
-        return Pass
-    }
+@Runtime
+class ActorList : BaseAttribute() {
+    val actors = mutableSetOf<AnyActorOfWorld>()
+    val viewers = mutableSetOf<Player>()
 }
+
+val Chunk.actors get() = findAttribute(ActorList::class).actors
+
+val Chunk.viewers get() = findAttribute(ActorList::class).viewers

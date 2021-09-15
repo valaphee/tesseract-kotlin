@@ -22,8 +22,10 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.entity
+package com.valaphee.tesseract.world.chunk
 
+import com.valaphee.tesseract.actor.AnyActorOfWorld
+import com.valaphee.tesseract.actor.location.location
 import com.valaphee.tesseract.world.AnyEntityOfWorld
 import com.valaphee.tesseract.world.World
 import com.valaphee.tesseract.world.WorldContext
@@ -31,17 +33,17 @@ import com.valaphee.tesseract.world.WorldContext
 /**
  * @author Kevin Ludwig
  */
-class EntityAdd(
-    override val context: WorldContext,
-    override val source: AnyEntityOfWorld?,
-    val entities: Array<AnyEntityOfWorld>
-) : EntityManagerMessage {
+class ChunkActorAdd(
+    context: WorldContext,
+    source: AnyEntityOfWorld?,
+    position: Long,
+    val actor: AnyActorOfWorld
+) : ChunkManagerMessage(context, source, longArrayOf(position)) {
     override val entity: AnyEntityOfWorld? get() = null
 }
 
-fun World.addEntities(context: WorldContext, source: AnyEntityOfWorld?, vararg entities: AnyEntityOfWorld) {
-    if (entities.isEmpty()) return
+fun World.addActor(context: WorldContext, actor: AnyActorOfWorld) {
+    val (x, _, z) = actor.location.position.toInt3()
 
-    @Suppress("UNCHECKED_CAST")
-    sendMessage(EntityAdd(context, source, entities as Array<AnyEntityOfWorld>))
+    sendMessage(ChunkActorAdd(context, null, encodePosition(x shr 4, z shr 4), actor))
 }

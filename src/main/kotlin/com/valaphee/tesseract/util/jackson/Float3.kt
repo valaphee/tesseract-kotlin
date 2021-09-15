@@ -36,7 +36,7 @@ import com.valaphee.foundry.math.Float3
  * @author Kevin Ludwig
  */
 object Float3Serializer : JsonSerializer<Float3>() {
-    override fun serialize(value: Float3, generator: JsonGenerator, provider: SerializerProvider) {
+    override fun serialize(value: Float3, generator: JsonGenerator, serializer: SerializerProvider) {
         generator.writeArray(floatArrayOf(value.x, value.y, value.z), 0, 3)
     }
 }

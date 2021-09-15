@@ -22,18 +22,26 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk
+package com.valaphee.tesseract.actor.player
 
-import com.valaphee.foundry.ecs.BaseAttribute
+import com.valaphee.tesseract.actor.ActorPacketFactory
 import com.valaphee.tesseract.actor.AnyActorOfWorld
-import com.valaphee.tesseract.data.entity.Runtime
+import com.valaphee.tesseract.actor.location.location
+import com.valaphee.tesseract.actor.metadata.metadata
+import com.valaphee.tesseract.data.Component
+import com.valaphee.tesseract.net.Packet
+import com.valaphee.tesseract.world.filter
 
 /**
  * @author Kevin Ludwig
  */
-@Runtime
-class Actors : BaseAttribute() {
-    val actors = mutableSetOf<AnyActorOfWorld>()
+@Component("tesseract:player_packet_factory")
+open class PlayerPacketFactory : ActorPacketFactory() {
+    override fun addPacket(actor: AnyActorOfWorld): Packet {
+        actor.filter<PlayerType> {
+            val location = it.location
+            return PlayerAddPacket(it.authExtra.userId, it.authExtra.userName, it.id, it.id, "", location.position, location.velocity, location.rotation, location.headRotationYaw, null, it.metadata, 0, emptyArray(), "", it.user.operatingSystem)
+        }
+        return super.addPacket(actor)
+    }
 }
-
-val Chunk.actors get() = findAttribute(Actors::class).actors

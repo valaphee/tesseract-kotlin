@@ -60,19 +60,14 @@ class ChunkInteractionManager :  BaseFacet<WorldContext, ChunkInteractionManager
                     if (BlockState.byId(blockStateId).block?.onUse(message.context, message.entity, blockUpdates, x, y, z, message.direction, message.clickPosition) != true) message.stackInHand?.let {
                         if (Blocks.isTransparent(adjacentBlockStateId)) {
                             if (it.item.item?.onUseBlock(message.context, message.entity, chunk.position, blockUpdates, x, y, z, message.direction, message.clickPosition) != true && it.blockRuntimeId != 0) blockUpdates[x + xOffset, y + yOffset, z + zOffset] = it.blockRuntimeId
-                            else {
-                                val (chunkX, chunkZ) = chunk.position
-                                message.entity.connection.write(BlockUpdatePacket(Int3(chunkX * 16 + x + xOffset, y + yOffset, chunkZ * 16 + z + zOffset), adjacentBlockStateId, BlockUpdatePacket.Flag.All, 0))
-                            }
                         } else {
+                            // Already a non-transparent block
                             val (chunkX, chunkZ) = chunk.position
                             message.entity.connection.write(BlockUpdatePacket(Int3(chunkX * 16 + x + xOffset, y + yOffset, chunkZ * 16 + z + zOffset), adjacentBlockStateId, BlockUpdatePacket.Flag.All, 0))
                         }
-                    } else {
-                        val (chunkX, chunkZ) = chunk.position
-                        message.entity.connection.write(BlockUpdatePacket(Int3(chunkX * 16 + x + xOffset, y + yOffset, chunkZ * 16 + z + zOffset), adjacentBlockStateId, BlockUpdatePacket.Flag.All, 0))
-                    }
+                    } // ?: No item in hand
                 } else {
+                    // Block building on is transparent
                     val (chunkX, chunkZ) = chunk.position
                     message.entity.connection.write(BlockUpdatePacket(Int3(chunkX * 16 + x + xOffset, y + yOffset, chunkZ * 16 + z + zOffset), adjacentBlockStateId, BlockUpdatePacket.Flag.All, 0))
                 }
@@ -80,9 +75,5 @@ class ChunkInteractionManager :  BaseFacet<WorldContext, ChunkInteractionManager
         }
 
         return Consumed
-    }
-
-    companion object {
-
     }
 }

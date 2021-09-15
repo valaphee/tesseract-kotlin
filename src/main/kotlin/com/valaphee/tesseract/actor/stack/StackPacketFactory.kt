@@ -22,26 +22,26 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.entity
+package com.valaphee.tesseract.actor.stack
 
-import com.valaphee.tesseract.world.AnyEntityOfWorld
-import com.valaphee.tesseract.world.World
-import com.valaphee.tesseract.world.WorldContext
+import com.valaphee.tesseract.actor.ActorPacketFactory
+import com.valaphee.tesseract.actor.AnyActorOfWorld
+import com.valaphee.tesseract.actor.location.location
+import com.valaphee.tesseract.actor.metadata.metadata
+import com.valaphee.tesseract.data.Component
+import com.valaphee.tesseract.net.Packet
+import com.valaphee.tesseract.world.filter
 
 /**
  * @author Kevin Ludwig
  */
-class EntityRemove(
-    override val context: WorldContext,
-    override val source: AnyEntityOfWorld?,
-    val entities: Array<AnyEntityOfWorld>
-) : EntityManagerMessage {
-    override val entity: AnyEntityOfWorld? get() = null
-}
-
-fun World.removeEntities(context: WorldContext, source: AnyEntityOfWorld?, vararg entities: AnyEntityOfWorld) {
-    if (entities.isEmpty()) return
-
-    @Suppress("UNCHECKED_CAST")
-    sendMessage(EntityRemove(context, source, entities as Array<AnyEntityOfWorld>))
+@Component("tesseract:stack_packet_factory")
+open class StackPacketFactory : ActorPacketFactory() {
+    override fun addPacket(actor: AnyActorOfWorld): Packet {
+        actor.filter<StackType> {
+            val location = it.location
+            return StackAddPacket(it.id, it.id, it.stack, location.position, location.velocity, it.metadata, false)
+        }
+        return super.addPacket(actor)
+    }
 }

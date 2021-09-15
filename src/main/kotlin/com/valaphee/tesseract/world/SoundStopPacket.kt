@@ -64,16 +64,16 @@ data class SoundStopPacket(
  */
 object SoundStopPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int): SoundStopPacket {
-        val soundKey = buffer.readString()
+        val _soundKey = buffer.readString()
         val sound: Sound?
-        val soundKey2: String?
+        val soundKey: String?
         if (!buffer.readBoolean()) {
-            sound = Sound.byKeyOrNull(soundKey)
-            soundKey2 = soundKey
+            sound = Sound.byKeyOrNull(_soundKey)
+            soundKey = _soundKey
         } else {
             sound = null
-            soundKey2 = null
+            soundKey = null
         }
-        return SoundStopPacket(sound, soundKey2)
+        return SoundStopPacket(sound, soundKey)
     }
 }

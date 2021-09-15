@@ -26,12 +26,10 @@ package com.valaphee.tesseract.world.chunk
 
 import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.actor.player.Player
-import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.connection
 import com.valaphee.tesseract.world.World
 import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.filterType
 
 /**
  * @author Kevin Ludwig
@@ -46,9 +44,9 @@ class Broadcast(
     override lateinit var chunks: Array<Chunk>
 }
 
-fun Chunk.broadcast(vararg packets: Packet) = actors.filterType<PlayerType>().forEach { packets.forEach(it.connection::write) }
+fun Chunk.broadcast(vararg packets: Packet) = viewers.forEach { packets.forEach(it.connection::write) }
 
-fun Chunk.broadcast(source: Player, vararg packets: Packet) = actors.filterType<PlayerType>().forEach { if (it != source) packets.forEach(it.connection::write) }
+fun Chunk.broadcast(source: Player, vararg packets: Packet) = viewers.forEach { if (it != source) packets.forEach(it.connection::write) }
 
 fun World.chunkBroadcast(context: WorldContext, position: Float3, vararg packets: Packet) {
     val (x, _, z) = position.toInt3()

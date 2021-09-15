@@ -35,7 +35,5 @@ interface Engine<C : Context> {
 
     fun removeEntity(entity: Entity<out EntityType, C>)
 
-    fun findEntityOrNull(id: Long): Entity<out EntityType, C>?
-
     fun run(context: C)
 }

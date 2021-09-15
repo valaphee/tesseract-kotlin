@@ -25,7 +25,6 @@
 package com.valaphee.tesseract.world
 
 import com.valaphee.foundry.ecs.system.BaseBehavior
-import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.data.Component
 import kotlin.random.Random
 
@@ -46,11 +45,11 @@ class EnvironmentUpdater : BaseBehavior<WorldContext>(Environment::class) {
             if (raining) {
                 environment.rainLevel = 1.0f
                 environment.rainTime = Random.nextInt(12000) + 12000
-                world.broadcast(WorldEventPacket(WorldEventPacket.Event.StartRaining, Float3.Zero, environment.rainTime))
+                //world.broadcast(WorldEventPacket(WorldEventPacket.Event.StartRaining, Float3.Zero, environment.rainTime)) TODO
             } else {
                 environment.rainLevel = 0.0f
                 environment.rainTime = Random.nextInt(168000) + 12000
-                world.broadcast(WorldEventPacket(WorldEventPacket.Event.StopRaining, Float3.Zero, environment.rainTime))
+                //world.broadcast(WorldEventPacket(WorldEventPacket.Event.StopRaining, Float3.Zero, environment.rainTime)) TODO
             }
         }
 
@@ -62,11 +61,11 @@ class EnvironmentUpdater : BaseBehavior<WorldContext>(Environment::class) {
 
                 environment.thunderLevel = 1.0f
                 environment.thunderTime = Random.nextInt(12000) + 12000
-                world.broadcast(WorldEventPacket(WorldEventPacket.Event.StartThunderstorm, Float3.Zero, environment.rainTime))
+                //world.broadcast(WorldEventPacket(WorldEventPacket.Event.StartThunderstorm, Float3.Zero, environment.rainTime)) TODO
             } else {
                 environment.thunderLevel = 0.0f
                 environment.thunderTime = Random.nextInt(168000) + 3600
-                world.broadcast(WorldEventPacket(WorldEventPacket.Event.StopThunderstorm, Float3.Zero, environment.rainTime))
+                //world.broadcast(WorldEventPacket(WorldEventPacket.Event.StopThunderstorm, Float3.Zero, environment.rainTime)) TODO
             }
         }
 

@@ -2,6 +2,11 @@
   "tesseract:entity_type": {
     "key": "minecraft:player",
     "components": {
+      "tesseract:object": {
+        "bounding_box": [0.6, 1.8]
+      },
+      "tesseract:player_packet_factory": {},
+
       /*LocationManagerMessage*/
       "tesseract:location_manager": {},
       "tesseract:radial_view": {},

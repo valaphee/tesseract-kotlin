@@ -86,12 +86,12 @@ import com.valaphee.tesseract.util.math.Direction
 import com.valaphee.tesseract.util.math.toDirectionVector
 import com.valaphee.tesseract.world.chunk.Chunk
 import com.valaphee.tesseract.world.chunk.ChunkRelease
+import com.valaphee.tesseract.world.chunk.addActor
 import com.valaphee.tesseract.world.chunk.chunkBroadcast
 import com.valaphee.tesseract.world.chunk.position
+import com.valaphee.tesseract.world.chunk.removeActor
 import com.valaphee.tesseract.world.chunk.terrain.SectionCompact
 import com.valaphee.tesseract.world.chunk.terrain.blockStorage
-import com.valaphee.tesseract.world.entity.addEntities
-import com.valaphee.tesseract.world.entity.removeEntities
 import io.netty.buffer.Unpooled
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import net.jpountz.xxhash.XXHashFactory
@@ -129,7 +129,7 @@ class WorldPacketHandler(
             val inventory = PlayerInventory()
             addAttribute(InventoryWrapper(inventory))
             addAttribute(WindowManager(inventory))
-        }.also { context.world.addEntities(context, null, it) }
+        }.also { context.world.addActor(context, it) }
 
         val settings = context.world.settings
         val environment = context.world.environment
@@ -147,9 +147,10 @@ class WorldPacketHandler(
     }
 
     override fun destroy() {
-        context.world.sendMessage(ChunkRelease(context, player, player.findFacet(View::class).acquiredChunks))
-        context.world.removeEntities(context, null, player)
+        context.world.removeActor(context, player)
         context.provider.savePlayer(authExtra.userId, player)
+
+        context.world.sendMessage(ChunkRelease(context, player, player.findFacet(View::class).acquiredChunks))
     }
 
     override fun other(packet: Packet) {
@@ -159,8 +160,7 @@ class WorldPacketHandler(
     override fun text(packet: TextPacket) {
         if (packet.type != TextPacket.Type.Chat || packet.xboxUserId != player.authExtra.xboxUserId) return
 
-        context.world.broadcast(packet)
-        chatLog.info("{}: {}", this, packet.message)
+        // TODO
     }
 
     override fun playerLocation(packet: PlayerLocationPacket) {
@@ -248,7 +248,7 @@ class WorldPacketHandler(
                         val sourceStack = sourceInventory.getSlot(sourceSlotId)
                         sourceInventory.setSlot(sourceSlotId, null)
                         val location = player.location
-                        context.world.addEntities(context, player, context.entityFactory.stack(location.position, location.rotation.toDirectionVector().scale(0.4f), sourceStack))
+                        context.world.addActor(context, context.entityFactory.stack(location.position, location.rotation.toDirectionVector().scale(0.4f), sourceStack))
                     }
                     InventoryRequestPacket.ActionType.Destroy -> {
                         val (sourceInventory, sourceSlotId) = windowManager.select(it.sourceSlotType!!, it.sourceSlotId)
@@ -302,7 +302,6 @@ class WorldPacketHandler(
 
     companion object {
         private val log: Logger = LogManager.getLogger(WorldPacketHandler::class.java)
-        private val chatLog: Logger = LogManager.getLogger("Chat")
         private val xxHash64 = XXHashFactory.fastestInstance().hash64()
     }
 }

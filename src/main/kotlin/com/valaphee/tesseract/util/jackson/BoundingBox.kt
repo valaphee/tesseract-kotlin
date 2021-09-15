@@ -30,20 +30,43 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
-import java.util.regex.Pattern
+import com.valaphee.foundry.math.collision.BoundingBox
 
 /**
  * @author Kevin Ludwig
  */
-object PatternSerializer : JsonSerializer<Pattern>() {
-    override fun serialize(value: Pattern, generator: JsonGenerator, provider: SerializerProvider) {
-        generator.writeString(value.pattern())
+object BoundingBoxSerializer : JsonSerializer<BoundingBox>() {
+    override fun serialize(value: BoundingBox, generator: JsonGenerator, serializer: SerializerProvider) {
+        val (xMin, yMin, zMin) = value.minimum
+        val (xMax, yMax, zMax) = value.maximum
+        generator.writeArray(floatArrayOf(xMin, yMin, zMin, xMax, yMax, zMax), 0, 6)
     }
 }
 
 /**
  * @author Kevin Ludwig
  */
-object PatternDeserializer : JsonDeserializer<Pattern>() {
-    override fun deserialize(parser: JsonParser, context: DeserializationContext): Pattern = Pattern.compile(parser.codec.readValue(parser, String::class.java))
+object BoundingBoxDeserializer : JsonDeserializer<BoundingBox>() {
+    override fun deserialize(parser: JsonParser, context: DeserializationContext): BoundingBox {
+        val array = parser.readValueAs(FloatArray::class.java)
+        return when (array.size) {
+            1 -> {
+                val size = array[0]
+                val halfSize = array[0] / 2
+                BoundingBox(-halfSize, 0.0f, -halfSize, halfSize, size, halfSize)
+            }
+            2 -> {
+                val xzHalfSize = array[0] / 2
+                val ySize = array[1]
+                BoundingBox(-xzHalfSize, 0.0f, -xzHalfSize, xzHalfSize, ySize, xzHalfSize)
+            }
+            3 -> {
+                val xHalfSize = array[0] / 2
+                val ySize = array[1]
+                val zHalfSize = array[2] / 2
+                BoundingBox(-xHalfSize, 0.0f, -zHalfSize, xHalfSize, ySize, zHalfSize)
+            }
+            else -> TODO()
+        }
+    }
 }

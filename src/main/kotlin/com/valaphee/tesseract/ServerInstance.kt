@@ -33,11 +33,8 @@ import com.valaphee.tesseract.net.Decompressor
 import com.valaphee.tesseract.net.PacketDecoder
 import com.valaphee.tesseract.net.PacketEncoder
 import com.valaphee.tesseract.net.UnconnectedPingHandler
-import com.valaphee.tesseract.net.base.DisconnectPacket
 import com.valaphee.tesseract.net.init.InitPacketHandler
 import com.valaphee.tesseract.util.generateKeyPair
-import com.valaphee.tesseract.world.PlayerList
-import com.valaphee.tesseract.world.broadcast
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.buffer.PooledByteBufAllocator
 import io.netty.channel.AdaptiveRecvByteBufAllocator
@@ -92,7 +89,7 @@ class ServerInstance(
                 override fun initChannel(channel: Channel) {
                     channel.config().writeBufferWaterMark = writeBufferWaterMark
 
-                    channel.pipeline().addLast(UnconnectedPingHandler(config, worldContext.world.findFacet(PlayerList::class)))
+                    channel.pipeline().addLast(UnconnectedPingHandler(config))
                 }
             })
             .childHandler(object : ChannelInitializer<Channel>() {
@@ -142,7 +139,7 @@ class ServerInstance(
     override fun destroy() {
         defaultSystemOut.println("Disconnecting all players and shutting down listener...")
 
-        worldContext.world.broadcast(DisconnectPacket("Shut down"))
+        //worldContext.world.broadcast(DisconnectPacket("Shut down"))
 
         channel.close().syncUninterruptibly()
 
