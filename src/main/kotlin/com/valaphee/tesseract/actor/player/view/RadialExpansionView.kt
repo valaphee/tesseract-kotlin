@@ -25,16 +25,15 @@
 package com.valaphee.tesseract.actor.player.view
 
 import com.google.inject.Inject
-import com.valaphee.foundry.ecs.Pass
-import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.math.Int2
-import com.valaphee.tesseract.actor.location.LocationManagerMessage
-import com.valaphee.tesseract.actor.location.location
 import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.data.Component
 import com.valaphee.tesseract.data.Config
+import com.valaphee.tesseract.world.AnyEntityOfWorld
+import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.ChunkAcquire
 import com.valaphee.tesseract.world.chunk.ChunkRelease
+import com.valaphee.tesseract.world.chunk.actor.location.location
 import com.valaphee.tesseract.world.chunk.encodePosition
 import com.valaphee.tesseract.world.filter
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet
@@ -51,8 +50,8 @@ class RadialExpansionView @Inject constructor(
 ) : View(config) {
     private lateinit var lastChunkPosition: Int2
 
-    override suspend fun receive(message: LocationManagerMessage): Response {
-        message.entity?.filter<PlayerType> { player ->
+    override suspend fun update(entity: AnyEntityOfWorld, context: WorldContext): Boolean {
+        entity.filter<PlayerType> { player ->
             val position = player.location.position.toInt3()
             val chunkX = position.x shr 4
             val chunkZ = position.z shr 4
@@ -73,18 +72,18 @@ class RadialExpansionView @Inject constructor(
                     val chunksToAcquire = chunksInDistance.filterNot(_acquiredChunks::contains)
                     if (chunksToAcquire.isNotEmpty()) {
                         _acquiredChunks.addAll(chunksToAcquire)
-                        message.context.world.sendMessage(ChunkAcquire(message.context, player, chunksToAcquire.toLongArray(), ViewChunk(message.context, player, position, distance)))
+                        context.world.sendMessage(ChunkAcquire(context, player, chunksToAcquire.toLongArray(), ViewChunk(context, player, position, distance)))
                     }
                     chunksInView.addAll(chunksInDistance)
                 }
                 val chunksToRelease = _acquiredChunks.filterNot(chunksInView::contains)
                 if (chunksToRelease.isNotEmpty()) {
                     _acquiredChunks.removeAll(chunksToRelease)
-                    message.context.world.sendMessage(ChunkRelease(message.context, player, chunksToRelease.toLongArray()))
+                    context.world.sendMessage(ChunkRelease(context, player, chunksToRelease.toLongArray()))
                 }
             }
         }
 
-        return Pass
+        return true
     }
 }

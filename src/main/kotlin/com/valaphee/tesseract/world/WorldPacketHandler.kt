@@ -27,8 +27,6 @@ package com.valaphee.tesseract.world
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
-import com.valaphee.tesseract.actor.location.Teleport
-import com.valaphee.tesseract.actor.location.location
 import com.valaphee.tesseract.actor.metadata.Flag
 import com.valaphee.tesseract.actor.metadata.Metadata
 import com.valaphee.tesseract.actor.metadata.MetadataField
@@ -36,11 +34,9 @@ import com.valaphee.tesseract.actor.metadata.MetadataPacket
 import com.valaphee.tesseract.actor.metadata.metadata
 import com.valaphee.tesseract.actor.player.AuthExtra
 import com.valaphee.tesseract.actor.player.EmotePacket
-import com.valaphee.tesseract.actor.player.InputPacket
 import com.valaphee.tesseract.actor.player.InteractPacket
 import com.valaphee.tesseract.actor.player.Player
 import com.valaphee.tesseract.actor.player.PlayerActionPacket
-import com.valaphee.tesseract.actor.player.PlayerLocationPacket
 import com.valaphee.tesseract.actor.player.Rank
 import com.valaphee.tesseract.actor.player.User
 import com.valaphee.tesseract.actor.player.WindowManager
@@ -87,6 +83,10 @@ import com.valaphee.tesseract.util.math.toDirectionVector
 import com.valaphee.tesseract.world.chunk.Chunk
 import com.valaphee.tesseract.world.chunk.ChunkRelease
 import com.valaphee.tesseract.world.chunk.actor.addActor
+import com.valaphee.tesseract.world.chunk.actor.chunk
+import com.valaphee.tesseract.world.chunk.actor.location.LocationManagerMessage
+import com.valaphee.tesseract.world.chunk.actor.location.PlayerLocationPacket
+import com.valaphee.tesseract.world.chunk.actor.location.location
 import com.valaphee.tesseract.world.chunk.actor.removeActor
 import com.valaphee.tesseract.world.chunk.chunkBroadcast
 import com.valaphee.tesseract.world.chunk.position
@@ -142,15 +142,13 @@ class WorldPacketHandler(
         connection.write(RecipesPacket(emptyArray(), emptyArray(), emptyArray(), true))
 
         connection.write(MetadataPacket(player.id, player.metadata, 0))
-
-        player.sendMessage(Teleport(context, player, player, location.position, location.rotation)) // notify view
     }
 
     override fun destroy() {
         context.world.removeActor(context, player)
         context.provider.savePlayer(authExtra.userId, player)
 
-        context.world.sendMessage(ChunkRelease(context, player, player.findFacet(View::class).acquiredChunks))
+        context.world.sendMessage(ChunkRelease(context, player, player.findBehavior(View::class).acquiredChunks))
     }
 
     override fun other(packet: Packet) {
@@ -166,20 +164,20 @@ class WorldPacketHandler(
     override fun playerLocation(packet: PlayerLocationPacket) {
         if (packet.runtimeEntityId != player.id) return
 
-        player.sendMessage(Teleport(context, player, player, packet.position, packet.rotation))
+        player.chunk.sendMessage(LocationManagerMessage(context, player, player.chunk, packet.position, packet.rotation))
     }
 
     override fun inventoryTransaction(packet: InventoryTransactionPacket) {
         when (packet.type) {
             InventoryTransactionPacket.Type.ItemUse -> {
-                player.sendMessage(Teleport(context, player, player, packet.fromPosition!!, player.location.rotation))
+                player.chunk.sendMessage(LocationManagerMessage(context, player, player.chunk, packet.fromPosition!!, player.location.rotation))
                 val stackInHand = player.inventory<PlayerInventory>().apply { hotbarSlot = packet.hotbarSlot }.stackInHand
                 if (packet.stackInHand == stackInHand) when (packet.actionId) {
                     InventoryTransactionPacket.ItemUseBlock -> context.world.useBlock(context, player, packet.position!!, Direction.fromIndex(packet.auxInt), packet.clickPosition!!, stackInHand)
                 }
             }
             InventoryTransactionPacket.Type.ItemUseOnEntity -> {
-                player.sendMessage(Teleport(context, player, player, packet.fromPosition!!, player.location.rotation))
+                player.chunk.sendMessage(LocationManagerMessage(context, player, player.chunk, packet.fromPosition!!, player.location.rotation))
             }
         }
     }
@@ -205,7 +203,7 @@ class WorldPacketHandler(
     }
 
     override fun viewDistanceRequest(packet: ViewDistanceRequestPacket) {
-        connection.write(ViewDistancePacket(player.findFacet(View::class).apply { distance = packet.distance }.distance))
+        connection.write(ViewDistancePacket(player.findBehavior(View::class).apply { distance = packet.distance }.distance))
     }
 
     override fun command(packet: CommandPacket) {
@@ -223,10 +221,6 @@ class WorldPacketHandler(
         if (packet.runtimeEntityId != player.id) return
 
         context.world.chunkBroadcast(context, player.location.position, packet)
-    }
-
-    override fun input(packet: InputPacket) {
-        player.sendMessage(Teleport(context, player, player, packet.position, packet.rotation))
     }
 
     override fun inventoryRequest(packet: InventoryRequestPacket) {

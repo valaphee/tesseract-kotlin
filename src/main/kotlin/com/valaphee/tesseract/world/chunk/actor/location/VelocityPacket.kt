@@ -22,23 +22,34 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.location
+package com.valaphee.tesseract.world.chunk.actor.location
 
-import com.valaphee.foundry.ecs.BaseAttribute
-import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
-import com.valaphee.tesseract.actor.AnyActorOfWorld
+import com.valaphee.tesseract.net.Packet
+import com.valaphee.tesseract.net.PacketBuffer
+import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 
 /**
  * @author Kevin Ludwig
  */
-class Location(
-    var position: Float3,
-    var velocity: Float3 = Float3.Zero,
-    var rotation: Float2 = Float2.Zero,
-    var headRotationYaw: Float = 0.0f,
-) : BaseAttribute() {
-    var onGround = false
+data class VelocityPacket(
+    var runtimeEntityId: Long,
+    var velocity: Float3
+) : Packet {
+    override val id get() = 0x28
+
+    override fun write(buffer: PacketBuffer, version: Int) {
+        buffer.writeVarULong(runtimeEntityId)
+        buffer.writeFloat3(velocity)
+    }
+
+    override fun handle(handler: PacketHandler) = handler.velocity(this)
 }
 
-val AnyActorOfWorld.location get() = findAttribute(Location::class)
+/**
+ * @author Kevin Ludwig
+ */
+object VelocityPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = VelocityPacket(buffer.readVarULong(), buffer.readFloat3())
+}

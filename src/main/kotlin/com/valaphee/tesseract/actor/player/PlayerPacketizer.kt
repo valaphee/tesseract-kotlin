@@ -26,17 +26,19 @@ package com.valaphee.tesseract.actor.player
 
 import com.valaphee.tesseract.actor.ActorPacketizer
 import com.valaphee.tesseract.actor.AnyActorOfWorld
-import com.valaphee.tesseract.actor.location.location
 import com.valaphee.tesseract.actor.metadata.metadata
 import com.valaphee.tesseract.data.Component
+import com.valaphee.tesseract.data.Share
 import com.valaphee.tesseract.data.entity.Runtime
 import com.valaphee.tesseract.net.Packet
+import com.valaphee.tesseract.world.chunk.actor.location.location
 import com.valaphee.tesseract.world.filter
 
 /**
  * @author Kevin Ludwig
  */
 @Runtime
+@Share
 @Component("tesseract:player.packetizer")
 open class PlayerPacketizer : ActorPacketizer() {
     override fun addPacket(actor: AnyActorOfWorld): Packet {

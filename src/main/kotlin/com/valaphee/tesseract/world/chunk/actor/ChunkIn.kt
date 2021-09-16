@@ -22,21 +22,25 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.location
+package com.valaphee.tesseract.world.chunk.actor
 
-import com.valaphee.foundry.math.Float2
-import com.valaphee.foundry.math.Float3
+import com.valaphee.foundry.ecs.BaseAttribute
 import com.valaphee.tesseract.actor.AnyActorOfWorld
-import com.valaphee.tesseract.world.WorldContext
+import com.valaphee.tesseract.data.Component
+import com.valaphee.tesseract.data.entity.Runtime
+import com.valaphee.tesseract.world.chunk.Chunk
 
 /**
  * @author Kevin Ludwig
  */
-class MoveRotate(
-    context: WorldContext,
-    override val source: AnyActorOfWorld,
-    val move: Float3,
-    val rotation: Float2
-) : LocationManagerMessage(context) {
-    override val entity get() = source
+@Runtime
+@Component("tesseract:actor.chunk_in")
+class ChunkIn : BaseAttribute() {
+    lateinit var value: Chunk
 }
+
+var AnyActorOfWorld.chunk
+    get() = findAttribute(ChunkIn::class).value
+    set(value) {
+        findAttribute(ChunkIn::class).value = value
+    }

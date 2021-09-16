@@ -26,16 +26,18 @@ package com.valaphee.tesseract.actor
 
 import com.valaphee.foundry.ecs.BaseAttribute
 import com.valaphee.tesseract.actor.attribute._attributes
-import com.valaphee.tesseract.actor.location.location
 import com.valaphee.tesseract.actor.metadata.metadata
 import com.valaphee.tesseract.data.Component
+import com.valaphee.tesseract.data.Share
 import com.valaphee.tesseract.data.entity.Runtime
 import com.valaphee.tesseract.net.Packet
+import com.valaphee.tesseract.world.chunk.actor.location.location
 
 /**
  * @author Kevin Ludwig
  */
 @Runtime
+@Share
 @Component("tesseract:actor.packetizer")
 open class ActorPacketizer : BaseAttribute() {
     open fun addPacket(actor: AnyActorOfWorld): Packet {

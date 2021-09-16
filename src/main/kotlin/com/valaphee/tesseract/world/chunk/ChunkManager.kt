@@ -41,6 +41,7 @@ import com.valaphee.tesseract.world.chunk.actor.ChunkActorAdd
 import com.valaphee.tesseract.world.chunk.actor.ChunkActorRemove
 import com.valaphee.tesseract.world.chunk.actor.ChunkActorUpdate
 import com.valaphee.tesseract.world.chunk.actor.actors
+import com.valaphee.tesseract.world.chunk.actor.chunk
 import com.valaphee.tesseract.world.chunk.actor.viewers
 import com.valaphee.tesseract.world.chunk.terrain.Terrain
 import com.valaphee.tesseract.world.chunk.terrain.TerrainRuntime
@@ -212,14 +213,18 @@ class ChunkManager @Inject constructor(
             is ChunkActorAdd -> {
                 val actor = message.actor
                 val position = message.positions.first()
-                (chunks[position]?.also { it.broadcast(actor.addPacket()) } ?: AwaitedChunk(position).also { awaitedChunksChannel.send(it) }.awaiting.await().also(context.engine::addEntity)).actors += actor
+                val chunk = (chunks[position]?.also { it.broadcast(actor.addPacket()) } ?: AwaitedChunk(position).also { awaitedChunksChannel.send(it) }.awaiting.await().also(context.engine::addEntity))
+                actor.chunk = chunk
+                chunk.actors += actor
                 context.engine.addEntity(actor)
             }
             is ChunkActorUpdate -> {
                 val actor = message.actor
                 message.source?.filter<ChunkType> { it.actors -= actor }
                 val position = message.positions.first()
-                (chunks[position] ?: AwaitedChunk(position).also { awaitedChunksChannel.send(it) }.awaiting.await().also(context.engine::addEntity)).actors += actor
+                val chunk = (chunks[position] ?: AwaitedChunk(position).also { awaitedChunksChannel.send(it) }.awaiting.await().also(context.engine::addEntity))
+                actor.chunk = chunk
+                chunk.actors += actor
             }
             is ChunkActorRemove -> {
                 val actor = message.actor

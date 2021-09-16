@@ -22,20 +22,33 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.location
+package com.valaphee.tesseract.world.chunk.actor.location
 
-import com.valaphee.foundry.math.Float2
-import com.valaphee.foundry.math.Float3
-import com.valaphee.tesseract.actor.AnyActorOfWorld
+import com.valaphee.foundry.ecs.Pass
+import com.valaphee.foundry.ecs.Response
+import com.valaphee.foundry.ecs.system.BaseFacet
+import com.valaphee.tesseract.data.Component
 import com.valaphee.tesseract.world.WorldContext
+import com.valaphee.tesseract.world.chunk.actor.ChunkActorUpdate
+import com.valaphee.tesseract.world.chunk.encodePosition
+import com.valaphee.tesseract.world.chunk.terrain.BlockStorage
 
 /**
  * @author Kevin Ludwig
  */
-class Teleport(
-    context: WorldContext,
-    override val source: AnyActorOfWorld?,
-    override val entity: AnyActorOfWorld,
-    val position: Float3,
-    val rotation: Float2,
-) : LocationManagerMessage(context)
+@Component("tesseract:chunk.actor_location_manager")
+class LocationManager : BaseFacet<WorldContext, LocationManagerMessage>(LocationManagerMessage::class, Location::class) {
+    override suspend fun receive(message: LocationManagerMessage): Response {
+        val actor = message.source
+        val location = actor.location
+        val position = message.position
+        location.position = position
+        val (xInt, _, zInt) = position.toInt3()
+        if (xInt < 0 || xInt >= BlockStorage.XZSize || zInt < 0 || zInt >= BlockStorage.XZSize) {
+            val (newX, _, newZ) = location.position.toInt3()
+            message.context.world.sendMessage(ChunkActorUpdate(message.context, message.entity, encodePosition(newX shr 4, newZ shr 4), actor))
+        }
+
+        return Pass
+    }
+}

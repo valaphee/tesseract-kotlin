@@ -22,14 +22,24 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.location
+package com.valaphee.tesseract.actor
 
-import com.valaphee.foundry.ecs.Message
-import com.valaphee.tesseract.world.WorldContext
+import com.valaphee.foundry.ecs.BaseAttribute
+import com.valaphee.foundry.math.collision.BoundingBox
+import com.valaphee.tesseract.data.Component
+import com.valaphee.tesseract.data.Share
+import com.valaphee.tesseract.data.entity.Runtime
 
 /**
  * @author Kevin Ludwig
  */
-sealed class LocationManagerMessage(
-    override val context: WorldContext
-) : Message<WorldContext>
+@Runtime
+@Share
+@Component("tesseract:actor.object")
+class Object(
+    val boundingBox: BoundingBox,
+    val yOffset: Float,
+    val gravity: Float
+) : BaseAttribute()
+
+val AnyActorOfWorld.`object` get() = findAttribute(Object::class)

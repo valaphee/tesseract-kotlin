@@ -4,7 +4,7 @@
     "components": {
       "tesseract:chunk.block_updater": {},
       "tesseract:chunk.actors": {},
-      "tesseract:chunk.actor_updater": {}
+      "tesseract:chunk.actor_location_manager": {}
     }
   }
 }

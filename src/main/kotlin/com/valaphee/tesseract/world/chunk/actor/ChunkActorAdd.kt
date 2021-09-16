@@ -25,7 +25,7 @@
 package com.valaphee.tesseract.world.chunk.actor
 
 import com.valaphee.tesseract.actor.AnyActorOfWorld
-import com.valaphee.tesseract.actor.location.location
+import com.valaphee.tesseract.world.chunk.actor.location.location
 import com.valaphee.tesseract.world.AnyEntityOfWorld
 import com.valaphee.tesseract.world.World
 import com.valaphee.tesseract.world.WorldContext

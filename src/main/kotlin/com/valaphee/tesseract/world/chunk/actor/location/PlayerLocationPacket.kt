@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.player
+package com.valaphee.tesseract.world.chunk.actor.location
 
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3

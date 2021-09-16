@@ -9,8 +9,7 @@
         ]
       },
       "tesseract:actor.packetizer": {},
-      "tesseract:actor.location_manager": {},
-      "tesseract:actor.location_packetizer": {}
+      "tesseract:actor.chunk_in": {}
     }
   }
 }

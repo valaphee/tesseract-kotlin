@@ -10,9 +10,8 @@
         "y_offset": 1.62
       },
       "tesseract:player.packetizer": {},
-      "tesseract:actor.location_manager": {},
+      "tesseract:actor.chunk_in": {},
       "tesseract:player.radial_view": {},
-      "tesseract:player.location_packetizer": {},
       "tesseract:player.view_chunk_packetizer": {},
       "tesseract:player.chunk_interaction_manager": {}
     }
