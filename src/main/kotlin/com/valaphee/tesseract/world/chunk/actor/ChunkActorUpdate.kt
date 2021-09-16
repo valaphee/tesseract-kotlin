@@ -38,5 +38,5 @@ class ChunkActorUpdate(
     position: Long,
     val actor: AnyActorOfWorld
 ) : ChunkManagerMessage(context, source, longArrayOf(position)) {
-    override val entity: AnyEntityOfWorld? get() = null
+    override val entity: AnyEntityOfWorld? get() = null // world is already in context
 }

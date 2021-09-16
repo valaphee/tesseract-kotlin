@@ -35,5 +35,5 @@ class ChunkRelease(
     source: AnyEntityOfWorld?,
     positions: LongArray
 ) : ChunkManagerMessage(context, source, positions) {
-    override val entity: AnyEntityOfWorld? get() = null
+    override val entity: AnyEntityOfWorld? get() = null // world is already in context
 }

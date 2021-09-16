@@ -25,11 +25,11 @@
 package com.valaphee.tesseract.world.chunk.actor
 
 import com.valaphee.tesseract.actor.AnyActorOfWorld
-import com.valaphee.tesseract.world.chunk.actor.location.location
 import com.valaphee.tesseract.world.AnyEntityOfWorld
 import com.valaphee.tesseract.world.World
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.ChunkManagerMessage
+import com.valaphee.tesseract.world.chunk.actor.location.location
 import com.valaphee.tesseract.world.chunk.encodePosition
 
 /**
@@ -41,7 +41,7 @@ class ChunkActorAdd(
     position: Long,
     val actor: AnyActorOfWorld
 ) : ChunkManagerMessage(context, source, longArrayOf(position)) {
-    override val entity: AnyEntityOfWorld? get() = null
+    override val entity: AnyEntityOfWorld? get() = null // world is already in context
 }
 
 fun World.addActor(context: WorldContext, actor: AnyActorOfWorld) {

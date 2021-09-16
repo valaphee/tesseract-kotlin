@@ -30,6 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.inject.AbstractModule
@@ -75,7 +76,7 @@ class DataModule(
         }
 
         val objectMapper = jacksonObjectMapper().apply {
-            /*registerModule(AfterburnerModule())*/
+            registerModule(AfterburnerModule())
             registerModule(
                 SimpleModule()
                     .addSerializer(Float2::class.java, Float2Serializer)

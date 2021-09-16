@@ -34,6 +34,7 @@ import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.base.CacheStatusPacket
 import com.valaphee.tesseract.net.base.DisconnectPacket
+import com.valaphee.tesseract.net.base.ViolationPacket
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.WorldPacketHandler
 import org.apache.logging.log4j.LogManager
@@ -60,7 +61,7 @@ class InitPacketHandler(
     }
 
     override fun exceptionCaught(cause: Throwable) {
-        log.debug("{}: Caught exception", cause)
+        log.error("$this: Exception caught", cause)
 
         connection.close(DisconnectPacket())
     }
@@ -70,8 +71,7 @@ class InitPacketHandler(
     }
 
     override fun other(packet: Packet) {
-        log.debug("{}: Unhandled packet: {}", packet)
-
+        log.warn("{}: Unhandled packet: {}", this, packet)
         connection.close(DisconnectPacket("disconnectionScreen.noReason"))
     }
 
@@ -142,6 +142,10 @@ class InitPacketHandler(
 
     override fun cacheStatus(packet: CacheStatusPacket) {
         cacheSupported = packet.supported
+    }
+
+    override fun violation(packet: ViolationPacket) {
+        log.warn("{}: Violation reported: {}", this, packet)
     }
 
     override fun toString() = if (this::authExtra.isInitialized) authExtra.userName else "${connection.address}"

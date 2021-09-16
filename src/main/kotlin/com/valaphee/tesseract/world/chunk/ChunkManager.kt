@@ -189,7 +189,7 @@ class ChunkManager @Inject constructor(
                         }
 
                         chunk.viewers.isEmpty()
-                    } ?: TODO()
+                    } ?: false/*TODO()*/
                 }.map(chunks::remove)
                 if (chunksRemoved.isNotEmpty()) {
                     val engine = context.engine

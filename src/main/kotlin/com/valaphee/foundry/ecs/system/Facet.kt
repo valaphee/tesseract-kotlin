@@ -63,7 +63,6 @@ abstract class BaseFacet<C : Context, P : Message<C>>(
 /**
  * @author Kevin Ludwig
  */
-@Suppress("DuplicatedCode")
 class CompositeFacet<C : Context, P : Message<C>>(
     private val children: Set<Facet<C, P>>,
     override val messageType: KClass<P>,

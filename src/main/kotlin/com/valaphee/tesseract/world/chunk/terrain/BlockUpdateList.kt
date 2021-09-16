@@ -34,8 +34,8 @@ import it.unimi.dsi.fastutil.shorts.Short2IntOpenHashMap
 class BlockUpdateList(
     private val cartesian: ReadWriteCartesian
 ) : ReadWriteCartesian {
-    val changes = Short2IntOpenHashMap()
-    val memory = Short2IntOpenHashMap()
+    internal val changes = Short2IntOpenHashMap()
+    internal val memory = Short2IntOpenHashMap()
 
     override fun get(x: Int, y: Int, z: Int): Int {
         val key = encodePosition(x, y, z)

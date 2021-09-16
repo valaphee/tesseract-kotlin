@@ -22,30 +22,21 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk.terrain
+package com.valaphee.tesseract.world.chunk.actor.location
 
+import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
-import com.valaphee.foundry.math.collision.BoundingBox
-import com.valaphee.tesseract.data.block.Blocks
-import com.valaphee.tesseract.util.math.ceil
-import com.valaphee.tesseract.util.math.floor
+import com.valaphee.tesseract.actor.AnyActorOfWorld
+import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.Chunk
 
-fun Chunk.getCollisions(boundingBox: BoundingBox): List<BoundingBox> {
-    val (xMin, yMin, zMin) = boundingBox.minimum
-    val (xMax, yMax, zMax) = boundingBox.maximum
-    val xMinInt = floor(xMin)
-    val yMinInt = floor(yMin)
-    val zMinInt = floor(zMin)
-    val xMaxInt = ceil(xMax)
-    val yMaxInt = ceil(yMax)
-    val zMaxInt = ceil(zMax)
-    val collisions = mutableListOf<BoundingBox>()
-    for (x in xMinInt..xMaxInt) for (y in yMinInt..yMaxInt) for (z in zMinInt..zMaxInt) if (!Blocks.isTransparent(blockStorage[x, y, z])) {
-        val xFloat = x.toFloat()
-        val yFloat = y.toFloat()
-        val zFloat = z.toFloat()
-        collisions.add(BoundingBox(Float3(xFloat, yFloat, zFloat), Float3(xFloat + 1.0f, yFloat + 1.0f, zFloat + 1.0f)))
-    }
-    return collisions
-}
+/**
+ * @author Kevin Ludwig
+ */
+class Input(
+    context: WorldContext,
+    source: AnyActorOfWorld,
+    entity: Chunk,
+    val position: Float3,
+    val rotation: Float2,
+) : LocationManagerMessage(context, source, entity)

@@ -25,16 +25,15 @@
 package com.valaphee.tesseract.world.chunk.actor.location
 
 import com.valaphee.foundry.ecs.Message
-import com.valaphee.foundry.math.Float2
-import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.actor.AnyActorOfWorld
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.Chunk
 
-class LocationManagerMessage(
+/**
+ * @author Kevin Ludwig
+ */
+sealed class LocationManagerMessage(
     override val context: WorldContext,
     override val source: AnyActorOfWorld,
-    override val entity: Chunk,
-    val position: Float3,
-    val rotation: Float2,
+    override val entity: Chunk
 ) : Message<WorldContext>

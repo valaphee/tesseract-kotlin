@@ -84,7 +84,7 @@ import com.valaphee.tesseract.world.chunk.Chunk
 import com.valaphee.tesseract.world.chunk.ChunkRelease
 import com.valaphee.tesseract.world.chunk.actor.addActor
 import com.valaphee.tesseract.world.chunk.actor.chunk
-import com.valaphee.tesseract.world.chunk.actor.location.LocationManagerMessage
+import com.valaphee.tesseract.world.chunk.actor.location.Input
 import com.valaphee.tesseract.world.chunk.actor.location.PlayerLocationPacket
 import com.valaphee.tesseract.world.chunk.actor.location.location
 import com.valaphee.tesseract.world.chunk.actor.removeActor
@@ -141,7 +141,11 @@ class WorldPacketHandler(
         connection.write(creativeInventoryPacket)
         connection.write(RecipesPacket(emptyArray(), emptyArray(), emptyArray(), true))
 
-        connection.write(MetadataPacket(player.id, player.metadata, 0))
+        connection.write(MetadataPacket(player.id, player.metadata, context.cycle))
+    }
+
+    override fun exceptionCaught(cause: Throwable) {
+        log.error("$this: Exception caught: {}", cause)
     }
 
     override fun destroy() {
@@ -152,7 +156,7 @@ class WorldPacketHandler(
     }
 
     override fun other(packet: Packet) {
-        log.debug("{}: Unhandled packet: {}", this, packet)
+        log.warn("{}: Unhandled packet: {}", this, packet)
     }
 
     override fun text(packet: TextPacket) {
@@ -164,20 +168,20 @@ class WorldPacketHandler(
     override fun playerLocation(packet: PlayerLocationPacket) {
         if (packet.runtimeEntityId != player.id) return
 
-        player.chunk.sendMessage(LocationManagerMessage(context, player, player.chunk, packet.position, packet.rotation))
+        player.chunk.sendMessage(Input(context, player, player.chunk, packet.position, packet.rotation))
     }
 
     override fun inventoryTransaction(packet: InventoryTransactionPacket) {
         when (packet.type) {
             InventoryTransactionPacket.Type.ItemUse -> {
-                player.chunk.sendMessage(LocationManagerMessage(context, player, player.chunk, packet.fromPosition!!, player.location.rotation))
+                player.chunk.sendMessage(Input(context, player, player.chunk, packet.fromPosition!!, player.location.rotation))
                 val stackInHand = player.inventory<PlayerInventory>().apply { hotbarSlot = packet.hotbarSlot }.stackInHand
                 if (packet.stackInHand == stackInHand) when (packet.actionId) {
                     InventoryTransactionPacket.ItemUseBlock -> context.world.useBlock(context, player, packet.position!!, Direction.fromIndex(packet.auxInt), packet.clickPosition!!, stackInHand)
                 }
             }
             InventoryTransactionPacket.Type.ItemUseOnEntity -> {
-                player.chunk.sendMessage(LocationManagerMessage(context, player, player.chunk, packet.fromPosition!!, player.location.rotation))
+                player.chunk.sendMessage(Input(context, player, player.chunk, packet.fromPosition!!, player.location.rotation))
             }
         }
     }
@@ -261,7 +265,7 @@ class WorldPacketHandler(
     }
 
     override fun violation(packet: ViolationPacket) {
-        log.debug("{}: Violation packet: {}", this, packet)
+        log.warn("{}: Violation reported: {}", this, packet)
     }
 
     fun writeChunks(chunks: Array<Chunk>) {
