@@ -34,8 +34,10 @@ import com.valaphee.foundry.ecs.entity.EntityType
 import com.valaphee.foundry.ecs.system.Behavior
 import com.valaphee.foundry.ecs.system.Facet
 import com.valaphee.foundry.ecs.system.FacetWithContext
+import com.valaphee.tesseract.data.Share
 import kotlin.random.Random
 import kotlin.reflect.KClass
+import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.isSubclassOf
 
 /**
@@ -46,21 +48,29 @@ class EntityFactory<C : Context> @Inject constructor(
     objectMapper: ObjectMapper,
     data: Map<String, @JvmSuppressWildcards EntityTypeData>
 ) {
-    private val attributesByType = mutableMapOf<String, Set<Attribute>>()
+    private val attributesByType = mutableMapOf<String, List<() -> Attribute>>()
     private val behaviorClassesByType = mutableMapOf<String, List<KClass<*>>>()
     private val facetClassesByType = mutableMapOf<String, List<KClass<*>>>()
 
     init {
         data.forEach { (key, data) ->
             val (attributes, others) = data.components.entries.partition { it.key.isSubclassOf(Attribute::class) }
-            attributesByType[key] = attributes.map { objectMapper.readValue(objectMapper.writeValueAsString(it.value), it.key.java) as Attribute }.toSet() // TODO
+            attributesByType[key] = attributes.map {
+                if (it.key::class.hasAnnotation<Share>()) {
+                    val instance = objectMapper.readValue(objectMapper.writeValueAsString(it.value), it.key.java) as Attribute
+                    { instance }
+                } else {
+                    val string = objectMapper.writeValueAsString(it.value);
+                    { objectMapper.readValue(string, it.key.java) as Attribute }
+                }
+            }
             val (behaviors, others2) = others.partition { it.key.isSubclassOf(Behavior::class) }
             behaviorClassesByType[key] = behaviors.map { it.key }
             facetClassesByType[key] = others2.filter { it.key.isSubclassOf(Facet::class) }.map { it.key }
         }
     }
 
-    operator fun <T : EntityType> invoke(type: T, attributes: Set<Attribute>, id: Long = Random.nextLong()) = DefaultEntity(type, attributesByType[type.key]?.let { it + attributes } ?: attributes, behaviorClassesByType[type.key]?.map {
+    operator fun <T : EntityType> invoke(type: T, attributes: Set<Attribute> = emptySet(), id: Long = Random.nextLong()) = DefaultEntity(type, attributesByType[type.key]?.let { it.map { it() }.toSet() + attributes } ?: attributes, behaviorClassesByType[type.key]?.map {
         @Suppress("UNCHECKED_CAST")
         injector.getInstance(it.java) as Behavior<C>
     }?.toSet() ?: emptySet(), facetClassesByType[type.key]?.map {

@@ -33,16 +33,10 @@ import java.util.regex.Pattern
 @Component("tesseract:config")
 class Config(
     var concurrency: Int = Runtime.getRuntime().availableProcessors(),
-    var watchdog: Watchdog = Watchdog(),
     var listener: Listener = Listener(),
     var maximumPlayers: Int = 10,
     var maximumViewDistance: Int = 32
 ) : Data {
-    class Watchdog(
-        var enabled: Boolean = true,
-        var timeout: Long = 30_000L
-    )
-
     class Listener(
         var address: InetSocketAddress = InetSocketAddress("0.0.0.0", 19132),
         var maximumQueuedBytes: Int = 8 * 1024 * 1024,

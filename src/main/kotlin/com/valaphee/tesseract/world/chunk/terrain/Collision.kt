@@ -22,26 +22,30 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor
+package com.valaphee.tesseract.world.chunk.terrain
 
-import com.valaphee.foundry.ecs.BaseAttribute
-import com.valaphee.tesseract.actor.attribute._attributes
-import com.valaphee.tesseract.actor.location.location
-import com.valaphee.tesseract.actor.metadata.metadata
-import com.valaphee.tesseract.data.Component
-import com.valaphee.tesseract.net.Packet
+import com.valaphee.foundry.math.Float3
+import com.valaphee.foundry.math.collision.BoundingBox
+import com.valaphee.tesseract.data.block.Blocks
+import com.valaphee.tesseract.util.math.ceil
+import com.valaphee.tesseract.util.math.floor
+import com.valaphee.tesseract.world.chunk.Chunk
 
-/**
- * @author Kevin Ludwig
- */
-@Component("tesseract:actor_packet_factory")
-open class ActorPacketFactory : BaseAttribute() {
-    open fun addPacket(actor: AnyActorOfWorld): Packet {
-        val location = actor.location
-        return ActorAddPacket(actor.id, actor.id, actor.type, location.position, location.velocity, location.rotation, location.headRotationYaw, actor._attributes, actor.metadata, emptyArray())
+fun Chunk.getCollisions(boundingBox: BoundingBox): List<BoundingBox> {
+    val (xMin, yMin, zMin) = boundingBox.minimum
+    val (xMax, yMax, zMax) = boundingBox.maximum
+    val xMinInt = floor(xMin)
+    val yMinInt = floor(yMin)
+    val zMinInt = floor(zMin)
+    val xMaxInt = ceil(xMax)
+    val yMaxInt = ceil(yMax)
+    val zMaxInt = ceil(zMax)
+    val collisions = mutableListOf<BoundingBox>()
+    for (x in xMinInt..xMaxInt) for (y in yMinInt..yMaxInt) for (z in zMinInt..zMaxInt) if (!Blocks.isTransparent(blockStorage[x, y, z])) {
+        val xFloat = x.toFloat()
+        val yFloat = y.toFloat()
+        val zFloat = z.toFloat()
+        collisions.add(BoundingBox(Float3(xFloat, yFloat, zFloat), Float3(xFloat + 1.0f, yFloat + 1.0f, zFloat + 1.0f)))
     }
+    return collisions
 }
-
-fun AnyActorOfWorld.addPacket() = findAttribute(ActorPacketFactory::class).addPacket(this)
-
-fun AnyActorOfWorld.removePacket() = ActorRemovePacket(this.id)

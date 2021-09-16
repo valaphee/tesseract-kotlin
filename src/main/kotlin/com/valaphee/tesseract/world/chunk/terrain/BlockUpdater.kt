@@ -41,7 +41,7 @@ import com.valaphee.tesseract.world.filter
 /**
  * @author Kevin Ludwig
  */
-@Component("tesseract:block_updater")
+@Component("tesseract:chunk.block_updater")
 class BlockUpdater : BaseBehavior<WorldContext>(Location::class, Terrain::class) {
     override suspend fun update(entity: AnyEntityOfWorld, context: WorldContext): Boolean {
         entity.filter<ChunkType> {

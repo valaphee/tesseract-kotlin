@@ -22,26 +22,21 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk
+package com.valaphee.tesseract.world.chunk.actor
 
-import com.valaphee.foundry.ecs.Consumed
-import com.valaphee.foundry.ecs.Response
-import com.valaphee.foundry.ecs.system.BaseFacet
-import com.valaphee.tesseract.data.Component
-import com.valaphee.tesseract.net.connection
+import com.valaphee.tesseract.actor.AnyActorOfWorld
+import com.valaphee.tesseract.world.AnyEntityOfWorld
 import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.chunk.actor.viewers
+import com.valaphee.tesseract.world.chunk.ChunkManagerMessage
 
 /**
  * @author Kevin Ludwig
  */
-@Component("tesseract:world.chunk_broadcaster")
-class ChunkBroadcaster : BaseFacet<WorldContext, Broadcast>(Broadcast::class) {
-    override suspend fun receive(message: Broadcast): Response {
-        val source = message.source
-        val packets = message.packets
-        message.chunks.first().viewers.forEach { if (it != source) packets.forEach(it.connection::write) }
-
-        return Consumed
-    }
+class ChunkActorUpdate(
+    context: WorldContext,
+    source: AnyEntityOfWorld?,
+    position: Long,
+    val actor: AnyActorOfWorld
+) : ChunkManagerMessage(context, source, longArrayOf(position)) {
+    override val entity: AnyEntityOfWorld? get() = null
 }

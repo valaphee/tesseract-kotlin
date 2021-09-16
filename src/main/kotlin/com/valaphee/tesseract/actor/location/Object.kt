@@ -26,15 +26,21 @@ package com.valaphee.tesseract.actor.location
 
 import com.valaphee.foundry.ecs.BaseAttribute
 import com.valaphee.foundry.math.collision.BoundingBox
+import com.valaphee.tesseract.actor.AnyActorOfWorld
 import com.valaphee.tesseract.data.Component
+import com.valaphee.tesseract.data.Share
 import com.valaphee.tesseract.data.entity.Runtime
 
 /**
  * @author Kevin Ludwig
  */
 @Runtime
-@Component("tesseract:object")
+@Share
+@Component("tesseract:actor.object")
 class Object(
     val boundingBox: BoundingBox,
+    val yOffset: Float,
     val gravity: Float
 ) : BaseAttribute()
+
+val AnyActorOfWorld.`object` get() = findAttribute(Object::class)

@@ -26,6 +26,7 @@ package com.valaphee.tesseract.world
 
 import com.valaphee.foundry.ecs.Engine
 import com.valaphee.tesseract.data.Config
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashBigSet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
@@ -44,13 +45,11 @@ class WorldEngine(
     var stopped = false
         private set
 
-    private val watchdog = Watchdog(config.watchdog)
-
     private val clock = Clock()
     private val sleep = (1_000L / cyclesPerSecond).toLong()
     private var lastSleep = sleep
 
-    private val entities = mutableSetOf<AnyEntityOfWorld>()
+    private val entities = ObjectOpenHashBigSet<AnyEntityOfWorld>()
 
     override fun addEntity(entity: AnyEntityOfWorld) {
         entities += entity
@@ -64,7 +63,6 @@ class WorldEngine(
         launch {
             if (!running) {
                 running = true
-                watchdog.start()
 
                 while (running) {
                     lastSleep = sleep - (clock.realDelta - lastSleep)
@@ -79,13 +77,9 @@ class WorldEngine(
                         context.cycleDelta = cycles.next()
                         entities.filter { it.needsUpdate }.map { launch { runCatching { it.update(context) }.onFailure { it.printStackTrace() } } }.joinAll()
                     }
-                    watchdog.update(clock.realTime)
                 }
             }
-            if (!stopped) {
-                watchdog.interrupt()
-                stopped = true
-            }
+            if (!stopped) stopped = true
         }
     }
 }

@@ -22,26 +22,10 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.actor.stack
-
-import com.valaphee.tesseract.actor.ActorPacketFactory
-import com.valaphee.tesseract.actor.AnyActorOfWorld
-import com.valaphee.tesseract.actor.location.location
-import com.valaphee.tesseract.actor.metadata.metadata
-import com.valaphee.tesseract.data.Component
-import com.valaphee.tesseract.net.Packet
-import com.valaphee.tesseract.world.filter
+package com.valaphee.tesseract.data
 
 /**
  * @author Kevin Ludwig
  */
-@Component("tesseract:stack_packet_factory")
-open class StackPacketFactory : ActorPacketFactory() {
-    override fun addPacket(actor: AnyActorOfWorld): Packet {
-        actor.filter<StackType> {
-            val location = it.location
-            return StackAddPacket(it.id, it.id, it.stack, location.position, location.velocity, it.metadata, false)
-        }
-        return super.addPacket(actor)
-    }
-}
+@Target(AnnotationTarget.CLASS)
+annotation class Share

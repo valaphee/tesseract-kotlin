@@ -35,7 +35,7 @@ import com.valaphee.tesseract.world.WorldPacketHandler
 /**
  * @author Kevin Ludwig
  */
-@Component("tesseract:view_chunk_packetizer")
+@Component("tesseract:player.view_chunk_packetizer")
 class ViewChunkPacketizer : BaseFacet<WorldContext, ViewChunk>(ViewChunk::class) {
     override suspend fun receive(message: ViewChunk): Response {
         val connection = message.entity.connection

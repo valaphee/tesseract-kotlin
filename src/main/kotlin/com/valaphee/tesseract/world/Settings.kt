@@ -25,15 +25,17 @@
 package com.valaphee.tesseract.world
 
 import com.valaphee.foundry.ecs.BaseAttribute
+import com.valaphee.tesseract.data.Component
 
 /**
  * @author Kevin Ludwig
  */
+@Component("tesseract:world.settings")
 class Settings(
-    var gameMode: GameMode,
-    var difficulty: Difficulty,
-    var gameRules: MutableList<GameRule<*>>,
-    var experiments: MutableList<Experiment>
+    var gameMode: GameMode = GameMode.Creative,
+    var difficulty: Difficulty = Difficulty.Peaceful,
+    var gameRules: MutableList<GameRule<*>> = mutableListOf(),
+    var experiments: MutableList<Experiment> = mutableListOf()
 ) : BaseAttribute()
 
 val World.settings get() = findAttribute(Settings::class)

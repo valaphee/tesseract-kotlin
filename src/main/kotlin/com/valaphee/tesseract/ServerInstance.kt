@@ -139,7 +139,7 @@ class ServerInstance(
     override fun destroy() {
         defaultSystemOut.println("Disconnecting all players and shutting down listener...")
 
-        //worldContext.world.broadcast(DisconnectPacket("Shut down"))
+        //worldContext.world.broadcast(DisconnectPacket("Shut down")) TODO
 
         channel.close().syncUninterruptibly()
 

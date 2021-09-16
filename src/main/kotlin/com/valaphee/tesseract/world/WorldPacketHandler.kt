@@ -86,10 +86,10 @@ import com.valaphee.tesseract.util.math.Direction
 import com.valaphee.tesseract.util.math.toDirectionVector
 import com.valaphee.tesseract.world.chunk.Chunk
 import com.valaphee.tesseract.world.chunk.ChunkRelease
-import com.valaphee.tesseract.world.chunk.addActor
+import com.valaphee.tesseract.world.chunk.actor.addActor
+import com.valaphee.tesseract.world.chunk.actor.removeActor
 import com.valaphee.tesseract.world.chunk.chunkBroadcast
 import com.valaphee.tesseract.world.chunk.position
-import com.valaphee.tesseract.world.chunk.removeActor
 import com.valaphee.tesseract.world.chunk.terrain.SectionCompact
 import com.valaphee.tesseract.world.chunk.terrain.blockStorage
 import io.netty.buffer.Unpooled
@@ -248,7 +248,9 @@ class WorldPacketHandler(
                         val sourceStack = sourceInventory.getSlot(sourceSlotId)
                         sourceInventory.setSlot(sourceSlotId, null)
                         val location = player.location
-                        context.world.addActor(context, context.entityFactory.stack(location.position, location.rotation.toDirectionVector().scale(0.4f), sourceStack))
+                        repeat(1000) {
+                            context.world.addActor(context, context.entityFactory.stack(location.position, location.rotation.toDirectionVector().scale(0.4f), sourceStack))
+                        }
                     }
                     InventoryRequestPacket.ActionType.Destroy -> {
                         val (sourceInventory, sourceSlotId) = windowManager.select(it.sourceSlotType!!, it.sourceSlotId)
@@ -259,7 +261,7 @@ class WorldPacketHandler(
                     }
                 }
             }
-            //responses += InventoryResponsePacket.Response(InventoryResponsePacket.ResponseStatus.Ok, it.requestId, emptyArray())
+            //responses += InventoryResponsePacket.Response(InventoryResponsePacket.ResponseStatus.Ok, it.requestId, emptyArray()) TODO
         }
         connection.write(InventoryResponsePacket(responses.toTypedArray()))
     }

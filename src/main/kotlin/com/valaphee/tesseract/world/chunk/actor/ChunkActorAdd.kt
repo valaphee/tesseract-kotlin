@@ -22,18 +22,20 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk
+package com.valaphee.tesseract.world.chunk.actor
 
 import com.valaphee.tesseract.actor.AnyActorOfWorld
 import com.valaphee.tesseract.actor.location.location
 import com.valaphee.tesseract.world.AnyEntityOfWorld
 import com.valaphee.tesseract.world.World
 import com.valaphee.tesseract.world.WorldContext
+import com.valaphee.tesseract.world.chunk.ChunkManagerMessage
+import com.valaphee.tesseract.world.chunk.encodePosition
 
 /**
  * @author Kevin Ludwig
  */
-class ChunkActorRemove(
+class ChunkActorAdd(
     context: WorldContext,
     source: AnyEntityOfWorld?,
     position: Long,
@@ -42,8 +44,8 @@ class ChunkActorRemove(
     override val entity: AnyEntityOfWorld? get() = null
 }
 
-fun World.removeActor(context: WorldContext, actor: AnyActorOfWorld) {
+fun World.addActor(context: WorldContext, actor: AnyActorOfWorld) {
     val (x, _, z) = actor.location.position.toInt3()
 
-    sendMessage(ChunkActorRemove(context, null, encodePosition(x shr 4, z shr 4), actor))
+    sendMessage(ChunkActorAdd(context, null, encodePosition(x shr 4, z shr 4), actor))
 }

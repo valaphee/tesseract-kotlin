@@ -2,7 +2,9 @@
   "tesseract:entity_type": {
     "key": "tesseract:chunk",
     "components": {
-      "tesseract:block_updater": {}
+      "tesseract:chunk.block_updater": {},
+      "tesseract:chunk.actors": {},
+      "tesseract:chunk.actor_updater": {}
     }
   }
 }

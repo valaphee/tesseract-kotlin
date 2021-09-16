@@ -22,28 +22,25 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk
+package com.valaphee.tesseract.world.chunk.actor
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.valaphee.foundry.ecs.BaseAttribute
 import com.valaphee.tesseract.actor.AnyActorOfWorld
-import com.valaphee.tesseract.actor.location.location
-import com.valaphee.tesseract.world.AnyEntityOfWorld
-import com.valaphee.tesseract.world.World
-import com.valaphee.tesseract.world.WorldContext
+import com.valaphee.tesseract.actor.player.Player
+import com.valaphee.tesseract.data.Component
+import com.valaphee.tesseract.world.chunk.Chunk
 
 /**
  * @author Kevin Ludwig
  */
-class ChunkActorAdd(
-    context: WorldContext,
-    source: AnyEntityOfWorld?,
-    position: Long,
-    val actor: AnyActorOfWorld
-) : ChunkManagerMessage(context, source, longArrayOf(position)) {
-    override val entity: AnyEntityOfWorld? get() = null
+@Component("tesseract:chunk.actors")
+class Actors(
+    val actors: MutableSet<AnyActorOfWorld> = mutableSetOf()
+): BaseAttribute() {
+    @JsonIgnore val viewers = mutableSetOf<Player>()
 }
 
-fun World.addActor(context: WorldContext, actor: AnyActorOfWorld) {
-    val (x, _, z) = actor.location.position.toInt3()
+val Chunk.actors get() = findAttribute(Actors::class).actors
 
-    sendMessage(ChunkActorAdd(context, null, encodePosition(x shr 4, z shr 4), actor))
-}
+val Chunk.viewers get() = findAttribute(Actors::class).viewers

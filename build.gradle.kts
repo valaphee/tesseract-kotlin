@@ -43,7 +43,7 @@ val gitVersion: groovy.lang.Closure<String> by extra
 version = gitVersion()
 
 dependencies {
-    implementation("com.fasterxml.jackson.module:jackson-module-guice:2.12.5")
+    implementation("com.fasterxml.jackson.module:jackson-module-afterburner:2.12.5")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-smile:2.12.5")
     implementation("com.google.code.gson:gson:2.8.8")

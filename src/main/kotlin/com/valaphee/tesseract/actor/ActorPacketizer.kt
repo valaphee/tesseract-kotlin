@@ -22,22 +22,28 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk
+package com.valaphee.tesseract.actor
 
 import com.valaphee.foundry.ecs.BaseAttribute
-import com.valaphee.tesseract.actor.AnyActorOfWorld
-import com.valaphee.tesseract.actor.player.Player
+import com.valaphee.tesseract.actor.attribute._attributes
+import com.valaphee.tesseract.actor.location.location
+import com.valaphee.tesseract.actor.metadata.metadata
+import com.valaphee.tesseract.data.Component
 import com.valaphee.tesseract.data.entity.Runtime
+import com.valaphee.tesseract.net.Packet
 
 /**
  * @author Kevin Ludwig
  */
 @Runtime
-class ActorList : BaseAttribute() {
-    val actors = mutableSetOf<AnyActorOfWorld>()
-    val viewers = mutableSetOf<Player>()
+@Component("tesseract:actor.packetizer")
+open class ActorPacketizer : BaseAttribute() {
+    open fun addPacket(actor: AnyActorOfWorld): Packet {
+        val location = actor.location
+        return ActorAddPacket(actor.id, actor.id, actor.type, location.position, location.velocity, location.rotation, location.headRotationYaw, actor._attributes, actor.metadata, emptyArray())
+    }
 }
 
-val Chunk.actors get() = findAttribute(ActorList::class).actors
+fun AnyActorOfWorld.addPacket() = findAttribute(ActorPacketizer::class).addPacket(this)
 
-val Chunk.viewers get() = findAttribute(ActorList::class).viewers
+fun AnyActorOfWorld.removePacket() = ActorRemovePacket(this.id)

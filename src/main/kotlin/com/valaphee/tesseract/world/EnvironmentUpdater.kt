@@ -31,7 +31,7 @@ import kotlin.random.Random
 /**
  * @author Kevin Ludwig
  */
-@Component("tesseract:environment_updater")
+@Component("tesseract:world.environment_updater")
 class EnvironmentUpdater : BaseBehavior<WorldContext>(Environment::class) {
     override suspend fun update(entity: AnyEntityOfWorld, context: WorldContext): Boolean {
         val world = context.world

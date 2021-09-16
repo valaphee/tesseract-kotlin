@@ -25,11 +25,13 @@
 package com.valaphee.tesseract.world
 
 import com.valaphee.foundry.ecs.BaseAttribute
+import com.valaphee.tesseract.data.Component
 import kotlin.random.Random
 
 /**
  * @author Kevin Ludwig
  */
+@Component("tesseract:world.environment")
 class Environment(
     var time: Int = 0,
     var rainTime: Int = Random.nextInt(168000) + 12000,

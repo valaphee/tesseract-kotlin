@@ -43,13 +43,9 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * View which expands and publishes from the center of the player.
- * For optimal use, distance should not exceed 25 chunks, otherwise client performance
- * is worse than with [RadialView].
- *
  * @author Kevin Ludwig
  */
-@Component("tesseract:radial_expansion_view")
+@Component("tesseract:player.radial_expansion_view")
 class RadialExpansionView @Inject constructor(
     config: Config
 ) : View(config) {

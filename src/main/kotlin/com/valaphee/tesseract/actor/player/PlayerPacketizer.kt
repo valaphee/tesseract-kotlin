@@ -22,26 +22,28 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk
+package com.valaphee.tesseract.actor.player
 
-import com.valaphee.foundry.ecs.Consumed
-import com.valaphee.foundry.ecs.Response
-import com.valaphee.foundry.ecs.system.BaseFacet
+import com.valaphee.tesseract.actor.ActorPacketizer
+import com.valaphee.tesseract.actor.AnyActorOfWorld
+import com.valaphee.tesseract.actor.location.location
+import com.valaphee.tesseract.actor.metadata.metadata
 import com.valaphee.tesseract.data.Component
-import com.valaphee.tesseract.net.connection
-import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.chunk.actor.viewers
+import com.valaphee.tesseract.data.entity.Runtime
+import com.valaphee.tesseract.net.Packet
+import com.valaphee.tesseract.world.filter
 
 /**
  * @author Kevin Ludwig
  */
-@Component("tesseract:world.chunk_broadcaster")
-class ChunkBroadcaster : BaseFacet<WorldContext, Broadcast>(Broadcast::class) {
-    override suspend fun receive(message: Broadcast): Response {
-        val source = message.source
-        val packets = message.packets
-        message.chunks.first().viewers.forEach { if (it != source) packets.forEach(it.connection::write) }
-
-        return Consumed
+@Runtime
+@Component("tesseract:player.packetizer")
+open class PlayerPacketizer : ActorPacketizer() {
+    override fun addPacket(actor: AnyActorOfWorld): Packet {
+        actor.filter<PlayerType> {
+            val location = it.location
+            return PlayerAddPacket(it.authExtra.userId, it.authExtra.userName, it.id, it.id, "", location.position, location.velocity, location.rotation, location.headRotationYaw, null, it.metadata, 0, emptyArray(), "", it.user.operatingSystem)
+        }
+        return super.addPacket(actor)
     }
 }

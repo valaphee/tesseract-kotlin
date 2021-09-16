@@ -41,7 +41,7 @@ import com.valaphee.tesseract.world.chunk.terrain.blockUpdates
 /**
  * @author Kevin Ludwig
  */
-@Component("tesseract:chunk_interaction_manager")
+@Component("tesseract:player.chunk_interaction_manager")
 class ChunkInteractionManager :  BaseFacet<WorldContext, ChunkInteractionManagerMessage>(ChunkInteractionManagerMessage::class){
     override suspend fun receive(message: ChunkInteractionManagerMessage): Response {
         val chunk = message.chunks.first()

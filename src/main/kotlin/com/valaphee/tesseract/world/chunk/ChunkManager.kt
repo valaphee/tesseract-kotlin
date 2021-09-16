@@ -28,21 +28,26 @@ import com.google.inject.Inject
 import com.valaphee.foundry.ecs.Consumed
 import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
-import com.valaphee.foundry.math.Int2
 import com.valaphee.tesseract.ServerInstance
 import com.valaphee.tesseract.actor.addPacket
 import com.valaphee.tesseract.actor.player.PlayerType
+import com.valaphee.tesseract.actor.player.view.ViewChunk
 import com.valaphee.tesseract.actor.removePacket
 import com.valaphee.tesseract.data.Component
 import com.valaphee.tesseract.data.Config
+import com.valaphee.tesseract.net.connection
 import com.valaphee.tesseract.world.WorldContext
+import com.valaphee.tesseract.world.chunk.actor.ChunkActorAdd
+import com.valaphee.tesseract.world.chunk.actor.ChunkActorRemove
+import com.valaphee.tesseract.world.chunk.actor.ChunkActorUpdate
+import com.valaphee.tesseract.world.chunk.actor.actors
+import com.valaphee.tesseract.world.chunk.actor.viewers
 import com.valaphee.tesseract.world.chunk.terrain.Terrain
 import com.valaphee.tesseract.world.chunk.terrain.TerrainRuntime
 import com.valaphee.tesseract.world.chunk.terrain.blockUpdates
 import com.valaphee.tesseract.world.chunk.terrain.generator.Generator
 import com.valaphee.tesseract.world.chunk.terrain.modified
 import com.valaphee.tesseract.world.filter
-import it.unimi.dsi.fastutil.longs.Long2ObjectMaps
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.channels.Channel
@@ -52,32 +57,29 @@ import kotlinx.coroutines.selects.select
 /**
  * @author Kevin Ludwig
  */
-@Component("tesseract:chunk_manager")
+@Component("tesseract:world.chunk_manager")
 class ChunkManager @Inject constructor(
     private val instance: ServerInstance,
     config: Config,
     private val generator: Generator
 ) : BaseFacet<WorldContext, ChunkManagerMessage>(ChunkManagerMessage::class) {
-    private val chunks = Long2ObjectMaps.synchronize(Long2ObjectOpenHashMap<Chunk>())
+    private val chunks = Long2ObjectOpenHashMap<Chunk>()
 
     private val awaitedChunksChannel = Channel<AwaitedChunk>()
-    private val requestedChunksChannel = Channel<Int2>(Channel.UNLIMITED)
+    private val requestedChunksChannel = Channel<Long>(Channel.UNLIMITED)
     private val loadedChunksChannel = Channel<Chunk>()
 
     private val workers = List(config.concurrency) {
         instance.coroutineScope.launch {
             for (requestedChunk in requestedChunksChannel) {
-                val (x, z) = requestedChunk
-                loadedChunksChannel.send((instance.worldContext.provider.loadChunk(encodePosition(x, z)) ?: instance.worldContext.entityFactory.chunk(requestedChunk, generator.generate(requestedChunk))).asMutableEntity().apply {
-                    addAttribute(TerrainRuntime(findAttribute(Terrain::class).blockUpdates))
-                    addAttribute(ActorList())
-                })
+                val requestedChunk0 = decodePosition(requestedChunk)
+                loadedChunksChannel.send((instance.worldContext.provider.loadChunk(requestedChunk) ?: instance.worldContext.entityFactory(ChunkType, setOf(Location(requestedChunk0), generator.generate(requestedChunk0)))).asMutableEntity().apply { addAttribute(TerrainRuntime(findAttribute(Terrain::class).blockUpdates)) })
             }
         }
     }
 
     private val loader = instance.coroutineScope.launch {
-        val requestedChunks = mutableMapOf<Int2, MutableList<AwaitedChunk>>()
+        val requestedChunks = Long2ObjectOpenHashMap<MutableList<AwaitedChunk>>()
         while (true) select<Unit> {
             awaitedChunksChannel.onReceive { awaitedChunk ->
                 requestedChunks[awaitedChunk.position]?.add(awaitedChunk) ?: run {
@@ -87,7 +89,8 @@ class ChunkManager @Inject constructor(
             }
             loadedChunksChannel.onReceive { loadedChunk ->
                 val (x, z) = loadedChunk.position
-                chunks[encodePosition(x, z)] = loadedChunk
+                val position = encodePosition(x, z)
+                chunks[position] = loadedChunk
 
                 val propagationBlockUpdates = loadedChunk.blockUpdates
                 val blockUpdates = loadedChunk.findAttribute(Terrain::class).blockUpdates
@@ -124,7 +127,7 @@ class ChunkManager @Inject constructor(
                     it.blockUpdates.chunks[4] = blockUpdates
                 }
 
-                requestedChunks.remove(loadedChunk.position)!!.forEach { it.awaiting.complete(loadedChunk) }
+                requestedChunks.remove(position)!!.forEach { it.awaiting.complete(loadedChunk) }
             }
         }
     }
@@ -135,21 +138,39 @@ class ChunkManager @Inject constructor(
             is ChunkAcquire -> {
                 val chunks = message.positions.map { chunks[it] }.filterNotNull()
                 if (chunks.isNotEmpty()) message.source?.let { source ->
-                    source.filter<PlayerType> { chunks.forEach { chunk -> chunk.viewers += it } }
-
                     message.usage?.let {
+                        if (it is ViewChunk) source.filter<PlayerType> { player ->
+                            val connection = player.connection
+                            chunks.forEach { chunk ->
+                                chunk.viewers += player
+
+                                chunk.actors.forEach { if (it != player) connection.write(it.addPacket()) }
+                            }
+                        }
+
                         it.chunks = chunks.toTypedArray()
                         source.sendMessage(it)
                     }
                 }
                 if (message.positions.size != chunks.size) instance.coroutineScope.launch {
-                    val loadedChunks = message.positions.filterNot(this@ChunkManager.chunks::containsKey).map { AwaitedChunk(decodePosition(it)).also { awaitedChunksChannel.send(it) }.awaiting.await() }
-                    loadedChunks.forEach(context.engine::addEntity)
+                    val loadedChunks = message.positions.filterNot(this@ChunkManager.chunks::containsKey).map { AwaitedChunk(it).also { awaitedChunksChannel.send(it) }.awaiting.await() }
+                    val engine = context.engine
+                    loadedChunks.forEach {
+                        engine.addEntity(it)
+                        it.actors.forEach { engine.addEntity(it) }
+                    }
 
                     message.source?.let { source ->
-                        source.filter<PlayerType> { loadedChunks.forEach { chunk -> chunk.viewers += it } }
-
                         message.usage?.let {
+                            if (it is ViewChunk) source.filter<PlayerType> { player ->
+                                val connection = player.connection
+                                loadedChunks.forEach { chunk ->
+                                    chunk.viewers += player
+
+                                    chunk.actors.forEach { if (it != player) connection.write(it.addPacket()) }
+                                }
+                            }
+
                             it.chunks = loadedChunks.toTypedArray()
                             source.sendMessage(it)
                         }
@@ -159,12 +180,22 @@ class ChunkManager @Inject constructor(
             is ChunkRelease -> {
                 val chunksRemoved = message.positions.filter { chunkPosition ->
                     chunks[chunkPosition]?.let { chunk ->
-                        message.source?.filter<PlayerType> { chunk.viewers -= it }
+                        message.source?.filter<PlayerType> {
+                            chunk.viewers -= it
+
+                            val connection = it.connection
+                            chunk.actors.forEach { connection.write(it.removePacket()) }
+                        }
 
                         chunk.viewers.isEmpty()
                     } ?: TODO()
                 }.map(chunks::remove)
                 if (chunksRemoved.isNotEmpty()) {
+                    val engine = context.engine
+                    chunksRemoved.forEach {
+                        it.actors.forEach { engine.removeEntity(it) }
+                        engine.removeEntity(it)
+                    }
                     context.provider.saveChunks(chunksRemoved.filter { it.modified }.onEach {
                         val (x, z) = it.position
                         chunks[encodePosition(x - 1, z + 0)]?.let { it.blockUpdates.chunks[2] = null }
@@ -176,19 +207,24 @@ class ChunkManager @Inject constructor(
                         chunks[encodePosition(x + 1, z - 1)]?.let { it.blockUpdates.chunks[5] = null }
                         chunks[encodePosition(x + 1, z + 1)]?.let { it.blockUpdates.chunks[4] = null }
                     })
-                    chunksRemoved.forEach(context.engine::removeEntity)
                 }
             }
             is ChunkActorAdd -> {
                 val actor = message.actor
                 val position = message.positions.first()
-                (chunks[position]?.also { it.broadcast(actor.addPacket()) } ?: AwaitedChunk(decodePosition(position)).also { awaitedChunksChannel.send(it) }.awaiting.await().also(context.engine::addEntity)).actors += actor
+                (chunks[position]?.also { it.broadcast(actor.addPacket()) } ?: AwaitedChunk(position).also { awaitedChunksChannel.send(it) }.awaiting.await().also(context.engine::addEntity)).actors += actor
                 context.engine.addEntity(actor)
+            }
+            is ChunkActorUpdate -> {
+                val actor = message.actor
+                message.source?.filter<ChunkType> { it.actors -= actor }
+                val position = message.positions.first()
+                (chunks[position] ?: AwaitedChunk(position).also { awaitedChunksChannel.send(it) }.awaiting.await().also(context.engine::addEntity)).actors += actor
             }
             is ChunkActorRemove -> {
                 val actor = message.actor
                 val position = message.positions.first()
-                (chunks[position]?.also { it.broadcast(actor.removePacket()) } ?: AwaitedChunk(decodePosition(position)).also { awaitedChunksChannel.send(it) }.awaiting.await().also(context.engine::addEntity)).actors -= actor
+                (chunks[position]?.also { it.broadcast(actor.removePacket()) } ?: AwaitedChunk(position).also { awaitedChunksChannel.send(it) }.awaiting.await().also(context.engine::addEntity)).actors -= actor
                 context.engine.removeEntity(actor)
             }
         }
@@ -197,7 +233,7 @@ class ChunkManager @Inject constructor(
     }
 
     private class AwaitedChunk(
-        val position: Int2,
+        val position: Long,
         val awaiting: CompletableDeferred<Chunk> = CompletableDeferred()
     )
 }

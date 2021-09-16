@@ -2,19 +2,19 @@
   "tesseract:entity_type": {
     "key": "minecraft:player",
     "components": {
-      "tesseract:object": {
-        "bounding_box": [0.6, 1.8]
+      "tesseract:actor.object": {
+        "bounding_box": [
+          0.6,
+          1.8
+        ],
+        "y_offset": 1.62
       },
-      "tesseract:player_packet_factory": {},
-
-      /*LocationManagerMessage*/
-      "tesseract:location_manager": {},
-      "tesseract:radial_view": {},
-      "tesseract:player_location_packetizer": {},
-      /*ViewChunk*/
-      "tesseract:view_chunk_packetizer": {},
-      /*ChunkInteractManagerMessage*/
-      "tesseract:chunk_interaction_manager": {}
+      "tesseract:player.packetizer": {},
+      "tesseract:actor.location_manager": {},
+      "tesseract:player.radial_view": {},
+      "tesseract:player.location_packetizer": {},
+      "tesseract:player.view_chunk_packetizer": {},
+      "tesseract:player.chunk_interaction_manager": {}
     }
   }
 }

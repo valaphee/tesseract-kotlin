@@ -1,13 +1,14 @@
 {
   "tesseract:entity_type": {
-    "key": "minecraft:item",
+    "key": "minecraft:chicken",
     "components": {
       "tesseract:actor.object": {
         "bounding_box": [
-          0.25
+          0.4,
+          0.7
         ]
       },
-      "tesseract:stack.packetizer": {},
+      "tesseract:actor.packetizer": {},
       "tesseract:actor.location_manager": {},
       "tesseract:actor.location_packetizer": {}
     }

@@ -43,7 +43,7 @@ import it.unimi.dsi.fastutil.longs.LongArrayList
 /**
  * @author Kevin Ludwig
  */
-@Component("tesseract:radial_view")
+@Component("tesseract:player.radial_view")
 class RadialView @Inject constructor(
     config: Config
 ) : View(config) {

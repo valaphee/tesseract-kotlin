@@ -50,7 +50,6 @@ import com.valaphee.tesseract.util.nbt.NbtInputStream
 import io.netty.buffer.ByteBufInputStream
 import io.netty.buffer.PooledByteBufAllocator
 import io.netty.buffer.Unpooled
-import org.apache.logging.log4j.LogManager
 import java.io.IOException
 import java.io.InputStreamReader
 import java.lang.invoke.MethodHandles
@@ -74,9 +73,6 @@ fun main(arguments: Array<String>) {
     initializeConsole()
     initializeLogging()
 
-    val log = LogManager.getLogger("Registry")
-    log.info("Populating registries...")
-
     val clazz = MethodHandles.lookup().lookupClass()
     val gson = GsonBuilder().create()
     val base64Decoder = Base64.getDecoder()
@@ -90,12 +86,10 @@ fun main(arguments: Array<String>) {
             buffer.release()
         }
         BlockState.finish()
-        log.info("Block states found: {}", BlockState.all.size)
     }
 
     run {
         gson.newJsonReader(InputStreamReader(clazz.getResourceAsStream("/runtime_item_states.json")!!)).use { (gson.fromJson(it, JsonArray::class.java) as JsonArray).map { it.asJsonObject }.forEach { Item.register(it.getString("name"), it.getInt("id")) } }
-        log.info("Items found: {}", Item.all.size)
     }
 
     run {
@@ -113,7 +107,6 @@ fun main(arguments: Array<String>) {
         } finally {
             buffer.release()
         }
-        log.info("Actor types found: {}", ActorTypeRegistry.size)
     }
 
     run {

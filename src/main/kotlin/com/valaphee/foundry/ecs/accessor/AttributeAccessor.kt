@@ -38,8 +38,6 @@ interface AttributeAccessor {
     fun <T : Attribute> findAttribute(`class`: KClass<T>) = checkNotNull(findAttributeOrNull(`class`))
 
     fun <T : Attribute> findAttributeOrNull(`class`: KClass<T>): T?
-
-    companion object {
-        fun create(attributes: Set<Attribute>): AttributeAccessor = DefaultAttributeMutator(attributes)
-    }
 }
+
+fun attributeAccessor(attributes: Set<Attribute>): AttributeAccessor = DefaultAttributeMutator(attributes)

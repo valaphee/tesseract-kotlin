@@ -30,6 +30,7 @@ import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.connection
 import com.valaphee.tesseract.world.World
 import com.valaphee.tesseract.world.WorldContext
+import com.valaphee.tesseract.world.chunk.actor.viewers
 
 /**
  * @author Kevin Ludwig

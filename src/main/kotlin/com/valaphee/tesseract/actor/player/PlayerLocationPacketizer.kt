@@ -39,7 +39,7 @@ import com.valaphee.tesseract.world.filter
 /**
  * @author Kevin Ludwig
  */
-@Component("tesseract:player_location_packetizer")
+@Component("tesseract:player.location_packetizer")
 class PlayerLocationPacketizer : BaseFacet<WorldContext, LocationManagerMessage>(LocationManagerMessage::class, Location::class) {
     override suspend fun receive(message: LocationManagerMessage): Response {
         message.entity?.filter<PlayerType> {

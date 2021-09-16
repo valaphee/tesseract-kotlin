@@ -2,12 +2,11 @@
   "tesseract:entity_type": {
     "key": "tesseract:world",
     "components": {
-      "tesseract:environment_updater": {},
-
-      /*ChunkManagerMessage*/
-      "tesseract:chunk_manager": {},
-      /*Broadcast*/
-      "tesseract:chunk_broadcaster": {}
+      "tesseract:world.settings": {},
+      "tesseract:world.environment": {},
+      "tesseract:world.environment_updater": {},
+      "tesseract:world.chunk_manager": {},
+      "tesseract:world.chunk_broadcaster": {}
     }
   }
 }
