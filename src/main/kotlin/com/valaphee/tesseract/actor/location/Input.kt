@@ -22,9 +22,10 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk.actor.location
+package com.valaphee.tesseract.actor.location
 
-import com.valaphee.foundry.ecs.Message
+import com.valaphee.foundry.math.Float2
+import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.actor.AnyActorOfWorld
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.Chunk
@@ -32,8 +33,10 @@ import com.valaphee.tesseract.world.chunk.Chunk
 /**
  * @author Kevin Ludwig
  */
-sealed class LocationManagerMessage(
-    override val context: WorldContext,
-    override val source: AnyActorOfWorld,
-    override val entity: Chunk
-) : Message<WorldContext>
+class Input(
+    context: WorldContext,
+    source: AnyActorOfWorld,
+    entity: Chunk,
+    val position: Float3,
+    val rotation: Float2,
+) : LocationManagerMessage(context, source, entity)

@@ -26,7 +26,7 @@ package com.valaphee.tesseract.actor.stack
 
 import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.actor.ActorType
-import com.valaphee.tesseract.world.chunk.actor.location.Location
+import com.valaphee.tesseract.actor.location.Location
 import com.valaphee.tesseract.actor.metadata.Metadata
 import com.valaphee.tesseract.data.entity.EntityFactory
 import com.valaphee.tesseract.world.EntityOfWorld

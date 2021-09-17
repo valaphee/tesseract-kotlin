@@ -31,7 +31,7 @@ import com.valaphee.tesseract.data.Component
 import com.valaphee.tesseract.data.Share
 import com.valaphee.tesseract.data.entity.Runtime
 import com.valaphee.tesseract.net.Packet
-import com.valaphee.tesseract.world.chunk.actor.location.location
+import com.valaphee.tesseract.actor.location.location
 import com.valaphee.tesseract.world.filter
 
 /**

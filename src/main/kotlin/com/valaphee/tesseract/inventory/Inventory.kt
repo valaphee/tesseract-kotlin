@@ -24,7 +24,7 @@
 
 package com.valaphee.tesseract.inventory
 
-import com.valaphee.tesseract.world.chunk.actor.location.location
+import com.valaphee.tesseract.actor.location.location
 import com.valaphee.tesseract.actor.player.Player
 import com.valaphee.tesseract.inventory.item.stack.Stack
 import com.valaphee.tesseract.net.connection

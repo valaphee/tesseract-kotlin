@@ -27,7 +27,7 @@ package com.valaphee.tesseract.actor.player.view
 import com.valaphee.foundry.ecs.system.BaseBehavior
 import com.valaphee.tesseract.data.Config
 import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.chunk.actor.location.Location
+import com.valaphee.tesseract.actor.location.Location
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet
 
 /**

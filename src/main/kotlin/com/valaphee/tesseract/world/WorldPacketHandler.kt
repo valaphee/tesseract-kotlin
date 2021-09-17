@@ -84,9 +84,9 @@ import com.valaphee.tesseract.world.chunk.Chunk
 import com.valaphee.tesseract.world.chunk.ChunkRelease
 import com.valaphee.tesseract.world.chunk.actor.addActor
 import com.valaphee.tesseract.world.chunk.actor.chunk
-import com.valaphee.tesseract.world.chunk.actor.location.Input
-import com.valaphee.tesseract.world.chunk.actor.location.PlayerLocationPacket
-import com.valaphee.tesseract.world.chunk.actor.location.location
+import com.valaphee.tesseract.actor.location.Input
+import com.valaphee.tesseract.actor.player.PlayerLocationPacket
+import com.valaphee.tesseract.actor.location.location
 import com.valaphee.tesseract.world.chunk.actor.removeActor
 import com.valaphee.tesseract.world.chunk.chunkBroadcast
 import com.valaphee.tesseract.world.chunk.position

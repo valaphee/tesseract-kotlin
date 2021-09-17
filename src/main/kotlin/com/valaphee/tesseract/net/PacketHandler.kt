@@ -29,9 +29,9 @@ import com.valaphee.tesseract.actor.ActorRemovePacket
 import com.valaphee.tesseract.actor.LinkPacket
 import com.valaphee.tesseract.actor.attribute.AttributesPacket
 import com.valaphee.tesseract.actor.stack.StackAddPacket
-import com.valaphee.tesseract.world.chunk.actor.location.VelocityPacket
-import com.valaphee.tesseract.world.chunk.actor.location.MoveRotatePacket
-import com.valaphee.tesseract.world.chunk.actor.location.TeleportPacket
+import com.valaphee.tesseract.actor.location.VelocityPacket
+import com.valaphee.tesseract.actor.location.MoveRotatePacket
+import com.valaphee.tesseract.actor.location.TeleportPacket
 import com.valaphee.tesseract.actor.metadata.MetadataPacket
 import com.valaphee.tesseract.actor.player.EmotePacket
 import com.valaphee.tesseract.actor.player.EmotesPacket
@@ -40,7 +40,7 @@ import com.valaphee.tesseract.actor.player.InputPacket
 import com.valaphee.tesseract.actor.player.InteractPacket
 import com.valaphee.tesseract.actor.player.PlayerActionPacket
 import com.valaphee.tesseract.actor.player.PlayerAddPacket
-import com.valaphee.tesseract.world.chunk.actor.location.PlayerLocationPacket
+import com.valaphee.tesseract.actor.player.PlayerLocationPacket
 import com.valaphee.tesseract.actor.player.view.ChunkPacket
 import com.valaphee.tesseract.actor.player.view.ChunkPublishPacket
 import com.valaphee.tesseract.actor.player.view.ViewDistancePacket

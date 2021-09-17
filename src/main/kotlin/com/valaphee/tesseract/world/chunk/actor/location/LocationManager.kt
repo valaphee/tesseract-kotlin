@@ -29,13 +29,21 @@ import com.valaphee.foundry.ecs.Response
 import com.valaphee.foundry.ecs.system.BaseFacet
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.collision.BoundingBox
+import com.valaphee.tesseract.actor.`object`
+import com.valaphee.tesseract.actor.location.Input
+import com.valaphee.tesseract.actor.location.Location
+import com.valaphee.tesseract.actor.location.LocationManagerMessage
+import com.valaphee.tesseract.actor.location.location
 import com.valaphee.tesseract.data.Component
+import com.valaphee.tesseract.data.block.Blocks
+import com.valaphee.tesseract.util.math.calculateXOffset
+import com.valaphee.tesseract.util.math.calculateYOffset
+import com.valaphee.tesseract.util.math.calculateZOffset
 import com.valaphee.tesseract.util.math.ceil
 import com.valaphee.tesseract.util.math.floor
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.Chunk
 import com.valaphee.tesseract.world.chunk.actor.ChunkActorUpdate
-import com.valaphee.tesseract.world.chunk.actor.chunk
 import com.valaphee.tesseract.world.chunk.encodePosition
 import com.valaphee.tesseract.world.chunk.position
 import com.valaphee.tesseract.world.chunk.terrain.BlockStorage
@@ -51,20 +59,37 @@ class LocationManager : BaseFacet<WorldContext, LocationManagerMessage>(Location
             is Input -> {
                 val actor = message.source
                 val location = actor.location
-                val position = message.position
-                location.position = position
-                val (xInt, _, zInt) = position.toInt3()
-                if (xInt < 0 || xInt >= BlockStorage.XZSize || zInt < 0 || zInt >= BlockStorage.XZSize) {
-                    val (newX, _, newZ) = location.position.toInt3()
-                    val context = message.context
-                    context.world.sendMessage(ChunkActorUpdate(context, message.entity, encodePosition(newX shr 4, newZ shr 4), actor))
-                }
-
+                val `object` = actor.`object`
                 val chunk = message.entity
                 val (chunkX, chunkZ) = chunk.position
-                val offset = location.position.toMutableFloat3().add(Float3(-(chunkX shl 4).toFloat() + deltaX, -`object`.yOffset + deltaY, -(chunkZ shl 4).toFloat() + deltaZ ))
-                val boundingBox = BoundingBox().set(`object`.boundingBox).move(offset)
-                actor.chunk.getCollisions()
+
+                val oldOffset = location.position.toMutableFloat3().sub(Float3((chunkX shl 4).toFloat(), `object`.yOffset, (chunkZ shl 4).toFloat()))
+                val newOffset = message.position.toMutableFloat3().sub(Float3((chunkX shl 4).toFloat(), `object`.yOffset, (chunkZ shl 4).toFloat()))
+                val boundingBox = BoundingBox().set(`object`.boundingBox).move(oldOffset).add(newOffset)
+
+                val (dx, dy, dz) = location.position - message.position
+                val collisions = chunk.getCollisions(boundingBox)
+                var cx = dx
+                collisions.forEach { cx = it.calculateXOffset(boundingBox, cx) }
+                boundingBox.move(dx, 0.0f, 0.0f)
+                var cy = dy
+                collisions.forEach { cy = it.calculateYOffset(boundingBox, cy) }
+                boundingBox.move(0.0f, dy, 0.0f)
+                var cz = dz
+                collisions.forEach { cz = it.calculateZOffset(boundingBox, cz) }
+                boundingBox.move(0.0f, 0.0f, cz)
+
+                val (oldX, oldY, oldZ) = location.position
+                val position = Float3(oldX + cx, oldY + cy, oldZ + cz)
+                location.position = position
+                val (xInt, _, zInt) = newOffset
+                if (xInt < 0 || xInt >= BlockStorage.XZSize || zInt < 0 || zInt >= BlockStorage.XZSize) {
+                    val context = message.context
+                    context.world.sendMessage(ChunkActorUpdate(context, chunk, encodePosition(position.x.toInt() shr 4, position.z.toInt() shr 4), actor))
+                }
+
+                println("$position")
+                //if (dx != cx || dy != cy || dz != cz) actor.filter<PlayerType> { it.connection.write(PlayerLocationPacket(it.id, position, location.rotation, location.headRotationYaw, PlayerLocationPacket.Mode.Teleport, true, 0, null, 0)) }
             }
         }
 
@@ -82,7 +107,7 @@ fun Chunk.getCollisions(boundingBox: BoundingBox): List<BoundingBox> {
     val yMaxInt = ceil(yMax)
     val zMaxInt = ceil(zMax)
     val collisions = mutableListOf<BoundingBox>()
-    for (x in xMinInt..xMaxInt) for (y in yMinInt..yMaxInt) for (z in zMinInt..zMaxInt) if (!com.valaphee.tesseract.data.block.Blocks.isTransparent(blockStorage[x, y, z])) {
+    for (x in xMinInt..xMaxInt) for (y in yMinInt..yMaxInt) for (z in zMinInt..zMaxInt) if (!Blocks.isTransparent(blockStorage[x, y, z])) {
         val xFloat = x.toFloat()
         val yFloat = y.toFloat()
         val zFloat = z.toFloat()
@@ -90,3 +115,4 @@ fun Chunk.getCollisions(boundingBox: BoundingBox): List<BoundingBox> {
     }
     return collisions
 }
+

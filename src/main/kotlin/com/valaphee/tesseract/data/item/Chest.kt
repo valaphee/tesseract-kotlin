@@ -27,7 +27,7 @@ package com.valaphee.tesseract.data.item
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int2
 import com.valaphee.foundry.math.Int3
-import com.valaphee.tesseract.world.chunk.actor.location.location
+import com.valaphee.tesseract.actor.location.location
 import com.valaphee.tesseract.actor.player.Player
 import com.valaphee.tesseract.data.Index
 import com.valaphee.tesseract.data.block.BlockState

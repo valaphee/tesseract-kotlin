@@ -26,6 +26,7 @@ package com.valaphee.tesseract.actor.player.view
 
 import com.google.inject.Inject
 import com.valaphee.foundry.math.Int2
+import com.valaphee.tesseract.actor.location.location
 import com.valaphee.tesseract.actor.player.PlayerType
 import com.valaphee.tesseract.data.Component
 import com.valaphee.tesseract.data.Config
@@ -33,7 +34,6 @@ import com.valaphee.tesseract.world.AnyEntityOfWorld
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.ChunkAcquire
 import com.valaphee.tesseract.world.chunk.ChunkRelease
-import com.valaphee.tesseract.world.chunk.actor.location.location
 import com.valaphee.tesseract.world.chunk.decodePosition
 import com.valaphee.tesseract.world.chunk.encodePosition
 import com.valaphee.tesseract.world.filter

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world.chunk.actor.location
+package com.valaphee.tesseract.actor.player
 
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
@@ -65,7 +65,7 @@ data class PlayerLocationPacket(
         buffer.writeVarULong(drivingRuntimeEntityId)
         if (mode == Mode.Teleport) {
             buffer.writeIntLE(teleportationCause!!.ordinal)
-            /*buffer.writeIntLE(actorType!!.id)*/
+            buffer.writeIntLE(0)
         }
         if (version >= 419) buffer.writeVarULong(tick)
     }

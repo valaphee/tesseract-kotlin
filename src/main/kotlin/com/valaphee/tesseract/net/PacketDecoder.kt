@@ -24,13 +24,13 @@
 
 package com.valaphee.tesseract.net
 
-import com.valaphee.tesseract.world.chunk.actor.location.VelocityPacketReader
+import com.valaphee.tesseract.actor.location.VelocityPacketReader
 import com.valaphee.tesseract.actor.player.EmotePacketReader
 import com.valaphee.tesseract.actor.player.EmotesPacketReader
 import com.valaphee.tesseract.actor.player.InputPacketReader
 import com.valaphee.tesseract.actor.player.InteractPacketReader
 import com.valaphee.tesseract.actor.player.PlayerActionPacketReader
-import com.valaphee.tesseract.world.chunk.actor.location.PlayerLocationPacketReader
+import com.valaphee.tesseract.actor.player.PlayerLocationPacketReader
 import com.valaphee.tesseract.actor.player.view.ChunkPacketReader
 import com.valaphee.tesseract.actor.player.view.ViewDistancePacketReader
 import com.valaphee.tesseract.actor.player.view.ViewDistanceRequestPacketReader

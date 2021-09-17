@@ -29,7 +29,7 @@ import com.valaphee.tesseract.world.AnyEntityOfWorld
 import com.valaphee.tesseract.world.World
 import com.valaphee.tesseract.world.WorldContext
 import com.valaphee.tesseract.world.chunk.ChunkManagerMessage
-import com.valaphee.tesseract.world.chunk.actor.location.location
+import com.valaphee.tesseract.actor.location.location
 import com.valaphee.tesseract.world.chunk.encodePosition
 
 /**
