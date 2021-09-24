@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class InventoryContentPacket(
     var windowId: Int,
     var content: Array<Stack<*>?>

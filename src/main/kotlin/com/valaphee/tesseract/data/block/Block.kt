@@ -24,21 +24,10 @@
 
 package com.valaphee.tesseract.data.block
 
-import com.valaphee.foundry.math.Float3
-import com.valaphee.tesseract.actor.player.Player
 import com.valaphee.tesseract.data.Data
-import com.valaphee.tesseract.data.Keyed
-import com.valaphee.tesseract.util.math.Direction
-import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.chunk.terrain.PropagationBlockUpdateList
+import com.valaphee.tesseract.data.KeyedData
 
 /**
  * @author Kevin Ludwig
  */
-interface Block : Data, Keyed {
-    val transparent get() = false
-
-    fun onUse(context: WorldContext, player: Player, blockUpdates: PropagationBlockUpdateList, x: Int, y: Int, z: Int, direction: Direction, clickPosition: Float3) = false
-
-    fun onUpdate(blockUpdates: PropagationBlockUpdateList, x: Int, y: Int, z: Int, blockState: BlockState) = Unit
-}
+interface Block : Data, KeyedData

@@ -42,7 +42,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Serverbound)
+@Restrict(Restriction.ToServer)
 data class InventoryTransactionPacket(
     var legacySlots: Array<LegacySlot>?,
     var type: Type,

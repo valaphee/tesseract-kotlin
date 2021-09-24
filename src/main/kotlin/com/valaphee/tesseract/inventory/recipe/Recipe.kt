@@ -27,14 +27,6 @@ package com.valaphee.tesseract.inventory.recipe
 import com.valaphee.tesseract.inventory.item.stack.Stack
 import java.util.UUID
 
-fun shapelessRecipe(type: Recipe.Type, id: UUID, name: String, inputs: Array<Stack<*>?>, outputs: Array<Stack<*>?>, tag: String, priority: Int, netId: Int) = Recipe(id, name, type, 0, 0, 0, 0, inputs, outputs, tag, priority, netId)
-
-fun shapedRecipe(type: Recipe.Type, id: UUID, name: String, width: Int, height: Int, inputs: Array<Stack<*>?>, outputs: Array<Stack<*>?>, tag: String, priority: Int, netId: Int) = Recipe(id, name, type, 0, 0, width, height, inputs, outputs, tag, priority, netId)
-
-fun furnaceRecipe(inputId: Int, inputSubId: Int, output: Stack<*>?, tag: String) = Recipe(null, null, if (inputSubId != -1) Recipe.Type.FurnaceData else Recipe.Type.Furnace, inputId, inputSubId, 0, 0, null, arrayOf(output), tag, 0, 0)
-
-fun multiRecipe(id: UUID, netId: Int) = Recipe(id, null, Recipe.Type.Multi, 0, 0, 0, 0, null, null, null, 0, netId)
-
 /**
  * @author Kevin Ludwig
  */

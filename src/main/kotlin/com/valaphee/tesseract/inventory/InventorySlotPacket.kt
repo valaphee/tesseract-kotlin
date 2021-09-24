@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class InventorySlotPacket(
     var windowId: Int,
     var slotId: Int,

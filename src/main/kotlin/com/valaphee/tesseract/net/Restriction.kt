@@ -28,5 +28,13 @@ package com.valaphee.tesseract.net
  * @author Kevin Ludwig
  */
 enum class Restriction {
-    Clientbound, Serverbound, OncePerCycle
+    ToClient, ToServer
 }
+
+/**
+ * @author Kevin Ludwig
+ */
+@Target(AnnotationTarget.CLASS)
+annotation class Restrict(
+    vararg val value: Restriction
+)

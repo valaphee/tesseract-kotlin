@@ -24,32 +24,27 @@
 
 package com.valaphee.tesseract.data.locale
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.valaphee.tesseract.data.Component
-import com.valaphee.tesseract.data.Data
-import com.valaphee.tesseract.data.Keyed
+import com.valaphee.tesseract.data.DataType
+import com.valaphee.tesseract.data.KeyedData
 import java.text.MessageFormat
 import java.util.regex.Pattern
 
 /**
  * @author Kevin Ludwig
  */
-@Component("tesseract:locale")
+@DataType("tesseract:locale")
 class LocaleData(
     override val key: String,
     val entries: Map<String, String>
-) : Data, Keyed {
-    @JsonIgnore
-    private val formats = mutableMapOf<String, MessageFormat>()
+) : KeyedData {
+    @Transient private val entryFormats = mutableMapOf<String, MessageFormat>()
 
-    operator fun get(key: String) = entries[key]
-
-    fun format(key: String, vararg arguments: Any?) = this[key]?.let {
-        (formats[key] ?: (try {
+    operator fun get(key: String, vararg arguments: Any?) = entries[key]?.let {
+        (entryFormats[key] ?: (try {
             MessageFormat(it)
         } catch (_: IllegalArgumentException) {
             MessageFormat(pattern.matcher(it).replaceAll("\\[$1\\]"))
-        }).also { formats[key] = it }).format(arguments)
+        }).also { entryFormats[key] = it }).format(arguments)
     } ?: key
 
     companion object {

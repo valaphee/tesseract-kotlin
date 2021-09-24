@@ -27,38 +27,113 @@ package com.valaphee.tesseract
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import com.google.inject.AbstractModule
 import com.google.inject.Guice
-import com.valaphee.tesseract.actor.ActorTypeRegistry
 import com.valaphee.tesseract.command.CommandManager
+import com.valaphee.tesseract.data.DataModule
 import com.valaphee.tesseract.data.block.BlockState
-import com.valaphee.tesseract.inventory.CreativeInventoryPacket
 import com.valaphee.tesseract.inventory.item.Item
 import com.valaphee.tesseract.inventory.item.stack.Stack
-import com.valaphee.tesseract.net.init.BiomeDefinitionsPacket
-import com.valaphee.tesseract.net.init.EntityIdentifiersPacket
+import com.valaphee.tesseract.log.Log4JLogHandler
+import com.valaphee.tesseract.log.QueueAppender
 import com.valaphee.tesseract.util.LittleEndianByteBufInputStream
-import com.valaphee.tesseract.util.LittleEndianVarIntByteBufInputStream
 import com.valaphee.tesseract.util.getCompoundTag
 import com.valaphee.tesseract.util.getInt
 import com.valaphee.tesseract.util.getIntOrNull
 import com.valaphee.tesseract.util.getJsonArray
-import com.valaphee.tesseract.util.getListTag
 import com.valaphee.tesseract.util.getString
 import com.valaphee.tesseract.util.getStringOrNull
 import com.valaphee.tesseract.util.nbt.NbtInputStream
 import io.netty.buffer.ByteBufInputStream
 import io.netty.buffer.PooledByteBufAllocator
 import io.netty.buffer.Unpooled
+import jline.Terminal
+import jline.TerminalFactory
+import jline.UnsupportedTerminal
+import jline.console.ConsoleReader
+import jline.console.CursorBuffer
+import org.apache.logging.log4j.Level
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.core.Logger
+import org.apache.logging.log4j.core.appender.ConsoleAppender
+import org.apache.logging.log4j.io.IoBuilder
+import org.fusesource.jansi.Ansi
+import org.fusesource.jansi.AnsiConsole
 import java.io.IOException
+import java.io.InputStream
 import java.io.InputStreamReader
+import java.io.PrintStream
+import java.io.PrintWriter
 import java.lang.invoke.MethodHandles
 import java.util.Base64
 import kotlin.concurrent.thread
 
-lateinit var biomeDefinitionsPacket: BiomeDefinitionsPacket
-lateinit var entityIdentifiersPacket: EntityIdentifiersPacket
-lateinit var creativeInventoryPacket: CreativeInventoryPacket
+val defaultSystemIn: InputStream = System.`in`
+val defaultSystemOut: PrintStream = System.out
+val defaultSystemErr: PrintStream = System.err
+val terminal: Terminal = TerminalFactory.get()
+var ansi = false
+lateinit var reader: ConsoleReader
+lateinit var writer: PrintWriter
+
+fun initializeConsole() {
+    ansi = System.getProperty("jline.terminal") != UnsupportedTerminal::class.java.name && System.console() != null
+
+    if (ansi) AnsiConsole.systemInstall()
+
+    try {
+        reader = ConsoleReader("tesseract", defaultSystemIn, defaultSystemOut, terminal)
+    } catch (ex: IOException) {
+        try {
+            System.setProperty("jline.terminal", UnsupportedTerminal::class.java.name)
+            System.setProperty("user.language", "en")
+            reader = ConsoleReader("tesseract", defaultSystemIn, defaultSystemOut, terminal)
+            ansi = false
+        } catch (_: IOException) {
+        }
+    } finally {
+        reader.expandEvents = false
+    }
+}
+
+fun initializeLogging() {
+    writer = if (::reader.isInitialized) PrintWriter(reader.output) else PrintWriter(defaultSystemOut)
+
+    val julLogger = java.util.logging.Logger.getLogger("")
+    julLogger.useParentHandlers = false
+    julLogger.handlers.forEach { julLogger.removeHandler(it) }
+    julLogger.level = java.util.logging.Level.ALL
+    julLogger.addHandler(Log4JLogHandler())
+
+    val logger = LogManager.getRootLogger() as Logger
+    logger.appenders.values.forEach { if (it is ConsoleAppender) logger.removeAppender(it) }
+
+    thread(isDaemon = true, name = "console-writer") {
+        while (true) {
+            val message = QueueAppender.getMessage()
+            if (ansi) {
+                val stashed: CursorBuffer = reader.cursorBuffer.copy()
+                writer.write(ansiErase)
+                writer.flush()
+                writer.write(message)
+                writer.write(ansiReset)
+                try {
+                    reader.resetPromptLine(reader.prompt, stashed.toString(), stashed.cursor)
+                } catch (_: IOException) {
+                    reader.cursorBuffer.clear()
+                } catch (_: IndexOutOfBoundsException) {
+                    reader.cursorBuffer.clear()
+                }
+            } else {
+                writer.write(message)
+                writer.flush()
+            }
+        }
+    }
+
+    System.setIn(null)
+    System.setOut(IoBuilder.forLogger(logger).setLevel(Level.INFO).buildPrintStream())
+    System.setErr(IoBuilder.forLogger(logger).setLevel(Level.ERROR).buildPrintStream())
+}
 
 fun main(arguments: Array<String>) {
     val argument = Argument().apply { if (!parse(arguments)) return }
@@ -73,14 +148,14 @@ fun main(arguments: Array<String>) {
     initializeConsole()
     initializeLogging()
 
-    val clazz = MethodHandles.lookup().lookupClass()
+    val `class` = MethodHandles.lookup().lookupClass()
     val gson = GsonBuilder().create()
     val base64Decoder = Base64.getDecoder()
 
     run {
         val buffer = PooledByteBufAllocator.DEFAULT.directBuffer()
         try {
-            buffer.writeBytes(clazz.getResourceAsStream("/runtime_block_states.dat")!!.readBytes())
+            buffer.writeBytes(`class`.getResourceAsStream("/runtime_block_states.dat")!!.readBytes())
             NbtInputStream(ByteBufInputStream(buffer)).use { it.readTag() }?.asCompoundTag()?.get("blocks")?.asListTag()!!.toList().map { it.asCompoundTag()!! }.forEach { BlockState.register(BlockState(it.getString("name"), it.getCompoundTag("states"), it.getInt("version"))) }
         } finally {
             buffer.release()
@@ -89,15 +164,14 @@ fun main(arguments: Array<String>) {
     }
 
     run {
-        gson.newJsonReader(InputStreamReader(clazz.getResourceAsStream("/runtime_item_states.json")!!)).use { (gson.fromJson(it, JsonArray::class.java) as JsonArray).map { it.asJsonObject }.forEach { Item.register(it.getString("name"), it.getInt("id")) } }
+        gson.newJsonReader(InputStreamReader(`class`.getResourceAsStream("/runtime_item_states.json")!!)).use { (gson.fromJson(it, JsonArray::class.java) as JsonArray).map { it.asJsonObject }.forEach { Item.register(it.getString("name"), it.getInt("id")) } }
     }
 
     run {
-        val data = clazz.getResourceAsStream("/biome_definitions.dat")!!.readBytes()
-        biomeDefinitionsPacket = BiomeDefinitionsPacket(data)
+        `class`.getResourceAsStream("/biome_definitions.dat")!!.readBytes()
     }
 
-    run {
+    /*run {
         val buffer = PooledByteBufAllocator.DEFAULT.directBuffer()
         try {
             val data = clazz.getResourceAsStream("/entity_identifiers.dat")!!.readBytes()
@@ -107,10 +181,10 @@ fun main(arguments: Array<String>) {
         } finally {
             buffer.release()
         }
-    }
+    }*/
 
     run {
-        gson.newJsonReader(InputStreamReader(clazz.getResourceAsStream("/creative_items.json")!!)).use {
+        gson.newJsonReader(InputStreamReader(`class`.getResourceAsStream("/creative_items.json")!!)).use {
             val content = mutableListOf<Stack<*>>()
             (gson.fromJson(it, JsonObject::class.java) as JsonObject).getJsonArray("items").map { it.asJsonObject }.forEach {
                 Item.byKeyOrNull(it.getString("id"))?.let { item ->
@@ -122,18 +196,10 @@ fun main(arguments: Array<String>) {
                     }, blockRuntimeId = it.getIntOrNull("blockRuntimeId") ?: 0)
                 }
             }
-            creativeInventoryPacket = CreativeInventoryPacket(content.toTypedArray())
         }
     }
 
-    val guice = Guice.createInjector(object : AbstractModule() {
-        override fun configure() {
-            bind(Argument::class.java).toInstance(argument)
-        }
-    })
-
-    val serverInstance = ServerInstance(guice)
-    serverInstance.bind()
+    val guice = Guice.createInjector(DataModule(argument))
 
     val commandManager = guice.getInstance(CommandManager::class.java)
     if (ansi) reader.prompt = "tesseract> "
@@ -148,3 +214,6 @@ fun main(arguments: Array<String>) {
         }
     }
 }
+
+private val ansiErase = Ansi.ansi().cursorToColumn(0).eraseLine().toString().toCharArray()
+private val ansiReset = Ansi.ansi().a(Ansi.Attribute.RESET).toString().toCharArray()

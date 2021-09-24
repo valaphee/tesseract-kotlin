@@ -34,6 +34,4 @@ data class PotionMixRecipe(
     var reagentSubId: Int,
     var outputId: Int,
     var outputSubId: Int
-) {
-    constructor(inputId: Int, reagentId: Int, outputId: Int) : this(inputId, 0, reagentId, 0, outputId, 0)
-}
+)

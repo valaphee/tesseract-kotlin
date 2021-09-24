@@ -33,7 +33,7 @@ import com.valaphee.tesseract.net.Restriction
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class InventoryResponsePacket(
     var responses: Array<Response>
 ) : Packet {

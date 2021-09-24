@@ -41,8 +41,8 @@ import com.valaphee.tesseract.actor.player.InteractPacket
 import com.valaphee.tesseract.actor.player.PlayerActionPacket
 import com.valaphee.tesseract.actor.player.PlayerAddPacket
 import com.valaphee.tesseract.actor.player.PlayerLocationPacket
-import com.valaphee.tesseract.actor.player.view.ChunkPacket
-import com.valaphee.tesseract.actor.player.view.ChunkPublishPacket
+import com.valaphee.tesseract.world.chunk.ChunkPacket
+import com.valaphee.tesseract.world.chunk.ChunkPublishPacket
 import com.valaphee.tesseract.actor.player.view.ViewDistancePacket
 import com.valaphee.tesseract.actor.player.view.ViewDistanceRequestPacket
 import com.valaphee.tesseract.command.net.CommandPacket
@@ -65,20 +65,20 @@ import com.valaphee.tesseract.net.base.CacheStatusPacket
 import com.valaphee.tesseract.net.base.DisconnectPacket
 import com.valaphee.tesseract.net.base.LatencyPacket
 import com.valaphee.tesseract.net.base.LocalPlayerAsInitializedPacket
-import com.valaphee.tesseract.net.base.TextPacket
-import com.valaphee.tesseract.net.base.TickSyncPacket
+import com.valaphee.tesseract.world.TextPacket
+import com.valaphee.tesseract.world.TickSyncPacket
 import com.valaphee.tesseract.net.base.ViolationPacket
 import com.valaphee.tesseract.net.init.BehaviorTreePacket
 import com.valaphee.tesseract.net.init.BiomeDefinitionsPacket
 import com.valaphee.tesseract.net.init.ClientToServerHandshakePacket
 import com.valaphee.tesseract.net.init.EntityIdentifiersPacket
 import com.valaphee.tesseract.net.init.LoginPacket
-import com.valaphee.tesseract.net.init.PackDataChunkPacket
-import com.valaphee.tesseract.net.init.PackDataChunkRequestPacket
-import com.valaphee.tesseract.net.init.PackDataPacket
-import com.valaphee.tesseract.net.init.PacksPacket
-import com.valaphee.tesseract.net.init.PacksResponsePacket
-import com.valaphee.tesseract.net.init.PacksStackPacket
+import com.valaphee.tesseract.net.init.pack.PackDataChunkPacket
+import com.valaphee.tesseract.net.init.pack.PackDataChunkRequestPacket
+import com.valaphee.tesseract.net.init.pack.PackDataPacket
+import com.valaphee.tesseract.net.init.pack.PacksPacket
+import com.valaphee.tesseract.net.init.pack.PacksResponsePacket
+import com.valaphee.tesseract.net.init.pack.PacksStackPacket
 import com.valaphee.tesseract.net.init.ServerToClientHandshakePacket
 import com.valaphee.tesseract.net.init.StatusPacket
 import com.valaphee.tesseract.world.DifficultyPacket
@@ -94,8 +94,8 @@ import com.valaphee.tesseract.world.SoundStopPacket
 import com.valaphee.tesseract.world.TimePacket
 import com.valaphee.tesseract.world.WorldEventPacket
 import com.valaphee.tesseract.world.WorldPacket
-import com.valaphee.tesseract.world.chunk.terrain.BlockUpdatePacket
-import com.valaphee.tesseract.world.chunk.terrain.BlockUpdateSyncedPacket
+import com.valaphee.tesseract.world.chunk.BlockUpdatePacket
+import com.valaphee.tesseract.world.chunk.BlockUpdateSyncedPacket
 
 /**
  * @author Kevin Ludwig

@@ -35,7 +35,7 @@ import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class WorldEventPacket(
     var eventOrParticleType: Event,
     var position: Float3,

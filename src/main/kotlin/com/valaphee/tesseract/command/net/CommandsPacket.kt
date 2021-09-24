@@ -35,7 +35,7 @@ import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class CommandsPacket(
     var commands: Array<Command>
 ) : Packet {

@@ -36,7 +36,7 @@ import com.valaphee.tesseract.util.nbt.NbtOutputStream
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class BiomeDefinitionsPacket(
     val data: ByteArray?,
     var tag: CompoundTag? = null

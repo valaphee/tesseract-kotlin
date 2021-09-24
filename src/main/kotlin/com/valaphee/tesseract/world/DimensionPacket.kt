@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class DimensionPacket(
     var dimension: Dimension? = null,
     var position: Float3? = null,

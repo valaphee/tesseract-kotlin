@@ -34,7 +34,7 @@ import com.valaphee.tesseract.net.Restriction
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class GameRulesPacket(
     var gameRules: Array<GameRule<*>>
 ) : Packet {

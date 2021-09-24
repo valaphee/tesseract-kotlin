@@ -24,15 +24,14 @@
 
 package com.valaphee.tesseract.data.recipe
 
-import com.valaphee.tesseract.data.Component
-import com.valaphee.tesseract.data.Data
-import com.valaphee.tesseract.data.Keyed
+import com.valaphee.tesseract.data.DataType
+import com.valaphee.tesseract.data.KeyedData
 import com.valaphee.tesseract.inventory.item.stack.Stack
 
 /**
  * @author Kevin Ludwig
  */
-@Component("tesseract:recipe_shaped")
+@DataType("tesseract:recipe_shaped")
 class ShapedRecipeData(
     override val key: String,
     val tags: Array<String>,
@@ -40,4 +39,4 @@ class ShapedRecipeData(
     val pattern: Array<String>,
     val priority: Int = 0,
     val result: Stack<*>
-) : Data, Keyed
+) : KeyedData

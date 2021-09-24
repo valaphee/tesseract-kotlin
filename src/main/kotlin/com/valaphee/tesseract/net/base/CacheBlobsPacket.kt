@@ -36,7 +36,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class CacheBlobsPacket(
     val blobs: Long2ObjectMap<ByteArray> = Long2ObjectOpenHashMap()
 ) : Packet {

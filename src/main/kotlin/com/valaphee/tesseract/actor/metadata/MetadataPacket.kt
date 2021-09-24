@@ -33,7 +33,7 @@ import com.valaphee.tesseract.net.Restriction
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class MetadataPacket(
     var runtimeEntityId: Long,
     val metadata: Metadata,

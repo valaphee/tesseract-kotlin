@@ -35,8 +35,9 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.base.CacheStatusPacket
 import com.valaphee.tesseract.net.base.DisconnectPacket
 import com.valaphee.tesseract.net.base.ViolationPacket
-import com.valaphee.tesseract.world.WorldContext
-import com.valaphee.tesseract.world.WorldPacketHandler
+import com.valaphee.tesseract.net.init.pack.PacksPacket
+import com.valaphee.tesseract.net.init.pack.PacksResponsePacket
+import com.valaphee.tesseract.net.init.pack.PacksStackPacket
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.security.KeyPair
@@ -45,7 +46,6 @@ import java.security.KeyPair
  * @author Kevin Ludwig
  */
 class InitPacketHandler(
-    private val worldContext: WorldContext,
     private val connection: Connection
 ) : PacketHandler {
     @Inject private lateinit var config: Config
@@ -135,7 +135,7 @@ class InitPacketHandler(
             PacksResponsePacket.Status.Completed -> {
                 state = State.Finished
 
-                connection.setHandler(WorldPacketHandler(worldContext, connection, authExtra, user, config.listener.caching && cacheSupported))
+                //connection.setHandler()
             }
         }
     }

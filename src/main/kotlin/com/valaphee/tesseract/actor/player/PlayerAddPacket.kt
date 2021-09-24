@@ -43,7 +43,7 @@ import java.util.UUID
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class PlayerAddPacket(
     var userId: UUID,
     var userName: String,

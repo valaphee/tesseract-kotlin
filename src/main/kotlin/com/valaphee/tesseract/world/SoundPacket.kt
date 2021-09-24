@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class SoundPacket(
     var sound: Sound? = null,
     var soundKey: String? = null,

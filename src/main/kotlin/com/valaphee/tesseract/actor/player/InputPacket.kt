@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Serverbound)
+@Restrict(Restriction.ToServer)
 data class InputPacket(
     var rotation: Float2,
     var position: Float3,

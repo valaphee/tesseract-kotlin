@@ -46,7 +46,7 @@ import java.util.Base64
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class ServerToClientHandshakePacket(
     var serverPublicKey: PublicKey,
     val serverPrivateKey: PrivateKey?,

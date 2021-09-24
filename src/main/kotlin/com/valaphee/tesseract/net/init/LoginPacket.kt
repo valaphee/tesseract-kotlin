@@ -57,7 +57,7 @@ import java.util.Base64
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Serverbound)
+@Restrict(Restriction.ToServer)
 data class LoginPacket(
     val protocolVersion: Int,
     val publicKey: PublicKey,

@@ -45,7 +45,7 @@ import java.util.UUID
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class PlayerListPacket(
     var action: Action,
     var entries: Array<Entry>

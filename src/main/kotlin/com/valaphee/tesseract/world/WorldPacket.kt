@@ -43,7 +43,7 @@ import com.valaphee.tesseract.util.nbt.ListTag
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class WorldPacket(
     var uniqueEntityId: Long,
     var runtimeEntityId: Long,

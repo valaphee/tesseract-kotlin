@@ -37,11 +37,11 @@ import com.valaphee.tesseract.net.Restriction
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class ActorAddPacket(
     var uniqueEntityId: Long,
     var runtimeEntityId: Long,
-    var type: ActorType,
+    var type: String,
     var position: Float3,
     var velocity: Float3,
     var rotation: Float2,
@@ -55,7 +55,7 @@ data class ActorAddPacket(
     override fun write(buffer: PacketBuffer, version: Int) {
         buffer.writeVarLong(uniqueEntityId)
         buffer.writeVarULong(runtimeEntityId)
-        buffer.writeString(type.key)
+        buffer.writeString(type)
         buffer.writeFloat3(position)
         buffer.writeFloat3(velocity)
         buffer.writeFloat2(rotation)

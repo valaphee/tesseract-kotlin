@@ -25,9 +25,7 @@
 package com.valaphee.tesseract.actor.player
 
 import com.google.gson.JsonObject
-import com.valaphee.foundry.ecs.BaseAttribute
 import com.valaphee.tesseract.util.address
-import com.valaphee.tesseract.data.entity.Runtime
 import com.valaphee.tesseract.util.getBoolOrNull
 import com.valaphee.tesseract.util.getIntOrNull
 import com.valaphee.tesseract.util.getLong
@@ -39,7 +37,6 @@ import java.util.UUID
 /**
  * @author Kevin Ludwig
  */
-@Runtime
 data class User constructor(
     val selfSignedId: UUID,
     val clientId: Long,
@@ -58,7 +55,7 @@ data class User constructor(
     val guiScale: Int,
     val uiProfile: UiProfile,
     val serverAddress: InetSocketAddress?
-) : BaseAttribute() {
+) {
     enum class OperatingSystem {
         Unknown,
         Android,
@@ -126,5 +123,3 @@ val JsonObject.asUser
         User.UiProfile.values()[getIntOrNull("UIProfile") ?: 0],
         address(getString("ServerAddress"), 19132)
     )
-
-val Player.user get() = findAttribute(User::class)

@@ -30,9 +30,8 @@ import java.util.regex.Pattern
 /**
  * @author Kevin Ludwig
  */
-@Component("tesseract:config")
+@DataType("tesseract:config")
 class Config(
-    var concurrency: Int = Runtime.getRuntime().availableProcessors(),
     var listener: Listener = Listener(),
     var maximumPlayers: Int = 10,
     var maximumViewDistance: Int = 32

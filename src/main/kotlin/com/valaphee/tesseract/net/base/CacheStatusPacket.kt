@@ -34,7 +34,7 @@ import com.valaphee.tesseract.net.Restriction
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Serverbound)
+@Restrict(Restriction.ToServer)
 data class CacheStatusPacket(
     var supported: Boolean
 ) : Packet {
