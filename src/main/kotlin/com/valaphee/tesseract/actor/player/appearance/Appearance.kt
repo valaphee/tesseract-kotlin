@@ -163,70 +163,71 @@ data class Appearance constructor(
     }
 }
 
-val JsonObject.asAppearance get() = Appearance(
-    getString("SkinId"),
-    "",
-    getStringOrNull("SkinResourcePatch")?.let {
-        val jsonSkinResourcePatch = Streams.parse(JsonReader(StringReader(String(base64Decoder.decode(it), StandardCharsets.UTF_8))))
-        val skinResourcePatch: MutableMap<String, Any> = HashMap()
-        if (jsonSkinResourcePatch.isJsonObject) jsonSkinResourcePatch.asJsonObject.entrySet().forEach { skinResourcePatch[it.key] = gson.fromJson(it.value, Any::class.java) }
-        skinResourcePatch
-    } ?: emptyMap(),
-    getAsAppearanceImage("Skin"),
-    run {
-        val animations: MutableList<AppearanceAnimation> = ArrayList()
-        getJsonArray("AnimatedImageData").forEach {
-            val jsonAnimation = it.asJsonObject
-            animations.add(
-                AppearanceAnimation(
-                    jsonAnimation.getAsAppearanceImage(null),
-                    AppearanceAnimation.Type.values()[jsonAnimation.getInt("Type")],
-                    jsonAnimation.getFloat("Frames"),
-                    AppearanceAnimation.Expression.values()[jsonAnimation.getIntOrNull("AnimationExpression") ?: 0],
+val JsonObject.asAppearance
+    get() = Appearance(
+        getString("SkinId"),
+        "",
+        getStringOrNull("SkinResourcePatch")?.let {
+            val jsonSkinResourcePatch = Streams.parse(JsonReader(StringReader(String(base64Decoder.decode(it), StandardCharsets.UTF_8))))
+            val skinResourcePatch: MutableMap<String, Any> = HashMap()
+            if (jsonSkinResourcePatch.isJsonObject) jsonSkinResourcePatch.asJsonObject.entrySet().forEach { skinResourcePatch[it.key] = gson.fromJson(it.value, Any::class.java) }
+            skinResourcePatch
+        } ?: emptyMap(),
+        getAsAppearanceImage("Skin"),
+        run {
+            val animations: MutableList<AppearanceAnimation> = ArrayList()
+            getJsonArray("AnimatedImageData").forEach {
+                val jsonAnimation = it.asJsonObject
+                animations.add(
+                    AppearanceAnimation(
+                        jsonAnimation.getAsAppearanceImage(null),
+                        AppearanceAnimation.Type.values()[jsonAnimation.getInt("Type")],
+                        jsonAnimation.getFloat("Frames"),
+                        AppearanceAnimation.Expression.values()[jsonAnimation.getIntOrNull("AnimationExpression") ?: 0],
+                    )
                 )
-            )
-        }
-        animations
-    },
-    getAsAppearanceImage("Cape"),
-    String(base64Decoder.decode(getString("SkinGeometryData")), StandardCharsets.UTF_8),
-    "",
-    String(base64Decoder.decode(getString("SkinAnimationData")), StandardCharsets.UTF_8),
-    getString("CapeId"),
-    "",
-    getStringOrNull("ArmSize") ?: "",
-    getStringOrNull("SkinColor") ?: "#0",
-    run {
-        val personaPieces = mutableListOf<Appearance.PersonaPiece>()
-        getJsonArrayOrNull("PersonaPieces")?.forEach {
-            val jsonPersonaPiece = it.asJsonObject
-            personaPieces.add(
-                Appearance.PersonaPiece(
-                    jsonPersonaPiece.getString("PieceId"),
-                    jsonPersonaPiece.getString("PieceType"),
-                    jsonPersonaPiece.getString("PackId"),
-                    jsonPersonaPiece.getBool("IsDefault"),
-                    jsonPersonaPiece.getString("ProductId")
+            }
+            animations
+        },
+        getAsAppearanceImage("Cape"),
+        String(base64Decoder.decode(getString("SkinGeometryData")), StandardCharsets.UTF_8),
+        "",
+        String(base64Decoder.decode(getString("SkinAnimationData")), StandardCharsets.UTF_8),
+        getString("CapeId"),
+        "",
+        getStringOrNull("ArmSize") ?: "",
+        getStringOrNull("SkinColor") ?: "#0",
+        run {
+            val personaPieces = mutableListOf<Appearance.PersonaPiece>()
+            getJsonArrayOrNull("PersonaPieces")?.forEach {
+                val jsonPersonaPiece = it.asJsonObject
+                personaPieces.add(
+                    Appearance.PersonaPiece(
+                        jsonPersonaPiece.getString("PieceId"),
+                        jsonPersonaPiece.getString("PieceType"),
+                        jsonPersonaPiece.getString("PackId"),
+                        jsonPersonaPiece.getBool("IsDefault"),
+                        jsonPersonaPiece.getString("ProductId")
+                    )
                 )
-            )
-        }
-        personaPieces
-    },
-    run {
-        val personaPieceTints = mutableListOf<Appearance.PersonaPieceTint>()
-        getJsonArrayOrNull("PieceTintColors")?.forEach {
-            val jsonPersonaPieceTint = it.asJsonObject
-            val jsonPersonaPieceTintColors = jsonPersonaPieceTint.getJsonArray("Colors")
-            personaPieceTints.add(Appearance.PersonaPieceTint(jsonPersonaPieceTint.getString("PieceType"), Array(jsonPersonaPieceTintColors.size()) { jsonPersonaPieceTintColors[it].asString }))
-        }
-        personaPieceTints
-    },
-    getBool("PremiumSkin"),
-    getBool("PersonaSkin"),
-    getBool("CapeOnClassicSkin"),
-    false,
-    false
-)
+            }
+            personaPieces
+        },
+        run {
+            val personaPieceTints = mutableListOf<Appearance.PersonaPieceTint>()
+            getJsonArrayOrNull("PieceTintColors")?.forEach {
+                val jsonPersonaPieceTint = it.asJsonObject
+                val jsonPersonaPieceTintColors = jsonPersonaPieceTint.getJsonArray("Colors")
+                personaPieceTints.add(Appearance.PersonaPieceTint(jsonPersonaPieceTint.getString("PieceType"), Array(jsonPersonaPieceTintColors.size()) { jsonPersonaPieceTintColors[it].asString }))
+            }
+            personaPieceTints
+        },
+        getBool("PremiumSkin"),
+        getBool("PersonaSkin"),
+        getBool("CapeOnClassicSkin"),
+        false,
+        false
+    )
 
 fun PacketBuffer.readAppearancePre390(): Appearance {
     val skinId = readString()

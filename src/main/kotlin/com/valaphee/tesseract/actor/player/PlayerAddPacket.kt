@@ -145,7 +145,6 @@ data class PlayerAddPacket(
     }
 }
 
-
 /**
  * @author Kevin Ludwig
  */

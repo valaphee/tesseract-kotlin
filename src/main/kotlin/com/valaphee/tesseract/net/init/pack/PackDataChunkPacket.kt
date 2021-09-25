@@ -48,7 +48,7 @@ data class PackDataChunkPacket(
     override val id get() = 0x53
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeString("$packId${packVersion?.let { "_$packVersion"} ?: "" }")
+        buffer.writeString("$packId${packVersion?.let { "_$packVersion" } ?: ""}")
         buffer.writeIntLE(chunkIndex.toInt())
         buffer.writeLongLE(progress)
         buffer.writeVarUInt(data.readableBytes())

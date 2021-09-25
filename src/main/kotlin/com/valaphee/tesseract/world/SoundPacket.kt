@@ -55,7 +55,6 @@ data class SoundPacket(
     override fun handle(handler: PacketHandler) = handler.sound(this)
 }
 
-
 /**
  * @author Kevin Ludwig
  */

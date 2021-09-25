@@ -107,11 +107,17 @@ data class PaintingAddPacket(
  * @author Kevin Ludwig
  */
 object PaintingAddPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = PaintingAddPacket(buffer.readVarLong(), buffer.readVarULong(), buffer.readFloat3(), when (buffer.readVarInt()) {
-        0 -> Direction.South
-        1 -> Direction.West
-        2 -> Direction.North
-        3 -> Direction.East
-        else -> throw IndexOutOfBoundsException()
-    }, PaintingAddPacket.Painting.byTitle(buffer.readString()))
+    override fun read(buffer: PacketBuffer, version: Int) = PaintingAddPacket(
+        buffer.readVarLong(),
+        buffer.readVarULong(),
+        buffer.readFloat3(),
+        when (buffer.readVarInt()) {
+            0 -> Direction.South
+            1 -> Direction.West
+            2 -> Direction.North
+            3 -> Direction.East
+            else -> throw IndexOutOfBoundsException()
+        },
+        PaintingAddPacket.Painting.byTitle(buffer.readString())
+    )
 }

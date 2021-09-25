@@ -327,7 +327,9 @@ object WorldPacketReader : PacketReader {
                 buffer.readString()
                 buffer.readString()
             }
-            experimentalGameplay = if (version >= 419) { if (buffer.readBoolean()) buffer.readBoolean() else false } else buffer.readBoolean()
+            experimentalGameplay = if (version >= 419) {
+                if (buffer.readBoolean()) buffer.readBoolean() else false
+            } else buffer.readBoolean()
         } else {
             limitedWorldRadius = 0
             limitedWorldHeight = 0
@@ -375,6 +377,72 @@ object WorldPacketReader : PacketReader {
         val multiplayerCorrelationId = buffer.readString()
         val inventoriesServerAuthoritative = buffer.readBoolean()
         val engine = buffer.readString()
-        return WorldPacket(uniqueEntityId, runtimeEntityId, gameMode, position, rotation, seed, biomeType, biomeName, dimension, generatorId, defaultGameMode, difficulty, defaultSpawn, achievementsDisabled, time, educationEditionOffer, educationModeId, educationFeaturesEnabled, educationProductId, rainLevel, thunderLevel, platformLockedContentConfirmed, multiplayerGame, broadcastingToLan, xboxLiveBroadcastMode, platformBroadcastMode, commandsEnabled, resourcePacksRequired, gameRules, experiments, experimentsPreviouslyToggled, bonusChestEnabled, startingWithMap, defaultPlayerPermission, serverChunkTickRange, behaviorPackLocked, resourcePackLocked, fromLockedWorldTemplate, usingMsaGamerTagsOnly, fromWorldTemplate, worldTemplateOptionLocked, onlySpawningV1Villagers, version0, limitedWorldRadius, limitedWorldHeight, v2Nether, experimentalGameplay, levelId, worldName, premiumWorldTemplateId, trial, movementAuthoritative, movementRewindHistory, blockBreakingServerAuthoritative, tick, enchantmentSeed, null, blocks, null, block2, null, items, multiplayerCorrelationId, inventoriesServerAuthoritative, engine)
+        return WorldPacket(
+            uniqueEntityId,
+            runtimeEntityId,
+            gameMode,
+            position,
+            rotation,
+            seed,
+            biomeType,
+            biomeName,
+            dimension,
+            generatorId,
+            defaultGameMode,
+            difficulty,
+            defaultSpawn,
+            achievementsDisabled,
+            time,
+            educationEditionOffer,
+            educationModeId,
+            educationFeaturesEnabled,
+            educationProductId,
+            rainLevel,
+            thunderLevel,
+            platformLockedContentConfirmed,
+            multiplayerGame,
+            broadcastingToLan,
+            xboxLiveBroadcastMode,
+            platformBroadcastMode,
+            commandsEnabled,
+            resourcePacksRequired,
+            gameRules,
+            experiments,
+            experimentsPreviouslyToggled,
+            bonusChestEnabled,
+            startingWithMap,
+            defaultPlayerPermission,
+            serverChunkTickRange,
+            behaviorPackLocked,
+            resourcePackLocked,
+            fromLockedWorldTemplate,
+            usingMsaGamerTagsOnly,
+            fromWorldTemplate,
+            worldTemplateOptionLocked,
+            onlySpawningV1Villagers,
+            version0,
+            limitedWorldRadius,
+            limitedWorldHeight,
+            v2Nether,
+            experimentalGameplay,
+            levelId,
+            worldName,
+            premiumWorldTemplateId,
+            trial,
+            movementAuthoritative,
+            movementRewindHistory,
+            blockBreakingServerAuthoritative,
+            tick,
+            enchantmentSeed,
+            null,
+            blocks,
+            null,
+            block2,
+            null,
+            items,
+            multiplayerCorrelationId,
+            inventoriesServerAuthoritative,
+            engine
+        )
     }
 }

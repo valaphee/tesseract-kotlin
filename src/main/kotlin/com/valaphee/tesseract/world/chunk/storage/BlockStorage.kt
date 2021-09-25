@@ -36,7 +36,6 @@ class BlockStorage(
 ) : ReadWriteBlockAccess {
     private val sectionCount get() = sections.size
 
-
     constructor(default: Int, sectionCount: Int = 16) : this(default, Array(sectionCount) { SectionCompact(default, BitArray.Version.V1) })
 
     override operator fun get(x: Int, y: Int, z: Int) = if (x in 0 until XZSize && y in 0 until sectionCount * Section.YSize && z in 0 until XZSize) sections[y shr YShift].get(x, y and YMask, z) else default

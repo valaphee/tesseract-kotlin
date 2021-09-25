@@ -87,7 +87,6 @@ data class ServerToClientHandshakePacket(
 
     companion object {
         private val base64Encoder: Base64.Encoder = Base64.getEncoder()
-
     }
 }
 

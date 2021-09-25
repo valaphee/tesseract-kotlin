@@ -61,7 +61,6 @@ data class GameRulesPacket(
     override fun hashCode() = gameRules.contentHashCode()
 }
 
-
 /**
  * @author Kevin Ludwig
  */

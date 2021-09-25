@@ -62,7 +62,7 @@ data class PackDataPacket(
     override val id get() = 0x52
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeString("$packId${packVersion?.let { "_$packVersion"} ?: "" }")
+        buffer.writeString("$packId${packVersion?.let { "_$packVersion" } ?: ""}")
         buffer.writeIntLE(maximumChunkSize.toInt())
         buffer.writeIntLE(chunkCount.toInt())
         buffer.writeLongLE(compressedPackSize)
@@ -103,7 +103,6 @@ data class PackDataPacket(
         return result
     }
 }
-
 
 /**
  * @author Kevin Ludwig
