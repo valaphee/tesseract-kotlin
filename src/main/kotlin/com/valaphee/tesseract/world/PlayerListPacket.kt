@@ -24,12 +24,13 @@
 
 package com.valaphee.tesseract.world
 
-import com.valaphee.tesseract.actor.player.Appearance
 import com.valaphee.tesseract.actor.player.User
-import com.valaphee.tesseract.actor.player.writeAppearance
-import com.valaphee.tesseract.actor.player.writeAppearancePre390
-import com.valaphee.tesseract.actor.player.writeAppearancePre419
-import com.valaphee.tesseract.actor.player.writeAppearancePre428
+import com.valaphee.tesseract.actor.player.appearance.Appearance
+import com.valaphee.tesseract.actor.player.appearance.writeAppearance
+import com.valaphee.tesseract.actor.player.appearance.writeAppearancePre390
+import com.valaphee.tesseract.actor.player.appearance.writeAppearancePre419
+import com.valaphee.tesseract.actor.player.appearance.writeAppearancePre428
+import com.valaphee.tesseract.actor.player.appearance.writeAppearancePre465
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
@@ -45,10 +46,10 @@ import java.util.UUID
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class PlayerListPacket(
-    var action: Action,
-    var entries: Array<Entry>
+    val action: Action,
+    val entries: Array<Entry>
 ) : Packet {
     enum class Action {
         Add, Remove
@@ -56,15 +57,17 @@ data class PlayerListPacket(
 
     data class Entry(
         val userId: UUID,
-        val uniqueEntityId: Long = 0,
-        val userName: String? = null,
-        val xboxUserId: String? = null,
-        val platformChatId: String? = null,
-        val operatingSystem: User.OperatingSystem? = null,
-        val appearance: Appearance? = null,
-        val teacher: Boolean = false,
-        val host: Boolean = false
-    )
+        val uniqueEntityId: Long,
+        val userName: String?,
+        val xboxUserId: String?,
+        val platformChatId: String?,
+        val operatingSystem: User.OperatingSystem?,
+        val appearance: Appearance?,
+        val teacher: Boolean,
+        val host: Boolean
+    ) {
+        constructor(userId: UUID) : this(userId, 0, null, null, null, null, null, false, false)
+    }
 
     override val id get() = 0x3F
 
@@ -79,7 +82,7 @@ data class PlayerListPacket(
                 buffer.writeString(it.xboxUserId!!)
                 buffer.writeString(it.platformChatId!!)
                 buffer.writeIntLE(it.operatingSystem!!.ordinal)
-                if (version >= 428) buffer.writeAppearance(it.appearance!!) else if (version >= 419) buffer.writeAppearancePre428(it.appearance!!) else if (version >= 390) buffer.writeAppearancePre419(it.appearance!!) else buffer.writeAppearancePre390(it.appearance!!)
+                if (version >= 465) buffer.writeAppearance(it.appearance!!) else if (version >= 428) buffer.writeAppearancePre465(it.appearance!!) else if (version >= 419) buffer.writeAppearancePre428(it.appearance!!) else if (version >= 390) buffer.writeAppearancePre419(it.appearance!!) else buffer.writeAppearancePre390(it.appearance!!)
                 buffer.writeBoolean(it.teacher)
                 buffer.writeBoolean(it.host)
             }

@@ -26,7 +26,10 @@ package com.valaphee.tesseract.data
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import com.fasterxml.jackson.databind.DatabindContext
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver
+import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase
+import kotlin.reflect.jvm.jvmName
 
 /**
  * @author Kevin Ludwig
@@ -36,5 +39,18 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver
     use = JsonTypeInfo.Id.NAME,
     include = JsonTypeInfo.As.WRAPPER_OBJECT
 )
-@JsonTypeIdResolver(ComponentKeyResolver::class)
+@JsonTypeIdResolver(DataTypeResolver::class)
 interface Data
+
+/**
+ * @author Kevin Ludwig
+ */
+object DataTypeResolver : TypeIdResolverBase() {
+    override fun idFromValue(value: Any) = DataModule.dataTypeByValueOrNull(value::class) ?: throw UnknownDataTypeException(value::class.jvmName)
+
+    override fun idFromValueAndType(value: Any, suggestedType: Class<*>) = idFromValue(value)
+
+    override fun typeFromId(context: DatabindContext, key: String) = DataModule.dataTypeByKeyOrNull(key)?.let { context.constructType(it.java) } ?: throw UnknownDataTypeException(key)
+
+    override fun getMechanism() = JsonTypeInfo.Id.NAME
+}

@@ -30,19 +30,20 @@ import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 
 /**
  * @author Kevin Ludwig
  */
 data class MoveRotatePacket(
-    var runtimeEntityId: Long,
-    var positionDelta: Int3,
-    var position: Float3,
-    var rotation: Float2,
-    var headRotationYaw: Float,
-    var onGround: Boolean,
-    var immediate: Boolean,
-    var force: Boolean
+    val runtimeEntityId: Long,
+    val positionDelta: Int3,
+    val position: Float3,
+    val rotation: Float2,
+    val headRotationYaw: Float,
+    val onGround: Boolean,
+    val immediate: Boolean,
+    val force: Boolean
 ) : Packet {
     override val id get() = 0x6F
 
@@ -102,14 +103,50 @@ data class MoveRotatePacket(
     override fun handle(handler: PacketHandler) = handler.moveRotate(this)
 
     companion object {
-        private const val flagHasX = 1 shl 0
-        private const val flagHasY = 1 shl 1
-        private const val flagHasZ = 1 shl 2
-        private const val flagHasPitch = 1 shl 3
-        private const val flagHasYaw = 1 shl 4
-        private const val flagHasHeadYaw = 1 shl 5
-        private const val flagOnGround = 1 shl 6
-        private const val flagImmediate = 1 shl 7
-        private const val flagForce = 1 shl 8
+        internal const val flagHasX = 1 shl 0
+        internal const val flagHasY = 1 shl 1
+        internal const val flagHasZ = 1 shl 2
+        internal const val flagHasPitch = 1 shl 3
+        internal const val flagHasYaw = 1 shl 4
+        internal const val flagHasHeadYaw = 1 shl 5
+        internal const val flagOnGround = 1 shl 6
+        internal const val flagImmediate = 1 shl 7
+        internal const val flagForce = 1 shl 8
+    }
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object MoveRotatePacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int): MoveRotatePacket {
+        val runtimeEntityId = buffer.readVarULong()
+        val flagsValue = buffer.readShortLE().toInt()
+        val position: Float3
+        val positionDelta: Int3
+        if (version >= 419) {
+            position = Float3(
+                if (flagsValue and MoveRotatePacket.flagHasX != 0) buffer.readFloatLE() else Float.NaN,
+                if (flagsValue and MoveRotatePacket.flagHasY != 0) buffer.readFloatLE() else Float.NaN,
+                if (flagsValue and MoveRotatePacket.flagHasZ != 0) buffer.readFloatLE() else Float.NaN
+            )
+            positionDelta = Int3.Zero
+        } else {
+            position = Float3.Zero
+            positionDelta = Int3(
+                if (flagsValue and MoveRotatePacket.flagHasX != 0) buffer.readVarInt() else 0,
+                if (flagsValue and MoveRotatePacket.flagHasY != 0) buffer.readVarInt() else 0,
+                if (flagsValue and MoveRotatePacket.flagHasZ != 0) buffer.readVarInt() else 0
+            )
+        }
+        val rotation = Float2(
+            if (flagsValue and MoveRotatePacket.flagHasPitch != 0) buffer.readAngle() else Float.NaN,
+            if (flagsValue and MoveRotatePacket.flagHasYaw != 0) buffer.readAngle() else Float.NaN
+        )
+        val headRotationYaw = if (flagsValue and MoveRotatePacket.flagHasHeadYaw != 0) buffer.readAngle() else Float.NaN
+        val onGround = flagsValue and MoveRotatePacket.flagOnGround != 0
+        val immediate = flagsValue and MoveRotatePacket.flagImmediate != 0
+        val force = flagsValue and MoveRotatePacket.flagForce != 0
+        return MoveRotatePacket(runtimeEntityId, positionDelta, position, rotation, headRotationYaw, onGround, immediate, force)
     }
 }

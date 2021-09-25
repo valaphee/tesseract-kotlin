@@ -30,7 +30,7 @@ plugins {
     id("edu.sc.seis.launch4j") version "2.5.0"
     kotlin("jvm") version "1.5.30"
     `maven-publish`
-    /*signing*/
+    signing
 }
 
 repositories {
@@ -43,26 +43,26 @@ val gitVersion: groovy.lang.Closure<String> by extra
 version = gitVersion()
 
 dependencies {
+    implementation("com.esotericsoftware:kryo:5.2.0")
     implementation("com.fasterxml.jackson.module:jackson-module-afterburner:2.12.5")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-smile:2.12.5")
     implementation("com.google.code.gson:gson:2.8.8")
-    api("com.google.inject:guice:5.0.1")
+    implementation("com.google.inject:guice:5.0.1")
     implementation("com.google.inject.extensions:guice-assistedinject:5.0.1")
     implementation("com.hazelcast:hazelcast-all:4.2.2")
-    api("com.valaphee:foundry-databind:1.3.0.0")
-    api("com.valaphee:foundry-math:1.3.0.0")
+    implementation("com.valaphee:foundry-databind:1.3.0.0")
+    implementation("com.valaphee:foundry-math:1.3.0.0")
     implementation("commons-cli:commons-cli:1.4")
-    implementation("io.github.classgraph:classgraph:4.8.114")
-    api("io.netty:netty-buffer:4.1.67.Final")
-    implementation("io.netty:netty-transport-native-epoll:4.1.67.Final:linux-x86_64")
-    implementation("io.netty:netty-transport-native-kqueue:4.1.67.Final:osx-x86_64")
-    implementation("io.netty:netty-codec-http2:4.1.67.Final")
-    api("it.unimi.dsi:fastutil:8.5.4")
+    implementation("io.github.classgraph:classgraph:4.8.116")
+    implementation("io.netty:netty-buffer:4.1.68.Final")
+    implementation("io.netty:netty-transport-native-epoll:4.1.68.Final:linux-x86_64")
+    implementation("io.netty:netty-transport-native-kqueue:4.1.68.Final:osx-x86_64")
+    implementation("io.netty:netty-codec-http2:4.1.68.Final")
+    implementation("it.unimi.dsi:fastutil:8.5.6")
     implementation("jline:jline:2.14.6")
     implementation("network.ycc:netty-raknet-client:0.8-SNAPSHOT")
     implementation("network.ycc:netty-raknet-server:0.8-SNAPSHOT")
-    api("org.apache.logging.log4j:log4j-core:2.14.1")
+    implementation("org.apache.logging.log4j:log4j-core:2.14.1")
     implementation("org.apache.logging.log4j:log4j-iostreams:2.14.1")
     implementation("org.apache.logging.log4j:log4j-jul:2.14.1")
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.14.1")
@@ -71,10 +71,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
     implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.5.2-native-mt")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.0-M1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.0")
     implementation("org.lz4:lz4-java:1.8.0")
-    testImplementation("org.openjdk.jmh:jmh-core:1.32")
-    testImplementation("org.openjdk.jmh:jmh-generator-annprocess:1.32")
 }
 
 tasks {
@@ -104,10 +102,10 @@ tasks {
     }
 }
 
-/*signing {
+signing {
     useGpgCmd()
     sign(publishing.publications)
-}*/
+}
 
 publishing {
     publications {

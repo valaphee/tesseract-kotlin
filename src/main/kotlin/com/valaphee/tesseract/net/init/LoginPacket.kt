@@ -57,14 +57,14 @@ import java.util.Base64
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Serverbound)
+@Restrict(Restriction.ToServer)
 data class LoginPacket(
     val protocolVersion: Int,
     val publicKey: PublicKey,
     val privateKey: PrivateKey?,
     val authExtra: AuthExtra,
     val user: User,
-    var verified: Boolean
+    val verified: Boolean
 ) : Packet {
     override val id get() = 0x01
 

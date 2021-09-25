@@ -30,8 +30,8 @@ import com.valaphee.tesseract.net.PacketBuffer
  * @author Kevin Ludwig
  */
 data class Experiment(
-    var name: String,
-    var enabled: Boolean
+    val name: String,
+    val enabled: Boolean
 )
 
 fun PacketBuffer.readExperiment(): Experiment = Experiment(readString(), readBoolean())

@@ -34,10 +34,10 @@ import com.valaphee.tesseract.net.Restriction
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class SoundStopPacket(
-    var sound: Sound? = null,
-    var soundKey: String? = null
+    val sound: Sound? = null,
+    val soundKey: String? = null
 ) : Packet {
     constructor(sound: Sound) : this(sound, null)
 

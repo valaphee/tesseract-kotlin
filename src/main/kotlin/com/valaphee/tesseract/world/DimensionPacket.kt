@@ -35,11 +35,11 @@ import com.valaphee.tesseract.net.Restriction
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class DimensionPacket(
-    var dimension: Dimension? = null,
-    var position: Float3? = null,
-    var respawn: Boolean = false
+    val dimension: Dimension? = null,
+    val position: Float3? = null,
+    val respawn: Boolean = false
 ) : Packet {
     override val id get() = 0x3D
 

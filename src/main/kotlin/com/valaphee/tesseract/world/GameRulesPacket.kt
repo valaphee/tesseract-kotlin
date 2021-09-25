@@ -34,9 +34,9 @@ import com.valaphee.tesseract.net.Restriction
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class GameRulesPacket(
-    var gameRules: Array<GameRule<*>>
+    val gameRules: Array<GameRule<*>>
 ) : Packet {
     override val id get() = 0x48
 

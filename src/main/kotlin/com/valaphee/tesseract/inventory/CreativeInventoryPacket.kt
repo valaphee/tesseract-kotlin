@@ -25,20 +25,23 @@
 package com.valaphee.tesseract.inventory
 
 import com.valaphee.tesseract.inventory.item.stack.Stack
+import com.valaphee.tesseract.inventory.item.stack.readStackInstance
+import com.valaphee.tesseract.inventory.item.stack.readStackWithNetIdPre431
 import com.valaphee.tesseract.inventory.item.stack.writeStackInstance
 import com.valaphee.tesseract.inventory.item.stack.writeStackWithNetIdPre431
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class CreativeInventoryPacket(
-    var content: Array<Stack<*>?>
+    val content: Array<Stack<*>?>
 ) : Packet {
     override val id get() = 0x91
 
@@ -66,4 +69,16 @@ data class CreativeInventoryPacket(
     }
 
     override fun hashCode() = content.contentHashCode()
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object CreativeInventoryPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = CreativeInventoryPacket(Array(buffer.readVarUInt()) {
+        if (version >= 431) {
+            val netId = buffer.readVarUInt()
+            buffer.readStackInstance().also { it?.let { it.netId = netId } }
+        } else buffer.readStackWithNetIdPre431()
+    })
 }

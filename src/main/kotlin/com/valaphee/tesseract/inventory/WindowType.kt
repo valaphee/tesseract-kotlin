@@ -71,6 +71,8 @@ enum class WindowType(
     companion object {
         private val byId = Int2ObjectOpenHashMap<WindowType>(values().size).apply { values().forEach { this[it.id] = it } }
 
+        fun byId(id: Int) = checkNotNull(byIdOrNull(id))
+
         fun byIdOrNull(id: Int): WindowType? = byId[id]
     }
 }

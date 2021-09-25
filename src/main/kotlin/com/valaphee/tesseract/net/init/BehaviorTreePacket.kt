@@ -25,18 +25,22 @@
 package com.valaphee.tesseract.net.init
 
 import com.google.gson.JsonElement
+import com.google.gson.internal.Streams
+import com.google.gson.stream.JsonReader
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import com.valaphee.tesseract.util.ByteBufStringReader
 
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class BehaviorTreePacket(
-    var json: JsonElement? = null
+    val json: JsonElement
 ) : Packet {
     override val id get() = 0x59
 
@@ -45,4 +49,11 @@ data class BehaviorTreePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.behaviorTree(this)
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object BehaviorTreePacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = BehaviorTreePacket(Streams.parse(JsonReader(ByteBufStringReader(buffer, buffer.readVarUInt()))))
 }

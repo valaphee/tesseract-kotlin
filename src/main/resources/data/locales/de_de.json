@@ -1,9 +1,0 @@
-{
-  "tesseract:locale": {
-    "key": "tesseract:de_de",
-    "entries": {
-      "player_list.player_add": "{0} betrat die Welt",
-      "player_list.player_remove": "{0} verließ die Welt"
-    }
-  }
-}

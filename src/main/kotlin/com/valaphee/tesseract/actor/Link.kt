@@ -30,11 +30,11 @@ import com.valaphee.tesseract.net.PacketBuffer
  * @author Kevin Ludwig
  */
 data class Link(
-    var type: Type,
-    var fromUniqueEntityId: Long,
-    var toUniqueEntityId: Long,
-    var immediate: Boolean,
-    var driversAction: Boolean
+    val type: Type,
+    val fromUniqueEntityId: Long,
+    val toUniqueEntityId: Long,
+    val immediate: Boolean,
+    val driversAction: Boolean
 ) {
     enum class Type {
         Remove, Driver, Passenger

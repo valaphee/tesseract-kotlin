@@ -34,9 +34,9 @@ import com.valaphee.tesseract.net.Restriction
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class DisconnectPacket(
-    var message: String? = null
+    val message: String? = null
 ) : Packet {
     override val id get() = 0x05
 

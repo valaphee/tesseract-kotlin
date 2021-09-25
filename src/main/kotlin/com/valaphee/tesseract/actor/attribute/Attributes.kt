@@ -24,16 +24,12 @@
 
 package com.valaphee.tesseract.actor.attribute
 
-import com.valaphee.foundry.ecs.BaseAttribute
-import com.valaphee.tesseract.actor.AnyActorOfWorld
 import com.valaphee.tesseract.net.PacketBuffer
-import com.valaphee.tesseract.data.entity.Runtime
 
 /**
  * @author Kevin Ludwig
  */
-@Runtime
-class Attributes : BaseAttribute() {
+class Attributes {
     private val attributes = mutableMapOf<String, AttributeValue>()
 
     operator fun get(field: AttributeField) = attributes[field.key]
@@ -91,5 +87,3 @@ class Attributes : BaseAttribute() {
         if (modifiedAttributes.isEmpty()) append(')') else setCharAt(length - 1, ')')
     }.toString()
 }
-
-val AnyActorOfWorld._attributes get() = findAttribute(Attributes::class)

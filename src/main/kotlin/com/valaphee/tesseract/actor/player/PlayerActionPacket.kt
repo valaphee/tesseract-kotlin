@@ -34,10 +34,10 @@ import com.valaphee.tesseract.net.PacketReader
  * @author Kevin Ludwig
  */
 data class PlayerActionPacket(
-    var runtimeEntityId: Long,
-    var action: Action,
-    var blockPosition: Int3,
-    var data: Int
+    val runtimeEntityId: Long,
+    val action: Action,
+    val blockPosition: Int3,
+    val data: Int
 ) : Packet {
     enum class Action {
         StartBreak,

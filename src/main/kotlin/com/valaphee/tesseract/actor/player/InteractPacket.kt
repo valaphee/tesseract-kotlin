@@ -34,9 +34,9 @@ import com.valaphee.tesseract.net.PacketReader
  * @author Kevin Ludwig
  */
 data class InteractPacket(
-    var action: Action,
-    var runtimeEntityId: Long,
-    var mousePosition: Float3?
+    val action: Action,
+    val runtimeEntityId: Long,
+    val mousePosition: Float3?
 ) : Packet {
     enum class Action {
         None, Interact, Damage, LeaveVehicle, Mouseover, NpcOpen, OpenInventory

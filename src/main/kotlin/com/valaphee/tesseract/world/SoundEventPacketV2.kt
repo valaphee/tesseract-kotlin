@@ -34,12 +34,12 @@ import com.valaphee.tesseract.net.PacketReader
  * @author Kevin Ludwig
  */
 data class SoundEventPacketV2(
-    var soundEvent: SoundEvent,
-    var position: Float3,
-    var extraData: Int,
-    var identifier: String,
-    var babySound: Boolean,
-    var relativeVolumeDisabled: Boolean
+    val soundEvent: SoundEvent,
+    val position: Float3,
+    val extraData: Int,
+    val identifier: String,
+    val babySound: Boolean,
+    val relativeVolumeDisabled: Boolean
 ) : Packet {
     override val id get() = 0x18
 

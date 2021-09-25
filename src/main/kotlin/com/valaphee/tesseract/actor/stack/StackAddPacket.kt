@@ -27,26 +27,29 @@ package com.valaphee.tesseract.actor.stack
 import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.actor.metadata.Metadata
 import com.valaphee.tesseract.inventory.item.stack.Stack
+import com.valaphee.tesseract.inventory.item.stack.readStack
+import com.valaphee.tesseract.inventory.item.stack.readStackPre431
 import com.valaphee.tesseract.inventory.item.stack.writeStack
 import com.valaphee.tesseract.inventory.item.stack.writeStackPre431
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class StackAddPacket(
-    var uniqueEntityId: Long,
-    var runtimeEntityId: Long,
-    var stack: Stack<*>?,
-    var position: Float3,
-    var velocity: Float3,
-    var metadata: Metadata,
-    var fromFishing: Boolean
+    val uniqueEntityId: Long,
+    val runtimeEntityId: Long,
+    val stack: Stack<*>?,
+    val position: Float3,
+    val velocity: Float3,
+    val metadata: Metadata,
+    val fromFishing: Boolean
 ) : Packet {
     override val id get() = 0x0F
 
@@ -61,4 +64,19 @@ data class StackAddPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.stackAdd(this)
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object StackAddPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = StackAddPacket(
+        buffer.readVarLong(),
+        buffer.readVarULong(),
+        if (version >= 431) buffer.readStack() else buffer.readStackPre431(),
+        buffer.readFloat3(),
+        buffer.readFloat3(),
+        Metadata().apply { readFromBuffer(buffer) },
+        buffer.readBoolean()
+    )
 }

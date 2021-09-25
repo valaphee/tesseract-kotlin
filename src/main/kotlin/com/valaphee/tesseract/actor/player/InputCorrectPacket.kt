@@ -28,15 +28,16 @@ import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 
 /**
  * @author Kevin Ludwig
  */
 data class InputCorrectPacket(
-    var position: Float3,
-    var positionDelta: Float3,
-    var onGround: Boolean,
-    var tick: Long
+    val position: Float3,
+    val positionDelta: Float3,
+    val onGround: Boolean,
+    val tick: Long
 ) : Packet {
     override val id get() = 0xA1
 
@@ -48,4 +49,11 @@ data class InputCorrectPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.inputCorrect(this)
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object InputCorrectPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = InputCorrectPacket(buffer.readFloat3(), buffer.readFloat3(), buffer.readBoolean(), buffer.readVarULong())
 }

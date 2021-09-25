@@ -34,9 +34,9 @@ import com.valaphee.tesseract.net.Restriction
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class ActorRemovePacket(
-    var uniqueEntityId: Long = 0
+    val uniqueEntityId: Long = 0
 ) : Packet {
     override val id get() = 0x0E
 

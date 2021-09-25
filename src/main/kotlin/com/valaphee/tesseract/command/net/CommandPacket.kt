@@ -34,11 +34,11 @@ import com.valaphee.tesseract.net.Restriction
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Serverbound)
+@Restrict(Restriction.ToServer)
 data class CommandPacket(
-    var command: String,
-    var origin: Origin,
-    var internal: Boolean
+    val command: String,
+    val origin: Origin,
+    val internal: Boolean
 ) : Packet {
     override val id get() = 0x4D
 

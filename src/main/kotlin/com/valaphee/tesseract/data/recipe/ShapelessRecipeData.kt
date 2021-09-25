@@ -24,19 +24,18 @@
 
 package com.valaphee.tesseract.data.recipe
 
-import com.valaphee.tesseract.data.Component
-import com.valaphee.tesseract.data.Data
-import com.valaphee.tesseract.data.Keyed
+import com.valaphee.tesseract.data.DataType
+import com.valaphee.tesseract.data.KeyedData
 import com.valaphee.tesseract.inventory.item.stack.Stack
 
 /**
  * @author Kevin Ludwig
  */
-@Component("tesseract:recipe_shapeless")
+@DataType("tesseract:recipe_shapeless")
 class ShapelessRecipeData(
     override val key: String,
     val tags: Array<String>,
     val ingredients: Array<Stack<*>>,
     val priority: Int = 0,
     val result: Stack<*>
-) : Data, Keyed
+) : KeyedData

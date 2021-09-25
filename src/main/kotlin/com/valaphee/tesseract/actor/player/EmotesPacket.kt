@@ -34,8 +34,8 @@ import java.util.UUID
  * @author Kevin Ludwig
  */
 data class EmotesPacket(
-    var runtimeEntityId: Long,
-    var pieceIds: Array<UUID>
+    val runtimeEntityId: Long,
+    val pieceIds: Array<UUID>
 ) : Packet {
     override val id get() = 0x98
 

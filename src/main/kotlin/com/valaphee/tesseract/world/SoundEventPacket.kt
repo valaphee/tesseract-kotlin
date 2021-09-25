@@ -35,12 +35,12 @@ import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
  * @author Kevin Ludwig
  */
 data class SoundEventPacket(
-    var soundEvent: SoundEvent,
-    var position: Float3,
-    var extraData: Int,
-    var identifier: String,
-    var babySound: Boolean,
-    var relativeVolumeDisabled: Boolean
+    val soundEvent: SoundEvent,
+    val position: Float3,
+    val extraData: Int,
+    val identifier: String,
+    val babySound: Boolean,
+    val relativeVolumeDisabled: Boolean
 ) : Packet {
     override val id get() = 0x7B
 

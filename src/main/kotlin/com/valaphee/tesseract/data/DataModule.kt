@@ -33,6 +33,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.google.common.collect.HashBiMap
 import com.google.inject.AbstractModule
 import com.google.inject.TypeLiteral
 import com.google.inject.binder.AnnotatedBindingBuilder
@@ -41,9 +42,9 @@ import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.collision.BoundingBox
 import com.valaphee.tesseract.Argument
-import com.valaphee.tesseract.data.block.Block
+import com.valaphee.tesseract.data.block.IBlock
 import com.valaphee.tesseract.data.block.BlockState
-import com.valaphee.tesseract.data.item.Item
+import com.valaphee.tesseract.data.item.IItem
 import com.valaphee.tesseract.util.jackson.BoundingBoxDeserializer
 import com.valaphee.tesseract.util.jackson.BoundingBoxSerializer
 import com.valaphee.tesseract.util.jackson.Float2Deserializer
@@ -51,8 +52,7 @@ import com.valaphee.tesseract.util.jackson.Float2Serializer
 import com.valaphee.tesseract.util.jackson.Float3Deserializer
 import com.valaphee.tesseract.util.jackson.Float3Serializer
 import io.github.classgraph.ClassGraph
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmName
 
@@ -63,14 +63,18 @@ class DataModule(
     private val argument: Argument
 ) : AbstractModule() {
     override fun configure() {
-        ComponentRegistry.scan()
+        dataTypeByKey.clear()
+        ClassGraph().acceptPackages(this::class.java.packageName).enableClassInfo().enableAnnotationInfo().scan().use {
+            val dataType = DataType::class.jvmName
+            dataTypeByKey.putAll(it.getClassesWithAnnotation(dataType).associate { it.getAnnotationInfo(dataType).parameterValues.getValue("value") as String to Class.forName(it.name).kotlin })
+        }
 
         ClassGraph().acceptPackages(this::class.java.packageName).enableClassInfo().enableAnnotationInfo().scan().use {
             val index = Index::class.jvmName
-            it.allClasses.forEach {
-                if (it.hasAnnotation(index)) when (val data = Class.forName(it.name).kotlin.primaryConstructor!!.call()) {
-                    is Block -> BlockState.byKey(data.key).forEach { it.block = data }
-                    is Item -> com.valaphee.tesseract.inventory.item.Item.byKey(data.key).item = data
+            it.getClassesWithAnnotation(index).forEach {
+                when (val data = Class.forName(it.name).kotlin.primaryConstructor!!.call()) {
+                    is IBlock -> BlockState.byKey(data.key).forEach { it.block = data }
+                    is IItem -> com.valaphee.tesseract.inventory.item.Item.byKey(data.key).item = data
                 }
             }
         }
@@ -91,7 +95,6 @@ class DataModule(
             configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             enable(JsonParser.Feature.ALLOW_COMMENTS)
         }.also { bind(ObjectMapper::class.java).toInstance(it) }
-
         ClassGraph().acceptPaths("data").scan().use {
             val (keyed, other) = it.allResources
                 .map {
@@ -104,9 +107,9 @@ class DataModule(
                         else -> TODO(extension)
                     }
                 }
-                .partition { it is Keyed }
-            keyed.filterIsInstance<Keyed>()
-                .groupBy { ComponentRegistry.byValueOrNull(it::class) }
+                .partition { it is KeyedData }
+            keyed.filterIsInstance<KeyedData>()
+                .groupBy { dataTypeByValueOrNull(it::class) }
                 .forEach { (key, value) ->
                     key?.let {
                         @Suppress("UNCHECKED_CAST")
@@ -118,10 +121,16 @@ class DataModule(
                 (bind(it::class.java) as AnnotatedBindingBuilder<Any>).toInstance(it)
             }
         }
+
+        bind(Argument::class.java).toInstance(argument)
         bind(Config::class.java).toInstance((if (argument.config.exists()) objectMapper.readValue(argument.config) else Config()).also { objectMapper.writeValue(argument.config, it) })
     }
 
     companion object {
-        private val log: Logger = LogManager.getLogger(DataModule::class.java)
+        private val dataTypeByKey = HashBiMap.create<String, KClass<*>>()
+
+        fun dataTypeByKeyOrNull(key: String) = dataTypeByKey[key]
+
+        fun dataTypeByValueOrNull(value: KClass<*>) = dataTypeByKey.inverse()[value]
     }
 }

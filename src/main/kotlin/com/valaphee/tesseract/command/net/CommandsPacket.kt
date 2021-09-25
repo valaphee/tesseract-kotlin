@@ -35,9 +35,9 @@ import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class CommandsPacket(
-    var commands: Array<Command>
+    val commands: Array<Command>
 ) : Packet {
     override val id get() = 0x4C
 

@@ -28,12 +28,12 @@ package com.valaphee.tesseract.command.net
  * @author Kevin Ludwig
  */
 data class Command(
-    var name: String,
-    var description: String,
-    var flags: Collection<Flag>,
-    var permission: Permission,
-    var aliases: Enumeration?,
-    var overloads: Array<Array<Parameter>>
+    val name: String,
+    val description: String,
+    val flags: Collection<Flag>,
+    val permission: Permission,
+    val aliases: Enumeration?,
+    val overloads: Array<Array<Parameter>>
 ) {
     enum class Flag {
         Usage, Visible, Synchronized, Executable, Type, Cheat, Unknown6

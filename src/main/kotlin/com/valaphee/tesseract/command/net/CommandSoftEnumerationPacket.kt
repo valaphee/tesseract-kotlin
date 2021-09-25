@@ -34,10 +34,10 @@ import com.valaphee.tesseract.net.Restriction
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class CommandSoftEnumerationPacket(
-    var action: Action,
-    var softEnumeration: Enumeration
+    val action: Action,
+    val softEnumeration: Enumeration
 ) : Packet {
     enum class Action {
         Add, Remove, Update

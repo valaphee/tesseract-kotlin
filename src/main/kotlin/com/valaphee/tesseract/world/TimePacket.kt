@@ -34,9 +34,9 @@ import com.valaphee.tesseract.net.Restriction
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class TimePacket(
-    var time: Int
+    val time: Int
 ) : Packet {
     override val id get() = 0x0A
 

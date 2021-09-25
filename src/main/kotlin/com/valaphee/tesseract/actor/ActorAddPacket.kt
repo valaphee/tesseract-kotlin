@@ -31,31 +31,32 @@ import com.valaphee.tesseract.actor.metadata.Metadata
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class ActorAddPacket(
-    var uniqueEntityId: Long,
-    var runtimeEntityId: Long,
-    var type: ActorType,
-    var position: Float3,
-    var velocity: Float3,
-    var rotation: Float2,
-    var headRotationYaw: Float,
+    val uniqueEntityId: Long,
+    val runtimeEntityId: Long,
+    val type: String,
+    val position: Float3,
+    val velocity: Float3,
+    val rotation: Float2,
+    val headRotationYaw: Float,
     val attributes: Attributes,
-    var metadata: Metadata,
-    var links: Array<Link>
+    val metadata: Metadata,
+    val links: Array<Link>
 ) : Packet {
     override val id get() = 0x0D
 
     override fun write(buffer: PacketBuffer, version: Int) {
         buffer.writeVarLong(uniqueEntityId)
         buffer.writeVarULong(runtimeEntityId)
-        buffer.writeString(type.key)
+        buffer.writeString(type)
         buffer.writeFloat3(position)
         buffer.writeFloat3(velocity)
         buffer.writeFloat2(rotation)
@@ -101,4 +102,22 @@ data class ActorAddPacket(
         result = 31 * result + links.contentHashCode()
         return result
     }
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object ActorAddPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = ActorAddPacket(
+        buffer.readVarLong(),
+        buffer.readVarULong(),
+        buffer.readString(),
+        buffer.readFloat3(),
+        buffer.readFloat3(),
+        buffer.readFloat2(),
+        buffer.readFloatLE(),
+        Attributes().apply { readFromBuffer(buffer, false) },
+        Metadata().apply { readFromBuffer(buffer) },
+        Array(buffer.readVarUInt()) { if (version >= 407) buffer.readLink() else buffer.readLinkPre407() }
+    )
 }

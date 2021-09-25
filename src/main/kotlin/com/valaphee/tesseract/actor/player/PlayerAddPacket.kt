@@ -28,42 +28,49 @@ import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.actor.Link
 import com.valaphee.tesseract.actor.metadata.Metadata
+import com.valaphee.tesseract.actor.readLink
+import com.valaphee.tesseract.actor.readLinkPre407
 import com.valaphee.tesseract.actor.writeLink
 import com.valaphee.tesseract.actor.writeLinkPre407
+import com.valaphee.tesseract.command.net.Permission
 import com.valaphee.tesseract.inventory.item.stack.Stack
+import com.valaphee.tesseract.inventory.item.stack.readStack
+import com.valaphee.tesseract.inventory.item.stack.readStackPre431
 import com.valaphee.tesseract.inventory.item.stack.writeStack
 import com.valaphee.tesseract.inventory.item.stack.writeStackPre431
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import com.valaphee.tesseract.world.WorldFlag
 import java.util.UUID
 
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
+@Restrict(Restriction.ToClient)
 data class PlayerAddPacket(
-    var userId: UUID,
-    var userName: String,
-    var uniqueEntityId: Long,
-    var runtimeEntityId: Long,
-    var platformChatId: String,
-    var position: Float3,
-    var velocity: Float3,
-    var rotation: Float2,
-    var headRotationYaw: Float,
-    var stackInHand: Stack<*>?,
-    var metadata: Metadata,
-    /*var playerFlags: Collection<PlayerFlag>? = null,
-    var levelFlags: Collection<LevelFlag>? = null,*/
-    var customFlags: Int,
-    /*var commandPermission: Permission? = null,
-    var playerPermission: PlayerPermission? = null,*/
-    var links: Array<Link>,
-    var deviceId: String,
-    var operatingSystem: User.OperatingSystem
+    val userId: UUID,
+    val userName: String,
+    val uniqueEntityId: Long,
+    val runtimeEntityId: Long,
+    val platformChatId: String,
+    val position: Float3,
+    val velocity: Float3,
+    val rotation: Float2,
+    val headRotationYaw: Float,
+    val stackInHand: Stack<*>?,
+    val metadata: Metadata,
+    val playerFlags: Collection<PlayerFlag>,
+    val permission: Permission,
+    val worldFlags: Collection<WorldFlag>,
+    val rank: Rank,
+    val customFlags: Int,
+    val links: Array<Link>,
+    val deviceId: String,
+    val operatingSystem: User.OperatingSystem
 ) : Packet {
     override val id get() = 0x0C
 
@@ -79,14 +86,10 @@ data class PlayerAddPacket(
         buffer.writeFloatLE(headRotationYaw)
         if (version >= 431) buffer.writeStack(stackInHand) else buffer.writeStackPre431(stackInHand)
         metadata.writeToBuffer(buffer)
-        /*buffer.writeVarUIntFlags(playerFlags!!)
-        buffer.writeVarUInt(commandPermission!!.ordinal)
-        buffer.writeVarUIntFlags(levelFlags!!)
-        buffer.writeVarUInt(playerPermission!!.ordinal)*/
-        buffer.writeVarUInt(0)
-        buffer.writeVarUInt(0)
-        buffer.writeVarUInt(0)
-        buffer.writeVarUInt(0)
+        buffer.writeVarUIntFlags(playerFlags)
+        buffer.writeVarUInt(permission.ordinal)
+        buffer.writeVarUIntFlags(worldFlags)
+        buffer.writeVarUInt(rank.ordinal)
         buffer.writeVarUInt(customFlags)
         buffer.writeLongLE(uniqueEntityId)
         buffer.writeVarUInt(links.size)
@@ -140,4 +143,32 @@ data class PlayerAddPacket(
         result = 31 * result + operatingSystem.hashCode()
         return result
     }
+}
+
+
+/**
+ * @author Kevin Ludwig
+ */
+object PlayerAddPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = PlayerAddPacket(
+        buffer.readUuid(),
+        buffer.readString(),
+        buffer.readVarLong(),
+        buffer.readVarULong(),
+        buffer.readString(),
+        buffer.readFloat3(),
+        buffer.readFloat3(),
+        buffer.readFloat2(),
+        buffer.readFloatLE(),
+        if (version >= 431) buffer.readStack() else buffer.readStackPre431(),
+        Metadata().apply { readFromBuffer(buffer) },
+        buffer.readVarUIntFlags(),
+        Permission.values()[buffer.readVarUInt()],
+        buffer.readVarUIntFlags(),
+        Rank.values()[buffer.readVarUInt()],
+        buffer.readVarUInt().also { buffer.readLongLE() },
+        Array(buffer.readVarUInt()) { if (version >= 407) buffer.readLink() else buffer.readLinkPre407() },
+        buffer.readString(),
+        User.OperatingSystem.values()[buffer.readIntLE()],
+    )
 }

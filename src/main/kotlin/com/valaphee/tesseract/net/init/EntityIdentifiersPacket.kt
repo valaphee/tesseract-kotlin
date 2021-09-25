@@ -27,6 +27,7 @@ package com.valaphee.tesseract.net.init
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 import com.valaphee.tesseract.util.LittleEndianVarIntByteBufOutputStream
@@ -36,12 +37,16 @@ import com.valaphee.tesseract.util.nbt.NbtOutputStream
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.Clientbound)
-data class EntityIdentifiersPacket(
+@Restrict(Restriction.ToClient)
+data class EntityIdentifiersPacket private constructor(
     val data: ByteArray?,
-    var tag: CompoundTag? = null
+    val tag: CompoundTag?
 ) : Packet {
     override val id get() = 0x77
+
+    constructor(data: ByteArray) : this(data, null)
+
+    constructor(tag: CompoundTag?) : this(null, tag)
 
     override fun write(buffer: PacketBuffer, version: Int) {
         data?.let { buffer.writeBytes(it) } ?: NbtOutputStream(LittleEndianVarIntByteBufOutputStream(buffer)).use { it.writeTag(tag) }
@@ -71,4 +76,11 @@ data class EntityIdentifiersPacket(
     }
 
     override fun toString() = "EntityIdentifiersPacket(tag=$tag)"
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object EntityIdentifiersPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = EntityIdentifiersPacket(buffer.toNbtInputStream().use { it.readTag()?.asCompoundTag() })
 }

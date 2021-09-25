@@ -25,9 +25,9 @@
 package com.valaphee.tesseract.actor.player
 
 import com.google.gson.JsonObject
-import com.valaphee.foundry.ecs.BaseAttribute
+import com.valaphee.tesseract.actor.player.appearance.Appearance
+import com.valaphee.tesseract.actor.player.appearance.asAppearance
 import com.valaphee.tesseract.util.address
-import com.valaphee.tesseract.data.entity.Runtime
 import com.valaphee.tesseract.util.getBoolOrNull
 import com.valaphee.tesseract.util.getIntOrNull
 import com.valaphee.tesseract.util.getLong
@@ -39,7 +39,6 @@ import java.util.UUID
 /**
  * @author Kevin Ludwig
  */
-@Runtime
 data class User constructor(
     val selfSignedId: UUID,
     val clientId: Long,
@@ -58,7 +57,7 @@ data class User constructor(
     val guiScale: Int,
     val uiProfile: UiProfile,
     val serverAddress: InetSocketAddress?
-) : BaseAttribute() {
+) {
     enum class OperatingSystem {
         Unknown,
         Android,
@@ -106,25 +105,22 @@ data class User constructor(
     }
 }
 
-val JsonObject.asUser
-    get() = User(
-        UUID.fromString(getString("SelfSignedId")),
-        getLong("ClientRandomId"),
-        getString("ThirdPartyName"),
-        getBoolOrNull("ThirdPartyNameOnly") ?: false,
-        asAppearance,
-        getString("PlatformOfflineId"),
-        getString("PlatformOnlineId"),
-        getString("DeviceId"),
-        getString("DeviceModel"),
-        User.OperatingSystem.values()[getIntOrNull("DeviceOS") ?: 0],
-        getString("GameVersion"),
-        Locale.forLanguageTag(getString("LanguageCode").replace('_', '-')),
-        User.InputMode.values()[getIntOrNull("DefaultInputMode") ?: 0],
-        User.InputMode.values()[getIntOrNull("CurrentInputMode") ?: 0],
-        getIntOrNull("GuiScale") ?: 0,
-        User.UiProfile.values()[getIntOrNull("UIProfile") ?: 0],
-        address(getString("ServerAddress"), 19132)
-    )
-
-val Player.user get() = findAttribute(User::class)
+val JsonObject.asUser get() = User(
+    UUID.fromString(getString("SelfSignedId")),
+    getLong("ClientRandomId"),
+    getString("ThirdPartyName"),
+    getBoolOrNull("ThirdPartyNameOnly") ?: false,
+    asAppearance,
+    getString("PlatformOfflineId"),
+    getString("PlatformOnlineId"),
+    getString("DeviceId"),
+    getString("DeviceModel"),
+    User.OperatingSystem.values()[getIntOrNull("DeviceOS") ?: 0],
+    getString("GameVersion"),
+    Locale.forLanguageTag(getString("LanguageCode").replace('_', '-')),
+    User.InputMode.values()[getIntOrNull("DefaultInputMode") ?: 0],
+    User.InputMode.values()[getIntOrNull("CurrentInputMode") ?: 0],
+    getIntOrNull("GuiScale") ?: 0,
+    User.UiProfile.values()[getIntOrNull("UIProfile") ?: 0],
+    address(getString("ServerAddress"), 19132)
+)

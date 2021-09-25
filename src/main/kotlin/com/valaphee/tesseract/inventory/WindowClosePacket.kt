@@ -33,8 +33,8 @@ import com.valaphee.tesseract.net.PacketReader
  * @author Kevin Ludwig
  */
 data class WindowClosePacket(
-    var windowId: Int,
-    var serverside: Boolean
+    val windowId: Int,
+    val serverside: Boolean
 ) : Packet {
     override val id get() = 0x2F
 

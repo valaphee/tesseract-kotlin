@@ -384,5 +384,12 @@ enum class SoundEvent {
     CakeAddCandle,
     ExtinguishCandle,
     AmbientCandle,
+    BlockClick,
+    BlockClickFail,
+    SculkShriekerShriek,
+    WardenNearbyClose,
+    WardenNearbyCloser,
+    WardenNearbyClosest,
+    WardenSlightlyAngry,
     Undefined
 }
