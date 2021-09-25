@@ -28,6 +28,7 @@ import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
@@ -233,7 +234,7 @@ data class WorldEventPacket(
     override fun handle(handler: PacketHandler) = handler.worldEvent(this)
 
     companion object {
-        private val eventsPre407 = Int2ObjectOpenHashBiMap<Event>().apply {
+        internal val eventsPre407 = Int2ObjectOpenHashBiMap<Event>().apply {
             this[0] = Event.Unknown
             this[1000] = Event.SoundClick
             this[1001] = Event.SoundClickFail
@@ -381,7 +382,7 @@ data class WorldEventPacket(
             this[0x4000 + 66] = Event.ParticleRisingDragonsBreath
             this[0x4000 + 67] = Event.ParticleDragonsBreath
         }
-        private val eventsPre428 = eventsPre407.clone().apply {
+        internal val eventsPre428 = eventsPre407.clone().apply {
             this[1050] = Event.SoundCamera
             this[3600] = Event.BlockStartBreak
             this[3601] = Event.BlockStopBreak
@@ -392,12 +393,12 @@ data class WorldEventPacket(
             this[0x4000 + 69] = Event.ParticleSoul
             this[0x4000 + 70] = Event.ParticleObsidianTear
         }
-        private val eventsPre431 = eventsPre428.clone().apply {
+        internal val eventsPre431 = eventsPre428.clone().apply {
             this[2027] = Event.ParticleVibrationSignal
             this[3514] = Event.CauldronFillPowderSnow
             this[3515] = Event.CauldronTakePowderSnow
         }
-        private val eventsPre440 = eventsPre431.clone().apply {
+        internal val eventsPre440 = eventsPre431.clone().apply {
             this[1064] = Event.SoundPointedDripstoneLand
             this[1065] = Event.SoundDyeUsed
             this[1066] = Event.SoundInkSaceUsed
@@ -452,7 +453,7 @@ data class WorldEventPacket(
             this[0x4000 + 71] = Event.ParticleSoul
             this[0x4000 + 72] = Event.ParticleObsidianTear
         }
-        private val eventsPre448 = eventsPre440.clone().apply {
+        internal val eventsPre448 = eventsPre440.clone().apply {
             this[0x4000 + 73] = Event.ParticlePortalReverse
             this[0x4000 + 74] = Event.ParticleSnowflake
             this[0x4000 + 75] = Event.ParticleVibrationSignal
@@ -462,7 +463,7 @@ data class WorldEventPacket(
             this[0x4000 + 79] = Event.ParticleWax
             this[0x4000 + 80] = Event.ParticleElectricSpark
         }
-        private val events = eventsPre440.clone().apply {
+        internal val events = eventsPre440.clone().apply {
             this[0x4000 + 9] = Event.ParticleCandleFlame
             this[0x4000 + 10] = Event.ParticleLava
             this[0x4000 + 11] = Event.ParticleLargeSmoke
@@ -538,4 +539,15 @@ data class WorldEventPacket(
             this[0x4000 + 81] = Event.ParticleElectricSpark
         }
     }
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object WorldEventPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = WorldEventPacket(
+        (if (version >= 448) WorldEventPacket.events else if (version >= 440) WorldEventPacket.eventsPre448 else if (version >= 431) WorldEventPacket.eventsPre440 else if (version >= 428) WorldEventPacket.eventsPre431 else if (version >= 407) WorldEventPacket.eventsPre428 else WorldEventPacket.eventsPre407)[buffer.readVarInt()],
+        buffer.readFloat3(),
+        buffer.readVarInt()
+    )
 }

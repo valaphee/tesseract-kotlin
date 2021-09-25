@@ -36,7 +36,7 @@ data class Parameter(
     val type: Type?
 ) {
     enum class Option {
-        SuppressEnumerationAutoCompletion, HasSemanticConstraint
+        SuppressEnumerationAutoCompletion, HasSemanticConstraint, EnumAsChainedCommand
     }
 
     enum class Type {

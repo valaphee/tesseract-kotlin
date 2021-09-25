@@ -23,49 +23,50 @@
  *
  */
 
-package com.valaphee.tesseract.world.chunk
+package com.valaphee.tesseract.actor
 
-import com.valaphee.foundry.math.Int3
+import com.valaphee.tesseract.inventory.item.stack.Stack
+import com.valaphee.tesseract.inventory.item.stack.readStack
+import com.valaphee.tesseract.inventory.item.stack.readStackPre431
+import com.valaphee.tesseract.inventory.item.stack.writeStack
+import com.valaphee.tesseract.inventory.item.stack.writeStackPre431
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
-import com.valaphee.tesseract.net.Restrict
-import com.valaphee.tesseract.net.Restriction
 
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.ToClient)
-data class BlockUpdateSyncedPacket(
-    val position: Int3,
-    val runtimeId: Int,
-    val flags: Collection<BlockUpdatePacket.Flag>,
-    val layerId: Int,
+data class ArmorPacket(
     val runtimeEntityId: Long,
-    val type: Type
+    val helmet: Stack<*>?,
+    val chestplate: Stack<*>?,
+    val leggings: Stack<*>?,
+    val boots: Stack<*>?
 ) : Packet {
-    enum class Type {
-        None, Create, Destroy
-    }
-
-    override val id get() = 0x6E
+    override val id get() = 0x20
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeInt3UnsignedY(position)
-        buffer.writeVarUInt(runtimeId)
-        buffer.writeVarUIntFlags(flags)
-        buffer.writeVarUInt(layerId)
         buffer.writeVarULong(runtimeEntityId)
-        buffer.writeVarULong(type.ordinal.toLong())
+        if (version >= 431) buffer.writeStack(helmet) else buffer.writeStackPre431(helmet)
+        if (version >= 431) buffer.writeStack(chestplate) else buffer.writeStackPre431(chestplate)
+        if (version >= 431) buffer.writeStack(leggings) else buffer.writeStackPre431(leggings)
+        if (version >= 431) buffer.writeStack(boots) else buffer.writeStackPre431(boots)
     }
 
-    override fun handle(handler: PacketHandler) = handler.blockUpdateSynced(this)
+    override fun handle(handler: PacketHandler) = handler.armor(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object BlockUpdateSyncedPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = BlockUpdateSyncedPacket(buffer.readInt3UnsignedY(), buffer.readVarUInt(), buffer.readVarUIntFlags(), buffer.readVarUInt(), buffer.readVarULong(), BlockUpdateSyncedPacket.Type.values()[buffer.readVarULong().toInt()])
+object ArmorPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = ArmorPacket(
+        buffer.readVarULong(),
+        if (version >= 431) buffer.readStack() else buffer.readStackPre431(),
+        if (version >= 431) buffer.readStack() else buffer.readStackPre431(),
+        if (version >= 431) buffer.readStack() else buffer.readStackPre431(),
+        if (version >= 431) buffer.readStack() else buffer.readStackPre431()
+    )
 }

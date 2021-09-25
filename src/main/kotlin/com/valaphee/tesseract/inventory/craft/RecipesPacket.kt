@@ -22,26 +22,32 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.inventory.recipe
+package com.valaphee.tesseract.inventory.craft
 
+import com.valaphee.tesseract.inventory.item.stack.readIngredient
+import com.valaphee.tesseract.inventory.item.stack.readStackInstance
+import com.valaphee.tesseract.inventory.item.stack.readStackPre431
 import com.valaphee.tesseract.inventory.item.stack.writeIngredient
 import com.valaphee.tesseract.inventory.item.stack.writeStackInstance
 import com.valaphee.tesseract.inventory.item.stack.writeStackPre431
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap
 
 /**
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
 data class RecipesPacket(
-    var recipes: Array<Recipe>,
-    var potionMixRecipes: Array<PotionMixRecipe>,
-    var containerMixRecipes: Array<ContainerMixRecipe>,
-    var cleanRecipes: Boolean
+    val recipes: Array<Recipe>,
+    val potionMixRecipes: Array<PotionMixRecipe>,
+    val containerMixRecipes: Array<ContainerMixRecipe>,
+    val materialReducers: Array<MaterialReducer>,
+    val cleanRecipes: Boolean
 ) : Packet {
     override val id get() = 0x34
 
@@ -107,7 +113,17 @@ data class RecipesPacket(
             buffer.writeVarInt(it.reagentId)
             buffer.writeVarInt(it.outputId)
         }
-        buffer.writeVarUInt(0)
+        if (version >= 465) {
+            buffer.writeVarUInt(materialReducers.size)
+            materialReducers.forEach {
+                buffer.writeVarInt(it.inputId)
+                buffer.writeVarUInt(it.itemCounts.size)
+                it.itemCounts.forEach {
+                    buffer.writeVarInt(it.key)
+                    buffer.writeVarInt(it.value)
+                }
+            }
+        }
         buffer.writeBoolean(cleanRecipes)
     }
 
@@ -134,4 +150,36 @@ data class RecipesPacket(
         result = 31 * result + cleanRecipes.hashCode()
         return result
     }
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object RecipesPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = RecipesPacket(
+        Array(buffer.readVarUInt()) {
+            when (val type = Recipe.Type.values()[buffer.readVarInt()]) {
+                Recipe.Type.Shapeless, Recipe.Type.ShulkerBox, Recipe.Type.ShapelessChemistry -> {
+                    val name = buffer.readString()
+                    val inputs = Array(buffer.readVarUInt()) { buffer.readIngredient() }
+                    val outputs = Array(buffer.readVarUInt()) { if (version >= 431) buffer.readStackInstance() else buffer.readStackPre431() }
+                    shapelessRecipe(type, buffer.readUuid(), name, inputs, outputs, buffer.readString(), buffer.readVarInt(), if (version >= 407) buffer.readVarUInt() else 0)
+                }
+                Recipe.Type.Shaped, Recipe.Type.ShapedChemistry -> {
+                    val name = buffer.readString()
+                    val width = buffer.readVarInt()
+                    val height = buffer.readVarInt()
+                    val inputs = Array(width * height) { buffer.readIngredient() }
+                    val outputs = Array(buffer.readVarUInt()) { if (version >= 431) buffer.readStackInstance() else buffer.readStackPre431() }
+                    shapedRecipe(type, buffer.readUuid(), name, width, height, inputs, outputs, buffer.readString(), buffer.readVarInt(), if (version >= 407) buffer.readVarUInt() else 0)
+                }
+                Recipe.Type.Furnace, Recipe.Type.FurnaceData -> furnaceRecipe(buffer.readVarInt(), if (type == Recipe.Type.FurnaceData) buffer.readVarInt() else -1, if (version >= 431) buffer.readStackInstance() else buffer.readStackPre431(), buffer.readString())
+                Recipe.Type.Multi -> multiRecipe(buffer.readUuid(), if (version >= 407) buffer.readVarUInt() else 0)
+            }
+        },
+        Array(buffer.readVarUInt()) { PotionMixRecipe(buffer.readVarInt(), if (version >= 407) buffer.readVarInt() else 0, buffer.readVarInt(), if (version >= 407) buffer.readVarInt() else 0, buffer.readVarInt(), if (version >= 407) buffer.readVarInt() else 0) },
+        Array(buffer.readVarUInt()) { ContainerMixRecipe(buffer.readVarInt(), buffer.readVarInt(), buffer.readVarInt()) },
+        if (version >= 465) Array(buffer.readVarUInt()) { MaterialReducer(buffer.readVarInt(), Int2IntOpenHashMap().apply { repeat(buffer.readVarUInt()) { this[buffer.readVarInt()] = buffer.readVarInt() } }) } else emptyArray(),
+        buffer.readBoolean()
+    )
 }

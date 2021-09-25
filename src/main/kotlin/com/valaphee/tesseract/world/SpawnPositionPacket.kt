@@ -20,40 +20,66 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
  */
 
-package com.valaphee.tesseract.net.init
+package com.valaphee.tesseract.world
 
-import com.google.gson.JsonElement
-import com.google.gson.internal.Streams
-import com.google.gson.stream.JsonReader
+import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
-import com.valaphee.tesseract.util.ByteBufStringReader
 
 /**
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class BehaviorTreePacket(
-    val json: JsonElement
+data class SpawnPositionPacket(
+    val type: Type,
+    val blockPosition: Int3,
+    val dimension: Dimension,
+    val position: Int3,
+    val forced: Boolean
 ) : Packet {
-    override val id get() = 0x59
-
-    override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeString(json.toString())
+    enum class Type {
+        PlayerSpawn, WorldSpawn
     }
 
-    override fun handle(handler: PacketHandler) = handler.behaviorTree(this)
+    override val id get() = 0x2B
+
+    override fun write(buffer: PacketBuffer, version: Int) {
+        buffer.writeVarInt(type.ordinal)
+        if (version >= 407) {
+            buffer.writeInt3UnsignedY(blockPosition)
+            buffer.writeVarUInt(dimension.ordinal)
+        }
+        buffer.writeInt3UnsignedY(position)
+        if (version < 407) buffer.writeBoolean(forced)
+    }
+
+    override fun handle(handler: PacketHandler) = handler.spawnPosition(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object BehaviorTreePacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = BehaviorTreePacket(Streams.parse(JsonReader(ByteBufStringReader(buffer, buffer.readVarUInt()))))
+object SpawnPositionPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int): SpawnPositionPacket {
+        val type = SpawnPositionPacket.Type.values()[buffer.readVarInt()]
+        val blockPosition: Int3
+        val dimension: Dimension
+        if (version >= 407) {
+            blockPosition = buffer.readInt3UnsignedY()
+            dimension = Dimension.values()[buffer.readVarUInt()]
+        } else {
+            blockPosition = Int3.Zero
+            dimension = Dimension.Overworld
+        }
+        val position = buffer.readInt3UnsignedY()
+        val forced = if (version < 407) buffer.readBoolean() else false
+        return SpawnPositionPacket(type, blockPosition, dimension, position, forced)
+    }
 }

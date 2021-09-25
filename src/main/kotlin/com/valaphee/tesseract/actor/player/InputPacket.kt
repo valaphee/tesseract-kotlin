@@ -97,7 +97,7 @@ data class InputPacket(
         StopGliding,
         PerformItemInteraction,
         PerformBlockActions,
-        PerformItemStackRequest
+        PerformInventoryRequest
     }
 
     override val id get() = 0x90
@@ -115,6 +115,14 @@ data class InputPacket(
             buffer.writeVarULong(tick)
             buffer.writeFloat3(positionDelta)
         }
+        /*if (version >= 428) {
+            if (input.equals(Input.PerformItemInteraction)) {
+            }
+            if (input.equals(Input.PerformInventoryRequest)) {
+            }
+            if (input.equals(Input.PerformBlockActions)) {
+            }
+        }*/
     }
 
     override fun handle(handler: PacketHandler) = handler.input(this)
@@ -134,14 +142,22 @@ object InputPacketReader : PacketReader {
         val playMode = InputPacket.PlayMode.values()[buffer.readVarUInt()]
         val virtualRealityGazeDirection = if (playMode == InputPacket.PlayMode.VirtualReality) buffer.readFloat3() else null
         val tick: Long
-        val delta: Float3
+        val positionDelta: Float3
         if (version >= 419) {
             tick = buffer.readVarULong()
-            delta = buffer.readFloat3()
+            positionDelta = buffer.readFloat3()
         } else {
             tick = 0L
-            delta = Float3.Zero
+            positionDelta = Float3.Zero
         }
-        return InputPacket(rotation, position, move, headRotationYaw, input, inputMode, playMode, virtualRealityGazeDirection, tick, delta)
+        /*if (version >= 428) {
+            if (input.equals(InputPacket.Input.PerformItemInteraction)) {
+            }
+            if (input.equals(InputPacket.Input.PerformInventoryRequest)) {
+            }
+            if (input.equals(InputPacket.Input.PerformBlockActions)) {
+            }
+        }*/
+        return InputPacket(rotation, position, move, headRotationYaw, input, inputMode, playMode, virtualRealityGazeDirection, tick, positionDelta)
     }
 }

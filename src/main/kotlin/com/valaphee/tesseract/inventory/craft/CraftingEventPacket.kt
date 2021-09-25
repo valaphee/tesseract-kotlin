@@ -20,57 +20,71 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
  */
 
-package com.valaphee.tesseract.inventory
+package com.valaphee.tesseract.inventory.craft
 
 import com.valaphee.tesseract.inventory.item.stack.Stack
 import com.valaphee.tesseract.inventory.item.stack.readStack
 import com.valaphee.tesseract.inventory.item.stack.readStackPre431
-import com.valaphee.tesseract.inventory.item.stack.readStackWithNetIdPre431
 import com.valaphee.tesseract.inventory.item.stack.writeStack
 import com.valaphee.tesseract.inventory.item.stack.writeStackPre431
-import com.valaphee.tesseract.inventory.item.stack.writeStackWithNetIdPre431
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
-import com.valaphee.tesseract.net.Restrict
-import com.valaphee.tesseract.net.Restriction
+import java.util.UUID
 
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.ToClient)
-data class InventoryContentPacket(
+data class CraftingEventPacket(
     val windowId: Int,
-    val content: Array<Stack<*>?>
+    val type: Type,
+    val recipeId: UUID,
+    val inputs: Array<Stack<*>?>,
+    val outputs: Array<Stack<*>?>,
 ) : Packet {
-    override val id get() = 0x31
-
-    override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarUInt(windowId)
-        buffer.writeVarUInt(content.size)
-        if (version >= 431) content.forEach(buffer::writeStack) else if (version >= 407) content.forEach(buffer::writeStackWithNetIdPre431) else content.forEach(buffer::writeStackPre431)
+    enum class Type {
+        Inventory, Crafting, Workbench
     }
 
-    override fun handle(handler: PacketHandler) = handler.inventoryContent(this)
+    override val id get() = 0x35
+
+    override fun write(buffer: PacketBuffer, version: Int) {
+        buffer.writeByte(windowId)
+        buffer.writeVarInt(type.ordinal)
+        buffer.writeUuid(recipeId)
+        buffer.writeVarUInt(inputs.size)
+        inputs.forEach { if (version >= 431) buffer.writeStack(it) else buffer.writeStackPre431(it) }
+        buffer.writeVarUInt(outputs.size)
+        outputs.forEach { if (version >= 431) buffer.writeStack(it) else buffer.writeStackPre431(it) }
+    }
+
+    override fun handle(handler: PacketHandler) = handler.craftingEvent(this)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as InventoryContentPacket
+        other as CraftingEventPacket
 
         if (windowId != other.windowId) return false
-        if (!content.contentEquals(other.content)) return false
+        if (type != other.type) return false
+        if (recipeId != other.recipeId) return false
+        if (!inputs.contentEquals(other.inputs)) return false
+        if (!outputs.contentEquals(other.outputs)) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = windowId
-        result = 31 * result + content.contentHashCode()
+        result = 31 * result + type.hashCode()
+        result = 31 * result + recipeId.hashCode()
+        result = 31 * result + inputs.contentHashCode()
+        result = 31 * result + outputs.contentHashCode()
         return result
     }
 }
@@ -78,6 +92,6 @@ data class InventoryContentPacket(
 /**
  * @author Kevin Ludwig
  */
-object InventoryContentPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = InventoryContentPacket(buffer.readVarUInt(), Array(buffer.readVarUInt()) { if (version >= 431) buffer.readStack() else if (version >= 407) buffer.readStackWithNetIdPre431() else buffer.readStackPre431() })
+object CraftingEventPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = CraftingEventPacket(buffer.readUnsignedByte().toInt(), CraftingEventPacket.Type.values()[buffer.readVarInt()], buffer.readUuid(), Array(buffer.readVarUInt()) { if (version >= 431) buffer.readStack() else buffer.readStackPre431() }, Array(buffer.readVarUInt()) { if (version >= 431) buffer.readStack() else buffer.readStackPre431() })
 }

@@ -25,12 +25,16 @@
 package com.valaphee.tesseract.inventory
 
 import com.valaphee.tesseract.inventory.item.stack.Stack
+import com.valaphee.tesseract.inventory.item.stack.readStack
+import com.valaphee.tesseract.inventory.item.stack.readStackPre431
+import com.valaphee.tesseract.inventory.item.stack.readStackWithNetIdPre431
 import com.valaphee.tesseract.inventory.item.stack.writeStack
 import com.valaphee.tesseract.inventory.item.stack.writeStackPre431
 import com.valaphee.tesseract.inventory.item.stack.writeStackWithNetIdPre431
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 
@@ -52,4 +56,11 @@ data class InventorySlotPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.inventorySlot(this)
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object InventorySlotPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = InventorySlotPacket(buffer.readVarUInt(), buffer.readVarUInt(), if (version >= 431) buffer.readStack() else if (version >= 407) buffer.readStackWithNetIdPre431() else buffer.readStackPre431())
 }

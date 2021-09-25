@@ -27,6 +27,7 @@ package com.valaphee.tesseract.inventory
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 
@@ -48,4 +49,11 @@ data class WindowPropertyPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.windowProperty(this)
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object WindowPropertyPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = WindowPropertyPacket(buffer.readByte().toInt(), buffer.readVarInt(), buffer.readVarInt())
 }

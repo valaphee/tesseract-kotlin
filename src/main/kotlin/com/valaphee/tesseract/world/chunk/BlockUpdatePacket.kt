@@ -29,6 +29,7 @@ import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 import java.util.EnumSet
@@ -62,4 +63,11 @@ data class BlockUpdatePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.blockUpdate(this)
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object BlockUpdatePacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = BlockUpdatePacket(buffer.readInt3UnsignedY(), buffer.readVarUInt(), buffer.readVarUIntFlags(), buffer.readVarUInt())
 }

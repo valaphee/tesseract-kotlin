@@ -20,40 +20,53 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
  */
 
-package com.valaphee.tesseract.net.init
+package com.valaphee.tesseract.actor
 
-import com.google.gson.JsonElement
-import com.google.gson.internal.Streams
-import com.google.gson.stream.JsonReader
+import com.valaphee.tesseract.inventory.item.stack.Stack
+import com.valaphee.tesseract.inventory.item.stack.readStack
+import com.valaphee.tesseract.inventory.item.stack.readStackPre431
+import com.valaphee.tesseract.inventory.item.stack.writeStack
+import com.valaphee.tesseract.inventory.item.stack.writeStackPre431
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
-import com.valaphee.tesseract.net.Restrict
-import com.valaphee.tesseract.net.Restriction
-import com.valaphee.tesseract.util.ByteBufStringReader
 
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.ToClient)
-data class BehaviorTreePacket(
-    val json: JsonElement
+data class ActorEquipmentPacket(
+    val runtimeEntityId: Long,
+    val stack: Stack<*>?,
+    val slotId: Int,
+    val hotbarSlot: Int,
+    val windowId: Int
 ) : Packet {
-    override val id get() = 0x59
+    override val id get() = 0x1F
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeString(json.toString())
+        buffer.writeVarULong(runtimeEntityId)
+        if (version >= 431) buffer.writeStack(stack) else buffer.writeStackPre431(stack)
+        buffer.writeByte(slotId)
+        buffer.writeByte(hotbarSlot)
+        buffer.writeByte(windowId)
     }
 
-    override fun handle(handler: PacketHandler) = handler.behaviorTree(this)
+    override fun handle(handler: PacketHandler) = handler.actorEquipment(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object BehaviorTreePacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = BehaviorTreePacket(Streams.parse(JsonReader(ByteBufStringReader(buffer, buffer.readVarUInt()))))
+object ActorEquipmentPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = ActorEquipmentPacket(
+        buffer.readVarULong(),
+        if (version >= 431) buffer.readStack() else buffer.readStackPre431(),
+        buffer.readUnsignedByte().toInt(),
+        buffer.readUnsignedByte().toInt(),
+        buffer.readByte().toInt()
+    )
 }

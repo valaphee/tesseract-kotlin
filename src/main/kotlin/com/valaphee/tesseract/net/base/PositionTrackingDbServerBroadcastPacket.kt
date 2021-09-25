@@ -20,40 +20,46 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
  */
 
-package com.valaphee.tesseract.net.init
+package com.valaphee.tesseract.net.base
 
-import com.google.gson.JsonElement
-import com.google.gson.internal.Streams
-import com.google.gson.stream.JsonReader
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
-import com.valaphee.tesseract.util.ByteBufStringReader
+import com.valaphee.tesseract.util.nbt.CompoundTag
 
 /**
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class BehaviorTreePacket(
-    val json: JsonElement
+data class PositionTrackingDbServerBroadcastPacket(
+    val action: Action,
+    val trackingId: Int,
+    val tag: CompoundTag?
 ) : Packet {
-    override val id get() = 0x59
-
-    override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeString(json.toString())
+    enum class Action {
+        Update, Destroy, NotFound
     }
 
-    override fun handle(handler: PacketHandler) = handler.behaviorTree(this)
+    override val id get() = 0x99
+
+    override fun write(buffer: PacketBuffer, version: Int) {
+        buffer.writeByte(action.ordinal)
+        buffer.writeVarUInt(trackingId)
+        buffer.toNbtOutputStream().use { it.writeTag(tag) }
+    }
+
+    override fun handle(handler: PacketHandler) = handler.positionTrackingDbServerBroadcast(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object BehaviorTreePacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = BehaviorTreePacket(Streams.parse(JsonReader(ByteBufStringReader(buffer, buffer.readVarUInt()))))
+object PositionTrackingDbServerBroadcastPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = PositionTrackingDbServerBroadcastPacket(PositionTrackingDbServerBroadcastPacket.Action.values()[buffer.readByte().toInt()], buffer.readVarUInt(), buffer.toNbtInputStream().use { it.readTag()?.asCompoundTag() })
 }

@@ -66,7 +66,7 @@ data class Appearance constructor(
     val premiumSkin: Boolean,
     val personaSkin: Boolean,
     val capeOnClassicSkin: Boolean,
-    val primary: Boolean,
+    val primaryUser: Boolean,
     var trusted: Boolean,
 ) {
     data class PersonaPiece(
@@ -485,7 +485,7 @@ fun PacketBuffer.writeAppearance(value: Appearance) {
     writeBoolean(value.premiumSkin)
     writeBoolean(value.personaSkin)
     writeBoolean(value.capeOnClassicSkin)
-    writeBoolean(value.primary)
+    writeBoolean(value.primaryUser)
 }
 
 private val gson = Gson()

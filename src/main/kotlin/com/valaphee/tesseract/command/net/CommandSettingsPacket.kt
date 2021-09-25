@@ -20,15 +20,11 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
  */
 
-package com.valaphee.tesseract.inventory
+package com.valaphee.tesseract.command.net
 
-import com.valaphee.tesseract.inventory.item.stack.Stack
-import com.valaphee.tesseract.inventory.item.stack.readStackInstance
-import com.valaphee.tesseract.inventory.item.stack.readStackWithNetIdPre431
-import com.valaphee.tesseract.inventory.item.stack.writeStackInstance
-import com.valaphee.tesseract.inventory.item.stack.writeStackWithNetIdPre431
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
@@ -40,45 +36,21 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class CreativeInventoryPacket(
-    val content: Array<Stack<*>?>
+data class CommandSettingsPacket(
+    val enabled: Boolean
 ) : Packet {
-    override val id get() = 0x91
+    override val id get() = 0x3B
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarUInt(content.size)
-        content.forEach {
-            if (version >= 431) {
-                buffer.writeVarUInt(it?.netId ?: 0)
-                buffer.writeStackInstance(it)
-            } else buffer.writeStackWithNetIdPre431(it)
-        }
+        buffer.writeBoolean(enabled)
     }
 
-    override fun handle(handler: PacketHandler) = handler.creativeInventory(this)
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as CreativeInventoryPacket
-
-        if (!content.contentEquals(other.content)) return false
-
-        return true
-    }
-
-    override fun hashCode() = content.contentHashCode()
+    override fun handle(handler: PacketHandler) = handler.commandSettings(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object CreativeInventoryPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = CreativeInventoryPacket(Array(buffer.readVarUInt()) {
-        if (version >= 431) {
-            val netId = buffer.readVarUInt()
-            buffer.readStackInstance().also { it?.let { it.netId = netId } }
-        } else buffer.readStackWithNetIdPre431()
-    })
+object CommandSettingsPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = CommandSettingsPacket(buffer.readBoolean())
 }

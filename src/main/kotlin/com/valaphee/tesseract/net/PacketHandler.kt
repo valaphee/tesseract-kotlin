@@ -25,14 +25,23 @@
 package com.valaphee.tesseract.net
 
 import com.valaphee.tesseract.actor.ActorAddPacket
+import com.valaphee.tesseract.actor.ActorEquipmentPacket
+import com.valaphee.tesseract.actor.ActorEventPacket
 import com.valaphee.tesseract.actor.ActorRemovePacket
+import com.valaphee.tesseract.actor.ArmorPacket
+import com.valaphee.tesseract.actor.ExperienceOrbAddPacket
+import com.valaphee.tesseract.actor.HealthPacket
 import com.valaphee.tesseract.actor.LinkPacket
+import com.valaphee.tesseract.actor.PaintingAddPacket
 import com.valaphee.tesseract.actor.attribute.AttributesPacket
+import com.valaphee.tesseract.actor.effect.EffectPacket
 import com.valaphee.tesseract.actor.location.MoveRotatePacket
 import com.valaphee.tesseract.actor.location.TeleportPacket
 import com.valaphee.tesseract.actor.location.VelocityPacket
 import com.valaphee.tesseract.actor.metadata.MetadataPacket
+import com.valaphee.tesseract.actor.player.ActorPickPacket
 import com.valaphee.tesseract.actor.player.AdventureSettingsPacket
+import com.valaphee.tesseract.actor.player.BlockPickPacket
 import com.valaphee.tesseract.actor.player.EmotePacket
 import com.valaphee.tesseract.actor.player.EmotesPacket
 import com.valaphee.tesseract.actor.player.InputCorrectPacket
@@ -41,6 +50,7 @@ import com.valaphee.tesseract.actor.player.InteractPacket
 import com.valaphee.tesseract.actor.player.PlayerActionPacket
 import com.valaphee.tesseract.actor.player.PlayerAddPacket
 import com.valaphee.tesseract.actor.player.PlayerLocationPacket
+import com.valaphee.tesseract.actor.player.RiderJumpPacket
 import com.valaphee.tesseract.actor.player.SteerPacket
 import com.valaphee.tesseract.actor.player.appearance.AppearancePacket
 import com.valaphee.tesseract.actor.player.view.ViewDistancePacket
@@ -49,25 +59,38 @@ import com.valaphee.tesseract.actor.stack.StackAddPacket
 import com.valaphee.tesseract.actor.stack.StackTakePacket
 import com.valaphee.tesseract.command.net.CommandPacket
 import com.valaphee.tesseract.command.net.CommandResponsePacket
+import com.valaphee.tesseract.command.net.CommandSettingsPacket
 import com.valaphee.tesseract.command.net.CommandSoftEnumerationPacket
 import com.valaphee.tesseract.command.net.CommandsPacket
 import com.valaphee.tesseract.command.net.LocalPlayerAsInitializedPacket
+import com.valaphee.tesseract.form.FormPacket
+import com.valaphee.tesseract.form.FormResponsePacket
+import com.valaphee.tesseract.form.ServerSettingsPacket
+import com.valaphee.tesseract.form.ServerSettingsRequestPacket
 import com.valaphee.tesseract.inventory.CreativeInventoryPacket
+import com.valaphee.tesseract.inventory.EnchantOptionsPacket
+import com.valaphee.tesseract.inventory.EquipmentPacket
+import com.valaphee.tesseract.inventory.HotbarPacket
 import com.valaphee.tesseract.inventory.InventoryContentPacket
 import com.valaphee.tesseract.inventory.InventoryRequestPacket
 import com.valaphee.tesseract.inventory.InventoryResponsePacket
 import com.valaphee.tesseract.inventory.InventorySlotPacket
 import com.valaphee.tesseract.inventory.InventoryTransactionPacket
+import com.valaphee.tesseract.inventory.TradePacket
 import com.valaphee.tesseract.inventory.WindowClosePacket
 import com.valaphee.tesseract.inventory.WindowOpenPacket
 import com.valaphee.tesseract.inventory.WindowPropertyPacket
-import com.valaphee.tesseract.inventory.recipe.RecipesPacket
+import com.valaphee.tesseract.inventory.craft.CraftingEventPacket
+import com.valaphee.tesseract.inventory.craft.RecipesPacket
 import com.valaphee.tesseract.net.base.CacheBlobStatusPacket
 import com.valaphee.tesseract.net.base.CacheBlobsPacket
 import com.valaphee.tesseract.net.base.CacheStatusPacket
 import com.valaphee.tesseract.net.base.DisconnectPacket
 import com.valaphee.tesseract.net.base.FilterPacket
 import com.valaphee.tesseract.net.base.LatencyPacket
+import com.valaphee.tesseract.net.base.PositionTrackingDbClientRequestPacket
+import com.valaphee.tesseract.net.base.PositionTrackingDbServerBroadcastPacket
+import com.valaphee.tesseract.net.base.TransferPacket
 import com.valaphee.tesseract.net.base.ViolationPacket
 import com.valaphee.tesseract.net.init.BehaviorTreePacket
 import com.valaphee.tesseract.net.init.BiomeDefinitionsPacket
@@ -76,32 +99,42 @@ import com.valaphee.tesseract.net.init.EntityIdentifiersPacket
 import com.valaphee.tesseract.net.init.LoginPacket
 import com.valaphee.tesseract.net.init.ServerToClientHandshakePacket
 import com.valaphee.tesseract.net.init.StatusPacket
+import com.valaphee.tesseract.net.init.SubLoginPacket
 import com.valaphee.tesseract.net.init.pack.PackDataChunkPacket
 import com.valaphee.tesseract.net.init.pack.PackDataChunkRequestPacket
 import com.valaphee.tesseract.net.init.pack.PackDataPacket
 import com.valaphee.tesseract.net.init.pack.PacksPacket
 import com.valaphee.tesseract.net.init.pack.PacksResponsePacket
 import com.valaphee.tesseract.net.init.pack.PacksStackPacket
+import com.valaphee.tesseract.world.BossBarPacket
 import com.valaphee.tesseract.world.DifficultyPacket
 import com.valaphee.tesseract.world.DimensionPacket
+import com.valaphee.tesseract.world.FogPacket
 import com.valaphee.tesseract.world.GameModePacket
 import com.valaphee.tesseract.world.GameRulesPacket
 import com.valaphee.tesseract.world.PlayerListPacket
+import com.valaphee.tesseract.world.RespawnPacket
 import com.valaphee.tesseract.world.ShowCreditsPacket
 import com.valaphee.tesseract.world.SoundEventPacket
 import com.valaphee.tesseract.world.SoundEventPacketV1
 import com.valaphee.tesseract.world.SoundEventPacketV2
 import com.valaphee.tesseract.world.SoundPacket
 import com.valaphee.tesseract.world.SoundStopPacket
+import com.valaphee.tesseract.world.SpawnPositionPacket
 import com.valaphee.tesseract.world.TextPacket
 import com.valaphee.tesseract.world.TickSyncPacket
 import com.valaphee.tesseract.world.TimePacket
+import com.valaphee.tesseract.world.TitlePacket
 import com.valaphee.tesseract.world.WorldEventPacket
 import com.valaphee.tesseract.world.WorldPacket
 import com.valaphee.tesseract.world.chunk.BlockUpdatePacket
 import com.valaphee.tesseract.world.chunk.BlockUpdateSyncedPacket
+import com.valaphee.tesseract.world.chunk.BlockUpdatesSyncedPacket
 import com.valaphee.tesseract.world.chunk.ChunkPacket
 import com.valaphee.tesseract.world.chunk.ChunkPublishPacket
+import com.valaphee.tesseract.world.map.MapCreateLockedCopyPacket
+import com.valaphee.tesseract.world.map.MapPacket
+import com.valaphee.tesseract.world.map.MapRequestPacket
 
 /**
  * @author Kevin Ludwig
@@ -145,7 +178,11 @@ interface PacketHandler : ProtocolHandler {
 
     fun playerLocation(packet: PlayerLocationPacket) = other(packet)
 
+    fun riderJump(packet: RiderJumpPacket) = other(packet)
+
     fun blockUpdate(packet: BlockUpdatePacket) = other(packet)
+
+    fun paintingAdd(packet: PaintingAddPacket) = other(packet)
 
     fun tickSync(packet: TickSyncPacket) = other(packet)
 
@@ -153,11 +190,23 @@ interface PacketHandler : ProtocolHandler {
 
     fun worldEvent(packet: WorldEventPacket) = other(packet)
 
+    fun actorEvent(packet: ActorEventPacket) = other(packet)
+
+    fun effect(packet: EffectPacket) = other(packet)
+
     fun attributes(packet: AttributesPacket) = other(packet)
 
     fun inventoryTransaction(packet: InventoryTransactionPacket) = other(packet)
 
+    fun actorEquipment(packet: ActorEquipmentPacket) = other(packet)
+
+    fun armor(packet: ArmorPacket) = other(packet)
+
     fun interact(packet: InteractPacket) = other(packet)
+
+    fun blockPick(packet: BlockPickPacket) = other(packet)
+
+    fun actorPick(packet: ActorPickPacket) = other(packet)
 
     fun playerAction(packet: PlayerActionPacket) = other(packet)
 
@@ -167,9 +216,17 @@ interface PacketHandler : ProtocolHandler {
 
     fun link(packet: LinkPacket) = other(packet)
 
+    fun health(packet: HealthPacket) = other(packet)
+
+    fun spawnPosition(packet: SpawnPositionPacket) = other(packet)
+
+    fun respawn(packet: RespawnPacket) = other(packet)
+
     fun windowOpen(packet: WindowOpenPacket) = other(packet)
 
     fun windowClose(packet: WindowClosePacket) = other(packet)
+
+    fun hotbar(packet: HotbarPacket) = other(packet)
 
     fun inventoryContent(packet: InventoryContentPacket) = other(packet)
 
@@ -179,11 +236,15 @@ interface PacketHandler : ProtocolHandler {
 
     fun recipes(packet: RecipesPacket) = other(packet)
 
+    fun craftingEvent(packet: CraftingEventPacket) = other(packet)
+
     fun adventureSettings(packet: AdventureSettingsPacket) = other(packet)
 
     fun steer(packet: SteerPacket) = other(packet)
 
     fun chunk(packet: ChunkPacket) = other(packet)
+
+    fun commandSettings(packet: CommandSettingsPacket) = other(packet)
 
     fun difficulty(packet: DifficultyPacket) = other(packet)
 
@@ -193,11 +254,19 @@ interface PacketHandler : ProtocolHandler {
 
     fun playerList(packet: PlayerListPacket) = other(packet)
 
+    fun experienceOrbAdd(packet: ExperienceOrbAddPacket) = other(packet)
+
+    fun map(packet: MapPacket) = other(packet)
+
+    fun mapRequest(packet: MapRequestPacket) = other(packet)
+
     fun viewDistanceRequest(packet: ViewDistanceRequestPacket) = other(packet)
 
     fun viewDistance(packet: ViewDistancePacket) = other(packet)
 
     fun gameRules(packet: GameRulesPacket) = other(packet)
+
+    fun bossBar(packet: BossBarPacket) = other(packet)
 
     fun showCredits(packet: ShowCreditsPacket) = other(packet)
 
@@ -207,19 +276,37 @@ interface PacketHandler : ProtocolHandler {
 
     fun commandResponse(packet: CommandResponsePacket) = other(packet)
 
+    fun trade(packet: TradePacket) = other(packet)
+
+    fun equipment(packet: EquipmentPacket) = other(packet)
+
     fun packData(packet: PackDataPacket) = other(packet)
 
     fun packDataChunk(packet: PackDataChunkPacket) = other(packet)
 
     fun packDataChunkRequest(packet: PackDataChunkRequestPacket) = other(packet)
 
+    fun transfer(packet: TransferPacket) = other(packet)
+
     fun sound(packet: SoundPacket) = other(packet)
 
     fun soundStop(packet: SoundStopPacket) = other(packet)
 
+    fun title(packet: TitlePacket) = other(packet)
+
     fun behaviorTree(packet: BehaviorTreePacket) = other(packet)
 
     fun appearance(packet: AppearancePacket) = other(packet)
+
+    fun subLogin(packet: SubLoginPacket) = other(packet)
+
+    fun form(packet: FormPacket) = other(packet)
+
+    fun formResponse(packet: FormResponsePacket) = other(packet)
+
+    fun serverSettingsRequest(packet: ServerSettingsRequestPacket) = other(packet)
+
+    fun serverSettings(packet: ServerSettingsPacket) = other(packet)
 
     fun blockUpdateSynced(packet: BlockUpdateSyncedPacket) = other(packet)
 
@@ -243,6 +330,8 @@ interface PacketHandler : ProtocolHandler {
 
     fun cacheStatus(packet: CacheStatusPacket) = other(packet)
 
+    fun mapCreateLockedCopy(packet: MapCreateLockedCopyPacket) = other(packet)
+
     fun cacheBlobStatus(packet: CacheBlobStatusPacket) = other(packet)
 
     fun cacheBlobs(packet: CacheBlobsPacket) = other(packet)
@@ -253,15 +342,25 @@ interface PacketHandler : ProtocolHandler {
 
     fun creativeInventory(packet: CreativeInventoryPacket) = other(packet)
 
+    fun enchantOptions(packet: EnchantOptionsPacket) = other(packet)
+
     fun inventoryRequest(packet: InventoryRequestPacket) = other(packet)
 
     fun inventoryResponse(packet: InventoryResponsePacket) = other(packet)
 
     fun emotes(packet: EmotesPacket) = other(packet)
 
+    fun positionTrackingDbClientRequest(packet: PositionTrackingDbClientRequestPacket) = other(packet)
+
+    fun positionTrackingDbServerBroadcast(packet: PositionTrackingDbServerBroadcastPacket) = other(packet)
+
     fun violation(packet: ViolationPacket) = other(packet)
+
+    fun fog(packet: FogPacket) = other(packet)
 
     fun inputCorrect(packet: InputCorrectPacket) = other(packet)
 
     fun filter(packet: FilterPacket) = other(packet)
+
+    fun blockUpdatesSynced(packet: BlockUpdatesSyncedPacket) = other(packet)
 }

@@ -20,15 +20,11 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
  */
 
-package com.valaphee.tesseract.inventory
+package com.valaphee.tesseract.world
 
-import com.valaphee.tesseract.inventory.item.stack.Stack
-import com.valaphee.tesseract.inventory.item.stack.readStackInstance
-import com.valaphee.tesseract.inventory.item.stack.readStackWithNetIdPre431
-import com.valaphee.tesseract.inventory.item.stack.writeStackInstance
-import com.valaphee.tesseract.inventory.item.stack.writeStackWithNetIdPre431
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
@@ -40,45 +36,35 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class CreativeInventoryPacket(
-    val content: Array<Stack<*>?>
+data class FogPacket(
+    val effects: Array<String>
 ) : Packet {
-    override val id get() = 0x91
+    override val id get() = 0xA0
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarUInt(content.size)
-        content.forEach {
-            if (version >= 431) {
-                buffer.writeVarUInt(it?.netId ?: 0)
-                buffer.writeStackInstance(it)
-            } else buffer.writeStackWithNetIdPre431(it)
-        }
+        buffer.writeVarUInt(effects.size)
+        effects.forEach { buffer.writeString(it) }
     }
 
-    override fun handle(handler: PacketHandler) = handler.creativeInventory(this)
+    override fun handle(handler: PacketHandler) = handler.fog(this)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as CreativeInventoryPacket
+        other as FogPacket
 
-        if (!content.contentEquals(other.content)) return false
+        if (!effects.contentEquals(other.effects)) return false
 
         return true
     }
 
-    override fun hashCode() = content.contentHashCode()
+    override fun hashCode() = effects.contentHashCode()
 }
 
 /**
  * @author Kevin Ludwig
  */
-object CreativeInventoryPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = CreativeInventoryPacket(Array(buffer.readVarUInt()) {
-        if (version >= 431) {
-            val netId = buffer.readVarUInt()
-            buffer.readStackInstance().also { it?.let { it.netId = netId } }
-        } else buffer.readStackWithNetIdPre431()
-    })
+object FogPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = FogPacket(Array(buffer.readVarUInt()) { buffer.readString() })
 }

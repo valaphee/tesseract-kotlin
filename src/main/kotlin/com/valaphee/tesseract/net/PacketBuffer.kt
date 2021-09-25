@@ -24,6 +24,7 @@
 
 package com.valaphee.tesseract.net
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
@@ -47,6 +48,7 @@ class PacketBuffer(
     buffer: ByteBuf
 ) : ByteBufWrapper(buffer) {
     var local = false
+    val objectMapper = jacksonObjectMapper()
 
     inline fun <reified T : Enum<T>> readByteFlags(): Collection<T> {
         val flagsValue = readByte().toInt()

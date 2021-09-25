@@ -20,40 +20,41 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
  */
 
-package com.valaphee.tesseract.net.init
+package com.valaphee.tesseract.actor.player
 
-import com.google.gson.JsonElement
-import com.google.gson.internal.Streams
-import com.google.gson.stream.JsonReader
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
-import com.valaphee.tesseract.util.ByteBufStringReader
 
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.ToClient)
-data class BehaviorTreePacket(
-    val json: JsonElement
+@Restrict(Restriction.ToServer)
+data class ActorPickPacket(
+    val runtimeEntityId: Long,
+    val hotbarSlot: Int,
+    val withMetadata: Boolean
 ) : Packet {
-    override val id get() = 0x59
+    override val id get() = 0x23
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeString(json.toString())
+        buffer.writeLongLE(runtimeEntityId)
+        buffer.writeByte(hotbarSlot)
+        if (version >= 465) buffer.writeBoolean(withMetadata)
     }
 
-    override fun handle(handler: PacketHandler) = handler.behaviorTree(this)
+    override fun handle(handler: PacketHandler) = handler.actorPick(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object BehaviorTreePacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = BehaviorTreePacket(Streams.parse(JsonReader(ByteBufStringReader(buffer, buffer.readVarUInt()))))
+object ActorPickPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = ActorPickPacket(buffer.readLongLE(), buffer.readByte().toInt(), if (version >= 465) buffer.readBoolean() else false)
 }

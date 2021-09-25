@@ -22,38 +22,14 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.net.init
+package com.valaphee.tesseract.inventory.craft
 
-import com.google.gson.JsonElement
-import com.google.gson.internal.Streams
-import com.google.gson.stream.JsonReader
-import com.valaphee.tesseract.net.Packet
-import com.valaphee.tesseract.net.PacketBuffer
-import com.valaphee.tesseract.net.PacketHandler
-import com.valaphee.tesseract.net.PacketReader
-import com.valaphee.tesseract.net.Restrict
-import com.valaphee.tesseract.net.Restriction
-import com.valaphee.tesseract.util.ByteBufStringReader
+import it.unimi.dsi.fastutil.ints.Int2IntMap
 
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.ToClient)
-data class BehaviorTreePacket(
-    val json: JsonElement
-) : Packet {
-    override val id get() = 0x59
-
-    override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeString(json.toString())
-    }
-
-    override fun handle(handler: PacketHandler) = handler.behaviorTree(this)
-}
-
-/**
- * @author Kevin Ludwig
- */
-object BehaviorTreePacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = BehaviorTreePacket(Streams.parse(JsonReader(ByteBufStringReader(buffer, buffer.readVarUInt()))))
-}
+data class MaterialReducer(
+    val inputId: Int,
+    val itemCounts: Int2IntMap
+)

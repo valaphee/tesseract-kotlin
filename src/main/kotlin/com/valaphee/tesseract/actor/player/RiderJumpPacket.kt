@@ -20,18 +20,37 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
  */
 
-package com.valaphee.tesseract.inventory.recipe
+package com.valaphee.tesseract.actor.player
+
+import com.valaphee.tesseract.net.Packet
+import com.valaphee.tesseract.net.PacketBuffer
+import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
+import com.valaphee.tesseract.net.Restrict
+import com.valaphee.tesseract.net.Restriction
 
 /**
  * @author Kevin Ludwig
  */
-data class PotionMixRecipe(
-    val inputId: Int,
-    val inputSubId: Int,
-    val reagentId: Int,
-    val reagentSubId: Int,
-    val outputId: Int,
-    val outputSubId: Int
-)
+@Restrict(Restriction.ToServer)
+data class RiderJumpPacket(
+    val jumpStrength: Int
+) : Packet {
+    override val id get() = 0x14
+
+    override fun write(buffer: PacketBuffer, version: Int) {
+        buffer.writeVarInt(jumpStrength)
+    }
+
+    override fun handle(handler: PacketHandler) = handler.riderJump(this)
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object RiderJumpPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = RiderJumpPacket(buffer.readVarInt())
+}

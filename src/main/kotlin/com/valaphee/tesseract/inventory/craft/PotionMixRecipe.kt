@@ -22,13 +22,16 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.inventory.recipe
+package com.valaphee.tesseract.inventory.craft
 
 /**
  * @author Kevin Ludwig
  */
-data class ContainerMixRecipe(
+data class PotionMixRecipe(
     val inputId: Int,
+    val inputSubId: Int,
     val reagentId: Int,
-    val outputId: Int
+    val reagentSubId: Int,
+    val outputId: Int,
+    val outputSubId: Int
 )
