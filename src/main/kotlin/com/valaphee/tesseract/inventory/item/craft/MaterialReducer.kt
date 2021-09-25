@@ -22,41 +22,14 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.data.recipe
+package com.valaphee.tesseract.inventory.item.craft
 
-import com.valaphee.tesseract.data.DataType
-import com.valaphee.tesseract.data.KeyedData
-import com.valaphee.tesseract.inventory.item.stack.Stack
+import it.unimi.dsi.fastutil.ints.Int2IntMap
 
 /**
  * @author Kevin Ludwig
  */
-@DataType("tesseract:recipe_furnace")
-data class FurnaceRecipeData(
-    override val key: String,
-    val tags: Array<String>,
-    val input: Stack<*>,
-    val output: Stack<*>
-) : KeyedData {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as FurnaceRecipeData
-
-        if (key != other.key) return false
-        if (!tags.contentEquals(other.tags)) return false
-        if (input != other.input) return false
-        if (output != other.output) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = key.hashCode()
-        result = 31 * result + tags.contentHashCode()
-        result = 31 * result + input.hashCode()
-        result = 31 * result + output.hashCode()
-        return result
-    }
-}
+data class MaterialReducer(
+    val inputId: Int,
+    val itemCounts: Int2IntMap
+)

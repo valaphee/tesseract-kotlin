@@ -31,7 +31,7 @@ import com.valaphee.tesseract.util.nbt.TagType
 /**
  * @author Kevin Ludwig
  */
-class BlockState(
+data class BlockState(
     val key: String,
     val propertiesNbt: CompoundTag,
     val version: Int

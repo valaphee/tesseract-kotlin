@@ -51,6 +51,7 @@ import com.valaphee.tesseract.actor.player.PlayerAddPacketReader
 import com.valaphee.tesseract.actor.player.PlayerLocationPacketReader
 import com.valaphee.tesseract.actor.player.RiderJumpPacketReader
 import com.valaphee.tesseract.actor.player.SteerPacketReader
+import com.valaphee.tesseract.actor.player.VelocityPredictionPacketReader
 import com.valaphee.tesseract.actor.player.appearance.AppearancePacketReader
 import com.valaphee.tesseract.actor.player.view.ViewDistancePacketReader
 import com.valaphee.tesseract.actor.player.view.ViewDistanceRequestPacketReader
@@ -78,8 +79,8 @@ import com.valaphee.tesseract.inventory.TradePacketReader
 import com.valaphee.tesseract.inventory.WindowClosePacketReader
 import com.valaphee.tesseract.inventory.WindowOpenPacketReader
 import com.valaphee.tesseract.inventory.WindowPropertyPacketReader
-import com.valaphee.tesseract.inventory.craft.CraftingEventPacketReader
-import com.valaphee.tesseract.inventory.craft.RecipesPacketReader
+import com.valaphee.tesseract.inventory.item.craft.CraftingEventPacketReader
+import com.valaphee.tesseract.inventory.item.craft.RecipesPacketReader
 import com.valaphee.tesseract.net.base.CacheBlobStatusPacketReader
 import com.valaphee.tesseract.net.base.CacheBlobsPacketReader
 import com.valaphee.tesseract.net.base.CacheStatusPacketReader
@@ -130,12 +131,15 @@ import com.valaphee.tesseract.world.chunk.ChunkPacketReader
 import com.valaphee.tesseract.world.chunk.ChunkPublishPacketReader
 import com.valaphee.tesseract.world.map.MapCreateLockedCopyPacketReader
 import com.valaphee.tesseract.world.map.MapRequestPacketReader
+import com.valaphee.tesseract.world.scoreboard.ObjectiveRemovePacketReader
+import com.valaphee.tesseract.world.scoreboard.ObjectiveSetPacketReader
+import com.valaphee.tesseract.world.scoreboard.ScoreboardIdentityPacketReader
+import com.valaphee.tesseract.world.scoreboard.ScoresPacketReader
 import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
+import io.netty.handler.codec.DecoderException
 import io.netty.handler.codec.MessageToMessageDecoder
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 
 /**
  * @author Kevin Ludwig
@@ -147,11 +151,10 @@ class PacketDecoder(
         val buffer = PacketBuffer(`in`)
         val header = buffer.readVarUInt()
         val id = header and Packet.idMask
-        readers[id]?.let { out.add(it.read(buffer, version)) } ?: log.debug("Unknown packet: 0x{}", id.toString(16).uppercase())
+        readers[id]?.let { out.add(it.read(buffer, version)) } ?: throw DecoderException("Unknown packet: 0x${id.toString(16).uppercase()}")
     }
 
     companion object {
-        private val log: Logger = LogManager.getLogger(PacketDecoder::class.java)
         private val readers = Int2ObjectOpenHashMap<PacketReader>().apply {
             this[0x01] = LoginPacketReader
             this[0x02] = StatusPacketReader
@@ -257,13 +260,13 @@ class PacketDecoder(
             this[0x67] = ServerSettingsPacketReader
             //this[0x68] =
             //this[0x69] =
-            //this[0x6A] =
-            //this[0x6B] =
-            //this[0x6C] =
+            this[0x6A] = ObjectiveRemovePacketReader
+            this[0x6B] = ObjectiveSetPacketReader
+            this[0x6C] = ScoresPacketReader
             //this[0x6D] =
             this[0x6E] = BlockUpdateSyncedPacketReader
             this[0x6F] = MoveRotatePacketReader
-            //this[0x70] =
+            this[0x70] = ScoreboardIdentityPacketReader
             this[0x71] = LocalPlayerAsInitializedPacketReader
             this[0x72] = CommandSoftEnumerationPacketReader
             this[0x73] = LatencyPacketReader
@@ -308,7 +311,7 @@ class PacketDecoder(
             this[0x9A] = PositionTrackingDbClientRequestPacketReader
             //this[0x9B] =
             this[0x9C] = ViolationPacketReader
-            //this[0x9D] =
+            this[0x9D] = VelocityPredictionPacketReader
             //this[0x9E] =
             //this[0x9F] =
             this[0xA0] = FogPacketReader

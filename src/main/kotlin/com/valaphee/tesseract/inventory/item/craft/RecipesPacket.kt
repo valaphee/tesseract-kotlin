@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.inventory.craft
+package com.valaphee.tesseract.inventory.item.craft
 
 import com.valaphee.tesseract.inventory.item.stack.readIngredient
 import com.valaphee.tesseract.inventory.item.stack.readStackInstance

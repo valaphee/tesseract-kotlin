@@ -23,7 +23,7 @@
  *
  */
 
-package com.valaphee.tesseract.inventory.craft
+package com.valaphee.tesseract.inventory.item.craft
 
 import com.valaphee.tesseract.inventory.item.stack.Stack
 import com.valaphee.tesseract.inventory.item.stack.readStack

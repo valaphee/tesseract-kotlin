@@ -24,10 +24,13 @@
 
 package com.valaphee.tesseract.inventory.item.stack.meta
 
+import com.valaphee.tesseract.inventory.item.Enchantment
 import com.valaphee.tesseract.util.getCompoundTagOrNull
+import com.valaphee.tesseract.util.getInt
 import com.valaphee.tesseract.util.getIntOrNull
 import com.valaphee.tesseract.util.getListTagOrNull
 import com.valaphee.tesseract.util.getOrCreateCompoundTag
+import com.valaphee.tesseract.util.getShort
 import com.valaphee.tesseract.util.getStringOrNull
 import com.valaphee.tesseract.util.nbt.CompoundTag
 import com.valaphee.tesseract.util.nbt.compoundTag
@@ -41,6 +44,7 @@ open class Meta(
     var lore: List<String>? = null,
     var damage: Int = 0,
     var repairCost: Int = 0,
+    var enchantments: Map<Enchantment, Int>? = null
 ) {
     open fun fromTag(tag: CompoundTag) {
         tag.getCompoundTagOrNull("display")?.let {
@@ -49,6 +53,7 @@ open class Meta(
         }
         damage = tag.getIntOrNull("Damage") ?: 0
         repairCost = tag.getIntOrNull("RepairCost") ?: 0
+        enchantments = tag.getListTagOrNull("ench")?.let { it.toList().map { it.asCompoundTag()!! }.associate { Enchantment.values()[it.getShort("id").toInt()] to it.getInt("lvl") } }
     }
 
     open fun toTag() = compoundTag().apply {
@@ -56,5 +61,15 @@ open class Meta(
         lore?.let { getOrCreateCompoundTag("display").apply { this["Lore"] = listTag().apply { it.forEach { putString(it) } } } }
         if (damage != 0) setInt("Damage", damage)
         if (repairCost != 0) setInt("RepairCost", repairCost)
+        enchantments?.let {
+            this["ench"] = listTag().apply {
+                it.forEach {
+                    put(compoundTag().apply {
+                        setShort("id", it.key.ordinal.toShort())
+                        setShort("lvl", it.value.toShort())
+                    })
+                }
+            }
+        }
     }
 }

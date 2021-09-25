@@ -20,18 +20,37 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
  */
 
-package com.valaphee.tesseract.inventory.craft
+package com.valaphee.tesseract.world.scoreboard
+
+import com.valaphee.tesseract.net.Packet
+import com.valaphee.tesseract.net.PacketBuffer
+import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
+import com.valaphee.tesseract.net.Restrict
+import com.valaphee.tesseract.net.Restriction
 
 /**
  * @author Kevin Ludwig
  */
-data class PotionMixRecipe(
-    val inputId: Int,
-    val inputSubId: Int,
-    val reagentId: Int,
-    val reagentSubId: Int,
-    val outputId: Int,
-    val outputSubId: Int
-)
+@Restrict(Restriction.ToClient)
+data class ObjectiveRemovePacket(
+    val name: String
+) : Packet {
+    override val id get() = 0x6A
+
+    override fun write(buffer: PacketBuffer, version: Int) {
+        buffer.writeString(name)
+    }
+
+    override fun handle(handler: PacketHandler) = handler.objectiveRemove(this)
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object ObjectiveRemovePacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = ObjectiveRemovePacket(buffer.readString())
+}

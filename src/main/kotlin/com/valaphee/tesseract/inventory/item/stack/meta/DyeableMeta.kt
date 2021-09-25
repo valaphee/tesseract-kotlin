@@ -24,6 +24,7 @@
 
 package com.valaphee.tesseract.inventory.item.stack.meta
 
+import com.valaphee.tesseract.inventory.item.Enchantment
 import com.valaphee.tesseract.util.getIntOrNull
 import com.valaphee.tesseract.util.nbt.CompoundTag
 
@@ -35,8 +36,9 @@ class DyeableMeta(
     lore: List<String>? = null,
     damage: Int = 0,
     repairCost: Int = 0,
+    enchantments: Map<Enchantment, Int>? = null,
     var color: Int? = null
-) : Meta(name, lore, damage, repairCost) {
+) : Meta(name, lore, damage, repairCost, enchantments) {
     override fun fromTag(tag: CompoundTag) {
         super.fromTag(tag)
         color = tag.getIntOrNull("customColor")

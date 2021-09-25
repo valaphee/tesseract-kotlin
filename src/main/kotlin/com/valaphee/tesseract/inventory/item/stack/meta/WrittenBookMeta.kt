@@ -24,6 +24,7 @@
 
 package com.valaphee.tesseract.inventory.item.stack.meta
 
+import com.valaphee.tesseract.inventory.item.Enchantment
 import com.valaphee.tesseract.util.getIntOrNull
 import com.valaphee.tesseract.util.getStringOrNull
 import com.valaphee.tesseract.util.nbt.CompoundTag
@@ -37,10 +38,11 @@ class WrittenBookMeta(
     damage: Int = 0,
     repairCost: Int = 0,
     pages: List<String>? = null,
+    enchantments: Map<Enchantment, Int>? = null,
     var title: String? = null,
     var author: String? = null,
     var generation: Int = 0,
-) : WritableBookMeta(name, lore, damage, repairCost, pages) {
+) : WritableBookMeta(name, lore, damage, repairCost, enchantments, pages) {
     override fun fromTag(tag: CompoundTag) {
         super.fromTag(tag)
         title = tag.getStringOrNull("title")

@@ -24,6 +24,7 @@
 
 package com.valaphee.tesseract.inventory.item.stack.meta
 
+import com.valaphee.tesseract.inventory.item.Enchantment
 import com.valaphee.tesseract.util.getLongOrNull
 import com.valaphee.tesseract.util.nbt.CompoundTag
 import com.valaphee.tesseract.util.setBool
@@ -36,8 +37,9 @@ class MapMeta(
     lore: List<String>? = null,
     damage: Int = 0,
     repairCost: Int = 0,
+    enchantments: Map<Enchantment, Int>? = null,
     var mapId: Int? = null
-) : Meta(name, lore, damage, repairCost) {
+) : Meta(name, lore, damage, repairCost, enchantments) {
     override fun fromTag(tag: CompoundTag) {
         super.fromTag(tag)
         mapId = tag.getLongOrNull("map_uuid")?.toInt()

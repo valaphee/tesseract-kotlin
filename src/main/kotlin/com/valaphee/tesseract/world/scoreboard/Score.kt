@@ -20,16 +20,31 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
  */
 
-package com.valaphee.tesseract.inventory.craft
-
-import it.unimi.dsi.fastutil.ints.Int2IntMap
+package com.valaphee.tesseract.world.scoreboard
 
 /**
  * @author Kevin Ludwig
  */
-data class MaterialReducer(
-    val inputId: Int,
-    val itemCounts: Int2IntMap
-)
+data class Score private constructor(
+    val scoreboardId: Long,
+    val objectiveName: String,
+    val value: Int,
+    val type: ScorerType,
+    val name: String?,
+    val entityId: Long
+) {
+    enum class ScorerType {
+        Invalid, Player, Entity, Fake
+    }
+
+    constructor(scoreboardId: Long, objectiveName: String) : this(scoreboardId, objectiveName, 0, ScorerType.Invalid, null, 0)
+
+    constructor(scoreboardId: Long, objectiveName: String, value: Int) : this(scoreboardId, objectiveName, value, ScorerType.Invalid, null, 0)
+
+    constructor(scoreboardId: Long, objectiveName: String, value: Int, name: String) : this(scoreboardId, objectiveName, value, ScorerType.Fake, name, 0)
+
+    constructor(scoreboardId: Long, objectiveName: String, value: Int, type: ScorerType, entityId: Long) : this(scoreboardId, objectiveName, value, type, null, entityId)
+}

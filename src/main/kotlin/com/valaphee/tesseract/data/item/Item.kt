@@ -30,7 +30,7 @@ import com.valaphee.tesseract.util.nbt.CompoundTag
 /**
  * @author Kevin Ludwig
  */
-class Item(
+data class Item(
     override val key: String,
     override val component: CompoundTag?
 ) : IItem

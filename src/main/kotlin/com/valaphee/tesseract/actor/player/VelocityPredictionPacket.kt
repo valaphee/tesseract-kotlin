@@ -20,15 +20,39 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
  */
 
-package com.valaphee.tesseract.inventory.craft
+package com.valaphee.tesseract.actor.player
+
+import com.valaphee.foundry.math.Float3
+import com.valaphee.tesseract.net.Packet
+import com.valaphee.tesseract.net.PacketBuffer
+import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 
 /**
  * @author Kevin Ludwig
  */
-data class ContainerMixRecipe(
-    val inputId: Int,
-    val reagentId: Int,
-    val outputId: Int
-)
+data class VelocityPredictionPacket(
+    val runtimeEntityId: Long,
+    val velocity: Float3,
+    val onGround: Boolean,
+) : Packet {
+    override val id get() = 0x9D
+
+    override fun write(buffer: PacketBuffer, version: Int) {
+        buffer.writeVarULong(runtimeEntityId)
+        buffer.writeFloat3(velocity)
+        buffer.writeBoolean(onGround)
+    }
+
+    override fun handle(handler: PacketHandler) = handler.velocityPrediction(this)
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object VelocityPredictionPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = VelocityPredictionPacket(buffer.readVarULong(), buffer.readFloat3(), buffer.readBoolean())
+}

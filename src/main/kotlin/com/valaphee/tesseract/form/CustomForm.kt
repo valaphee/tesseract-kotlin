@@ -5,8 +5,6 @@
 
 package com.valaphee.tesseract.form
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
@@ -42,7 +40,6 @@ class CustomForm(
     override fun toString() = "CustomForm(title=$title, elements=$elements)"
 }
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
     include = JsonTypeInfo.As.PROPERTY,
@@ -57,7 +54,7 @@ class CustomForm(
     JsonSubTypes.Type(Toggle::class, name = "toggle"),
 )
 abstract class Element(
-    @JsonIgnore val id: String,
+    @Transient val id: String,
     @get:JsonProperty("text") val text: String
 ) {
     abstract fun answer(jsonAnswer: JsonElement): Any?

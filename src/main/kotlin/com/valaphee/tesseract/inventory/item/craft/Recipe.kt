@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.inventory.craft
+package com.valaphee.tesseract.inventory.item.craft
 
 import com.valaphee.tesseract.inventory.item.stack.Stack
 import java.util.UUID
@@ -41,7 +41,7 @@ fun multiRecipe(id: UUID, netId: Int) = Recipe(id, null, Recipe.Type.Multi, 0, 0
 data class Recipe(
     val id: UUID?,
     val name: String?,
-    val type: Type?,
+    val type: Type,
     val inputId: Int,
     val inputDamage: Int,
     val width: Int,

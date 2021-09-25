@@ -33,7 +33,7 @@ import java.util.regex.Pattern
  * @author Kevin Ludwig
  */
 @DataType("tesseract:locale")
-class LocaleData(
+data class LocaleData(
     override val key: String,
     val entries: Map<String, String>
 ) : KeyedData {

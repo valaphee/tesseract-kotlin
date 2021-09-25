@@ -24,7 +24,6 @@
 
 package com.valaphee.tesseract.util.text
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
@@ -34,7 +33,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 /**
  * @author Kevin Ludwig
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
 @JsonSubTypes(
     JsonSubTypes.Type(TextComponent::class),

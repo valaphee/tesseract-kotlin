@@ -30,7 +30,7 @@ import com.valaphee.tesseract.util.nbt.CompoundTag
 /**
  * @author Kevin Ludwig
  */
-class Block(
+data class Block(
     override val key: String,
     override val component: CompoundTag?
 ) : IBlock

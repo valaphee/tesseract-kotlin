@@ -52,6 +52,7 @@ import com.valaphee.tesseract.actor.player.PlayerAddPacket
 import com.valaphee.tesseract.actor.player.PlayerLocationPacket
 import com.valaphee.tesseract.actor.player.RiderJumpPacket
 import com.valaphee.tesseract.actor.player.SteerPacket
+import com.valaphee.tesseract.actor.player.VelocityPredictionPacket
 import com.valaphee.tesseract.actor.player.appearance.AppearancePacket
 import com.valaphee.tesseract.actor.player.view.ViewDistancePacket
 import com.valaphee.tesseract.actor.player.view.ViewDistanceRequestPacket
@@ -80,8 +81,8 @@ import com.valaphee.tesseract.inventory.TradePacket
 import com.valaphee.tesseract.inventory.WindowClosePacket
 import com.valaphee.tesseract.inventory.WindowOpenPacket
 import com.valaphee.tesseract.inventory.WindowPropertyPacket
-import com.valaphee.tesseract.inventory.craft.CraftingEventPacket
-import com.valaphee.tesseract.inventory.craft.RecipesPacket
+import com.valaphee.tesseract.inventory.item.craft.CraftingEventPacket
+import com.valaphee.tesseract.inventory.item.craft.RecipesPacket
 import com.valaphee.tesseract.net.base.CacheBlobStatusPacket
 import com.valaphee.tesseract.net.base.CacheBlobsPacket
 import com.valaphee.tesseract.net.base.CacheStatusPacket
@@ -135,6 +136,10 @@ import com.valaphee.tesseract.world.chunk.ChunkPublishPacket
 import com.valaphee.tesseract.world.map.MapCreateLockedCopyPacket
 import com.valaphee.tesseract.world.map.MapPacket
 import com.valaphee.tesseract.world.map.MapRequestPacket
+import com.valaphee.tesseract.world.scoreboard.ObjectiveRemovePacket
+import com.valaphee.tesseract.world.scoreboard.ObjectiveSetPacket
+import com.valaphee.tesseract.world.scoreboard.ScoreboardIdentityPacket
+import com.valaphee.tesseract.world.scoreboard.ScoresPacket
 
 /**
  * @author Kevin Ludwig
@@ -308,9 +313,17 @@ interface PacketHandler : ProtocolHandler {
 
     fun serverSettings(packet: ServerSettingsPacket) = other(packet)
 
+    fun objectiveRemove(packet: ObjectiveRemovePacket) = other(packet)
+
+    fun objectiveSet(packet: ObjectiveSetPacket) = other(packet)
+
+    fun scores(packet: ScoresPacket) = other(packet)
+
     fun blockUpdateSynced(packet: BlockUpdateSyncedPacket) = other(packet)
 
     fun moveRotate(packet: MoveRotatePacket) = other(packet)
+
+    fun scoreboardIdentity(packet: ScoreboardIdentityPacket) = other(packet)
 
     fun localPlayerAsInitialized(packet: LocalPlayerAsInitializedPacket) = other(packet)
 
@@ -355,6 +368,8 @@ interface PacketHandler : ProtocolHandler {
     fun positionTrackingDbServerBroadcast(packet: PositionTrackingDbServerBroadcastPacket) = other(packet)
 
     fun violation(packet: ViolationPacket) = other(packet)
+
+    fun velocityPrediction(packet: VelocityPredictionPacket) = other(packet)
 
     fun fog(packet: FogPacket) = other(packet)
 

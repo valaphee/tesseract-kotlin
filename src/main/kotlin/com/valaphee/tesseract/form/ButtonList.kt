@@ -5,8 +5,6 @@
 
 package com.valaphee.tesseract.form
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.google.gson.JsonElement
 
@@ -43,8 +41,7 @@ class ButtonList(
     override fun toString() = "ButtonList(title=$title, content=$content, buttons=$buttons)"
 }
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 data class Button(
-    @JsonIgnore val id: String,
+    @Transient val id: String,
     @get:JsonProperty("text") val text: String
 )

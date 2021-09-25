@@ -25,7 +25,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("com.github.johnrengelman.shadow") version "7.0.0"
     id("com.palantir.git-version") version "0.12.3"
     id("edu.sc.seis.launch4j") version "2.5.0"
     kotlin("jvm") version "1.5.30"
@@ -43,36 +42,36 @@ val gitVersion: groovy.lang.Closure<String> by extra
 version = gitVersion()
 
 dependencies {
-    implementation("com.esotericsoftware:kryo:5.2.0")
-    implementation("com.fasterxml.jackson.module:jackson-module-afterburner:2.12.5")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5")
-    implementation("com.google.code.gson:gson:2.8.8")
-    implementation("com.google.inject:guice:5.0.1")
-    implementation("com.google.inject.extensions:guice-assistedinject:5.0.1")
-    implementation("com.hazelcast:hazelcast-all:4.2.2")
-    implementation("com.valaphee:foundry-databind:1.3.0.0")
-    implementation("com.valaphee:foundry-math:1.3.0.0")
-    implementation("commons-cli:commons-cli:1.4")
-    implementation("io.github.classgraph:classgraph:4.8.116")
-    implementation("io.netty:netty-buffer:4.1.68.Final")
-    implementation("io.netty:netty-transport-native-epoll:4.1.68.Final:linux-x86_64")
-    implementation("io.netty:netty-transport-native-kqueue:4.1.68.Final:osx-x86_64")
-    implementation("io.netty:netty-codec-http2:4.1.68.Final")
-    implementation("it.unimi.dsi:fastutil:8.5.6")
-    implementation("jline:jline:2.14.6")
-    implementation("network.ycc:netty-raknet-client:0.8-SNAPSHOT")
-    implementation("network.ycc:netty-raknet-server:0.8-SNAPSHOT")
-    implementation("org.apache.logging.log4j:log4j-core:2.14.1")
-    implementation("org.apache.logging.log4j:log4j-iostreams:2.14.1")
-    implementation("org.apache.logging.log4j:log4j-jul:2.14.1")
-    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.14.1")
-    implementation("org.bitbucket.b_c:jose4j:0.7.9")
-    implementation("org.fusesource.leveldbjni:leveldbjni-all:1.8")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
-    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.4")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.5.2-native-mt")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.0")
-    implementation("org.lz4:lz4-java:1.8.0")
+    api("com.esotericsoftware:kryo:5.2.0")
+    api("com.fasterxml.jackson.module:jackson-module-afterburner:2.12.5")
+    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5")
+    api("com.google.code.gson:gson:2.8.8")
+    api("com.google.inject:guice:5.0.1")
+    api("com.google.inject.extensions:guice-assistedinject:5.0.1")
+    api("com.hazelcast:hazelcast-all:4.2.2")
+    api("com.valaphee:foundry-databind:1.3.0.0")
+    api("com.valaphee:foundry-math:1.3.0.0")
+    api("commons-cli:commons-cli:1.4")
+    api("io.github.classgraph:classgraph:4.8.116")
+    api("io.netty:netty-buffer:4.1.68.Final")
+    api("io.netty:netty-transport-native-epoll:4.1.68.Final:linux-x86_64")
+    api("io.netty:netty-transport-native-kqueue:4.1.68.Final:osx-x86_64")
+    api("io.netty:netty-codec-http2:4.1.68.Final")
+    api("it.unimi.dsi:fastutil:8.5.6")
+    api("jline:jline:2.14.6")
+    api("network.ycc:netty-raknet-client:0.8-SNAPSHOT")
+    api("network.ycc:netty-raknet-server:0.8-SNAPSHOT")
+    api("org.apache.logging.log4j:log4j-core:2.14.1")
+    api("org.apache.logging.log4j:log4j-iostreams:2.14.1")
+    api("org.apache.logging.log4j:log4j-jul:2.14.1")
+    api("org.apache.logging.log4j:log4j-slf4j-impl:2.14.1")
+    api("org.bitbucket.b_c:jose4j:0.7.9")
+    api("org.fusesource.leveldbjni:leveldbjni-all:1.8")
+    api("org.jetbrains.kotlin:kotlin-reflect:1.5.30")
+    api("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.4")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.5.2-native-mt")
+    testApi("org.junit.jupiter:junit-jupiter:5.8.0")
+    api("org.lz4:lz4-java:1.8.0")
 }
 
 tasks {
@@ -81,24 +80,13 @@ tasks {
         targetCompatibility = "16"
     }
 
-    withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            jvmTarget = "16"
-            freeCompilerArgs = listOf("-Xlambdas=indy", "-Xsam-conversions=indy", "-Xopt-in=kotlin.contracts.ExperimentalContracts", "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi")
-        }
-    }
+    withType<KotlinCompile>().configureEach { kotlinOptions { jvmTarget = "16" } }
 
     withType<Test> { useJUnitPlatform() }
 
     task<Copy>("copyDependencies") {
         from(configurations.default)
         into("build/libs/libs")
-    }
-
-    shadowJar {
-        archiveName = "tesseract.jar"
-
-        manifest { attributes["Main-Class"] = "com.valaphee.tesseract.MainKt" }
     }
 }
 
@@ -143,7 +131,6 @@ publishing {
 launch4j {
     mainClassName = "com.valaphee.tesseract.MainKt"
     headerType = "console"
-    jarTask = tasks.shadowJar.get()
     icon = "${projectDir}/app.ico"
     copyright = "Copyright (c) 2021, Valaphee"
     companyName = "Valaphee"
