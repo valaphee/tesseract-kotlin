@@ -22,44 +22,15 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.command
+package com.valaphee.tesseract.data.item
 
-import com.valaphee.tesseract.net.PacketBuffer
+import com.valaphee.tesseract.data.Data
+import com.valaphee.tesseract.data.KeyedData
+import com.valaphee.tesseract.util.nbt.CompoundTag
 
 /**
  * @author Kevin Ludwig
  */
-data class Message(
-    val success: Boolean,
-    val message: String,
-    val arguments: Array<String>
-) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Message
-
-        if (success != other.success) return false
-        if (message != other.message) return false
-        if (!arguments.contentEquals(other.arguments)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = success.hashCode()
-        result = 31 * result + message.hashCode()
-        result = 31 * result + arguments.contentHashCode()
-        return result
-    }
-}
-
-fun PacketBuffer.readMessage() = Message(readBoolean(), readString(), Array(readVarUInt()) { readString() })
-
-fun PacketBuffer.writeMessage(value: Message) {
-    writeBoolean(value.success)
-    writeString(value.message)
-    writeVarUInt(value.arguments.size)
-    value.arguments.forEach { writeString(it) }
+interface IItem : Data, KeyedData {
+    val component: CompoundTag? get() = null
 }

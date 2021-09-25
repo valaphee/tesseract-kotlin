@@ -24,9 +24,6 @@
 
 package com.valaphee.tesseract.command.net
 
-import com.valaphee.tesseract.command.Message
-import com.valaphee.tesseract.command.readMessage
-import com.valaphee.tesseract.command.writeMessage
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
@@ -39,11 +36,11 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.ToClient)
 data class CommandResponsePacket(
-    var origin: Origin,
-    var type: Type,
-    var successCount: Int,
-    var messages: Array<Message>,
-    var data: String?
+    val origin: Origin,
+    val type: Type,
+    val successCount: Int,
+    val messages: Array<Message>,
+    val data: String?
 ) : Packet {
     enum class Type {
         None, LastOutput, Silent, AllOutput, Data

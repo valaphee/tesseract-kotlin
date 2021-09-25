@@ -33,7 +33,7 @@ import com.valaphee.tesseract.net.PacketReader
  * @author Kevin Ludwig
  */
 data class GameModePacket(
-    var gameMode: GameMode
+    val gameMode: GameMode
 ) : Packet {
     override val id get() = 0x3E
 

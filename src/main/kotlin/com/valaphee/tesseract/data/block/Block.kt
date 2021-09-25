@@ -20,14 +20,17 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
  */
 
 package com.valaphee.tesseract.data.block
 
-import com.valaphee.tesseract.data.Data
-import com.valaphee.tesseract.data.KeyedData
+import com.valaphee.tesseract.util.nbt.CompoundTag
 
 /**
  * @author Kevin Ludwig
  */
-interface Block : Data, KeyedData
+class Block(
+    override val key: String,
+    override val component: CompoundTag?
+) : IBlock

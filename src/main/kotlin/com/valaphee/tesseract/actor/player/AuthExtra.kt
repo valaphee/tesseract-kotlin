@@ -32,9 +32,9 @@ import java.util.UUID
  * @author Kevin Ludwig
  */
 data class AuthExtra(
-    var userId: UUID,
-    var xboxUserId: String,
-    var userName: String
+    val userId: UUID,
+    val xboxUserId: String,
+    val userName: String
 ) {
     fun toJson(json: JsonObject) {
         json.addProperty("identity", userId.toString())

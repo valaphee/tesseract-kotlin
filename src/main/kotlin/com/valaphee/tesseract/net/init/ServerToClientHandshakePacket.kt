@@ -48,9 +48,9 @@ import java.util.Base64
  */
 @Restrict(Restriction.ToClient)
 data class ServerToClientHandshakePacket(
-    var serverPublicKey: PublicKey,
+    val serverPublicKey: PublicKey,
     val serverPrivateKey: PrivateKey?,
-    var salt: ByteArray
+    val salt: ByteArray
 ) : Packet {
     override val id get() = 0x03
 

@@ -38,14 +38,14 @@ import java.util.UUID
  */
 @Restrict(Restriction.ToServer)
 data class PackDataChunkRequestPacket(
-    var packId: UUID,
-    var packVersion: String?,
-    var chunkIndex: Long
+    val packId: UUID,
+    val packVersion: String?,
+    val chunkIndex: Long
 ) : Packet {
     override val id get() = 0x54
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeString("$packId${if (null == packVersion) "" else "_$packVersion"}")
+        buffer.writeString("$packId${packVersion?.let { "_$packVersion"} ?: "" }")
         buffer.writeIntLE(chunkIndex.toInt())
     }
 

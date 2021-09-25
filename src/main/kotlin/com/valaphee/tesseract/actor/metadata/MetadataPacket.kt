@@ -27,6 +27,7 @@ package com.valaphee.tesseract.actor.metadata
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 
@@ -35,9 +36,9 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.ToClient)
 data class MetadataPacket(
-    var runtimeEntityId: Long,
+    val runtimeEntityId: Long,
     val metadata: Metadata,
-    var tick: Long
+    val tick: Long
 ) : Packet {
     override val id get() = 0x27
 
@@ -48,4 +49,11 @@ data class MetadataPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.metadata(this)
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object MetadataPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = MetadataPacket(buffer.readVarULong(), Metadata().apply { readFromBuffer(buffer) }, if (version >= 419) buffer.readVarULong() else 0)
 }

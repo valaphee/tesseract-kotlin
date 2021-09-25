@@ -33,9 +33,9 @@ import com.valaphee.tesseract.net.PacketReader
  * @author Kevin Ludwig
  */
 data class EmotePacket(
-    var runtimeEntityId: Long,
-    var emoteId: String,
-    var flags: Collection<Flag>
+    val runtimeEntityId: Long,
+    val emoteId: String,
+    val flags: Collection<Flag>
 ) : Packet {
     enum class Flag {
         Serverside

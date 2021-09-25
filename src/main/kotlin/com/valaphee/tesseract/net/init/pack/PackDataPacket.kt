@@ -38,14 +38,14 @@ import java.util.UUID
  */
 @Restrict(Restriction.ToClient)
 data class PackDataPacket(
-    var packId: UUID,
-    var packVersion: String?,
-    var maximumChunkSize: Long,
-    var chunkCount: Long,
-    var compressedPackSize: Long,
-    var hash: ByteArray,
-    var premium: Boolean,
-    var type: Type
+    val packId: UUID,
+    val packVersion: String?,
+    val maximumChunkSize: Long,
+    val chunkCount: Long,
+    val compressedPackSize: Long,
+    val hash: ByteArray,
+    val premium: Boolean,
+    val type: Type
 ) : Packet {
     enum class Type {
         Invalid,
@@ -62,7 +62,7 @@ data class PackDataPacket(
     override val id get() = 0x52
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeString("$packId${if (null == packVersion) "" else "_$packVersion"}")
+        buffer.writeString("$packId${packVersion?.let { "_$packVersion"} ?: "" }")
         buffer.writeIntLE(maximumChunkSize.toInt())
         buffer.writeIntLE(chunkCount.toInt())
         buffer.writeLongLE(compressedPackSize)

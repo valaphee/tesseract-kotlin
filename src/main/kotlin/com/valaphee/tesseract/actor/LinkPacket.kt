@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.ToClient)
 data class LinkPacket(
-    var link: Link
+    val link: Link
 ) : Packet {
     override val id get() = 0x29
 

@@ -33,10 +33,10 @@ import com.valaphee.tesseract.net.PacketReader
  * @author Kevin Ludwig
  */
 data class ViolationPacket(
-    var type: Type,
-    var severity: Severity,
-    var packetId: Int,
-    var context: String
+    val type: Type,
+    val severity: Severity,
+    val packetId: Int,
+    val context: String
 ) : Packet {
     enum class Type {
         Unknown, MalformedPacket

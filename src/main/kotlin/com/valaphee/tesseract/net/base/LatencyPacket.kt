@@ -33,8 +33,8 @@ import com.valaphee.tesseract.net.PacketReader
  * @author Kevin Ludwig
  */
 data class LatencyPacket(
-    var timestamp: Long = 0,
-    var fromServer: Boolean = false
+    val timestamp: Long = 0,
+    val fromServer: Boolean = false
 ) : Packet {
     override val id get() = 0x73
 

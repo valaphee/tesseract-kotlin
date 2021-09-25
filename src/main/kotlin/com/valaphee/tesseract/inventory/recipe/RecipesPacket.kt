@@ -107,6 +107,7 @@ data class RecipesPacket(
             buffer.writeVarInt(it.reagentId)
             buffer.writeVarInt(it.outputId)
         }
+        buffer.writeVarUInt(0)
         buffer.writeBoolean(cleanRecipes)
     }
 

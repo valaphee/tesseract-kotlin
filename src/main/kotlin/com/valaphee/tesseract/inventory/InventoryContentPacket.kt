@@ -39,8 +39,8 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.ToClient)
 data class InventoryContentPacket(
-    var windowId: Int,
-    var content: Array<Stack<*>?>
+    val windowId: Int,
+    val content: Array<Stack<*>?>
 ) : Packet {
     override val id get() = 0x31
 

@@ -37,12 +37,12 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.ToClient)
 data class BlockUpdateSyncedPacket(
-    var position: Int3,
-    var runtimeId: Int,
-    var flags: Collection<BlockUpdatePacket.Flag>,
-    var layerId: Int,
-    var runtimeEntityId: Long,
-    var type: Type
+    val position: Int3,
+    val runtimeId: Int,
+    val flags: Collection<BlockUpdatePacket.Flag>,
+    val layerId: Int,
+    val runtimeEntityId: Long,
+    val type: Type
 ) : Packet {
     enum class Type {
         None, Create, Destroy

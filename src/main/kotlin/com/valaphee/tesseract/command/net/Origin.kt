@@ -31,10 +31,10 @@ import java.util.UUID
  * @author Kevin Ludwig
  */
 data class Origin(
-    var where: Where,
-    var requestId: UUID,
-    var purpose: String,
-    var eventId: Long
+    val where: Where,
+    val requestId: UUID,
+    val purpose: String,
+    val eventId: Long
 ) {
     enum class Where {
         Player,

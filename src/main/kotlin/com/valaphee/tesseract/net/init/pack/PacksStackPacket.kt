@@ -40,18 +40,18 @@ import java.util.UUID
  */
 @Restrict(Restriction.ToClient)
 data class PacksStackPacket(
-    var forcedToAccept: Boolean,
-    var behaviorPacks: Array<Pack>,
-    var resourcePacks: Array<Pack>,
-    var experimental: Boolean,
-    var version: String,
-    var experiments: Array<Experiment>,
-    var experimentsPreviouslyToggled: Boolean
+    val forcedToAccept: Boolean,
+    val behaviorPacks: Array<Pack>,
+    val resourcePacks: Array<Pack>,
+    val experimental: Boolean,
+    val version: String,
+    val experiments: Array<Experiment>,
+    val experimentsPreviouslyToggled: Boolean
 ) : Packet {
     data class Pack(
-        var packId: UUID,
-        var version: String,
-        var subPackName: String
+        val id: UUID,
+        val version: String,
+        val subPackName: String
     )
 
     override val id get() = 0x07
@@ -60,13 +60,13 @@ data class PacksStackPacket(
         buffer.writeBoolean(forcedToAccept)
         buffer.writeVarUInt(behaviorPacks.size)
         behaviorPacks.forEach {
-            buffer.writeString(it.packId.toString())
+            buffer.writeString(it.id.toString())
             buffer.writeString(it.version)
             buffer.writeString(it.subPackName)
         }
         buffer.writeVarUInt(resourcePacks.size)
         resourcePacks.forEach {
-            buffer.writeString(it.packId.toString())
+            buffer.writeString(it.id.toString())
             buffer.writeString(it.version)
             buffer.writeString(it.subPackName)
         }

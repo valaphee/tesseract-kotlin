@@ -35,15 +35,15 @@ import com.valaphee.tesseract.net.PacketReader
  * @author Kevin Ludwig
  */
 data class PlayerLocationPacket(
-    var runtimeEntityId: Long,
-    var position: Float3,
-    var rotation: Float2,
-    var headRotationYaw: Float,
-    var mode: Mode,
-    var onGround: Boolean,
-    var drivingRuntimeEntityId: Long,
-    var teleportationCause: TeleportationCause?,
-    var tick: Long
+    val runtimeEntityId: Long,
+    val position: Float3,
+    val rotation: Float2,
+    val headRotationYaw: Float,
+    val mode: Mode,
+    val onGround: Boolean,
+    val drivingRuntimeEntityId: Long,
+    val teleportationCause: TeleportationCause = TeleportationCause.Unknown,
+    val tick: Long
 ) : Packet {
     enum class Mode {
         Normal, Reset, Teleport, Vehicle
@@ -64,8 +64,8 @@ data class PlayerLocationPacket(
         buffer.writeBoolean(onGround)
         buffer.writeVarULong(drivingRuntimeEntityId)
         if (mode == Mode.Teleport) {
-            buffer.writeIntLE(teleportationCause!!.ordinal)
-            buffer.writeIntLE(0)
+            buffer.writeIntLE(teleportationCause.ordinal)
+            buffer.writeIntLE(0) // TODO
         }
         if (version >= 419) buffer.writeVarULong(tick)
     }
@@ -85,14 +85,12 @@ object PlayerLocationPacketReader : PacketReader {
         val mode = PlayerLocationPacket.Mode.values()[buffer.readUnsignedByte().toInt()]
         val onGround = buffer.readBoolean()
         val drivingRuntimeEntityId = buffer.readVarULong()
-        val teleportationCause: PlayerLocationPacket.TeleportationCause?
-        /*val actorType: ActorType?*/
+        val teleportationCause: PlayerLocationPacket.TeleportationCause
         if (mode == PlayerLocationPacket.Mode.Teleport) {
             teleportationCause = PlayerLocationPacket.TeleportationCause.values()[buffer.readIntLE()]
-            /*actorType = ActorType.byId(buffer.readIntLE())*/
+            buffer.readIntLE() // TODO
         } else {
-            teleportationCause = null
-            /*actorType = null*/
+            teleportationCause = PlayerLocationPacket.TeleportationCause.Unknown
         }
         val tick = if (version >= 419) buffer.readVarULong() else 0
         return PlayerLocationPacket(runtimeEntityId, position, rotation, headRotationYaw, mode, onGround, drivingRuntimeEntityId, teleportationCause, tick)

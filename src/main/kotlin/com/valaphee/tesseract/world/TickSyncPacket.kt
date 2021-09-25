@@ -34,8 +34,8 @@ import com.valaphee.tesseract.net.PacketReader
  * @author Kevin Ludwig
  */
 data class TickSyncPacket(
-    var requestTicks: Long = 0,
-    var responseTicks: Long = 0
+    val requestTicks: Long,
+    val responseTicks: Long
 ) : Packet {
     override val id get() = 0x17
 

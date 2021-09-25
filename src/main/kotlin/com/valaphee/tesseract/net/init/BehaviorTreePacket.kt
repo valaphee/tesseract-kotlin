@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.ToClient)
 data class BehaviorTreePacket(
-    var json: JsonElement? = null
+    val json: JsonElement
 ) : Packet {
     override val id get() = 0x59
 

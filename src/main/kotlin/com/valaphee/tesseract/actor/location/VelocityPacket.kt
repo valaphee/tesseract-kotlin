@@ -34,8 +34,8 @@ import com.valaphee.tesseract.net.PacketReader
  * @author Kevin Ludwig
  */
 data class VelocityPacket(
-    var runtimeEntityId: Long,
-    var velocity: Float3
+    val runtimeEntityId: Long,
+    val velocity: Float3
 ) : Packet {
     override val id get() = 0x28
 

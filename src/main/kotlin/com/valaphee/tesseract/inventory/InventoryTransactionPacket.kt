@@ -44,20 +44,20 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
  */
 @Restrict(Restriction.ToServer)
 data class InventoryTransactionPacket(
-    var legacySlots: Array<LegacySlot>?,
-    var type: Type,
-    var usingNetIds: Boolean,
-    var actions: Array<Action>,
-    var actionId: Int,
-    var runtimeEntityId: Long,
-    var position: Int3?,
-    var auxInt: Int,
-    var hotbarSlot: Int,
-    var stackInHand: Stack<*>?,
-    var fromPosition: Float3?,
-    var clickPosition: Float3?,
-    var headPosition: Float3?,
-    var blockRuntimeId: Int
+    val legacySlots: Array<LegacySlot>?,
+    val type: Type,
+    val usingNetIds: Boolean,
+    val actions: Array<Action>,
+    val actionId: Int,
+    val runtimeEntityId: Long,
+    val position: Int3?,
+    val auxInt: Int,
+    val hotbarSlot: Int,
+    val stackInHand: Stack<*>?,
+    val fromPosition: Float3?,
+    val clickPosition: Float3?,
+    val headPosition: Float3?,
+    val blockRuntimeId: Int
 ) : Packet {
     data class LegacySlot(
         val windowId: Int,

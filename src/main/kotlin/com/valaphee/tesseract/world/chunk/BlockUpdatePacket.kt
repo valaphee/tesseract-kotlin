@@ -38,10 +38,10 @@ import java.util.EnumSet
  */
 @Restrict(Restriction.ToClient)
 data class BlockUpdatePacket(
-    var position: Int3,
-    var runtimeId: Int,
-    var flags: Collection<Flag>,
-    var layerId: Int
+    val position: Int3,
+    val runtimeId: Int,
+    val flags: Collection<Flag>,
+    val layerId: Int
 ) : Packet {
     enum class Flag {
         Neighbors, Network, NonVisual, Priority;

@@ -31,18 +31,18 @@ import java.util.UUID
  * @author Kevin Ludwig
  */
 data class Recipe(
-    var id: UUID?,
-    var name: String?,
-    var type: Type?,
-    var inputId: Int,
-    var inputDamage: Int,
-    var width: Int,
-    var height: Int,
-    var inputs: Array<Stack<*>?>?,
-    var outputs: Array<Stack<*>?>?,
-    var tag: String?,
-    var priority: Int,
-    var netId: Int
+    val id: UUID?,
+    val name: String?,
+    val type: Type?,
+    val inputId: Int,
+    val inputDamage: Int,
+    val width: Int,
+    val height: Int,
+    val inputs: Array<Stack<*>?>?,
+    val outputs: Array<Stack<*>?>?,
+    val tag: String?,
+    val priority: Int,
+    val netId: Int
 ) {
     enum class Type {
         Shapeless,

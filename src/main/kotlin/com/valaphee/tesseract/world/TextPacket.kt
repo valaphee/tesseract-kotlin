@@ -34,13 +34,13 @@ import com.valaphee.tesseract.net.PacketReader
  * @author Kevin Ludwig
  */
 data class TextPacket(
-    var type: Type,
-    var needsTranslation: Boolean,
-    var sourceName: String?,
-    var message: String,
-    var arguments: Array<String>?,
-    var xboxUserId: String,
-    var platformChatId: String
+    val type: Type,
+    val needsTranslation: Boolean,
+    val sourceName: String?,
+    val message: String,
+    val arguments: Array<String>?,
+    val xboxUserId: String,
+    val platformChatId: String
 ) : Packet {
     enum class Type {
         Raw, Chat, Translation, PopUp, JukeboxPopUp, Tip, System, Whisper, Announcement, Object, ObjectWhisper

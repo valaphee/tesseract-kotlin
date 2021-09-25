@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.net.base
+package com.valaphee.tesseract.command.net
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.ToServer)
 data class LocalPlayerAsInitializedPacket(
-    var runtimeEntityId: Long
+    val runtimeEntityId: Long
 ) : Packet {
     override val id get() = 0x71
 

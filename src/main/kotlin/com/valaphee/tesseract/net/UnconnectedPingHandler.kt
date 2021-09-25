@@ -44,7 +44,7 @@ class UnconnectedPingHandler(
 ) : UdpPacketHandler<UnconnectedPing>(UnconnectedPing::class.java) {
     override fun handle(context: ChannelHandlerContext, address: InetSocketAddress, packet: UnconnectedPing) {
         val rakNetConfig = context.channel().config() as RakNet.Config
-        val unconnectedPongPacket = UnconnectedPong(packet.clientTime, rakNetConfig.serverId, rakNetConfig.magic, Pong(rakNetConfig.serverId, config.listener.serverName, "1.17.11", 448, "MCPE", false, GameMode.Survival, 0 /* TODO */, config.maximumPlayers, 19132, 19133, config.listener.serverName).toString())
+        val unconnectedPongPacket = UnconnectedPong(packet.clientTime, rakNetConfig.serverId, rakNetConfig.magic, Pong(rakNetConfig.serverId, config.listener.serverName, "1.17.30", 465, "MCPE", false, GameMode.Survival, 0 /* TODO */, config.maximumPlayers, 19132, 19133, config.listener.serverName).toString())
         val unconnectedPongBuffer = context.alloc().directBuffer(unconnectedPongPacket.sizeHint())
         try {
             rakNetConfig.codec.encode(unconnectedPongPacket, unconnectedPongBuffer)

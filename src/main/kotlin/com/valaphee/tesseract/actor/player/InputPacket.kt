@@ -38,16 +38,16 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.ToServer)
 data class InputPacket(
-    var rotation: Float2,
-    var position: Float3,
-    var move: Float2,
-    var headRotationYaw: Float,
-    var input: Collection<Input>,
-    var inputMode: User.InputMode,
-    var playMode: PlayMode,
-    var virtualRealityGazeDirection: Float3? = null,
-    var tick: Long,
-    var positionDelta: Float3
+    val rotation: Float2,
+    val position: Float3,
+    val move: Float2,
+    val headRotationYaw: Float,
+    val input: Collection<Input>,
+    val inputMode: User.InputMode,
+    val playMode: PlayMode,
+    val virtualRealityGazeDirection: Float3? = null,
+    val tick: Long,
+    val positionDelta: Float3
 ) : Packet {
     enum class PlayMode {
         Normal,

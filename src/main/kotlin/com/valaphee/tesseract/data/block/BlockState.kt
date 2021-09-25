@@ -20,6 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
  */
 
 package com.valaphee.tesseract.data.block
@@ -44,7 +45,7 @@ class BlockState(
         }
     }
     var id = 0
-    var block: Block? = null
+    var block: IBlock? = null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

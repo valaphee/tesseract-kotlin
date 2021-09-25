@@ -29,11 +29,11 @@ package com.valaphee.tesseract.command.net
  */
 data class Parameter(
     val name: String,
-    var optional: Boolean,
-    var options: Collection<Option>,
-    var enumeration: Enumeration?,
-    var postfix: String?,
-    var type: Type?
+    val optional: Boolean,
+    val options: Collection<Option>,
+    val enumeration: Enumeration?,
+    val postfix: String?,
+    val type: Type?
 ) {
     enum class Option {
         SuppressEnumerationAutoCompletion, HasSemanticConstraint

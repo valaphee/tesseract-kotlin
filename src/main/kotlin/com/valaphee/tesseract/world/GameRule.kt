@@ -30,9 +30,9 @@ import com.valaphee.tesseract.net.PacketBuffer
  * @author Kevin Ludwig
  */
 data class GameRule<T>(
-    var name: String,
-    var editable: Boolean,
-    var value: T
+    val name: String,
+    val editable: Boolean,
+    val value: T
 )
 
 fun PacketBuffer.readGameRulePre440(): GameRule<*> {
@@ -61,15 +61,15 @@ fun PacketBuffer.writeGameRulePre440(value: GameRule<*>) {
     when (value.value) {
         is Boolean -> {
             writeVarUInt(1)
-            writeBoolean(value.value as Boolean)
+            writeBoolean(value.value)
         }
         is Int -> {
             writeVarUInt(2)
-            writeVarUInt(value.value as Int)
+            writeVarUInt(value.value)
         }
         is Float -> {
             writeVarUInt(3)
-            writeFloatLE(value.value as Float)
+            writeFloatLE(value.value)
         }
         else -> TODO()
     }
@@ -81,15 +81,15 @@ fun PacketBuffer.writeGameRule(value: GameRule<*>) {
     when (value.value) {
         is Boolean -> {
             writeVarUInt(1)
-            writeBoolean(value.value as Boolean)
+            writeBoolean(value.value)
         }
         is Int -> {
             writeVarUInt(2)
-            writeVarUInt(value.value as Int)
+            writeVarUInt(value.value)
         }
         is Float -> {
             writeVarUInt(3)
-            writeFloatLE(value.value as Float)
+            writeFloatLE(value.value)
         }
         else -> TODO()
     }

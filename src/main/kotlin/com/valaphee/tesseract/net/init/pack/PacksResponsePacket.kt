@@ -38,8 +38,8 @@ import java.util.UUID
  */
 @Restrict(Restriction.ToServer)
 data class PacksResponsePacket(
-    var status: Status,
-    var packIds: Array<UUID>
+    val status: Status,
+    val packIds: Array<UUID>
 ) : Packet {
     enum class Status {
         None, Refused, TransferPacks, HaveAllPacks, Completed

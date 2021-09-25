@@ -25,7 +25,6 @@
 package com.valaphee.tesseract.inventory.item
 
 import com.valaphee.tesseract.inventory.item.stack.meta.Meta
-import com.valaphee.tesseract.util.nbt.CompoundTag
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 
 /**
@@ -33,11 +32,10 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
  */
 class Item<T : Meta> constructor(
     val key: String,
-    val component: CompoundTag? = null,
     val meta: () -> T
 ) {
     var id = 0
-    var item: com.valaphee.tesseract.data.item.Item? = null
+    var item: com.valaphee.tesseract.data.item.IItem? = null
 
     init {
         register(this)
@@ -67,7 +65,7 @@ class Item<T : Meta> constructor(
         }
 
         fun register(key: String, id: Int) {
-            byId[id] = byKey.getOrPut(key) { Item(key, null, ::Meta) }.apply { this.id = id }
+            byId[id] = byKey.getOrPut(key) { Item(key, ::Meta) }.apply { this.id = id }
         }
 
         fun byId(id: Int) = checkNotNull(byId[id])

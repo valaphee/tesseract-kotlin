@@ -35,12 +35,12 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.ToClient)
 data class InventoryResponsePacket(
-    var responses: Array<Response>
+    val responses: Array<Response>
 ) : Packet {
     data class Response(
         val status: ResponseStatus,
-        var requestId: Int,
-        var windows: Array<ResponseWindow>
+        val requestId: Int,
+        val windows: Array<ResponseWindow>
     ) {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true

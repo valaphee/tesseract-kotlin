@@ -37,9 +37,9 @@ import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
  */
 @Restrict(Restriction.ToClient)
 data class WorldEventPacket(
-    var eventOrParticleType: Event,
-    var position: Float3,
-    var data: Int
+    val eventOrParticleType: Event,
+    val position: Float3,
+    val data: Int
 ) : Packet {
     enum class Event {
         Unknown,

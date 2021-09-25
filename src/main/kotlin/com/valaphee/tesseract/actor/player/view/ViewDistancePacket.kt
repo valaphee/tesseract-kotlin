@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.ToClient)
 data class ViewDistancePacket(
-    var distance: Int
+    val distance: Int
 ) : Packet {
     override val id get() = 0x46
 

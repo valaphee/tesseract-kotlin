@@ -36,8 +36,8 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.ToServer)
 data class CacheBlobStatusPacket(
-    var misses: LongArray,
-    var hits: LongArray
+    val misses: LongArray,
+    val hits: LongArray
 ) : Packet {
     override val id get() = 0x87
 

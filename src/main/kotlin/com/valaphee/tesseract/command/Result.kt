@@ -24,6 +24,8 @@
 
 package com.valaphee.tesseract.command
 
+import com.valaphee.tesseract.command.net.Message
+
 /**
  * @author Kevin Ludwig
  */

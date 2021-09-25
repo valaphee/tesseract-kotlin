@@ -35,9 +35,9 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.ToClient)
 data class WindowPropertyPacket(
-    var windowId: Int,
-    var property: Int,
-    var value: Int
+    val windowId: Int,
+    val property: Int,
+    val value: Int
 ) : Packet {
     override val id get() = 0x33
 

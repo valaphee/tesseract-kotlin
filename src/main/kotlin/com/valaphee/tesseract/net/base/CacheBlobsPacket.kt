@@ -38,7 +38,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
  */
 @Restrict(Restriction.ToClient)
 data class CacheBlobsPacket(
-    val blobs: Long2ObjectMap<ByteArray> = Long2ObjectOpenHashMap()
+    val blobs: Long2ObjectMap<ByteArray>
 ) : Packet {
     override val id get() = 0x88
 
@@ -57,5 +57,8 @@ data class CacheBlobsPacket(
  * @author Kevin Ludwig
  */
 object CacheBlobsPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = CacheBlobsPacket().apply { repeat(buffer.readVarUInt()) { blobs[buffer.readLongLE()] = buffer.readByteArray() } }
+    override fun read(buffer: PacketBuffer, version: Int): CacheBlobsPacket {
+        val blobCount = buffer.readVarUInt()
+        return CacheBlobsPacket(Long2ObjectOpenHashMap<ByteArray>(blobCount).apply { repeat(blobCount) { this[buffer.readLongLE()] = buffer.readByteArray() } })
+    }
 }

@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.ToClient)
 data class StatusPacket(
-    var status: Status
+    val status: Status
 ) : Packet {
     enum class Status {
         LoginSuccess,

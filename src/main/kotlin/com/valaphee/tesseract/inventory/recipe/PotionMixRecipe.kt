@@ -28,10 +28,10 @@ package com.valaphee.tesseract.inventory.recipe
  * @author Kevin Ludwig
  */
 data class PotionMixRecipe(
-    var inputId: Int,
-    var inputSubId: Int,
-    var reagentId: Int,
-    var reagentSubId: Int,
-    var outputId: Int,
-    var outputSubId: Int
+    val inputId: Int,
+    val inputSubId: Int,
+    val reagentId: Int,
+    val reagentSubId: Int,
+    val outputId: Int,
+    val outputSubId: Int
 )

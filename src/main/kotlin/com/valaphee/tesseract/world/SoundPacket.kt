@@ -37,11 +37,11 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.ToClient)
 data class SoundPacket(
-    var sound: Sound? = null,
-    var soundKey: String? = null,
-    var position: Float3,
-    var volume: Float,
-    var pitch: Float
+    val sound: Sound? = null,
+    val soundKey: String? = null,
+    val position: Float3,
+    val volume: Float,
+    val pitch: Float
 ) : Packet {
     override val id get() = 0x56
 

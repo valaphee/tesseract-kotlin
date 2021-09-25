@@ -29,6 +29,7 @@ import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 
@@ -37,8 +38,8 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.ToClient)
 data class ChunkPublishPacket(
-    var position: Int3,
-    var radius: Int
+    val position: Int3,
+    val radius: Int
 ) : Packet {
     override val id get() = 0x79
 
@@ -48,4 +49,11 @@ data class ChunkPublishPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.chunkPublish(this)
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object ChunkPublishPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = ChunkPublishPacket(buffer.readInt3(), buffer.readVarUInt())
 }

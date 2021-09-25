@@ -27,6 +27,7 @@ package com.valaphee.tesseract.actor.attribute
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 
@@ -35,9 +36,9 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.ToClient)
 data class AttributesPacket(
-    var runtimeEntityId: Long,
+    val runtimeEntityId: Long,
     val attributes: Attributes,
-    var tick: Long
+    val tick: Long
 ) : Packet {
     override val id get() = 0x1D
 
@@ -48,4 +49,11 @@ data class AttributesPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.attributes(this)
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object AttributesPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = AttributesPacket(buffer.readVarULong(), Attributes().apply { readFromBuffer(buffer, true) }, if (version >= 419) buffer.readVarULong() else 0)
 }

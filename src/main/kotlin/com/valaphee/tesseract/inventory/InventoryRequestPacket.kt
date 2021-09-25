@@ -41,7 +41,7 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.ToServer)
 data class InventoryRequestPacket(
-    var requests: Array<Request>
+    val requests: Array<Request>
 ) : Packet {
     enum class ActionType {
         Move, Place, Swap, Drop, Destroy, Consume, Create, LabTableCombine, BeaconPayment, MineBlock, CraftRecipe, CraftRecipeAuto, CraftCreative, CraftRecipeOptional, CraftNonImplementedDeprecated, CraftResultsDeprecated

@@ -28,6 +28,7 @@ import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 
@@ -36,10 +37,10 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.ToClient)
 data class WindowOpenPacket(
-    var windowId: Int,
-    var type: WindowType,
-    var blockPosition: Int3,
-    var uniqueEntityId: Long
+    val windowId: Int,
+    val type: WindowType,
+    val blockPosition: Int3,
+    val uniqueEntityId: Long
 ) : Packet {
     override val id get() = 0x2E
 
@@ -51,4 +52,11 @@ data class WindowOpenPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.windowOpen(this)
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object WindowOpenPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = WindowOpenPacket(buffer.readByte().toInt(), WindowType.byId(buffer.readByte().toInt()), buffer.readInt3UnsignedY(), buffer.readVarLong())
 }

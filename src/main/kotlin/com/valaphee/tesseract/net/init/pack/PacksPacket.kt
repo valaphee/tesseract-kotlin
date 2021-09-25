@@ -38,21 +38,21 @@ import java.util.UUID
  */
 @Restrict(Restriction.ToClient)
 data class PacksPacket(
-    var forcedToAccept: Boolean,
-    var scriptingEnabled: Boolean,
-    var forcingServerPacksEnabled: Boolean,
-    var behaviorPacks: Array<Pack>,
-    var resourcePacks: Array<Pack>
+    val forcedToAccept: Boolean,
+    val scriptingEnabled: Boolean,
+    val forcingServerPacksEnabled: Boolean,
+    val behaviorPacks: Array<Pack>,
+    val resourcePacks: Array<Pack>
 ) : Packet {
     data class Pack(
-        var packId: UUID,
-        var version: String,
-        var size: Long,
-        var encryptionKey: String,
-        var subPackName: String,
-        var contentId: String,
-        var scripting: Boolean,
-        var raytracingCapable: Boolean = false
+        val id: UUID,
+        val version: String,
+        val size: Long,
+        val encryptionKey: String,
+        val subPackName: String,
+        val contentId: String,
+        val scripting: Boolean,
+        val raytracingCapable: Boolean = false
     )
 
     override val id get() = 0x06
@@ -63,7 +63,7 @@ data class PacksPacket(
         if (version >= 448) buffer.writeBoolean(forcingServerPacksEnabled)
         buffer.writeShortLE(behaviorPacks.size)
         behaviorPacks.forEach {
-            buffer.writeString(it.packId.toString())
+            buffer.writeString(it.id.toString())
             buffer.writeString(it.version)
             buffer.writeLongLE(it.size)
             buffer.writeString(it.encryptionKey)
@@ -73,7 +73,7 @@ data class PacksPacket(
         }
         buffer.writeShortLE(resourcePacks.size)
         resourcePacks.forEach {
-            buffer.writeString(it.packId.toString())
+            buffer.writeString(it.id.toString())
             buffer.writeString(it.version)
             buffer.writeLongLE(it.size)
             buffer.writeString(it.encryptionKey)

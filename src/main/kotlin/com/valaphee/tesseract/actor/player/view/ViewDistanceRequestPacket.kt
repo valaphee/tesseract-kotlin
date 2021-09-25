@@ -33,7 +33,7 @@ import com.valaphee.tesseract.net.PacketReader
  * @author Kevin Ludwig
  */
 data class ViewDistanceRequestPacket(
-    var distance: Int = 0
+    val distance: Int = 0
 ) : Packet {
     override val id get() = 0x45
 

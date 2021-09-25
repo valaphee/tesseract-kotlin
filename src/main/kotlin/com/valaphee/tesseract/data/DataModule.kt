@@ -42,9 +42,9 @@ import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.collision.BoundingBox
 import com.valaphee.tesseract.Argument
-import com.valaphee.tesseract.data.block.Block
+import com.valaphee.tesseract.data.block.IBlock
 import com.valaphee.tesseract.data.block.BlockState
-import com.valaphee.tesseract.data.item.Item
+import com.valaphee.tesseract.data.item.IItem
 import com.valaphee.tesseract.util.jackson.BoundingBoxDeserializer
 import com.valaphee.tesseract.util.jackson.BoundingBoxSerializer
 import com.valaphee.tesseract.util.jackson.Float2Deserializer
@@ -73,8 +73,8 @@ class DataModule(
             val index = Index::class.jvmName
             it.getClassesWithAnnotation(index).forEach {
                 when (val data = Class.forName(it.name).kotlin.primaryConstructor!!.call()) {
-                    is Block -> BlockState.byKey(data.key).forEach { it.block = data }
-                    is Item -> com.valaphee.tesseract.inventory.item.Item.byKey(data.key).item = data
+                    is IBlock -> BlockState.byKey(data.key).forEach { it.block = data }
+                    is IItem -> com.valaphee.tesseract.inventory.item.Item.byKey(data.key).item = data
                 }
             }
         }

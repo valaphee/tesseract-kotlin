@@ -33,7 +33,7 @@ import com.valaphee.tesseract.net.PacketReader
  * @author Kevin Ludwig
  */
 data class DifficultyPacket(
-    var difficulty: Difficulty
+    val difficulty: Difficulty
 ) : Packet {
     override val id get() = 0x3C
 

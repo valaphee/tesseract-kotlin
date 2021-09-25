@@ -42,9 +42,9 @@ import it.unimi.dsi.fastutil.ints.Int2ShortOpenHashMap
  */
 @Restrict(Restriction.ToClient)
 data class ChunkPacket(
-    var position: Int2,
-    var blockStorage: BlockStorage,
-    var cache: Boolean,
+    val position: Int2,
+    val blockStorage: BlockStorage,
+    val cache: Boolean,
     val blobIds: LongArray? = null
 ) : Packet {
     override val id get() = 0x3A

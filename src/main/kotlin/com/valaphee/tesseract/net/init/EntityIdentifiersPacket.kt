@@ -39,7 +39,7 @@ import com.valaphee.tesseract.util.nbt.NbtOutputStream
 @Restrict(Restriction.ToClient)
 data class EntityIdentifiersPacket(
     val data: ByteArray?,
-    var tag: CompoundTag? = null
+    val tag: CompoundTag? = null
 ) : Packet {
     override val id get() = 0x77
 

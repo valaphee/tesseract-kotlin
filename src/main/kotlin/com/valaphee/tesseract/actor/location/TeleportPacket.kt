@@ -29,17 +29,18 @@ import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 
 /**
  * @author Kevin Ludwig
  */
 data class TeleportPacket(
-    var runtimeEntityId: Long,
-    var position: Float3,
-    var rotation: Float2,
-    var headRotationYaw: Float,
-    var onGround: Boolean,
-    var immediate: Boolean
+    val runtimeEntityId: Long,
+    val position: Float3,
+    val rotation: Float2,
+    val headRotationYaw: Float,
+    val onGround: Boolean,
+    val immediate: Boolean
 ) : Packet {
     override val id get() = 0x12
 
@@ -56,7 +57,23 @@ data class TeleportPacket(
     override fun handle(handler: PacketHandler) = handler.teleport(this)
 
     companion object {
-        private const val flagOnGround = 1 shl 0
-        private const val flagImmediate = 1 shl 1
+        internal const val flagOnGround = 1 shl 0
+        internal const val flagImmediate = 1 shl 1
+    }
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object TeleportPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int): TeleportPacket {
+        val runtimeEntityId = buffer.readVarULong()
+        val flagsValue = buffer.readUnsignedByte().toInt()
+        val onGround = flagsValue and TeleportPacket.flagOnGround != 0
+        val immediate = flagsValue and TeleportPacket.flagImmediate != 0
+        val position = buffer.readFloat3()
+        val rotation = buffer.readAngle2()
+        val headRotationYaw = buffer.readAngle()
+        return TeleportPacket(runtimeEntityId, position, rotation, headRotationYaw, onGround, immediate)
     }
 }

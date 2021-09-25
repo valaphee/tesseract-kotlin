@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.ToServer)
 data class CacheStatusPacket(
-    var supported: Boolean
+    val supported: Boolean
 ) : Packet {
     override val id get() = 0x81
 
