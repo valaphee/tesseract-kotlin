@@ -88,7 +88,7 @@ data class RecipesPacket(
                 }
                 Recipe.Type.Furnace, Recipe.Type.FurnaceData -> {
                     buffer.writeVarInt(it.inputId)
-                    if (type == Recipe.Type.FurnaceData) buffer.writeVarInt(it.inputDamage)
+                    if (type == Recipe.Type.FurnaceData) buffer.writeVarInt(it.inputSubId)
                     if (version >= 431) buffer.writeStackInstance(it.outputs!![0]) else buffer.writeStackPre431(it.outputs!![0])
                     buffer.writeString(it.tag!!)
                 }

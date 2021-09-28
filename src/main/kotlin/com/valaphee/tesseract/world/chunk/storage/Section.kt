@@ -132,9 +132,14 @@ class SectionCompact(
     }
 }
 
-fun PacketBuffer.readSection(default: Int) = when (readUnsignedByte().toInt()) {
+fun PacketBuffer.readSection(default: Int) = when (val version = readUnsignedByte().toInt()) {
     0, 2, 3, 4, 5, 6 -> SectionLegacy(ByteArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize).apply { readBytes(this) }, nibbleArray(ByteArray((BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize) / 2).apply { readBytes(this) })).also { if (isReadable(4096)) skipBytes(4096) }
     1 -> SectionCompact(arrayOf(readLayer(default)))
     8 -> SectionCompact(Array(readUnsignedByte().toInt()) { readLayer(default) })
-    else -> TODO()
+    9 -> {
+        val layerCount = readUnsignedByte().toInt()
+        readByte() // absolute index for data-driven dimension heights
+        SectionCompact(Array(layerCount) { readLayer(default) })
+    }
+    else -> TODO(version.toString())
 }

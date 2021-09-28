@@ -25,6 +25,7 @@
 package com.valaphee.tesseract
 
 import com.google.inject.Guice
+import com.valaphee.tesseract.capture.Capture
 import com.valaphee.tesseract.command.CommandManager
 import com.valaphee.tesseract.data.DataModule
 import com.valaphee.tesseract.log.Log4JLogHandler
@@ -129,9 +130,10 @@ fun main(arguments: Array<String>) {
 
     initializeConsole()
     initializeLogging()
-    initializeRuntime()
 
     val injector = Guice.createInjector(DataModule(argument))
+
+    Capture(injector).capture()
 
     val commandManager = injector.getInstance(CommandManager::class.java)
     if (ansi) reader.prompt = "tesseract> "

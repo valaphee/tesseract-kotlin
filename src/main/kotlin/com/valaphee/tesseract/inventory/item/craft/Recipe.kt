@@ -43,7 +43,7 @@ data class Recipe(
     val name: String?,
     val type: Type,
     val inputId: Int,
-    val inputDamage: Int,
+    val inputSubId: Int,
     val width: Int,
     val height: Int,
     val inputs: Array<Stack/*<*>*/?>?,
@@ -73,7 +73,7 @@ data class Recipe(
         if (name != other.name) return false
         if (type != other.type) return false
         if (inputId != other.inputId) return false
-        if (inputDamage != other.inputDamage) return false
+        if (inputSubId != other.inputSubId) return false
         if (width != other.width) return false
         if (height != other.height) return false
         if (inputs != null) {
@@ -96,7 +96,7 @@ data class Recipe(
         result = 31 * result + (name?.hashCode() ?: 0)
         result = 31 * result + (type?.hashCode() ?: 0)
         result = 31 * result + inputId
-        result = 31 * result + inputDamage
+        result = 31 * result + inputSubId
         result = 31 * result + width
         result = 31 * result + height
         result = 31 * result + (inputs?.contentHashCode() ?: 0)

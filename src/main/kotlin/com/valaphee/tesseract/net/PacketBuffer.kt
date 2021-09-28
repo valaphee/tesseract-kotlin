@@ -24,7 +24,6 @@
 
 package com.valaphee.tesseract.net
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
@@ -45,11 +44,9 @@ import java.util.UUID
  * @author Kevin Ludwig
  */
 class PacketBuffer(
-    buffer: ByteBuf
+    buffer: ByteBuf,
+    var local: Boolean = false
 ) : ByteBufWrapper(buffer) {
-    var local = false
-    val objectMapper = jacksonObjectMapper()
-
     inline fun <reified T : Enum<T>> readByteFlags(): Collection<T> {
         val flagsValue = readByte().toInt()
         return EnumSet.noneOf(T::class.java).apply { enumValues<T>().filter { (flagsValue and (1 shl it.ordinal)) != 0 }.forEach { add(it) } }

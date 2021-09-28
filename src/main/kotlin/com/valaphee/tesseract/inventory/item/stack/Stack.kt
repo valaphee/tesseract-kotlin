@@ -33,6 +33,7 @@ import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.valaphee.tesseract.data.block.BlockState
 import com.valaphee.tesseract.inventory.item.Item
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.util.LittleEndianByteBufInputStream
@@ -46,6 +47,8 @@ import com.valaphee.tesseract.util.getString
 import com.valaphee.tesseract.util.nbt.CompoundTag
 import com.valaphee.tesseract.util.nbt.NbtInputStream
 import com.valaphee.tesseract.util.nbt.NbtOutputStream
+import io.netty.buffer.Unpooled
+import java.util.Base64
 
 /**
  * @author Kevin Ludwig
@@ -62,7 +65,7 @@ data class Stack/*<T : Meta> internal constructor*/(
     var canDestroy: Array<String>? = null,
     var blockingTicks: Long = 0,
     var netId: Int = 0,
-    var blockRuntimeId: Int = 0
+    var blockState: BlockState? = null
 ) {
     /*var tag: CompoundTag?
         get() = meta?.toTag()
@@ -91,6 +94,7 @@ data class Stack/*<T : Meta> internal constructor*/(
         other as Stack/*<*>*/
 
         if (item != other.item) return false
+        if (subId != other.subId) return false
         if (count != other.count) return false
         if (tag != other.tag) return false
 
@@ -104,6 +108,7 @@ data class Stack/*<T : Meta> internal constructor*/(
         other as Stack/*<*>*/
 
         if (item != other.item) return false
+        if (subId != other.subId) return false
         if (tag != other.tag) return false
 
         return true
@@ -111,6 +116,7 @@ data class Stack/*<T : Meta> internal constructor*/(
 
     override fun hashCode(): Int {
         var result = item.hashCode()
+        result = 31 * result + subId
         result = 31 * result + count
         result = 31 * result + (tag?.hashCode() ?: 0)
         return result
@@ -121,12 +127,26 @@ data class Stack/*<T : Meta> internal constructor*/(
  * @author Kevin Ludwig
  */
 object StackSerializer : JsonSerializer<Stack/*<*>*/?>() {
+    private val base64Encoder = Base64.getEncoder()
+
     override fun serialize(value: Stack/*<*>*/?, generator: JsonGenerator, provider: SerializerProvider) {
         value?.let {
             generator.writeStartObject()
             generator.writeStringField("item", it.item.key)
-            if (it.subId != 0) generator.writeNumberField("data", it.subId)
+            if (it.subId != 0) generator.writeNumberField("subId", it.subId)
             if (it.count != 1) generator.writeNumberField("count", it.count)
+            it.tag?.let { tag ->
+                var buffer: PacketBuffer? = null
+                try {
+                    buffer = PacketBuffer(Unpooled.buffer(), true).also { it.toNbtOutputStream().use { it.writeTag(tag) } }
+                    val array = ByteArray(buffer.readableBytes())
+                    buffer.readBytes(array)
+                    generator.writeStringField("tag", base64Encoder.encodeToString(array))
+                } finally {
+                    buffer?.release()
+                }
+            }
+            it.blockState?.let { generator.writeStringField("blockState", it.toString()) }
             generator.writeEndObject()
         } ?: generator.writeNull()
     }
@@ -136,10 +156,21 @@ object StackSerializer : JsonSerializer<Stack/*<*>*/?>() {
  * @author Kevin Ludwig
  */
 object StackDeserializer : JsonDeserializer<Stack/*<*>*/?>() {
+    private val base64Decoder = Base64.getDecoder()
+
     override fun deserialize(parser: JsonParser, context: DeserializationContext): Stack/*<*>*/? {
         val node = parser.readValueAsTree<JsonNode>()
         return if (node.isNull) null else {
-            Stack(Item.byKeyOrNull(node["item"].asText()) as Item/*<*>*/, node["data"]?.asInt() ?: 0, node["count"]?.asInt() ?: 1)
+            var tag: CompoundTag? = null
+            node["tag"]?.let {
+                var buffer: PacketBuffer? = null
+                try {
+                    buffer = PacketBuffer(Unpooled.wrappedBuffer(base64Decoder.decode(it.asText())), true).also { tag = it.toNbtInputStream().use { it.readTag()?.asCompoundTag() } }
+                } finally {
+                    buffer?.release()
+                }
+            }
+            Stack(Item.byKeyOrNull(node["item"].asText()) as Item/*<*>*/, node["subId"]?.asInt() ?: 0, node["count"]?.asInt() ?: 1, tag, blockState = node["blockState"]?.let { BlockState.byKeyWithStates(it.asText()) })
         }
     }
 }
@@ -205,7 +236,7 @@ fun PacketBuffer.readStack(): Stack/*<*>*/? {
         readIntLE().let { if (it == 0) null else Array(it) { readString16() } },
         if (item == shield) readLongLE() else 0,
         netId,
-        blockRuntimeId
+        if (blockRuntimeId != 0) BlockState.byId(blockRuntimeId) else null
     )
 }
 
@@ -232,7 +263,7 @@ fun PacketBuffer.readStackInstance(): Stack/*<*>*/? {
         readIntLE().let { if (it == 0) null else Array(it) { readString16() } },
         if (item == shield) readLongLE() else 0,
         0,
-        blockRuntimeId
+        if (blockRuntimeId != 0) BlockState.byId(blockRuntimeId) else null
     )
 }
 
@@ -277,7 +308,7 @@ fun PacketBuffer.writeStack(value: Stack/*<*>*/?) {
             writeBoolean(true)
             writeVarInt(it.netId)
         } else writeBoolean(false)
-        writeVarInt(it.blockRuntimeId)
+        writeVarInt(it.blockState?.id ?: 0)
         val dataLengthIndex = buffer.writerIndex()
         writeZero(PacketBuffer.MaximumVarUIntLength)
         it.tag?.let {
@@ -303,7 +334,7 @@ fun PacketBuffer.writeStackInstance(value: Stack/*<*>*/?) {
         writeVarInt(it.item.id)
         writeShortLE(it.count)
         writeVarUInt(it.subId)
-        writeVarInt(it.blockRuntimeId)
+        writeVarInt(it.blockState?.id ?: 0)
         val dataLengthIndex = buffer.writerIndex()
         writeZero(PacketBuffer.MaximumVarUIntLength)
         it.tag?.let {

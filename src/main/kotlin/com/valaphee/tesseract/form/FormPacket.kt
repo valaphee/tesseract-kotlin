@@ -25,6 +25,7 @@
 
 package com.valaphee.tesseract.form
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -45,7 +46,7 @@ data class FormPacket(
 
     override fun write(buffer: PacketBuffer, version: Int) {
         buffer.writeVarUInt(formId)
-        buffer.writeString(buffer.objectMapper.writeValueAsString(form))
+        buffer.writeString(jacksonObjectMapper().writeValueAsString(form))
     }
 
     override fun handle(handler: PacketHandler) = handler.form(this)
@@ -55,5 +56,5 @@ data class FormPacket(
  * @author Kevin Ludwig
  */
 object FormPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = FormPacket(buffer.readVarUInt(), buffer.objectMapper.readValue(buffer.readString()))
+    override fun read(buffer: PacketBuffer, version: Int) = FormPacket(buffer.readVarUInt(), jacksonObjectMapper().readValue(buffer.readString()))
 }

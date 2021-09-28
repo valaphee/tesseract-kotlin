@@ -37,7 +37,7 @@ import com.valaphee.tesseract.util.nbt.CompoundTag
 import com.valaphee.tesseract.world.chunk.storage.BlockStorage
 import com.valaphee.tesseract.world.chunk.storage.readSection
 import it.unimi.dsi.fastutil.ints.Int2ShortMap
-import it.unimi.dsi.fastutil.ints.Int2ShortOpenHashMap
+import it.unimi.dsi.fastutil.ints.Int2ShortMaps
 
 /**
  * @author Kevin Ludwig
@@ -129,8 +129,8 @@ object ChunkPacketReader : PacketReader {
             buffer.readBytes(ByteArray(BlockStorage.XZSize * BlockStorage.XZSize))
         } else blockStorage = BlockStorage(air.id, sectionCount)
         buffer.readByte()
-        val blockExtraData = Int2ShortOpenHashMap().apply { repeat(buffer.readVarInt()) { this[buffer.readVarInt()] = buffer.readShortLE() } }
-        return ChunkPacket(position, blockStorage, blockExtraData, emptyArray(), cache, blobIds)
+        /*val blockExtraData = Int2ShortOpenHashMap().apply { repeat(buffer.readVarInt()) { this[buffer.readVarInt()] = buffer.readShortLE() } }*/
+        return ChunkPacket(position, blockStorage, Int2ShortMaps.EMPTY_MAP, emptyArray(), cache, blobIds)
     }
 
     private val air = BlockState.byKeyWithStates("minecraft:air")
