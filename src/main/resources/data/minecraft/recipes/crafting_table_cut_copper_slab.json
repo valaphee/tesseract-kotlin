@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:crafting_table_cut_copper_slab",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:cut_copper",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA" ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:cut_copper_slab",
+      "count" : 6,
+      "blockState" : "minecraft:cut_copper_slab[top_slot_bit=false]"
+    }
+  }
+}

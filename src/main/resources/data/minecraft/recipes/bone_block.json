@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:bone_block",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:bone_meal"
+      }
+    },
+    "pattern" : [ "AAA", "AAA", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:bone_block",
+      "blockState" : "minecraft:bone_block[deprecated=0,pillar_axis=y]"
+    }
+  }
+}

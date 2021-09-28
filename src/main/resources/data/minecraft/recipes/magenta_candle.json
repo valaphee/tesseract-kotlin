@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:magenta_candle",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:candle",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:magenta_dye"
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:magenta_candle",
+      "blockState" : "minecraft:magenta_candle[candles=0,lit=false]"
+    }
+  }
+}

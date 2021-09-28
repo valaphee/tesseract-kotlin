@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:anvil",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:iron_block",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:iron_ingot",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", " B ", "BBB" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:anvil",
+      "blockState" : "minecraft:anvil[damage=undamaged,direction=0]"
+    }
+  }
+}

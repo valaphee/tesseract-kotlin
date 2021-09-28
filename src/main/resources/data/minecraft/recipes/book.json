@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:book",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:paper"
+    }, {
+      "item" : "minecraft:paper"
+    }, {
+      "item" : "minecraft:paper"
+    }, {
+      "item" : "minecraft:leather"
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:book"
+    }
+  }
+}

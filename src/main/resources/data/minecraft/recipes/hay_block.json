@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:hay_block",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:wheat",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "AAA", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:hay_block",
+      "blockState" : "minecraft:hay_block[deprecated=0,pillar_axis=y]"
+    }
+  }
+}

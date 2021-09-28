@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "stoneslab3_diorite_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:stone",
+        "subId" : 3
+      }
+    },
+    "pattern" : [ "AAA" ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:double_stone_slab3",
+      "count" : 6,
+      "blockState" : "minecraft:stone_slab3[stone_slab_type_3=diorite,top_slot_bit=false]"
+    }
+  }
+}

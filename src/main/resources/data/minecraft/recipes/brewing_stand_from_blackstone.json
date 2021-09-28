@@ -1,0 +1,21 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:brewing_stand_from_blackstone",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:blaze_rod",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:blackstone",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ " A ", "BBB" ],
+    "priority" : 2,
+    "result" : {
+      "item" : "minecraft:brewing_stand"
+    }
+  }
+}

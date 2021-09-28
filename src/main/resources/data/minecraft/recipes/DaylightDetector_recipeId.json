@@ -1,0 +1,25 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "DaylightDetector_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:glass"
+      },
+      "B" : {
+        "item" : "minecraft:quartz",
+        "subId" : -1
+      },
+      "C" : {
+        "item" : "minecraft:wooden_slab",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "BBB", "CCC" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:daylight_detector",
+      "blockState" : "minecraft:daylight_detector[redstone_signal=0]"
+    }
+  }
+}

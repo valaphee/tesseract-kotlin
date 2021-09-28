@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:stone_brick_stairs",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:stonebrick"
+      }
+    },
+    "pattern" : [ "A  ", "AA ", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:stone_brick_stairs",
+      "count" : 4,
+      "blockState" : "minecraft:stone_brick_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

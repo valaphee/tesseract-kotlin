@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:smooth_sandstone_stairs",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:sandstone",
+        "subId" : 3
+      }
+    },
+    "pattern" : [ "A  ", "AA ", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:smooth_sandstone_stairs",
+      "count" : 4,
+      "blockState" : "minecraft:smooth_sandstone_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

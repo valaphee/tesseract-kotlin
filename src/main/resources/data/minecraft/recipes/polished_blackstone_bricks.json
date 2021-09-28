@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:polished_blackstone_bricks",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:polished_blackstone",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AA", "AA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:polished_blackstone_bricks",
+      "count" : 4,
+      "blockState" : "minecraft:polished_blackstone_bricks"
+    }
+  }
+}

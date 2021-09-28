@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:leather_horse_armor",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:leather",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A A", "AAA", "A A" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:leather_horse_armor"
+    }
+  }
+}

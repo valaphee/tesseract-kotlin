@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:crafting_table_weathered_cut_copper_stairs",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:weathered_cut_copper",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A  ", "AA ", "AAA" ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:weathered_cut_copper_stairs",
+      "count" : 4,
+      "blockState" : "minecraft:weathered_cut_copper_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

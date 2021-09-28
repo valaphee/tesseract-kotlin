@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:andesite_stairs",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:stone",
+        "subId" : 5
+      }
+    },
+    "pattern" : [ "A  ", "AA ", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:andesite_stairs",
+      "count" : 4,
+      "blockState" : "minecraft:andesite_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

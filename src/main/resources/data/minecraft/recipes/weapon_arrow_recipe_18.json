@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "weapon_arrow_recipe_18",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:arrow"
+      },
+      "B" : {
+        "item" : "minecraft:lingering_potion",
+        "subId" : 18
+      }
+    },
+    "pattern" : [ "AAA", "ABA", "AAA" ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:arrow",
+      "subId" : 19,
+      "count" : 8
+    }
+  }
+}

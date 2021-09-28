@@ -1,0 +1,14 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:stonecutter_mossy_cobblestone_stairs",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:mossy_cobblestone"
+    } ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:mossy_cobblestone_stairs",
+      "blockState" : "minecraft:mossy_cobblestone_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:diorite",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:cobblestone",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:quartz",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AB", "BA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:stone",
+      "count" : 2,
+      "blockState" : "minecraft:stone[stone_type=diorite]"
+    }
+  }
+}

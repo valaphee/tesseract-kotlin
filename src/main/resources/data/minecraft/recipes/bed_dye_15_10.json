@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "bed_dye_15_10",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:bed",
+      "subId" : 5
+    }, {
+      "item" : "minecraft:bone_meal",
+      "subId" : -1
+    } ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:bed"
+    }
+  }
+}

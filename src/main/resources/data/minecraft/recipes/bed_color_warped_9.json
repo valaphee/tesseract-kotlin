@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "bed_color_warped_9",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:wool",
+        "subId" : 9
+      },
+      "B" : {
+        "item" : "minecraft:warped_planks",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "BBB" ],
+    "priority" : 2,
+    "result" : {
+      "item" : "minecraft:bed",
+      "subId" : 9
+    }
+  }
+}

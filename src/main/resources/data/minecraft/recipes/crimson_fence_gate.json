@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:crimson_fence_gate",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:stick",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:crimson_planks",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "ABA", "ABA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:crimson_fence_gate",
+      "blockState" : "minecraft:crimson_fence_gate[direction=0,in_wall_bit=false,open_bit=false]"
+    }
+  }
+}

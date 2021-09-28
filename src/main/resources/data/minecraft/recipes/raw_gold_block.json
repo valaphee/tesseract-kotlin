@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:raw_gold_block",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:raw_gold",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "AAA", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:raw_gold_block",
+      "blockState" : "minecraft:raw_gold_block"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:yellow_dye_from_sunflower",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:double_plant"
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:yellow_dye",
+      "count" : 2
+    }
+  }
+}

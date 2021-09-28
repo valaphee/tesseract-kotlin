@@ -1,0 +1,16 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:cyan_dye",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:blue_dye"
+    }, {
+      "item" : "minecraft:green_dye"
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:cyan_dye",
+      "count" : 2
+    }
+  }
+}

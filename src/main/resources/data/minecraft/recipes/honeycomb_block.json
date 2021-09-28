@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:honeycomb_block",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:honeycomb",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AA", "AA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:honeycomb_block",
+      "blockState" : "minecraft:honeycomb_block"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:stonecutter_smooth_sanddouble_stone_slab",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:sandstone",
+      "subId" : 3
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:double_stone_slab2",
+      "count" : 2,
+      "blockState" : "minecraft:stone_slab2[stone_slab_type_2=smooth_sandstone,top_slot_bit=false]"
+    }
+  }
+}

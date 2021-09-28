@@ -1,0 +1,13 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:white_dye_from_bone_meal",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:bone_meal"
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:white_dye"
+    }
+  }
+}

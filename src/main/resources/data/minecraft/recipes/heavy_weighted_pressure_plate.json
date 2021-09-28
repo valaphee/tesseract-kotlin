@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:heavy_weighted_pressure_plate",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:iron_ingot",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:heavy_weighted_pressure_plate",
+      "blockState" : "minecraft:heavy_weighted_pressure_plate[redstone_signal=0]"
+    }
+  }
+}

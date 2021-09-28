@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:soul_lantern",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:iron_nugget",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:soul_torch",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "ABA", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:soul_lantern",
+      "blockState" : "minecraft:soul_lantern[hanging=false]"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:crafting_table_waxed_weathered_cut_copper",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:waxed_weathered_copper",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AA", "AA" ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:waxed_weathered_cut_copper",
+      "count" : 4,
+      "blockState" : "minecraft:waxed_weathered_cut_copper"
+    }
+  }
+}

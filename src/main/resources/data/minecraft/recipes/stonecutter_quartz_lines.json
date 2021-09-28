@@ -1,0 +1,14 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:stonecutter_quartz_lines",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:quartz_block"
+    } ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:quartz_block",
+      "blockState" : "minecraft:quartz_block[chisel_type=lines,pillar_axis=y]"
+    }
+  }
+}

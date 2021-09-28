@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:orange_candle",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:candle",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:orange_dye"
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:orange_candle",
+      "blockState" : "minecraft:orange_candle[candles=0,lit=false]"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:deepslate_brick_stairs_from_deepslate_bricks_stonecutting",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:deepslate_bricks"
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:deepslate_brick_stairs",
+      "blockState" : "minecraft:deepslate_brick_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

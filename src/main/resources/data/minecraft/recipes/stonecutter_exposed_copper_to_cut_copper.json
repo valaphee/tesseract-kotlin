@@ -1,0 +1,15 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:stonecutter_exposed_copper_to_cut_copper",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:exposed_copper",
+      "subId" : -1
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:exposed_cut_copper",
+      "blockState" : "minecraft:exposed_cut_copper"
+    }
+  }
+}

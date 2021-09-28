@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:bread",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:wheat",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:bread"
+    }
+  }
+}

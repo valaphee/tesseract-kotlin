@@ -1,0 +1,16 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:stonecutter_copper_block_to_cut_copper_slab",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:copper_block",
+      "subId" : -1
+    } ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:cut_copper_slab",
+      "count" : 2,
+      "blockState" : "minecraft:cut_copper_slab[top_slot_bit=false]"
+    }
+  }
+}

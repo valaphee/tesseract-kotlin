@@ -1,0 +1,35 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:brown_concrete_powder_from_cocoa_beans",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:cocoa_beans"
+    }, {
+      "item" : "minecraft:sand"
+    }, {
+      "item" : "minecraft:sand"
+    }, {
+      "item" : "minecraft:sand"
+    }, {
+      "item" : "minecraft:sand"
+    }, {
+      "item" : "minecraft:gravel",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:gravel",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:gravel",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:gravel",
+      "subId" : -1
+    } ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:concrete_powder",
+      "count" : 8,
+      "blockState" : "minecraft:concretePowder[color=brown]"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:crossbow",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:stick",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:iron_ingot",
+        "subId" : -1
+      },
+      "C" : {
+        "item" : "minecraft:string",
+        "subId" : -1
+      },
+      "D" : {
+        "item" : "minecraft:tripwire_hook",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "ABA", "CDC", " A " ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:crossbow"
+    }
+  }
+}

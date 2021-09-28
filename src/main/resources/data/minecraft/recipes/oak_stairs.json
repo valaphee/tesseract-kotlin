@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:oak_stairs",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:planks"
+      }
+    },
+    "pattern" : [ "A  ", "AA ", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:oak_stairs",
+      "count" : 4,
+      "blockState" : "minecraft:oak_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

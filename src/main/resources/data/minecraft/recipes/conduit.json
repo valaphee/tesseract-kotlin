@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:conduit",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:nautilus_shell",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:heart_of_the_sea",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "ABA", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:conduit",
+      "blockState" : "minecraft:conduit"
+    }
+  }
+}

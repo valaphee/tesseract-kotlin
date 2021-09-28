@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:light_blue_candle",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:candle",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:light_blue_dye"
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:light_blue_candle",
+      "blockState" : "minecraft:light_blue_candle[candles=0,lit=false]"
+    }
+  }
+}

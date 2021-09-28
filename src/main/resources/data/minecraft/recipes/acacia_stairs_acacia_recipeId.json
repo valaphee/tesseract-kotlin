@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "acacia_stairs_acacia_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:planks",
+        "subId" : 4
+      }
+    },
+    "pattern" : [ "A  ", "AA ", "AAA" ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:acacia_stairs",
+      "count" : 4,
+      "blockState" : "minecraft:acacia_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

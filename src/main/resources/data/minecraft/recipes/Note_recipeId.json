@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "Note_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:planks",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:redstone",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "ABA", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:noteblock",
+      "blockState" : "minecraft:noteblock"
+    }
+  }
+}

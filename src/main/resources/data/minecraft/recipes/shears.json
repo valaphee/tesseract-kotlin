@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:shears",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:iron_ingot",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ " A", "A " ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:shears"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:golden_axe",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:gold_ingot",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:stick",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AA", "AB", " B" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:golden_axe"
+    }
+  }
+}

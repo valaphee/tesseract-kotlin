@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:diamond_leggings",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:diamond",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "A A", "A A" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:diamond_leggings"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:lapis_block",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:lapis_lazuli"
+      }
+    },
+    "pattern" : [ "AAA", "AAA", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:lapis_block",
+      "blockState" : "minecraft:lapis_block"
+    }
+  }
+}

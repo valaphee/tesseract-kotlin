@@ -1,0 +1,16 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:light_blue_dye_from_lapis_white",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:lapis_lazuli"
+    }, {
+      "item" : "minecraft:white_dye"
+    } ],
+    "priority" : 3,
+    "result" : {
+      "item" : "minecraft:light_blue_dye",
+      "count" : 2
+    }
+  }
+}

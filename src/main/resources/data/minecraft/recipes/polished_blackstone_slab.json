@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:polished_blackstone_slab",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:polished_blackstone",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:polished_blackstone_slab",
+      "count" : 6,
+      "blockState" : "minecraft:polished_blackstone_slab[top_slot_bit=false]"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:warped_fungus_on_a_stick",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:fishing_rod",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:warped_fungus",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A ", " B" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:warped_fungus_on_a_stick"
+    }
+  }
+}

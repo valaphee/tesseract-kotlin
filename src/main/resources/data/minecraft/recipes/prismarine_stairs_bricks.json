@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:prismarine_stairs_bricks",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:prismarine",
+        "subId" : 2
+      }
+    },
+    "pattern" : [ "A  ", "AA ", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:prismarine_bricks_stairs",
+      "count" : 4,
+      "blockState" : "minecraft:prismarine_bricks_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

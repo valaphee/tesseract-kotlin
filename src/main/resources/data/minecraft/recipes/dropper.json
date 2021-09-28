@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:dropper",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:cobblestone",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:redstone",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "A A", "ABA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:dropper",
+      "blockState" : "minecraft:dropper[facing_direction=3,triggered_bit=false]"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:crafting_table_from_warped_planks",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:warped_planks",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AA", "AA" ],
+    "priority" : 2,
+    "result" : {
+      "item" : "minecraft:crafting_table",
+      "blockState" : "minecraft:crafting_table"
+    }
+  }
+}

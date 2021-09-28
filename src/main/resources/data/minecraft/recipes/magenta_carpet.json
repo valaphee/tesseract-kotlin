@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:magenta_carpet",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:wool",
+        "subId" : 2
+      }
+    },
+    "pattern" : [ "AA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:carpet",
+      "count" : 3,
+      "blockState" : "minecraft:carpet[color=magenta]"
+    }
+  }
+}

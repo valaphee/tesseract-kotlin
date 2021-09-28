@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "birch_stairs_birch_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:planks",
+        "subId" : 2
+      }
+    },
+    "pattern" : [ "A  ", "AA ", "AAA" ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:birch_stairs",
+      "count" : 4,
+      "blockState" : "minecraft:birch_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

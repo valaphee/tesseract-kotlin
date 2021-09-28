@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:barrel_from_crimson_slab",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:stick",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:crimson_slab",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "ABA", "A A", "ABA" ],
+    "priority" : 2,
+    "result" : {
+      "item" : "minecraft:barrel",
+      "blockState" : "minecraft:barrel[facing_direction=0,open_bit=false]"
+    }
+  }
+}

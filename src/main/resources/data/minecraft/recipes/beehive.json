@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:beehive",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:planks",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:honeycomb",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "BBB", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:beehive",
+      "blockState" : "minecraft:beehive[direction=0,honey_level=0]"
+    }
+  }
+}

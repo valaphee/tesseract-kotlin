@@ -1,0 +1,15 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:magenta_dye_from_lilac",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:double_plant",
+      "subId" : 1
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:magenta_dye",
+      "count" : 2
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:deepslate_tile_wall",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:deepslate_tiles",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "AAA" ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:deepslate_tile_wall",
+      "count" : 6,
+      "blockState" : "minecraft:deepslate_tile_wall[wall_connection_type_east=none,wall_connection_type_north=none,wall_connection_type_south=none,wall_connection_type_west=none,wall_post_bit=false]"
+    }
+  }
+}

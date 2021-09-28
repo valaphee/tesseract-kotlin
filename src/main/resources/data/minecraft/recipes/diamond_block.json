@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:diamond_block",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:diamond",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "AAA", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:diamond_block",
+      "blockState" : "minecraft:diamond_block"
+    }
+  }
+}

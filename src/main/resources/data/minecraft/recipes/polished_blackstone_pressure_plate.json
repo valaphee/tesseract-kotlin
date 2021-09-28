@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:polished_blackstone_pressure_plate",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:polished_blackstone",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:polished_blackstone_pressure_plate",
+      "blockState" : "minecraft:polished_blackstone_pressure_plate[redstone_signal=0]"
+    }
+  }
+}

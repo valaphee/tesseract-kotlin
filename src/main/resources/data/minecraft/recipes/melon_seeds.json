@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:melon_seeds",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:melon_slice",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:melon_seeds"
+    }
+  }
+}

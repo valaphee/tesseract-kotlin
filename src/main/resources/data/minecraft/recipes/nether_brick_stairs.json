@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:nether_brick_stairs",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:nether_brick",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A  ", "AA ", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:nether_brick_stairs",
+      "count" : 4,
+      "blockState" : "minecraft:nether_brick_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

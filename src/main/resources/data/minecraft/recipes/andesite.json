@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:andesite",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:stone",
+      "subId" : 3
+    }, {
+      "item" : "minecraft:cobblestone",
+      "subId" : -1
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:stone",
+      "count" : 2,
+      "blockState" : "minecraft:stone[stone_type=andesite]"
+    }
+  }
+}

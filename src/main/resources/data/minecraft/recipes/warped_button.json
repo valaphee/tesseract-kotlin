@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:warped_button",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:warped_planks",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:warped_button",
+      "blockState" : "minecraft:warped_button[button_pressed_bit=false,facing_direction=0]"
+    }
+  }
+}

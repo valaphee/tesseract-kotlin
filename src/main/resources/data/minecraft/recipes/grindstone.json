@@ -1,0 +1,26 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:grindstone",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:stick",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:double_stone_slab4",
+        "subId" : 2
+      },
+      "C" : {
+        "item" : "minecraft:planks",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "ABA", "C C" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:grindstone",
+      "blockState" : "minecraft:grindstone[attachment=standing,direction=0]"
+    }
+  }
+}

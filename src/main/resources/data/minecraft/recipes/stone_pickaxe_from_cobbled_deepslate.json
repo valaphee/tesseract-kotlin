@@ -1,0 +1,21 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:stone_pickaxe_from_cobbled_deepslate",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:cobbled_deepslate",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:stick",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", " B ", " B " ],
+    "priority" : 2,
+    "result" : {
+      "item" : "minecraft:stone_pickaxe"
+    }
+  }
+}

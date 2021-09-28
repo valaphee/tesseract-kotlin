@@ -1,0 +1,16 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:stonecutter_brick_slab_from_polished_blackstone",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:polished_blackstone",
+      "subId" : -1
+    } ],
+    "priority" : 2,
+    "result" : {
+      "item" : "minecraft:polished_blackstone_brick_slab",
+      "count" : 2,
+      "blockState" : "minecraft:polished_blackstone_brick_slab[top_slot_bit=false]"
+    }
+  }
+}

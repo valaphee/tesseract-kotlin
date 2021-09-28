@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:lectern",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:wooden_slab",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:bookshelf",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", " B ", " A " ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:lectern",
+      "blockState" : "minecraft:lectern[direction=0,powered_bit=false]"
+    }
+  }
+}

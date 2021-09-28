@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:stick_from_crimson_planks",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:crimson_planks",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A", "A" ],
+    "priority" : 2,
+    "result" : {
+      "item" : "minecraft:stick",
+      "count" : 4
+    }
+  }
+}

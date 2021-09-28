@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:respawn_anchor",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:crying_obsidian",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:glowstone",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "BBB", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:respawn_anchor",
+      "blockState" : "minecraft:respawn_anchor[respawn_anchor_charge=0]"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:white_candle_from_bonemeal",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:candle",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:bone_meal"
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:white_candle",
+      "blockState" : "minecraft:white_candle[candles=0,lit=false]"
+    }
+  }
+}

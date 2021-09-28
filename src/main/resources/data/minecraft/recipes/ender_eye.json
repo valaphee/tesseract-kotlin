@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:ender_eye",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:ender_pearl",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:blaze_powder",
+      "subId" : -1
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:ender_eye"
+    }
+  }
+}

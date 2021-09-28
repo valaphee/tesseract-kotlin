@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:quartz_block",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:quartz",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AA", "AA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:quartz_block",
+      "blockState" : "minecraft:quartz_block[chisel_type=default,pillar_axis=y]"
+    }
+  }
+}

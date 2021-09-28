@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:cauldron",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:iron_ingot",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A A", "A A", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:cauldron"
+    }
+  }
+}

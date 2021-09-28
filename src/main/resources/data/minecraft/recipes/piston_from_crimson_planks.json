@@ -1,0 +1,30 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:piston_from_crimson_planks",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:crimson_planks",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:cobblestone",
+        "subId" : -1
+      },
+      "C" : {
+        "item" : "minecraft:iron_ingot",
+        "subId" : -1
+      },
+      "D" : {
+        "item" : "minecraft:redstone",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "BCB", "BDB" ],
+    "priority" : 2,
+    "result" : {
+      "item" : "minecraft:piston",
+      "blockState" : "minecraft:piston[facing_direction=1]"
+    }
+  }
+}

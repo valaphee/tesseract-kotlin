@@ -1,0 +1,16 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:gray_dye_from_ink_white",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:ink_sac"
+    }, {
+      "item" : "minecraft:white_dye"
+    } ],
+    "priority" : 2,
+    "result" : {
+      "item" : "minecraft:gray_dye",
+      "count" : 2
+    }
+  }
+}

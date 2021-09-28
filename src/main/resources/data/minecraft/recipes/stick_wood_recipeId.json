@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "stick_wood_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:planks",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A", "A" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:stick",
+      "count" : 4
+    }
+  }
+}

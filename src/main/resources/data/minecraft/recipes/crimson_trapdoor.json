@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:crimson_trapdoor",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:crimson_planks",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:crimson_trapdoor",
+      "count" : 2,
+      "blockState" : "minecraft:crimson_trapdoor[direction=0,open_bit=false,upside_down_bit=false]"
+    }
+  }
+}

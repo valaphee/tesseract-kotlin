@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "dark_oak_stairs_dark_oak_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:planks",
+        "subId" : 5
+      }
+    },
+    "pattern" : [ "A  ", "AA ", "AAA" ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:dark_oak_stairs",
+      "count" : 4,
+      "blockState" : "minecraft:dark_oak_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

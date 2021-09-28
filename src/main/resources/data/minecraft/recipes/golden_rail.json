@@ -1,0 +1,27 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:golden_rail",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:gold_ingot",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:stick",
+        "subId" : -1
+      },
+      "C" : {
+        "item" : "minecraft:redstone",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A A", "ABA", "ACA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:golden_rail",
+      "count" : 6,
+      "blockState" : "minecraft:golden_rail[rail_data_bit=false,rail_direction=0]"
+    }
+  }
+}

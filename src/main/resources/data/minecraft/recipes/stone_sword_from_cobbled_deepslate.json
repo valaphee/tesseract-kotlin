@@ -1,0 +1,21 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:stone_sword_from_cobbled_deepslate",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:cobbled_deepslate",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:stick",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A", "A", "B" ],
+    "priority" : 2,
+    "result" : {
+      "item" : "minecraft:stone_sword"
+    }
+  }
+}

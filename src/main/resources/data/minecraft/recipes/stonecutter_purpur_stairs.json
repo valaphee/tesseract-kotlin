@@ -1,0 +1,14 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:stonecutter_purpur_stairs",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:purpur_block"
+    } ],
+    "priority" : 2,
+    "result" : {
+      "item" : "minecraft:purpur_stairs",
+      "blockState" : "minecraft:purpur_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

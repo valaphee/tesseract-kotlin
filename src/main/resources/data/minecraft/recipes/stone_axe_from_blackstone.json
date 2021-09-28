@@ -1,0 +1,21 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:stone_axe_from_blackstone",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:blackstone",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:stick",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AA", "AB", " B" ],
+    "priority" : 2,
+    "result" : {
+      "item" : "minecraft:stone_axe"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:wooden_sword_from_crimson_planks",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:crimson_planks",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:stick",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A", "A", "B" ],
+    "priority" : 2,
+    "result" : {
+      "item" : "minecraft:wooden_sword"
+    }
+  }
+}

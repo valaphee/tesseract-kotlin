@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:candle",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:string",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:honeycomb",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A", "B" ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:candle",
+      "blockState" : "minecraft:candle[candles=0,lit=false]"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:armor_stand",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:stick",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:double_stone_slab"
+      }
+    },
+    "pattern" : [ "AAA", " A ", "ABA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:armor_stand"
+    }
+  }
+}

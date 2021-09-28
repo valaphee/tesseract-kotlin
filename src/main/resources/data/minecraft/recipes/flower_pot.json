@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:flower_pot",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:brick",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A A", " A " ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:flower_pot"
+    }
+  }
+}

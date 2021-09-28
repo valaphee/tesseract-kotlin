@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:gray_candle",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:candle",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:gray_dye"
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:gray_candle",
+      "blockState" : "minecraft:gray_candle[candles=0,lit=false]"
+    }
+  }
+}

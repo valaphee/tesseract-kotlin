@@ -1,0 +1,15 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:stonecutter_diorite_stairs",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:stone",
+      "subId" : 3
+    } ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:diorite_stairs",
+      "blockState" : "minecraft:diorite_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

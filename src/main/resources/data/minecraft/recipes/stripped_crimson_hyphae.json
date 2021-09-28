@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:stripped_crimson_hyphae",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:stripped_crimson_stem",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AA", "AA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:stripped_crimson_hyphae",
+      "count" : 3,
+      "blockState" : "minecraft:stripped_crimson_hyphae[pillar_axis=y]"
+    }
+  }
+}

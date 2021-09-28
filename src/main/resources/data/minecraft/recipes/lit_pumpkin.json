@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:lit_pumpkin",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:carved_pumpkin",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:torch",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A", "B" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:lit_pumpkin",
+      "blockState" : "minecraft:lit_pumpkin[direction=0]"
+    }
+  }
+}

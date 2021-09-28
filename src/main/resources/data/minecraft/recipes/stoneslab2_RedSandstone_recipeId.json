@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "stoneslab2_RedSandstone_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:red_sandstone"
+      }
+    },
+    "pattern" : [ "AAA" ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:double_stone_slab2",
+      "count" : 6,
+      "blockState" : "minecraft:stone_slab2[stone_slab_type_2=red_sandstone,top_slot_bit=false]"
+    }
+  }
+}

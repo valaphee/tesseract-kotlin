@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "paper_sulphur_dye_18_recipeId",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:gunpowder",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:blue_dye",
+      "subId" : -1
+    } ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:firework_star",
+      "subId" : 4,
+      "tag" : "CgAACg0ARmlyZXdvcmtzSXRlbQcNAEZpcmV3b3JrQ29sb3IBAAAABAcMAEZpcmV3b3JrRmFkZQAAAAABDwBGaXJld29ya0ZsaWNrZXIAAQ0ARmlyZXdvcmtUcmFpbAABDABGaXJld29ya1R5cGUAAAMLAGN1c3RvbUNvbG9yqkQ8/wA="
+    }
+  }
+}

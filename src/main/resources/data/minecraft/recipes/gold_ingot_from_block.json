@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:gold_ingot_from_block",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:gold_block",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:gold_ingot",
+      "count" : 9
+    }
+  }
+}

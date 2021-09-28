@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:glass_pane",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:glass",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:glass_pane",
+      "count" : 16,
+      "blockState" : "minecraft:glass_pane"
+    }
+  }
+}

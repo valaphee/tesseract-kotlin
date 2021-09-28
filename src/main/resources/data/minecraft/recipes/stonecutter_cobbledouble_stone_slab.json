@@ -1,0 +1,15 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:stonecutter_cobbledouble_stone_slab",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:cobblestone"
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:double_stone_slab",
+      "count" : 2,
+      "blockState" : "minecraft:stone_slab[stone_slab_type=cobblestone,top_slot_bit=false]"
+    }
+  }
+}

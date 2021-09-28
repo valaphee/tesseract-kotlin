@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:crimson_slab",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:crimson_planks",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:crimson_slab",
+      "count" : 6,
+      "blockState" : "minecraft:crimson_slab[top_slot_bit=false]"
+    }
+  }
+}

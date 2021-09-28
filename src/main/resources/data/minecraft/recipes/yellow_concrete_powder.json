@@ -1,0 +1,35 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:yellow_concrete_powder",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:yellow_dye"
+    }, {
+      "item" : "minecraft:sand"
+    }, {
+      "item" : "minecraft:sand"
+    }, {
+      "item" : "minecraft:sand"
+    }, {
+      "item" : "minecraft:sand"
+    }, {
+      "item" : "minecraft:gravel",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:gravel",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:gravel",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:gravel",
+      "subId" : -1
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:concrete_powder",
+      "count" : 8,
+      "blockState" : "minecraft:concretePowder[color=yellow]"
+    }
+  }
+}

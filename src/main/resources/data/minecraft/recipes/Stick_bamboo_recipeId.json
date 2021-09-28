@@ -1,0 +1,16 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "Stick_bamboo_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:bamboo"
+      }
+    },
+    "pattern" : [ "A", "A" ],
+    "priority" : 2,
+    "result" : {
+      "item" : "minecraft:stick"
+    }
+  }
+}

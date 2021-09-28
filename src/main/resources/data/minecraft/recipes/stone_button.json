@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:stone_button",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:stone"
+      }
+    },
+    "pattern" : [ "A" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:stone_button",
+      "blockState" : "minecraft:stone_button[button_pressed_bit=false,facing_direction=0]"
+    }
+  }
+}

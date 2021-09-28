@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:smithing_table_from_crimson_planks",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:iron_ingot",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:crimson_planks",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AA", "BB", "BB" ],
+    "priority" : 2,
+    "result" : {
+      "item" : "minecraft:smithing_table",
+      "blockState" : "minecraft:smithing_table"
+    }
+  }
+}

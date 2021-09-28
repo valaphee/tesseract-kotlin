@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "Trapdoor_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:planks"
+      }
+    },
+    "pattern" : [ "AAA", "AAA" ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:trapdoor",
+      "count" : 2,
+      "blockState" : "minecraft:trapdoor[direction=0,open_bit=false,upside_down_bit=false]"
+    }
+  }
+}

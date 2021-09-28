@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:string_to_wool",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:string",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AA", "AA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:wool",
+      "blockState" : "minecraft:wool[color=white]"
+    }
+  }
+}

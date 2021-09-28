@@ -1,0 +1,15 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:stonecutter_andesite_stairs",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:stone",
+      "subId" : 5
+    } ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:andesite_stairs",
+      "blockState" : "minecraft:andesite_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

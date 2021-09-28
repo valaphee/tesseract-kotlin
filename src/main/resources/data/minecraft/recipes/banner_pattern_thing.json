@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:banner_pattern_thing",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:paper",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:enchanted_golden_apple",
+      "subId" : -1
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:mojang_banner_pattern"
+    }
+  }
+}

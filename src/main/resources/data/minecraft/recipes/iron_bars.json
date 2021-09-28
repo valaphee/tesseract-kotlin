@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:iron_bars",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:iron_ingot",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:iron_bars",
+      "count" : 16,
+      "blockState" : "minecraft:iron_bars"
+    }
+  }
+}

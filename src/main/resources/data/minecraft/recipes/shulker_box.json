@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:shulker_box",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:shulker_shell",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:chest",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A", "B", "A" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:undyed_shulker_box",
+      "blockState" : "minecraft:undyed_shulker_box"
+    }
+  }
+}

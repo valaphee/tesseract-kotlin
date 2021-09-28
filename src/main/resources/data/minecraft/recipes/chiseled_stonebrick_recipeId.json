@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "chiseled_stonebrick_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:double_stone_slab",
+        "subId" : 5
+      }
+    },
+    "pattern" : [ "A", "A" ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:stonebrick",
+      "blockState" : "minecraft:stonebrick[stone_brick_type=chiseled]"
+    }
+  }
+}

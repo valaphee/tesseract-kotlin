@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "PressurePlateJungle_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:planks",
+        "subId" : 3
+      }
+    },
+    "pattern" : [ "AA" ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:jungle_pressure_plate",
+      "blockState" : "minecraft:jungle_pressure_plate[redstone_signal=0]"
+    }
+  }
+}

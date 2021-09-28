@@ -1,0 +1,21 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:chain",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:iron_nugget",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:iron_ingot",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A", "B", "A" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:chain"
+    }
+  }
+}

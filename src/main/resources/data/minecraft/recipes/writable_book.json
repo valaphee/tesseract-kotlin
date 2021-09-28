@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:writable_book",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:book",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:ink_sac"
+    }, {
+      "item" : "minecraft:feather",
+      "subId" : -1
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:writable_book"
+    }
+  }
+}

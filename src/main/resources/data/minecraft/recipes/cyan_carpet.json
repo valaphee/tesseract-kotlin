@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:cyan_carpet",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:wool",
+        "subId" : 9
+      }
+    },
+    "pattern" : [ "AA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:carpet",
+      "count" : 3,
+      "blockState" : "minecraft:carpet[color=cyan]"
+    }
+  }
+}

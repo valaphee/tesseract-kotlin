@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "wool_dye_wool_19_4",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:white_dye",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:wool",
+      "subId" : 11
+    } ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:wool",
+      "blockState" : "minecraft:wool[color=white]"
+    }
+  }
+}

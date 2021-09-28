@@ -1,0 +1,27 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "TripwireHook_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:iron_ingot",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:stick",
+        "subId" : -1
+      },
+      "C" : {
+        "item" : "minecraft:planks",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A", "B", "C" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:tripwire_hook",
+      "count" : 2,
+      "blockState" : "minecraft:tripwire_hook[attached_bit=false,direction=0,powered_bit=false]"
+    }
+  }
+}

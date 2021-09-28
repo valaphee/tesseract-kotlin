@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:jungle_door",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:planks",
+        "subId" : 3
+      }
+    },
+    "pattern" : [ "AA", "AA", "AA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:jungle_door",
+      "count" : 3
+    }
+  }
+}

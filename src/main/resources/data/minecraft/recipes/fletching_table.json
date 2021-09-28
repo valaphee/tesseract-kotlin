@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:fletching_table",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:flint",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:planks",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AA", "BB", "BB" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:fletching_table",
+      "blockState" : "minecraft:fletching_table"
+    }
+  }
+}

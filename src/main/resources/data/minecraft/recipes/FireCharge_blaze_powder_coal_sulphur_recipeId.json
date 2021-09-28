@@ -1,0 +1,21 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "FireCharge_blaze_powder_coal_sulphur_recipeId",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:blaze_powder",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:charcoal",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:gunpowder",
+      "subId" : -1
+    } ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:fire_charge",
+      "count" : 3
+    }
+  }
+}

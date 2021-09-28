@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:lodestone",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:stonebrick",
+        "subId" : 3
+      },
+      "B" : {
+        "item" : "minecraft:netherite_ingot",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "ABA", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:lodestone",
+      "blockState" : "minecraft:lodestone"
+    }
+  }
+}

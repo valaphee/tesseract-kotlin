@@ -1,0 +1,16 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:stonecutter_smooth_quartz_slab",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:quartz_block",
+      "subId" : 3
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:double_stone_slab4",
+      "count" : 2,
+      "blockState" : "minecraft:stone_slab4[stone_slab_type_4=smooth_quartz,top_slot_bit=false]"
+    }
+  }
+}

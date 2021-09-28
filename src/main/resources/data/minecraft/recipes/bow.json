@@ -1,0 +1,21 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:bow",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:stick",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:string",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ " AB", "A B", " AB" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:bow"
+    }
+  }
+}

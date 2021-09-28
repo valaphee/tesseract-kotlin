@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "ButtonDarkOak_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:planks",
+        "subId" : 5
+      }
+    },
+    "pattern" : [ "A" ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:dark_oak_button",
+      "blockState" : "minecraft:dark_oak_button[button_pressed_bit=false,facing_direction=0]"
+    }
+  }
+}

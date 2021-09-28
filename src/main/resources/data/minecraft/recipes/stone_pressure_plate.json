@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:stone_pressure_plate",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:stone"
+      }
+    },
+    "pattern" : [ "AA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:stone_pressure_plate",
+      "blockState" : "minecraft:stone_pressure_plate[redstone_signal=0]"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:pink_stained_glass_pane",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:stained_glass",
+        "subId" : 6
+      }
+    },
+    "pattern" : [ "AAA", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:stained_glass_pane",
+      "count" : 16,
+      "blockState" : "minecraft:stained_glass_pane[color=pink]"
+    }
+  }
+}

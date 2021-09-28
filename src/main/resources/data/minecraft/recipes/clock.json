@@ -1,0 +1,21 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:clock",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:gold_ingot",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:redstone",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ " A ", "ABA", " A " ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:clock"
+    }
+  }
+}

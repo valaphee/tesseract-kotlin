@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:cobbled_deepslate_stairs",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:cobbled_deepslate",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A  ", "AA ", "AAA" ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:cobbled_deepslate_stairs",
+      "count" : 4,
+      "blockState" : "minecraft:cobbled_deepslate_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

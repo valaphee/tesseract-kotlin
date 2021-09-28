@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:polished_blackstone_wall",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:polished_blackstone",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:polished_blackstone_wall",
+      "count" : 6,
+      "blockState" : "minecraft:polished_blackstone_wall[wall_connection_type_east=none,wall_connection_type_north=none,wall_connection_type_south=none,wall_connection_type_west=none,wall_post_bit=false]"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:tinted_glass",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:amethyst_shard",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:glass",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ " A ", "ABA", " A " ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:tinted_glass",
+      "count" : 2,
+      "blockState" : "minecraft:tinted_glass"
+    }
+  }
+}

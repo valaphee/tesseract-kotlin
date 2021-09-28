@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:black_stained_glass_from_ink_sac",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:glass",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:ink_sac"
+      }
+    },
+    "pattern" : [ "AAA", "ABA", "AAA" ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:stained_glass",
+      "count" : 8,
+      "blockState" : "minecraft:stained_glass[color=black]"
+    }
+  }
+}

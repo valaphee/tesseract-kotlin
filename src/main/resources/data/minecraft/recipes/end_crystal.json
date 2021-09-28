@@ -1,0 +1,25 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:end_crystal",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:glass",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:ender_eye",
+        "subId" : -1
+      },
+      "C" : {
+        "item" : "minecraft:ghast_tear",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "ABA", "ACA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:end_crystal"
+    }
+  }
+}

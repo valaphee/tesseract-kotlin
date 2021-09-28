@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:composter",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:wooden_slab",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A A", "A A", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:composter",
+      "blockState" : "minecraft:composter[composter_fill_level=0]"
+    }
+  }
+}

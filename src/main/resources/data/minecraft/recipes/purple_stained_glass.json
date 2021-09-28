@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:purple_stained_glass",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:glass",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:purple_dye"
+      }
+    },
+    "pattern" : [ "AAA", "ABA", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:stained_glass",
+      "count" : 8,
+      "blockState" : "minecraft:stained_glass[color=purple]"
+    }
+  }
+}

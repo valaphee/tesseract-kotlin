@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:sealantern",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:prismarine_shard",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:prismarine_crystals",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "ABA", "BBB", "ABA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:sealantern",
+      "blockState" : "minecraft:seaLantern"
+    }
+  }
+}

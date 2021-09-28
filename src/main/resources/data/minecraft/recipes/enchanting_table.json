@@ -1,0 +1,26 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:enchanting_table",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:book",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:diamond",
+        "subId" : -1
+      },
+      "C" : {
+        "item" : "minecraft:obsidian",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ " A ", "BCB", "CCC" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:enchanting_table",
+      "blockState" : "minecraft:enchanting_table"
+    }
+  }
+}

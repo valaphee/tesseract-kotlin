@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "stoneslab_sandstone_heiroglyphs_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:sandstone",
+        "subId" : 1
+      }
+    },
+    "pattern" : [ "AAA" ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:double_stone_slab",
+      "count" : 6,
+      "blockState" : "minecraft:stone_slab[stone_slab_type=sandstone,top_slot_bit=false]"
+    }
+  }
+}

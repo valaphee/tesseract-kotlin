@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:glass_bottle",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:glass",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A A", " A " ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:glass_bottle",
+      "count" : 3
+    }
+  }
+}

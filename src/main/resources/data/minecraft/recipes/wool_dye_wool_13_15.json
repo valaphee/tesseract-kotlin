@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "wool_dye_wool_13_15",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:magenta_dye",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:wool"
+    } ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:wool",
+      "blockState" : "minecraft:wool[color=magenta]"
+    }
+  }
+}

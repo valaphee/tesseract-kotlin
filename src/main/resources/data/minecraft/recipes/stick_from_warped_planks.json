@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:stick_from_warped_planks",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:warped_planks",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A", "A" ],
+    "priority" : 2,
+    "result" : {
+      "item" : "minecraft:stick",
+      "count" : 4
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:stonecutter_purpur_lines",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:purpur_block"
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:purpur_block",
+      "blockState" : "minecraft:purpur_block[chisel_type=lines,pillar_axis=y]"
+    }
+  }
+}

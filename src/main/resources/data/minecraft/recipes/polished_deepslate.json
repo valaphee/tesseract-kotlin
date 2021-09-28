@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:polished_deepslate",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:cobbled_deepslate",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AA", "AA" ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:polished_deepslate",
+      "count" : 4,
+      "blockState" : "minecraft:polished_deepslate"
+    }
+  }
+}

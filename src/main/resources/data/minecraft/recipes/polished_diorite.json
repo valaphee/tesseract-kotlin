@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:polished_diorite",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:stone",
+        "subId" : 3
+      }
+    },
+    "pattern" : [ "AA", "AA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:stone",
+      "count" : 4,
+      "blockState" : "minecraft:stone[stone_type=diorite_smooth]"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:cyan_dye_from_lapis_lazuli",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:lapis_lazuli"
+    }, {
+      "item" : "minecraft:green_dye"
+    } ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:cyan_dye",
+      "count" : 2
+    }
+  }
+}

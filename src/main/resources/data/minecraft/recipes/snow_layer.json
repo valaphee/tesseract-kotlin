@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:snow_layer",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:snow",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:snow_layer",
+      "count" : 6,
+      "blockState" : "minecraft:snow_layer[covered_bit=false,height=0]"
+    }
+  }
+}

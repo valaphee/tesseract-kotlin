@@ -1,0 +1,26 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:dispenser",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:cobblestone",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:bow",
+        "subId" : -1
+      },
+      "C" : {
+        "item" : "minecraft:redstone",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "ABA", "ACA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:dispenser",
+      "blockState" : "minecraft:dispenser[facing_direction=3,triggered_bit=false]"
+    }
+  }
+}

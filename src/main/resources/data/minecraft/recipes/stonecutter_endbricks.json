@@ -1,0 +1,14 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:stonecutter_endbricks",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:end_stone"
+    } ],
+    "priority" : 3,
+    "result" : {
+      "item" : "minecraft:end_bricks",
+      "blockState" : "minecraft:end_bricks"
+    }
+  }
+}

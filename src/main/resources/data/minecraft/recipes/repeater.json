@@ -1,0 +1,24 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:repeater",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:redstone_torch",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:redstone",
+        "subId" : -1
+      },
+      "C" : {
+        "item" : "minecraft:stone"
+      }
+    },
+    "pattern" : [ "ABA", "CCC" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:repeater"
+    }
+  }
+}

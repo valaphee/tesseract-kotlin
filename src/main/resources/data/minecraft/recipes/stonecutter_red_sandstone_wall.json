@@ -1,0 +1,14 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:stonecutter_red_sandstone_wall",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:red_sandstone"
+    } ],
+    "priority" : 4,
+    "result" : {
+      "item" : "minecraft:cobblestone_wall",
+      "blockState" : "minecraft:cobblestone_wall[wall_block_type=red_sandstone,wall_connection_type_east=none,wall_connection_type_north=none,wall_connection_type_south=none,wall_connection_type_west=none,wall_post_bit=false]"
+    }
+  }
+}

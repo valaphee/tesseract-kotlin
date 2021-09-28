@@ -1,0 +1,23 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "Torch_charcoal_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:charcoal",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:stick",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A", "B" ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:torch",
+      "count" : 4,
+      "blockState" : "minecraft:torch[torch_facing_direction=unknown]"
+    }
+  }
+}

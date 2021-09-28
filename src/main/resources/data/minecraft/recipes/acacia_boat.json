@@ -1,0 +1,21 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:acacia_boat",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:planks",
+        "subId" : 4
+      },
+      "B" : {
+        "item" : "minecraft:wooden_shovel",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "ABA", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:acacia_boat"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:stonecutter_polished_stairs_from_blackstone",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:blackstone",
+      "subId" : -1
+    } ],
+    "priority" : 2,
+    "result" : {
+      "item" : "minecraft:polished_blackstone_stairs",
+      "blockState" : "minecraft:polished_blackstone_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

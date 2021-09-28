@@ -1,0 +1,15 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:stonecutter_smooth_quartz_stairs",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:quartz_block",
+      "subId" : 3
+    } ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:smooth_quartz_stairs",
+      "blockState" : "minecraft:smooth_quartz_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

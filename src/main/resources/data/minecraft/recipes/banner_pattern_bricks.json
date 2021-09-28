@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:banner_pattern_bricks",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:paper",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:brick_block",
+      "subId" : -1
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:field_masoned_banner_pattern"
+    }
+  }
+}

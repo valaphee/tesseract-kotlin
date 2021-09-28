@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:warped_hyphae",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:warped_stem",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AA", "AA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:warped_hyphae",
+      "count" : 3,
+      "blockState" : "minecraft:warped_hyphae[pillar_axis=y]"
+    }
+  }
+}

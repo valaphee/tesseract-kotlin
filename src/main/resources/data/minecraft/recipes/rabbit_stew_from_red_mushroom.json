@@ -1,0 +1,26 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:rabbit_stew_from_red_mushroom",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:bowl",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:baked_potato",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:carrot",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:red_mushroom",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:cooked_rabbit",
+      "subId" : -1
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:rabbit_stew"
+    }
+  }
+}

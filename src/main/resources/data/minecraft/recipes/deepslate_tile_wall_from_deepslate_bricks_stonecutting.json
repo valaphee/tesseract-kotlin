@@ -1,0 +1,14 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:deepslate_tile_wall_from_deepslate_bricks_stonecutting",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:deepslate_bricks"
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:deepslate_tile_wall",
+      "blockState" : "minecraft:deepslate_tile_wall[wall_connection_type_east=none,wall_connection_type_north=none,wall_connection_type_south=none,wall_connection_type_west=none,wall_post_bit=false]"
+    }
+  }
+}

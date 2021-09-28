@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:redstone_torch",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:redstone",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:stick",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A", "B" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:redstone_torch",
+      "blockState" : "minecraft:redstone_torch[torch_facing_direction=unknown]"
+    }
+  }
+}

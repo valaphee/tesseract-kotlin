@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:smoker_from_crimson_stem",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:crimson_stem",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:furnace",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ " A ", "ABA", " A " ],
+    "priority" : 2,
+    "result" : {
+      "item" : "minecraft:smoker",
+      "blockState" : "minecraft:smoker[facing_direction=0]"
+    }
+  }
+}

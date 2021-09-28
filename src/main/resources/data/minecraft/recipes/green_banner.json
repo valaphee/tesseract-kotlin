@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:green_banner",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:wool",
+        "subId" : 13
+      },
+      "B" : {
+        "item" : "minecraft:stick",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "AAA", " B " ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:banner",
+      "subId" : 2
+    }
+  }
+}

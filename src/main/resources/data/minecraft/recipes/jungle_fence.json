@@ -1,0 +1,23 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:jungle_fence",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:planks",
+        "subId" : 3
+      },
+      "B" : {
+        "item" : "minecraft:stick",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "ABA", "ABA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:fence",
+      "count" : 3,
+      "blockState" : "minecraft:fence[wood_type=jungle]"
+    }
+  }
+}

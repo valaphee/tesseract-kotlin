@@ -1,0 +1,14 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:magenta_dye_from_allium",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:red_flower",
+      "subId" : 2
+    } ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:magenta_dye"
+    }
+  }
+}

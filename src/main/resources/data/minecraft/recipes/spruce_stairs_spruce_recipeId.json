@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "spruce_stairs_spruce_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:planks",
+        "subId" : 1
+      }
+    },
+    "pattern" : [ "A  ", "AA ", "AAA" ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:spruce_stairs",
+      "count" : 4,
+      "blockState" : "minecraft:spruce_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

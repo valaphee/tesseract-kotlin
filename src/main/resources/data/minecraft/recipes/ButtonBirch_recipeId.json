@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "ButtonBirch_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:planks",
+        "subId" : 2
+      }
+    },
+    "pattern" : [ "A" ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:birch_button",
+      "blockState" : "minecraft:birch_button[button_pressed_bit=false,facing_direction=0]"
+    }
+  }
+}

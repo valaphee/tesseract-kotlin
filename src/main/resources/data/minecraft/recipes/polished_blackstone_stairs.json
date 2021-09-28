@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:polished_blackstone_stairs",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:polished_blackstone",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A  ", "AA ", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:polished_blackstone_stairs",
+      "count" : 4,
+      "blockState" : "minecraft:polished_blackstone_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:acacia_wooden_slab",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:planks",
+        "subId" : 4
+      }
+    },
+    "pattern" : [ "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:wooden_slab",
+      "count" : 6,
+      "blockState" : "minecraft:wooden_slab[top_slot_bit=false,wood_type=acacia]"
+    }
+  }
+}

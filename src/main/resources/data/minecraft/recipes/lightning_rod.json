@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:lightning_rod",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:copper_ingot",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A", "A", "A" ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:lightning_rod",
+      "blockState" : "minecraft:lightning_rod[facing_direction=0]"
+    }
+  }
+}

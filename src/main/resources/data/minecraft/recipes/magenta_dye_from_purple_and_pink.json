@@ -1,0 +1,16 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:magenta_dye_from_purple_and_pink",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:purple_dye"
+    }, {
+      "item" : "minecraft:pink_dye"
+    } ],
+    "priority" : 3,
+    "result" : {
+      "item" : "minecraft:magenta_dye",
+      "count" : 2
+    }
+  }
+}

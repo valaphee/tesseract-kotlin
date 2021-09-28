@@ -1,0 +1,15 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:polished_deepslate_slab_from_cobbled_deepslate_stonecut",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:cobbled_deepslate"
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:polished_deepslate_slab",
+      "count" : 2,
+      "blockState" : "minecraft:polished_deepslate_slab[top_slot_bit=false]"
+    }
+  }
+}

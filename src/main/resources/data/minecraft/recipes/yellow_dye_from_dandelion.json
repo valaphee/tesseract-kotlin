@@ -1,0 +1,13 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:yellow_dye_from_dandelion",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:yellow_flower"
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:yellow_dye"
+    }
+  }
+}

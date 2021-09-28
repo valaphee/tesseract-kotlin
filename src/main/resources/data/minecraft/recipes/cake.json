@@ -1,0 +1,28 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:cake",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:milk_bucket"
+      },
+      "B" : {
+        "item" : "minecraft:sugar",
+        "subId" : -1
+      },
+      "C" : {
+        "item" : "minecraft:egg",
+        "subId" : -1
+      },
+      "D" : {
+        "item" : "minecraft:wheat",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "BCB", "DDD" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:cake"
+    }
+  }
+}

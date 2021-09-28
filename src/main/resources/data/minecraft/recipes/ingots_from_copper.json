@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:ingots_from_copper",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:copper_block",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A" ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:copper_ingot",
+      "count" : 9
+    }
+  }
+}

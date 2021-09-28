@@ -1,0 +1,27 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:detector_rail",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:iron_ingot",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:stone_pressure_plate",
+        "subId" : -1
+      },
+      "C" : {
+        "item" : "minecraft:redstone",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A A", "ABA", "ACA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:detector_rail",
+      "count" : 6,
+      "blockState" : "minecraft:detector_rail[rail_data_bit=false,rail_direction=0]"
+    }
+  }
+}

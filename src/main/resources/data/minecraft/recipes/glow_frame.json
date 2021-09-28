@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:glow_frame",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:frame",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:glow_ink_sac",
+      "subId" : -1
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:glow_frame"
+    }
+  }
+}

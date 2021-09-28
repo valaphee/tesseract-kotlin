@@ -1,0 +1,13 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:brown_dye_from_cocoa_beans",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:cocoa_beans"
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:brown_dye"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "WoodButton_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:planks"
+      }
+    },
+    "pattern" : [ "A" ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:wooden_button",
+      "blockState" : "minecraft:wooden_button[button_pressed_bit=false,facing_direction=0]"
+    }
+  }
+}

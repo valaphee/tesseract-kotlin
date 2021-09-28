@@ -1,0 +1,26 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:blast_furnace",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:iron_ingot",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:furnace",
+        "subId" : -1
+      },
+      "C" : {
+        "item" : "minecraft:smooth_stone",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "ABA", "CCC" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:blast_furnace",
+      "blockState" : "minecraft:blast_furnace[facing_direction=0]"
+    }
+  }
+}

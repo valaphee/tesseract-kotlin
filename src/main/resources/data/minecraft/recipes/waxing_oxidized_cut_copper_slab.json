@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:waxing_oxidized_cut_copper_slab",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:oxidized_cut_copper_slab",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:honeycomb",
+      "subId" : -1
+    } ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:waxed_oxidized_cut_copper_slab",
+      "blockState" : "minecraft:waxed_oxidized_cut_copper_slab[top_slot_bit=false]"
+    }
+  }
+}

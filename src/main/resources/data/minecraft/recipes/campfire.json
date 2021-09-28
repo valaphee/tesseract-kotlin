@@ -1,0 +1,24 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:campfire",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:stick",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:coal"
+      },
+      "C" : {
+        "item" : "minecraft:log",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ " A ", "ABA", "CCC" ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:campfire"
+    }
+  }
+}

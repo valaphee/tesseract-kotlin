@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:waxing_cut_copper_stairs",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:cut_copper_stairs",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:honeycomb",
+      "subId" : -1
+    } ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:waxed_cut_copper_stairs",
+      "blockState" : "minecraft:waxed_cut_copper_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:fishing_rod",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:stick",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:string",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "  A", " AB", "A B" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:fishing_rod"
+    }
+  }
+}

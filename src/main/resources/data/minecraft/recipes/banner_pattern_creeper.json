@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:banner_pattern_creeper",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:paper",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:skull",
+      "subId" : 4
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:creeper_banner_pattern"
+    }
+  }
+}

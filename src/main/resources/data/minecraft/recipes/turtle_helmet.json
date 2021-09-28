@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:turtle_helmet",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:scute",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "A A" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:turtle_helmet"
+    }
+  }
+}

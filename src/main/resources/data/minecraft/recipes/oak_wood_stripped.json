@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:oak_wood_stripped",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:stripped_oak_log",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AA", "AA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:wood",
+      "count" : 3,
+      "blockState" : "minecraft:wood[pillar_axis=y,stripped_bit=true,wood_type=oak]"
+    }
+  }
+}

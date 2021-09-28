@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "jungle_stairs_jungle_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:planks",
+        "subId" : 3
+      }
+    },
+    "pattern" : [ "A  ", "AA ", "AAA" ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:jungle_stairs",
+      "count" : 4,
+      "blockState" : "minecraft:jungle_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

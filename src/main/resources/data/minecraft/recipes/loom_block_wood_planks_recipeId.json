@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "loom_block_wood_planks_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:string",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:planks",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AA", "BB" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:loom",
+      "blockState" : "minecraft:loom[direction=0]"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:suspicious_stew_from_dandelion",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:brown_mushroom",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:red_mushroom",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:bowl",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:yellow_flower",
+      "subId" : -1
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:suspicious_stew",
+      "subId" : 5
+    }
+  }
+}

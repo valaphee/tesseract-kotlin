@@ -1,0 +1,16 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:stonecutter_polished_diorite_slab2",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:stone",
+      "subId" : 4
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:double_stone_slab3",
+      "count" : 2,
+      "blockState" : "minecraft:stone_slab3[stone_slab_type_3=polished_diorite,top_slot_bit=false]"
+    }
+  }
+}

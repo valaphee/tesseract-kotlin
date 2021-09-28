@@ -1,0 +1,14 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:light_gray_dye_from_oxeye_daisy",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:red_flower",
+      "subId" : 8
+    } ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:light_gray_dye"
+    }
+  }
+}

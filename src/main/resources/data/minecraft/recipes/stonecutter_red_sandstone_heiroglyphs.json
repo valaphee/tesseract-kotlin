@@ -1,0 +1,14 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:stonecutter_red_sandstone_heiroglyphs",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:red_sandstone"
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:red_sandstone",
+      "blockState" : "minecraft:red_sandstone[sand_stone_type=heiroglyphs]"
+    }
+  }
+}

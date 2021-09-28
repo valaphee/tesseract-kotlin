@@ -1,0 +1,24 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:suspicious_stew_from_cornflower",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:brown_mushroom",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:red_mushroom",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:bowl",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:red_flower",
+      "subId" : 9
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:suspicious_stew",
+      "subId" : 1
+    }
+  }
+}

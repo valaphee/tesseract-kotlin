@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:sign_acacia",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:planks",
+        "subId" : 4
+      },
+      "B" : {
+        "item" : "minecraft:stick",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "AAA", " B " ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:acacia_sign",
+      "count" : 3
+    }
+  }
+}

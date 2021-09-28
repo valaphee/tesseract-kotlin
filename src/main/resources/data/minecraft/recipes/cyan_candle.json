@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:cyan_candle",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:candle",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:cyan_dye"
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:cyan_candle",
+      "blockState" : "minecraft:cyan_candle[candles=0,lit=false]"
+    }
+  }
+}

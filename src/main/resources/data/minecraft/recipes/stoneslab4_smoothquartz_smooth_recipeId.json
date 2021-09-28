@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "stoneslab4_smoothquartz_smooth_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:quartz_block",
+        "subId" : 3
+      }
+    },
+    "pattern" : [ "AAA" ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:double_stone_slab4",
+      "count" : 6,
+      "blockState" : "minecraft:stone_slab4[stone_slab_type_4=smooth_quartz,top_slot_bit=false]"
+    }
+  }
+}

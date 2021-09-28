@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:prismarine_stairs",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:prismarine"
+      }
+    },
+    "pattern" : [ "A  ", "AA ", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:prismarine_stairs",
+      "count" : 4,
+      "blockState" : "minecraft:prismarine_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

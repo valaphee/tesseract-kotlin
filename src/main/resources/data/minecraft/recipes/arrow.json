@@ -1,0 +1,26 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:arrow",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:flint",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:stick",
+        "subId" : -1
+      },
+      "C" : {
+        "item" : "minecraft:feather",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A", "B", "C" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:arrow",
+      "count" : 4
+    }
+  }
+}

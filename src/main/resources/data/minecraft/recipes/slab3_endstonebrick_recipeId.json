@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "slab3_endstonebrick_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:end_bricks"
+      }
+    },
+    "pattern" : [ "AAA" ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:double_stone_slab3",
+      "count" : 6,
+      "blockState" : "minecraft:stone_slab3[stone_slab_type_3=end_stone_brick,top_slot_bit=false]"
+    }
+  }
+}

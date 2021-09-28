@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:warped_trapdoor",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:warped_planks",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:warped_trapdoor",
+      "count" : 2,
+      "blockState" : "minecraft:warped_trapdoor[direction=0,open_bit=false,upside_down_bit=false]"
+    }
+  }
+}

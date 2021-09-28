@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:lantern",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:iron_nugget",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:torch",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "ABA", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:lantern",
+      "blockState" : "minecraft:lantern[hanging=false]"
+    }
+  }
+}

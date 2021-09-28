@@ -1,0 +1,16 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:gray_dye_from_black_bonemeal",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:black_dye"
+    }, {
+      "item" : "minecraft:bone_meal"
+    } ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:gray_dye",
+      "count" : 2
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "tool_material_recipe_0_3",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:planks",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:stick",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AA", " B", " B" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:wooden_hoe"
+    }
+  }
+}

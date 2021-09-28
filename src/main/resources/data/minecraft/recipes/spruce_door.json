@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:spruce_door",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:planks",
+        "subId" : 1
+      }
+    },
+    "pattern" : [ "AA", "AA", "AA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:spruce_door",
+      "count" : 3
+    }
+  }
+}

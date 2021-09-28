@@ -1,0 +1,20 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "bed_color_0",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:wool"
+      },
+      "B" : {
+        "item" : "minecraft:planks",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "BBB" ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:bed"
+    }
+  }
+}

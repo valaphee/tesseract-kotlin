@@ -1,0 +1,15 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:stonecutter_prismarine_brick_stairs",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:prismarine",
+      "subId" : 2
+    } ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:prismarine_bricks_stairs",
+      "blockState" : "minecraft:prismarine_bricks_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

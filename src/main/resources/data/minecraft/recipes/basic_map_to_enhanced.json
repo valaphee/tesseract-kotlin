@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:basic_map_to_enhanced",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:empty_map",
+      "subId" : 1
+    }, {
+      "item" : "minecraft:compass",
+      "subId" : -1
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:empty_map",
+      "subId" : 2
+    }
+  }
+}

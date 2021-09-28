@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:mossy_cobblestone",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:cobblestone",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:vine",
+      "subId" : -1
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:mossy_cobblestone",
+      "blockState" : "minecraft:mossy_cobblestone"
+    }
+  }
+}

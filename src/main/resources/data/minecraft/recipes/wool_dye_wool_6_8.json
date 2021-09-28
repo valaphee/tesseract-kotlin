@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "wool_dye_wool_6_8",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:cyan_dye",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:wool",
+      "subId" : 7
+    } ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:wool",
+      "blockState" : "minecraft:wool[color=cyan]"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:tnt_minecart",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:tnt"
+      },
+      "B" : {
+        "item" : "minecraft:minecart",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A", "B" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:tnt_minecart"
+    }
+  }
+}

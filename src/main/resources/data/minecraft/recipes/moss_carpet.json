@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:moss_carpet",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:moss_block",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:moss_carpet",
+      "count" : 3,
+      "blockState" : "minecraft:moss_carpet"
+    }
+  }
+}

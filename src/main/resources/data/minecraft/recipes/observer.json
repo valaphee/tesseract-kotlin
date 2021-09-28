@@ -1,0 +1,26 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:observer",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:cobblestone",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:redstone",
+        "subId" : -1
+      },
+      "C" : {
+        "item" : "minecraft:quartz",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "BBC", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:observer",
+      "blockState" : "minecraft:observer[facing_direction=0,powered_bit=false]"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:stonecutter_red_nether_brick_slab",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:red_nether_brick"
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:double_stone_slab2",
+      "count" : 2,
+      "blockState" : "minecraft:stone_slab2[stone_slab_type_2=red_nether_brick,top_slot_bit=false]"
+    }
+  }
+}

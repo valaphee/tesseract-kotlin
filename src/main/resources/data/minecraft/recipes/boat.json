@@ -1,0 +1,20 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:boat",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:planks"
+      },
+      "B" : {
+        "item" : "minecraft:wooden_shovel",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "ABA", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:oak_boat"
+    }
+  }
+}

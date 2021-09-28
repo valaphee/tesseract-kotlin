@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "stoneslab2_rednetherbrick_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:red_nether_brick"
+      }
+    },
+    "pattern" : [ "AAA" ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:double_stone_slab2",
+      "count" : 6,
+      "blockState" : "minecraft:stone_slab2[stone_slab_type_2=red_nether_brick,top_slot_bit=false]"
+    }
+  }
+}

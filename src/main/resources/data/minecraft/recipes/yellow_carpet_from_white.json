@@ -1,0 +1,21 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:yellow_carpet_from_white",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:carpet"
+      },
+      "B" : {
+        "item" : "minecraft:yellow_dye"
+      }
+    },
+    "pattern" : [ "AAA", "ABA", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:carpet",
+      "count" : 8,
+      "blockState" : "minecraft:carpet[color=yellow]"
+    }
+  }
+}

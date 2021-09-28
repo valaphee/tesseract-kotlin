@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:sticky_piston",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:slime_ball",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:piston",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A", "B" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:sticky_piston",
+      "blockState" : "minecraft:sticky_piston[facing_direction=1]"
+    }
+  }
+}

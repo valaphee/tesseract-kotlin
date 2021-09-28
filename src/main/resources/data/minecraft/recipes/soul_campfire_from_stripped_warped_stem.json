@@ -1,0 +1,25 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:soul_campfire_from_stripped_warped_stem",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:stick",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:soul_soil",
+        "subId" : -1
+      },
+      "C" : {
+        "item" : "minecraft:stripped_warped_stem",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ " A ", "ABA", "CCC" ],
+    "priority" : 2,
+    "result" : {
+      "item" : "minecraft:soul_campfire"
+    }
+  }
+}

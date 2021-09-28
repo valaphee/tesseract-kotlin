@@ -1,0 +1,14 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:stonecutter_red_sandstone_stairs",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:red_sandstone"
+    } ],
+    "priority" : 3,
+    "result" : {
+      "item" : "minecraft:red_sandstone_stairs",
+      "blockState" : "minecraft:red_sandstone_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

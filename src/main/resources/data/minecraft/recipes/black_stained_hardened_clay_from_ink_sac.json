@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:black_stained_hardened_clay_from_ink_sac",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:hardened_clay",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:ink_sac"
+      }
+    },
+    "pattern" : [ "AAA", "ABA", "AAA" ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:stained_hardened_clay",
+      "count" : 8,
+      "blockState" : "minecraft:stained_hardened_clay[color=black]"
+    }
+  }
+}

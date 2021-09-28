@@ -1,0 +1,21 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:cookie",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:wheat",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:cocoa_beans"
+      }
+    },
+    "pattern" : [ "ABA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:cookie",
+      "count" : 8
+    }
+  }
+}

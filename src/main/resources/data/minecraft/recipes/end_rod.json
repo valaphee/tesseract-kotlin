@@ -1,0 +1,23 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:end_rod",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:blaze_rod",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:popped_chorus_fruit",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A", "B" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:end_rod",
+      "count" : 4,
+      "blockState" : "minecraft:end_rod[facing_direction=0]"
+    }
+  }
+}

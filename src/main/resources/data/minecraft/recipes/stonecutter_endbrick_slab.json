@@ -1,0 +1,15 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:stonecutter_endbrick_slab",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:end_stone"
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:double_stone_slab3",
+      "count" : 2,
+      "blockState" : "minecraft:stone_slab3[stone_slab_type_3=end_stone_brick,top_slot_bit=false]"
+    }
+  }
+}

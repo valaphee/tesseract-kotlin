@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:red_nether_brick",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:netherbrick",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:nether_wart",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AB", "BA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:red_nether_brick",
+      "blockState" : "minecraft:red_nether_brick"
+    }
+  }
+}

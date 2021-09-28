@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:stonecutter",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:iron_ingot",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:stone",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ " A ", "BBB" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:stonecutter_block",
+      "blockState" : "minecraft:stonecutter_block[facing_direction=0]"
+    }
+  }
+}

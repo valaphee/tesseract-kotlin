@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:chest_from_crimson_planks",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:crimson_planks",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AAA", "A A", "AAA" ],
+    "priority" : 2,
+    "result" : {
+      "item" : "minecraft:chest",
+      "blockState" : "minecraft:chest[facing_direction=0]"
+    }
+  }
+}

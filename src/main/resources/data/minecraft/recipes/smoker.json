@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:smoker",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:log",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:furnace",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ " A ", "ABA", " A " ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:smoker",
+      "blockState" : "minecraft:smoker[facing_direction=0]"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "WoodPressurePlate_recipeId",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:planks"
+      }
+    },
+    "pattern" : [ "AA" ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:wooden_pressure_plate",
+      "blockState" : "minecraft:wooden_pressure_plate[redstone_signal=0]"
+    }
+  }
+}

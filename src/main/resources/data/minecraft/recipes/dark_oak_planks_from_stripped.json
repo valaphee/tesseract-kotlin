@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:dark_oak_planks_from_stripped",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:stripped_dark_oak_log",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:planks",
+      "count" : 4,
+      "blockState" : "minecraft:planks[wood_type=dark_oak]"
+    }
+  }
+}

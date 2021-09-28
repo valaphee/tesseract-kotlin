@@ -1,0 +1,23 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:scaffolding",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:bamboo",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:string",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "ABA", "A A", "A A" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:scaffolding",
+      "count" : 6,
+      "blockState" : "minecraft:scaffolding[stability=0,stability_check=false]"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:amethyst_block",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:amethyst_shard",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "AA", "AA" ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:amethyst_block",
+      "blockState" : "minecraft:amethyst_block"
+    }
+  }
+}

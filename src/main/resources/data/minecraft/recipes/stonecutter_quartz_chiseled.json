@@ -1,0 +1,14 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:stonecutter_quartz_chiseled",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:quartz_block"
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:quartz_block",
+      "blockState" : "minecraft:quartz_block[chisel_type=chiseled,pillar_axis=y]"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:wooden_door",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:planks"
+      }
+    },
+    "pattern" : [ "AA", "AA", "AA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:wooden_door",
+      "count" : 3
+    }
+  }
+}

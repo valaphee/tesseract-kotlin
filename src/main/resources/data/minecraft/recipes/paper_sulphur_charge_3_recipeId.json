@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "paper_sulphur_charge_3_recipeId",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:paper",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:gunpowder",
+      "subId" : -1
+    }, {
+      "item" : "minecraft:firework_star",
+      "subId" : 3
+    } ],
+    "priority" : 50,
+    "result" : {
+      "item" : "minecraft:firework_rocket",
+      "count" : 3,
+      "tag" : "CgAACgkARmlyZXdvcmtzCQoARXhwbG9zaW9ucwoBAAAABw0ARmlyZXdvcmtDb2xvcgEAAAADBwwARmlyZXdvcmtGYWRlAAAAAAEPAEZpcmV3b3JrRmxpY2tlcgABDQBGaXJld29ya1RyYWlsAAEMAEZpcmV3b3JrVHlwZQAAAQYARmxpZ2h0AQAA"
+    }
+  }
+}

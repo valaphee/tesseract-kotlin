@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:smooth_sandstone",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:sandstone"
+      }
+    },
+    "pattern" : [ "AA", "AA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:sandstone",
+      "count" : 4,
+      "blockState" : "minecraft:sandstone[sand_stone_type=cut]"
+    }
+  }
+}

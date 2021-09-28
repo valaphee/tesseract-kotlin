@@ -1,0 +1,15 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:stonecutter_polished_diorite",
+    "tags" : [ "stonecutter" ],
+    "ingredients" : [ {
+      "item" : "minecraft:stone",
+      "subId" : 3
+    } ],
+    "priority" : 3,
+    "result" : {
+      "item" : "minecraft:stone",
+      "blockState" : "minecraft:stone[stone_type=diorite_smooth]"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:comparator",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:redstone_torch",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:quartz",
+        "subId" : -1
+      },
+      "C" : {
+        "item" : "minecraft:stone"
+      }
+    },
+    "pattern" : [ " A ", "ABA", "CCC" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:comparator"
+    }
+  }
+}

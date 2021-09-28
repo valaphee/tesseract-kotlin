@@ -1,0 +1,16 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:purple_dye_from_lapis_lazuli",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:lapis_lazuli"
+    }, {
+      "item" : "minecraft:red_dye"
+    } ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:purple_dye",
+      "count" : 2
+    }
+  }
+}

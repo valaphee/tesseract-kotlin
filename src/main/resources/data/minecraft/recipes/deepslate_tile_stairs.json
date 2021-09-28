@@ -1,0 +1,19 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:deepslate_tile_stairs",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:deepslate_tiles",
+        "subId" : -1
+      }
+    },
+    "pattern" : [ "A  ", "AA ", "AAA" ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:deepslate_tile_stairs",
+      "count" : 4,
+      "blockState" : "minecraft:deepslate_tile_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

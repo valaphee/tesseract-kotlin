@@ -1,0 +1,21 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:dark_prismarine_from_ink_sac",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:prismarine_shard",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:ink_sac"
+      }
+    },
+    "pattern" : [ "AAA", "ABA", "AAA" ],
+    "priority" : 1,
+    "result" : {
+      "item" : "minecraft:prismarine",
+      "blockState" : "minecraft:prismarine[prismarine_block_type=dark]"
+    }
+  }
+}

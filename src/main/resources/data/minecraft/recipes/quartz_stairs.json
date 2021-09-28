@@ -1,0 +1,18 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:quartz_stairs",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:quartz_block"
+      }
+    },
+    "pattern" : [ "A  ", "AA ", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:quartz_stairs",
+      "count" : 4,
+      "blockState" : "minecraft:quartz_stairs[upside_down_bit=false,weirdo_direction=0]"
+    }
+  }
+}

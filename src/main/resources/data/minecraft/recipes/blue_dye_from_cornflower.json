@@ -1,0 +1,14 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:blue_dye_from_cornflower",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:red_flower",
+      "subId" : 9
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:blue_dye"
+    }
+  }
+}

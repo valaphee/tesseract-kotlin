@@ -1,0 +1,22 @@
+{
+  "tesseract:recipe_shaped" : {
+    "key" : "minecraft:black_stained_glass_pane_from_pane",
+    "tags" : [ "crafting_table" ],
+    "map" : {
+      "A" : {
+        "item" : "minecraft:glass_pane",
+        "subId" : -1
+      },
+      "B" : {
+        "item" : "minecraft:black_dye"
+      }
+    },
+    "pattern" : [ "AAA", "ABA", "AAA" ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:stained_glass_pane",
+      "count" : 8,
+      "blockState" : "minecraft:stained_glass_pane[color=black]"
+    }
+  }
+}

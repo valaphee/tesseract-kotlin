@@ -1,0 +1,13 @@
+{
+  "tesseract:recipe_shapeless" : {
+    "key" : "minecraft:black_dye_from_ink_sac",
+    "tags" : [ "crafting_table" ],
+    "ingredients" : [ {
+      "item" : "minecraft:ink_sac"
+    } ],
+    "priority" : 0,
+    "result" : {
+      "item" : "minecraft:black_dye"
+    }
+  }
+}
