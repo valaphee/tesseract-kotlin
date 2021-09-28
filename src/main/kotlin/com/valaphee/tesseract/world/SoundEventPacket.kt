@@ -364,7 +364,7 @@ data class SoundEventPacket(
             this[0x137] = SoundEvent.RespawnAnchorAmbient
             this[0x138] = SoundEvent.SoulEscapeQuiet
             this[0x139] = SoundEvent.SoulEscapeLoud
-            this[0x13A] = SoundEvent.RecordPigStep
+            this[0x13A] = SoundEvent.RecordPigstep
             this[0x13B] = SoundEvent.LinkCompassToLodestone
             this[0x13C] = SoundEvent.UseSmithingTable
             this[0x13D] = SoundEvent.EquipNetherite

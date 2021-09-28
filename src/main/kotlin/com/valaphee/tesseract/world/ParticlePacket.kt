@@ -20,11 +20,11 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
-package com.valaphee.tesseract.actor.effect
+package com.valaphee.tesseract.world
 
+import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
@@ -36,44 +36,36 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class EffectPacket(
-    val runtimeEntityId: Long,
-    val action: Action,
-    val effect: Effect,
-    val amplifier: Int,
-    val particles: Boolean,
-    val duration: Int
+data class ParticlePacket(
+    val dimension: Dimension,
+    val uniqueEntityId: Long,
+    val position: Float3,
+    val particleName: String
 ) : Packet {
-    enum class Action {
-        Apply, Modify, Revoke
-    }
+    override val id get() = 0x76
 
-    override val id get() = 0x1C
+    constructor(dimension: Dimension, uniqueEntityId: Long, particleName: String) : this(dimension, uniqueEntityId, Float3.Zero, particleName)
 
-    constructor(runtimeEntityId: Long, action: Action, effect: Effect) : this(runtimeEntityId, action, effect, 0, false, 0)
+    constructor(dimension: Dimension, position: Float3, particleName: String) : this(dimension, 0, position, particleName)
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarULong(runtimeEntityId)
-        buffer.writeByte(action.ordinal + 1)
-        buffer.writeVarInt(effect.ordinal + 1)
-        buffer.writeVarInt(amplifier)
-        buffer.writeBoolean(particles)
-        buffer.writeVarInt(duration)
+        buffer.writeByte(dimension.ordinal)
+        buffer.writeVarLong(uniqueEntityId)
+        buffer.writeFloat3(position)
+        buffer.writeString(particleName)
     }
 
-    override fun handle(handler: PacketHandler) = handler.effect(this)
+    override fun handle(handler: PacketHandler) = handler.particle(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object EffectPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = EffectPacket(
-        buffer.readVarULong(),
-        EffectPacket.Action.values()[buffer.readByte().toInt() - 1],
-        Effect.values()[buffer.readVarInt() - 1],
-        buffer.readVarInt(),
-        buffer.readBoolean(),
-        buffer.readVarInt()
+object ParticlePacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = ParticlePacket(
+        Dimension.values()[buffer.readUnsignedByte().toInt()],
+        buffer.readVarLong(),
+        buffer.readFloat3(),
+        buffer.readString()
     )
 }

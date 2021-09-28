@@ -61,7 +61,7 @@ data class PlayerAddPacket(
     val velocity: Float3,
     val rotation: Float2,
     val headRotationYaw: Float,
-    val stackInHand: Stack<*>?,
+    val stackInHand: Stack/*<*>*/?,
     val metadata: Metadata,
     val playerFlags: Collection<PlayerFlag>,
     val permission: Permission,

@@ -35,10 +35,10 @@ import com.valaphee.tesseract.inventory.item.stack.Stack
 data class ShapedRecipeData(
     override val key: String,
     val tags: Array<String>,
-    val map: Map<String, Stack<*>>,
+    val map: Map<String, Stack/*<*>*/>,
     val pattern: Array<String>,
     val priority: Int = 0,
-    val result: Stack<*>
+    val result: Stack/*<*>*/
 ) : KeyedData {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

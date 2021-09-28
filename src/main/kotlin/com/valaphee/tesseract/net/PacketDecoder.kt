@@ -28,12 +28,14 @@ import com.valaphee.tesseract.actor.ActorAddPacketReader
 import com.valaphee.tesseract.actor.ActorEquipmentPacketReader
 import com.valaphee.tesseract.actor.ActorEventPacketReader
 import com.valaphee.tesseract.actor.ActorRemovePacketReader
+import com.valaphee.tesseract.actor.AnimationPacketReader
 import com.valaphee.tesseract.actor.ArmorPacketReader
 import com.valaphee.tesseract.actor.ExperienceOrbAddPacketReader
 import com.valaphee.tesseract.actor.HealthPacketReader
 import com.valaphee.tesseract.actor.LinkPacketReader
 import com.valaphee.tesseract.actor.PaintingAddPacketReader
 import com.valaphee.tesseract.actor.attribute.AttributesPacketReader
+import com.valaphee.tesseract.actor.effect.EffectPacketReader
 import com.valaphee.tesseract.actor.location.MoveRotatePacketReader
 import com.valaphee.tesseract.actor.location.TeleportPacketReader
 import com.valaphee.tesseract.actor.location.VelocityPacketReader
@@ -111,6 +113,7 @@ import com.valaphee.tesseract.world.DimensionPacketReader
 import com.valaphee.tesseract.world.FogPacketReader
 import com.valaphee.tesseract.world.GameModePacketReader
 import com.valaphee.tesseract.world.GameRulesPacketReader
+import com.valaphee.tesseract.world.ParticlePacketReader
 import com.valaphee.tesseract.world.RespawnPacketReader
 import com.valaphee.tesseract.world.ShowCreditsPacketReader
 import com.valaphee.tesseract.world.SoundEventPacketReader
@@ -125,6 +128,8 @@ import com.valaphee.tesseract.world.TimePacketReader
 import com.valaphee.tesseract.world.TitlePacketReader
 import com.valaphee.tesseract.world.WorldEventPacketReader
 import com.valaphee.tesseract.world.WorldPacketReader
+import com.valaphee.tesseract.world.chunk.BlockEntityPacketReader
+import com.valaphee.tesseract.world.chunk.BlockEventPacketReader
 import com.valaphee.tesseract.world.chunk.BlockUpdatePacketReader
 import com.valaphee.tesseract.world.chunk.BlockUpdateSyncedPacketReader
 import com.valaphee.tesseract.world.chunk.ChunkPacketReader
@@ -180,9 +185,9 @@ class PacketDecoder(
             this[0x17] = TickSyncPacketReader
             this[0x18] = SoundEventPacketV1Reader
             this[0x19] = WorldEventPacketReader
-            //this[0x1A] =
+            this[0x1A] = BlockEventPacketReader
             this[0x1B] = ActorEventPacketReader
-            //this[0x1C] = EffectPacketReader
+            this[0x1C] = EffectPacketReader
             this[0x1D] = AttributesPacketReader
             this[0x1E] = InventoryTransactionPacketReader
             this[0x1F] = ActorEquipmentPacketReader
@@ -198,7 +203,7 @@ class PacketDecoder(
             this[0x29] = LinkPacketReader
             this[0x2A] = HealthPacketReader
             this[0x2B] = SpawnPositionPacketReader
-            //this[0x2C] =
+            this[0x2C] = AnimationPacketReader
             this[0x2D] = RespawnPacketReader
             this[0x2E] = WindowOpenPacketReader
             this[0x2F] = WindowClosePacketReader
@@ -210,7 +215,7 @@ class PacketDecoder(
             this[0x35] = CraftingEventPacketReader
             //this[0x36] =
             this[0x37] = AdventureSettingsPacketReader
-            //this[0x38] =
+            this[0x38] = BlockEntityPacketReader
             this[0x39] = SteerPacketReader
             this[0x3A] = ChunkPacketReader
             this[0x3B] = CommandSettingsPacketReader
@@ -272,7 +277,7 @@ class PacketDecoder(
             this[0x73] = LatencyPacketReader
             //this[0x74] =
             //this[0x75] =
-            //this[0x76] =
+            this[0x76] = ParticlePacketReader
             this[0x77] = EntityIdentifiersPacketReader
             this[0x78] = SoundEventPacketV2Reader
             this[0x79] = ChunkPublishPacketReader

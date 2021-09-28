@@ -34,7 +34,6 @@ import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.valaphee.tesseract.inventory.item.Item
-import com.valaphee.tesseract.inventory.item.stack.meta.Meta
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.util.LittleEndianByteBufInputStream
 import com.valaphee.tesseract.util.LittleEndianByteBufOutputStream
@@ -53,38 +52,47 @@ import com.valaphee.tesseract.util.nbt.NbtOutputStream
  */
 @JsonSerialize(using = StackSerializer::class)
 @JsonDeserialize(using = StackDeserializer::class)
-class Stack<T : Meta> private constructor(
-    val item: Item<T>,
-    var subId: Int,
-    var count: Int,
-    var meta: T?,
+data class Stack/*<T : Meta> internal constructor*/(
+    val item: Item/*<T>*/,
+    var subId: Int = 0,
+    var count: Int = 1,
+    /*var meta: T?,*/
+    var tag: CompoundTag? = null,
     var canPlaceOn: Array<String>? = null,
     var canDestroy: Array<String>? = null,
     var blockingTicks: Long = 0,
     var netId: Int = 0,
     var blockRuntimeId: Int = 0
 ) {
-    var tag: CompoundTag?
+    /*var tag: CompoundTag?
         get() = meta?.toTag()
         set(value) {
             value?.let { meta?.fromTag(value) } ?: run { meta = null }
-        }
+        }*/
 
-    constructor(item: Item<T>, subId: Int = 0, count: Int = 1, canPlaceOn: Array<String>? = null, canDestroy: Array<String>? = null, blockingTicks: Long = 0, netId: Int = 0, blockRuntimeId: Int = 0, meta: T.() -> Unit = {}) : this(item, subId, count, item.meta().apply(meta), canPlaceOn, canDestroy, blockingTicks, netId, blockRuntimeId)
+    /*constructor(item: Item<T>, subId: Int = 0, count: Int = 1, canPlaceOn: Array<String>? = null, canDestroy: Array<String>? = null, blockingTicks: Long = 0, netId: Int = 0, blockRuntimeId: Int = 0, meta: T.() -> Unit = {}) : this(item, subId, count, item.meta().apply(meta), canPlaceOn, canDestroy, blockingTicks, netId, blockRuntimeId)*/
 
-    constructor(item: Item<T>, subId: Int = 0, count: Int, tag: CompoundTag?, canPlaceOn: Array<String>? = null, canDestroy: Array<String>? = null, blockingTicks: Long = 0, netId: Int = 0, blockRuntimeId: Int = 0) : this(item, subId, count, tag?.let { item.meta().apply { fromTag(tag) } }, canPlaceOn, canDestroy, blockingTicks, netId, blockRuntimeId)
+    /*constructor(item: Item<T>, subId: Int = 0, count: Int, tag: CompoundTag?, canPlaceOn: Array<String>? = null, canDestroy: Array<String>? = null, blockingTicks: Long = 0, netId: Int = 0, blockRuntimeId: Int = 0) : this(item, subId, count, tag?.let { item.meta().apply { fromTag(tag) } }, canPlaceOn, canDestroy, blockingTicks, netId, blockRuntimeId)*/
 
-    fun meta(meta: T.() -> Unit = {}): T = item.meta().apply(meta).also { this.meta = it }
+    /*fun meta(meta: T.() -> Unit = {}): T = item.meta().apply(meta).also { this.meta = it }*/
+
+    fun toTag(tag: CompoundTag): CompoundTag {
+        tag.setString("Name", item.key)
+        tag.setShort("Damage", subId.toShort())
+        tag.setByte("Count", count.toByte())
+        this.tag?.let { tag["tag"] = it }
+        return tag
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Stack<*>
+        other as Stack/*<*>*/
 
         if (item != other.item) return false
         if (count != other.count) return false
-        if (meta != other.meta) return false
+        if (tag != other.tag) return false
 
         return true
     }
@@ -93,10 +101,10 @@ class Stack<T : Meta> private constructor(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Stack<*>
+        other as Stack/*<*>*/
 
         if (item != other.item) return false
-        if (meta != other.meta) return false
+        if (tag != other.tag) return false
 
         return true
     }
@@ -104,7 +112,7 @@ class Stack<T : Meta> private constructor(
     override fun hashCode(): Int {
         var result = item.hashCode()
         result = 31 * result + count
-        result = 31 * result + (meta?.hashCode() ?: 0)
+        result = 31 * result + (tag?.hashCode() ?: 0)
         return result
     }
 }
@@ -112,8 +120,8 @@ class Stack<T : Meta> private constructor(
 /**
  * @author Kevin Ludwig
  */
-object StackSerializer : JsonSerializer<Stack<*>?>() {
-    override fun serialize(value: Stack<*>?, generator: JsonGenerator, provider: SerializerProvider) {
+object StackSerializer : JsonSerializer<Stack/*<*>*/?>() {
+    override fun serialize(value: Stack/*<*>*/?, generator: JsonGenerator, provider: SerializerProvider) {
         value?.let {
             generator.writeStartObject()
             generator.writeStringField("item", it.item.key)
@@ -127,11 +135,11 @@ object StackSerializer : JsonSerializer<Stack<*>?>() {
 /**
  * @author Kevin Ludwig
  */
-object StackDeserializer : JsonDeserializer<Stack<*>?>() {
-    override fun deserialize(parser: JsonParser, context: DeserializationContext): Stack<*>? {
+object StackDeserializer : JsonDeserializer<Stack/*<*>*/?>() {
+    override fun deserialize(parser: JsonParser, context: DeserializationContext): Stack/*<*>*/? {
         val node = parser.readValueAsTree<JsonNode>()
         return if (node.isNull) null else {
-            Stack(Item.byKeyOrNull(node["item"].asText()) as Item<*>, node["data"]?.asInt() ?: 0, node["count"]?.asInt() ?: 1)
+            Stack(Item.byKeyOrNull(node["item"].asText()) as Item/*<*>*/, node["data"]?.asInt() ?: 0, node["count"]?.asInt() ?: 1)
         }
     }
 }
@@ -141,13 +149,13 @@ fun CompoundTag.asStack() = Stack(
         has("Name") -> Item.byKeyOrNull(getString("Name")) ?: Item.default
         has("id") -> Item.byIdOrNull(getInt("id"))
         else -> Item.default
-    } as Item<*>, getIntOrNull("Damage") ?: 0, getIntOrNull("Count") ?: 1, getCompoundTagOrNull("tag")
+    } as Item/*<*>*/, getIntOrNull("Damage") ?: 0, getIntOrNull("Count") ?: 1, getCompoundTagOrNull("tag")
 )
 
-fun PacketBuffer.readStackPre431(): Stack<*>? {
+fun PacketBuffer.readStackPre431(): Stack/*<*>*/? {
     val id = readVarInt()
     if (id == 0) return null
-    val item = Item.byIdOrNull(id) as Item<*>
+    val item = Item.byIdOrNull(id) as Item/*<*>*/
     val countAndSubId = readVarInt()
     return Stack(
         item,
@@ -166,17 +174,17 @@ fun PacketBuffer.readStackPre431(): Stack<*>? {
     )
 }
 
-fun PacketBuffer.readStackWithNetIdPre431(): Stack<*>? {
+fun PacketBuffer.readStackWithNetIdPre431(): Stack/*<*>*/? {
     val netId = readVarInt()
     val stack = readStackPre431()
     stack?.let { it.netId = netId }
     return stack
 }
 
-fun PacketBuffer.readStack(): Stack<*>? {
+fun PacketBuffer.readStack(): Stack/*<*>*/? {
     val id = readVarInt()
     if (id == 0) return null
-    val item = Item.byIdOrNull(id) as Item<*>
+    val item = Item.byIdOrNull(id) as Item/*<*>*/
     val count = readUnsignedShortLE()
     val subId = readVarUInt()
     val netId = if (readBoolean()) readVarInt() else 0
@@ -201,10 +209,10 @@ fun PacketBuffer.readStack(): Stack<*>? {
     )
 }
 
-fun PacketBuffer.readStackInstance(): Stack<*>? {
+fun PacketBuffer.readStackInstance(): Stack/*<*>*/? {
     val id = readVarInt()
     if (id == 0) return null
-    val item = Item.byIdOrNull(id) as Item<*>
+    val item = Item.byIdOrNull(id) as Item/*<*>*/
     val count = readUnsignedShortLE()
     val subId = readVarUInt()
     val blockRuntimeId = readVarInt()
@@ -228,13 +236,13 @@ fun PacketBuffer.readStackInstance(): Stack<*>? {
     )
 }
 
-fun PacketBuffer.readIngredient(): Stack<*>? {
+fun PacketBuffer.readIngredient(): Stack/*<*>*/? {
     val id = readVarInt()
     if (id == 0) return null
-    return Stack(Item.byIdOrNull(id) as Item<*>, readVarInt().let { if (it == Short.MAX_VALUE.toInt()) -1 else it }, readVarInt())
+    return Stack(Item.byIdOrNull(id) as Item/*<*>*/, readVarInt().let { if (it == Short.MAX_VALUE.toInt()) -1 else it }, readVarInt())
 }
 
-fun PacketBuffer.writeStackPre431(value: Stack<*>?) {
+fun PacketBuffer.writeStackPre431(value: Stack/*<*>*/?) {
     value?.let {
         writeVarInt(it.item.id)
         writeVarInt(((if (it.subId == -1) Short.MAX_VALUE.toInt() else it.subId) shl 8) or (it.count and 0xFF))
@@ -255,12 +263,12 @@ fun PacketBuffer.writeStackPre431(value: Stack<*>?) {
     } ?: writeVarInt(0)
 }
 
-fun PacketBuffer.writeStackWithNetIdPre431(value: Stack<*>?) {
+fun PacketBuffer.writeStackWithNetIdPre431(value: Stack/*<*>*/?) {
     writeVarInt(value?.netId ?: 0)
     writeStackPre431(value)
 }
 
-fun PacketBuffer.writeStack(value: Stack<*>?) {
+fun PacketBuffer.writeStack(value: Stack/*<*>*/?) {
     value?.let {
         writeVarInt(it.item.id)
         writeShortLE(it.count)
@@ -290,7 +298,7 @@ fun PacketBuffer.writeStack(value: Stack<*>?) {
     } ?: writeVarInt(0)
 }
 
-fun PacketBuffer.writeStackInstance(value: Stack<*>?) {
+fun PacketBuffer.writeStackInstance(value: Stack/*<*>*/?) {
     value?.let {
         writeVarInt(it.item.id)
         writeShortLE(it.count)
@@ -316,7 +324,7 @@ fun PacketBuffer.writeStackInstance(value: Stack<*>?) {
     } ?: writeVarInt(0)
 }
 
-fun PacketBuffer.writeIngredient(value: Stack<*>?) {
+fun PacketBuffer.writeIngredient(value: Stack/*<*>*/?) {
     value?.let {
         writeVarInt(value.item.id)
         writeVarInt(if (value.subId == -1) Short.MAX_VALUE.toInt() else value.subId)

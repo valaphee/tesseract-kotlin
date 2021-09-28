@@ -45,7 +45,7 @@ import com.valaphee.tesseract.net.Restriction
 data class InventorySlotPacket(
     val windowId: Int,
     val slotId: Int,
-    val stack: Stack<*>?
+    val stack: Stack/*<*>*/?
 ) : Packet {
     override val id get() = 0x32
 

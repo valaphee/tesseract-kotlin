@@ -24,15 +24,14 @@
 
 package com.valaphee.tesseract.inventory.item
 
-import com.valaphee.tesseract.inventory.item.stack.meta.Meta
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 
 /**
  * @author Kevin Ludwig
  */
-class Item<T : Meta> constructor(
-    val key: String,
-    val meta: () -> T
+class Item/*<T : Meta>*/ constructor(
+    val key: String/*,
+    val meta: () -> T*/
 ) {
     var id = 0
     var item: com.valaphee.tesseract.data.item.IItem? = null
@@ -45,7 +44,7 @@ class Item<T : Meta> constructor(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Item<*>
+        other as Item/*<*>*/
 
         if (id != other.id) return false
 
@@ -57,20 +56,20 @@ class Item<T : Meta> constructor(
     override fun toString() = key
 
     companion object {
-        private val byId = Int2ObjectOpenHashMap<Item<*>>()
-        private val byKey = mutableMapOf<String, Item<*>>()
+        private val byId = Int2ObjectOpenHashMap<Item/*<*>*/>()
+        private val byKey = mutableMapOf<String, Item/*<*>*/>()
 
-        fun register(value: Item<*>) {
+        fun register(value: Item/*<*>*/) {
             byKey[value.key] = value
         }
 
         fun register(key: String, id: Int) {
-            byId[id] = byKey.getOrPut(key) { Item(key, ::Meta) }.apply { this.id = id }
+            byId[id] = byKey.getOrPut(key) { Item(key/*, ::Meta*/) }.apply { this.id = id }
         }
 
         fun byId(id: Int) = checkNotNull(byId[id])
 
-        fun byIdOrNull(id: Int): Item<*>? = byId[id]
+        fun byIdOrNull(id: Int): Item/*<*>*/? = byId[id]
 
         fun byKey(key: String) = checkNotNull(byKey[key])
 
@@ -78,8 +77,16 @@ class Item<T : Meta> constructor(
 
         val all get() = byId.values
 
-        var default: Item<*>
+        var default: Item/*<*>*/
             get() = byId.defaultReturnValue()
             set(value) = byId.defaultReturnValue(value)
+
+        /*val LeatherHelmet = Item("minecraft:leather_helmet", ::DyeableMeta)
+        val LeatherChestplate = Item("minecraft:leather_chestplate", ::DyeableMeta)
+        val LeatherLeggings = Item("minecraft:leather_leggings", ::DyeableMeta)
+        val LeatherBoots = Item("minecraft:leather_boots", ::DyeableMeta)
+        val FilledMap = Item("minecraft:filled_map", ::MapMeta)
+        val WritableBook = Item("minecraft:writable_book", ::WritableBookMeta)
+        val WrittenBook = Item("minecraft:writable_book", ::WrittenBookMeta)*/
     }
 }

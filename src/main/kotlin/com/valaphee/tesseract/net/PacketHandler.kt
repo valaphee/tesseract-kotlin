@@ -28,6 +28,8 @@ import com.valaphee.tesseract.actor.ActorAddPacket
 import com.valaphee.tesseract.actor.ActorEquipmentPacket
 import com.valaphee.tesseract.actor.ActorEventPacket
 import com.valaphee.tesseract.actor.ActorRemovePacket
+import com.valaphee.tesseract.actor.AnimatePacket
+import com.valaphee.tesseract.actor.AnimationPacket
 import com.valaphee.tesseract.actor.ArmorPacket
 import com.valaphee.tesseract.actor.ExperienceOrbAddPacket
 import com.valaphee.tesseract.actor.HealthPacket
@@ -113,6 +115,7 @@ import com.valaphee.tesseract.world.DimensionPacket
 import com.valaphee.tesseract.world.FogPacket
 import com.valaphee.tesseract.world.GameModePacket
 import com.valaphee.tesseract.world.GameRulesPacket
+import com.valaphee.tesseract.world.ParticlePacket
 import com.valaphee.tesseract.world.PlayerListPacket
 import com.valaphee.tesseract.world.RespawnPacket
 import com.valaphee.tesseract.world.ShowCreditsPacket
@@ -128,6 +131,8 @@ import com.valaphee.tesseract.world.TimePacket
 import com.valaphee.tesseract.world.TitlePacket
 import com.valaphee.tesseract.world.WorldEventPacket
 import com.valaphee.tesseract.world.WorldPacket
+import com.valaphee.tesseract.world.chunk.BlockEntityPacket
+import com.valaphee.tesseract.world.chunk.BlockEventPacket
 import com.valaphee.tesseract.world.chunk.BlockUpdatePacket
 import com.valaphee.tesseract.world.chunk.BlockUpdateSyncedPacket
 import com.valaphee.tesseract.world.chunk.BlockUpdatesSyncedPacket
@@ -195,6 +200,8 @@ interface PacketHandler : ProtocolHandler {
 
     fun worldEvent(packet: WorldEventPacket) = other(packet)
 
+    fun blockEvent(packet: BlockEventPacket) = other(packet)
+
     fun actorEvent(packet: ActorEventPacket) = other(packet)
 
     fun effect(packet: EffectPacket) = other(packet)
@@ -225,6 +232,8 @@ interface PacketHandler : ProtocolHandler {
 
     fun spawnPosition(packet: SpawnPositionPacket) = other(packet)
 
+    fun animation(packet: AnimationPacket) = other(packet)
+
     fun respawn(packet: RespawnPacket) = other(packet)
 
     fun windowOpen(packet: WindowOpenPacket) = other(packet)
@@ -244,6 +253,8 @@ interface PacketHandler : ProtocolHandler {
     fun craftingEvent(packet: CraftingEventPacket) = other(packet)
 
     fun adventureSettings(packet: AdventureSettingsPacket) = other(packet)
+
+    fun blockEntity(packet: BlockEntityPacket) = other(packet)
 
     fun steer(packet: SteerPacket) = other(packet)
 
@@ -331,6 +342,8 @@ interface PacketHandler : ProtocolHandler {
 
     fun latency(packet: LatencyPacket) = other(packet)
 
+    fun particle(packet: ParticlePacket) = other(packet)
+
     fun entityIdentifiers(packet: EntityIdentifiersPacket) = other(packet)
 
     fun soundEventV2(packet: SoundEventPacketV2) = other(packet)
@@ -370,6 +383,8 @@ interface PacketHandler : ProtocolHandler {
     fun violation(packet: ViolationPacket) = other(packet)
 
     fun velocityPrediction(packet: VelocityPredictionPacket) = other(packet)
+
+    fun animate(packet: AnimatePacket) = other(packet)
 
     fun fog(packet: FogPacket) = other(packet)
 

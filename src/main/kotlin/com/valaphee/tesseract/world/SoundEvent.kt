@@ -335,7 +335,7 @@ enum class SoundEvent {
     RespawnAnchorAmbient,
     SoulEscapeQuiet,
     SoulEscapeLoud,
-    RecordPigStep,
+    RecordPigstep,
     LinkCompassToLodestone,
     UseSmithingTable,
     EquipNetherite,

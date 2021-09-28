@@ -40,7 +40,7 @@ import com.valaphee.tesseract.net.PacketReader
  */
 data class ActorEquipmentPacket(
     val runtimeEntityId: Long,
-    val stack: Stack<*>?,
+    val stack: Stack/*<*>*/?,
     val slotId: Int,
     val hotbarSlot: Int,
     val windowId: Int

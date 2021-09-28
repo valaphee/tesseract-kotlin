@@ -23,57 +23,36 @@
  *
  */
 
-package com.valaphee.tesseract.actor.effect
+package com.valaphee.tesseract.world.chunk
 
+import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
-import com.valaphee.tesseract.net.Restrict
-import com.valaphee.tesseract.net.Restriction
 
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.ToClient)
-data class EffectPacket(
-    val runtimeEntityId: Long,
-    val action: Action,
-    val effect: Effect,
-    val amplifier: Int,
-    val particles: Boolean,
-    val duration: Int
+data class BlockEventPacket(
+    val position: Int3,
+    val data1: Int,
+    val data2: Int
 ) : Packet {
-    enum class Action {
-        Apply, Modify, Revoke
-    }
-
-    override val id get() = 0x1C
-
-    constructor(runtimeEntityId: Long, action: Action, effect: Effect) : this(runtimeEntityId, action, effect, 0, false, 0)
+    override val id get() = 0x1A
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarULong(runtimeEntityId)
-        buffer.writeByte(action.ordinal + 1)
-        buffer.writeVarInt(effect.ordinal + 1)
-        buffer.writeVarInt(amplifier)
-        buffer.writeBoolean(particles)
-        buffer.writeVarInt(duration)
+        buffer.writeInt3UnsignedY(position)
+        buffer.writeVarInt(data1)
+        buffer.writeVarInt(data2)
     }
 
-    override fun handle(handler: PacketHandler) = handler.effect(this)
+    override fun handle(handler: PacketHandler) = handler.blockEvent(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object EffectPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = EffectPacket(
-        buffer.readVarULong(),
-        EffectPacket.Action.values()[buffer.readByte().toInt() - 1],
-        Effect.values()[buffer.readVarInt() - 1],
-        buffer.readVarInt(),
-        buffer.readBoolean(),
-        buffer.readVarInt()
-    )
+object BlockEventPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = BlockEventPacket(buffer.readInt3UnsignedY(), buffer.readVarInt(), buffer.readVarInt())
 }

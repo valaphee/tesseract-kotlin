@@ -111,7 +111,7 @@ data class Appearance constructor(
         return true
     }
 
-    override fun hashCode() = id?.hashCode() ?: 0
+    override fun hashCode() = id.hashCode()
 
     fun toJson(json: JsonObject): JsonObject {
         json.addProperty("SkinId", skinId)

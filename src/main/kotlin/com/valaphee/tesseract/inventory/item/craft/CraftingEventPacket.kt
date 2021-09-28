@@ -43,8 +43,8 @@ data class CraftingEventPacket(
     val windowId: Int,
     val type: Type,
     val recipeId: UUID,
-    val inputs: Array<Stack<*>?>,
-    val outputs: Array<Stack<*>?>,
+    val inputs: Array<Stack/*<*>*/?>,
+    val outputs: Array<Stack/*<*>*/?>,
 ) : Packet {
     enum class Type {
         Inventory, Crafting, Workbench

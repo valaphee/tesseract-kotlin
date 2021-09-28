@@ -35,9 +35,9 @@ interface Packet {
     fun handle(handler: PacketHandler)
 
     companion object {
-        internal const val idMask = 0x3FF
-        internal const val senderIdShift = 10
-        internal const val senderIdClientIdMask = 0x3
-        internal const val clientIdShift = 12
+        const val idMask = 0x3FF
+        const val senderIdShift = 10
+        const val senderIdClientIdMask = 0x3
+        const val clientIdShift = 12
     }
 }

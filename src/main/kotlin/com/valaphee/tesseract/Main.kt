@@ -24,28 +24,11 @@
 
 package com.valaphee.tesseract
 
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 import com.google.inject.Guice
 import com.valaphee.tesseract.command.CommandManager
 import com.valaphee.tesseract.data.DataModule
-import com.valaphee.tesseract.data.block.BlockState
-import com.valaphee.tesseract.inventory.item.Item
-import com.valaphee.tesseract.inventory.item.stack.Stack
 import com.valaphee.tesseract.log.Log4JLogHandler
 import com.valaphee.tesseract.log.QueueAppender
-import com.valaphee.tesseract.util.LittleEndianByteBufInputStream
-import com.valaphee.tesseract.util.getCompoundTag
-import com.valaphee.tesseract.util.getInt
-import com.valaphee.tesseract.util.getIntOrNull
-import com.valaphee.tesseract.util.getJsonArray
-import com.valaphee.tesseract.util.getString
-import com.valaphee.tesseract.util.getStringOrNull
-import com.valaphee.tesseract.util.nbt.NbtInputStream
-import io.netty.buffer.ByteBufInputStream
-import io.netty.buffer.PooledByteBufAllocator
-import io.netty.buffer.Unpooled
 import jline.Terminal
 import jline.TerminalFactory
 import jline.UnsupportedTerminal
@@ -60,11 +43,8 @@ import org.fusesource.jansi.Ansi
 import org.fusesource.jansi.AnsiConsole
 import java.io.IOException
 import java.io.InputStream
-import java.io.InputStreamReader
 import java.io.PrintStream
 import java.io.PrintWriter
-import java.lang.invoke.MethodHandles
-import java.util.Base64
 import kotlin.concurrent.thread
 
 val defaultSystemIn: InputStream = System.`in`
@@ -149,61 +129,11 @@ fun main(arguments: Array<String>) {
 
     initializeConsole()
     initializeLogging()
+    initializeRuntime()
 
-    val `class` = MethodHandles.lookup().lookupClass()
-    val gson = GsonBuilder().create()
-    val base64Decoder = Base64.getDecoder()
+    val injector = Guice.createInjector(DataModule(argument))
 
-    run {
-        val buffer = PooledByteBufAllocator.DEFAULT.directBuffer()
-        try {
-            buffer.writeBytes(`class`.getResourceAsStream("/runtime_block_states.dat")!!.readBytes())
-            NbtInputStream(ByteBufInputStream(buffer)).use { it.readTag() }?.asCompoundTag()?.get("blocks")?.asListTag()!!.toList().map { it.asCompoundTag()!! }.forEach { BlockState.register(BlockState(it.getString("name"), it.getCompoundTag("states"), it.getInt("version"))) }
-        } finally {
-            buffer.release()
-        }
-        BlockState.finish()
-    }
-
-    run {
-        gson.newJsonReader(InputStreamReader(`class`.getResourceAsStream("/runtime_item_states.json")!!)).use { (gson.fromJson(it, JsonArray::class.java) as JsonArray).map { it.asJsonObject }.forEach { Item.register(it.getString("name"), it.getInt("id")) } }
-    }
-
-    run {
-        `class`.getResourceAsStream("/biome_definitions.dat")!!.readBytes()
-    }
-
-    /*run {
-        val buffer = PooledByteBufAllocator.DEFAULT.directBuffer()
-        try {
-            val data = clazz.getResourceAsStream("/entity_identifiers.dat")!!.readBytes()
-            buffer.writeBytes(data)
-            NbtInputStream(LittleEndianVarIntByteBufInputStream(buffer)).use { it.readTag() }!!.asCompoundTag()!!.getListTag("idlist").toList().map { it.asCompoundTag()!! }.forEach { ActorTypeRegistry.register(it.getString("id"), it.getInt("rid")) }
-            entityIdentifiersPacket = EntityIdentifiersPacket(data)
-        } finally {
-            buffer.release()
-        }
-    }*/
-
-    run {
-        gson.newJsonReader(InputStreamReader(`class`.getResourceAsStream("/creative_items.json")!!)).use {
-            val content = mutableListOf<Stack<*>>()
-            (gson.fromJson(it, JsonObject::class.java) as JsonObject).getJsonArray("items").map { it.asJsonObject }.forEach {
-                Item.byKeyOrNull(it.getString("id"))?.let { item ->
-                    content += Stack(Item.byIdOrNull(item.id)!!, it.getIntOrNull("damage") ?: 0, 1, it.getStringOrNull("nbt_b64")?.let {
-                        val buffer = Unpooled.wrappedBuffer(base64Decoder.decode(it))
-                        val tag = NbtInputStream(LittleEndianByteBufInputStream(buffer)).use { it.readTag() }?.asCompoundTag()
-                        buffer.release()
-                        tag
-                    }, blockRuntimeId = it.getIntOrNull("blockRuntimeId") ?: 0)
-                }
-            }
-        }
-    }
-
-    val guice = Guice.createInjector(DataModule(argument))
-
-    val commandManager = guice.getInstance(CommandManager::class.java)
+    val commandManager = injector.getInstance(CommandManager::class.java)
     if (ansi) reader.prompt = "tesseract> "
     thread(isDaemon = true, name = "console-reader") {
         while (true) {

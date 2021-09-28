@@ -41,7 +41,7 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.ToClient)
 data class CreativeInventoryPacket(
-    val content: Array<Stack<*>?>
+    val content: Array<Stack/*<*>*/?>
 ) : Packet {
     override val id get() = 0x91
 

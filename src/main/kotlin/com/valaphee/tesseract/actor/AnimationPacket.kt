@@ -20,53 +20,59 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
 package com.valaphee.tesseract.actor
 
-import com.valaphee.tesseract.inventory.item.stack.Stack
-import com.valaphee.tesseract.inventory.item.stack.readStack
-import com.valaphee.tesseract.inventory.item.stack.readStackPre431
-import com.valaphee.tesseract.inventory.item.stack.writeStack
-import com.valaphee.tesseract.inventory.item.stack.writeStackPre431
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
+import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
 
 /**
  * @author Kevin Ludwig
  */
-data class ArmorPacket(
+data class AnimationPacket(
+    val animation: Animation,
     val runtimeEntityId: Long,
-    val helmet: Stack/*<*>*/?,
-    val chestplate: Stack/*<*>*/?,
-    val leggings: Stack/*<*>*/?,
-    val boots: Stack/*<*>*/?
+    val rowingTime: Float = 0.0f
 ) : Packet {
-    override val id get() = 0x20
-
-    override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarULong(runtimeEntityId)
-        if (version >= 431) buffer.writeStack(helmet) else buffer.writeStackPre431(helmet)
-        if (version >= 431) buffer.writeStack(chestplate) else buffer.writeStackPre431(chestplate)
-        if (version >= 431) buffer.writeStack(leggings) else buffer.writeStackPre431(leggings)
-        if (version >= 431) buffer.writeStack(boots) else buffer.writeStackPre431(boots)
+    enum class Animation {
+        NoAction, SwingArm, WakeUp, CriticalHit, MagicCriticalHit, RowRight, RowLeft
     }
 
-    override fun handle(handler: PacketHandler) = handler.armor(this)
+    override val id get() = 0x2C
+
+    override fun write(buffer: PacketBuffer, version: Int) {
+        buffer.writeVarInt(animations.getKey(animation))
+        buffer.writeVarULong(runtimeEntityId)
+        if (animation == Animation.RowRight || animation == Animation.RowLeft) buffer.writeFloatLE(rowingTime)
+    }
+
+    override fun handle(handler: PacketHandler) = handler.animation(this)
+
+    companion object {
+        internal val animations = Int2ObjectOpenHashBiMap<Animation>().apply {
+            this[0x00] = Animation.NoAction
+            this[0x01] = Animation.SwingArm
+            this[0x03] = Animation.WakeUp
+            this[0x04] = Animation.CriticalHit
+            this[0x05] = Animation.MagicCriticalHit
+            this[0x80] = Animation.RowRight
+            this[0x81] = Animation.RowLeft
+        }
+    }
 }
 
 /**
  * @author Kevin Ludwig
  */
-object ArmorPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = ArmorPacket(
-        buffer.readVarULong(),
-        if (version >= 431) buffer.readStack() else buffer.readStackPre431(),
-        if (version >= 431) buffer.readStack() else buffer.readStackPre431(),
-        if (version >= 431) buffer.readStack() else buffer.readStackPre431(),
-        if (version >= 431) buffer.readStack() else buffer.readStackPre431()
-    )
+object AnimationPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int): AnimationPacket {
+        val animation = AnimationPacket.animations[buffer.readVarInt()]
+        val runtimeEntityId = buffer.readVarULong()
+        val rowingTime = if (animation == AnimationPacket.Animation.RowRight || animation == AnimationPacket.Animation.RowLeft) buffer.readFloatLE() else 0.0f
+        return AnimationPacket(animation, runtimeEntityId, rowingTime)
+    }
 }

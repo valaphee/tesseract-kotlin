@@ -35,13 +35,13 @@ import com.valaphee.tesseract.util.nibbleArray
 interface Section {
     val empty: Boolean
 
-    fun get(x: Int, y: Int, z: Int): Int
+    operator fun get(x: Int, y: Int, z: Int): Int
 
-    fun get(x: Int, y: Int, z: Int, layer: Int) = get(x, y, z)
+    operator fun get(x: Int, y: Int, z: Int, layer: Int) = get(x, y, z)
 
-    fun set(x: Int, y: Int, z: Int, value: Int)
+    operator fun set(x: Int, y: Int, z: Int, value: Int)
 
-    fun set(x: Int, y: Int, z: Int, value: Int, layer: Int) = set(x, y, z, value)
+    operator fun set(x: Int, y: Int, z: Int, value: Int, layer: Int) = set(x, y, z, value)
 
     fun writeToBuffer(buffer: PacketBuffer)
 

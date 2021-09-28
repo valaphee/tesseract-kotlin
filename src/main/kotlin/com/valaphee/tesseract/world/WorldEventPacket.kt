@@ -40,7 +40,7 @@ import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
 data class WorldEventPacket(
     val eventOrParticleType: Event,
     val position: Float3,
-    val data: Int
+    val data: Int = 0
 ) : Packet {
     enum class Event {
         Unknown,

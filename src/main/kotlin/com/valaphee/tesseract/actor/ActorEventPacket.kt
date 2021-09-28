@@ -37,7 +37,7 @@ import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
 data class ActorEventPacket(
     val runtimeEntityId: Long,
     val event: Event,
-    val data: Int
+    val data: Int = 0
 ) : Packet {
     enum class Event {
         JumpAnimation,

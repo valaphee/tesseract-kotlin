@@ -35,11 +35,12 @@ import java.util.regex.Pattern
 @DataType("tesseract:locale")
 data class LocaleData(
     override val key: String,
-    val entries: Map<String, String>
+    val entries: Map<String, Any>
 ) : KeyedData {
+    @Transient private val entriesFlat = entries.flatMap { flatten(it.key, it.value) }.toMap()
     @Transient private val entryFormats = mutableMapOf<String, MessageFormat>()
 
-    operator fun get(key: String, vararg arguments: Any?) = entries[key]?.let {
+    operator fun get(key: String, vararg arguments: Any?) = entriesFlat[key]?.let {
         (entryFormats[key] ?: (try {
             MessageFormat(it)
         } catch (_: IllegalArgumentException) {
@@ -49,5 +50,7 @@ data class LocaleData(
 
     companion object {
         private val pattern = Pattern.compile("\\{(\\D*?)}")
+
+        private fun flatten(key: String, value: Any): Iterable<Pair<String, String>> = if (value !is Map<*, *>) listOf(key to value.toString()) else value.flatMap { flatten("${it.key}.${(it.key as String)}", it.value!!) }
     }
 }

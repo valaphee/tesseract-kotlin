@@ -40,7 +40,7 @@ import com.valaphee.tesseract.util.nbt.CompoundTag
 data class PositionTrackingDbServerBroadcastPacket(
     val action: Action,
     val trackingId: Int,
-    val tag: CompoundTag?
+    val tag: CompoundTag? = null
 ) : Packet {
     enum class Action {
         Update, Destroy, NotFound

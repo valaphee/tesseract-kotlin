@@ -58,7 +58,7 @@ import kotlin.reflect.jvm.jvmName
  * @author Kevin Ludwig
  */
 class DataModule(
-    private val argument: Argument
+    private val argument: Argument? = null
 ) : AbstractModule() {
     override fun configure() {
         dataTypeByKey.clear()
@@ -92,7 +92,7 @@ class DataModule(
             enable(JsonParser.Feature.ALLOW_COMMENTS)
         }.also { bind(ObjectMapper::class.java).toInstance(it) }
 
-        log.info("Searching in ${javaClass.classLoader.getResource("data")}...")
+        log.info("Searching in ${javaClass.classLoader}/data...")
         ClassGraph().acceptPaths("data").scan().use {
             val (keyed, other) = it.allResources
                 .map {
@@ -122,8 +122,10 @@ class DataModule(
             }
         }
 
-        bind(Argument::class.java).toInstance(argument)
-        bind(Config::class.java).toInstance((if (argument.config.exists()) objectMapper.readValue(argument.config) else Config()).also { objectMapper.writeValue(argument.config, it) })
+        argument?.let {
+            bind(Argument::class.java).toInstance(argument)
+            bind(Config::class.java).toInstance((if (argument.config.exists()) objectMapper.readValue(argument.config) else Config()).also { objectMapper.writeValue(argument.config, it) })
+        }
     }
 
     companion object {

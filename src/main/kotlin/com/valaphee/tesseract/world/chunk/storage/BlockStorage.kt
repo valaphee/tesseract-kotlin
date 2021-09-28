@@ -32,7 +32,7 @@ import com.valaphee.tesseract.world.chunk.ReadWriteBlockAccess
  */
 class BlockStorage(
     val default: Int,
-    val sections: Array<Section>
+    val sections: Array<out Section>
 ) : ReadWriteBlockAccess {
     private val sectionCount get() = sections.size
 

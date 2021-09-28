@@ -33,6 +33,7 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import com.valaphee.tesseract.util.nbt.CompoundTag
 import com.valaphee.tesseract.world.chunk.storage.BlockStorage
 import com.valaphee.tesseract.world.chunk.storage.readSection
 import it.unimi.dsi.fastutil.ints.Int2ShortMap
@@ -46,14 +47,15 @@ data class ChunkPacket(
     val position: Int2,
     val blockStorage: BlockStorage,
     val blockExtraData: Int2ShortMap,
+    val blockEntities: Array<CompoundTag>,
     val cache: Boolean,
     val blobIds: LongArray? = null
 ) : Packet {
     override val id get() = 0x3A
 
-    constructor(position: Int2, blockStorage: BlockStorage, blockExtraData: Int2ShortMap) : this(position, blockStorage, blockExtraData, false, null)
+    constructor(position: Int2, blockStorage: BlockStorage, blockExtraData: Int2ShortMap, blockEntities: Array<CompoundTag>) : this(position, blockStorage, blockExtraData, blockEntities, false, null)
 
-    constructor(position: Int2, blockStorage: BlockStorage, blockExtraData: Int2ShortMap, blobIds: LongArray) : this(position, blockStorage, blockExtraData, true, blobIds)
+    constructor(position: Int2, blockStorage: BlockStorage, blockExtraData: Int2ShortMap, blockEntities: Array<CompoundTag>, blobIds: LongArray) : this(position, blockStorage, blockExtraData, blockEntities, true, blobIds)
 
     override fun write(buffer: PacketBuffer, version: Int) {
         val (x, z) = position
@@ -79,6 +81,7 @@ data class ChunkPacket(
             buffer.writeVarInt(it.key)
             buffer.writeShortLE(it.value.toInt())
         }
+        buffer.toNbtOutputStream().use { stream -> blockEntities.forEach { stream.writeTag(it) } }
         buffer.setMaximumLengthVarUInt(dataLengthIndex, buffer.writerIndex() - (dataLengthIndex + PacketBuffer.MaximumVarUIntLength))
     }
 
@@ -127,7 +130,7 @@ object ChunkPacketReader : PacketReader {
         } else blockStorage = BlockStorage(air.id, sectionCount)
         buffer.readByte()
         val blockExtraData = Int2ShortOpenHashMap().apply { repeat(buffer.readVarInt()) { this[buffer.readVarInt()] = buffer.readShortLE() } }
-        return ChunkPacket(position, blockStorage, blockExtraData, cache, blobIds)
+        return ChunkPacket(position, blockStorage, blockExtraData, emptyArray(), cache, blobIds)
     }
 
     private val air = BlockState.byKeyWithStates("minecraft:air")

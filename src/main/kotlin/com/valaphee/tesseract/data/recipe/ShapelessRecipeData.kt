@@ -35,9 +35,9 @@ import com.valaphee.tesseract.inventory.item.stack.Stack
 data class ShapelessRecipeData(
     override val key: String,
     val tags: Array<String>,
-    val ingredients: Array<Stack<*>>,
+    val ingredients: Array<Stack/*<*>*/>,
     val priority: Int = 0,
-    val result: Stack<*>
+    val result: Stack/*<*>*/
 ) : KeyedData {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

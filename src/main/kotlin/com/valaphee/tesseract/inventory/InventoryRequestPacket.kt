@@ -48,7 +48,7 @@ data class InventoryRequestPacket(
     }
 
     data class Action(
-        val result: Array<Stack<*>?>?,
+        val result: Array<Stack/*<*>*/?>?,
         var type: ActionType,
         var count: Int,
         var sourceSlotType: WindowSlotType?,
