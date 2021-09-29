@@ -1,0 +1,11 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:tripWire",
+    "properties" : {
+      "powered_bit" : [ false, true ],
+      "suspended_bit" : [ false, true ],
+      "disarmed_bit" : [ false, true ],
+      "attached_bit" : [ false, true ]
+    }
+  }
+}

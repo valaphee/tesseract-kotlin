@@ -1,0 +1,9 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:double_plant",
+    "properties" : {
+      "upper_block_bit" : [ false, true ],
+      "double_plant_type" : [ "sunflower", "syringa", "grass", "fern", "rose", "paeonia" ]
+    }
+  }
+}

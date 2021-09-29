@@ -1,0 +1,8 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:red_sandstone",
+    "properties" : {
+      "sand_stone_type" : [ "default", "heiroglyphs", "cut", "smooth" ]
+    }
+  }
+}

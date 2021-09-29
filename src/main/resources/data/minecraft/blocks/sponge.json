@@ -1,0 +1,8 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:sponge",
+    "properties" : {
+      "sponge_type" : [ "dry", "wet" ]
+    }
+  }
+}

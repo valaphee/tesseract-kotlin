@@ -1,0 +1,8 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:lime_glazed_terracotta",
+    "properties" : {
+      "facing_direction" : [ 0, 1, 2, 3, 4, 5 ]
+    }
+  }
+}

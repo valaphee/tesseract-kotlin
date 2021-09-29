@@ -1,0 +1,9 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:skull",
+    "properties" : {
+      "facing_direction" : [ 0, 1, 2, 3, 4, 5 ],
+      "no_drop_bit" : [ false, true ]
+    }
+  }
+}

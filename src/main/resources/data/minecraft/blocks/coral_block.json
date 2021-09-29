@@ -1,0 +1,9 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:coral_block",
+    "properties" : {
+      "coral_color" : [ "blue", "pink", "purple", "red", "yellow" ],
+      "dead_bit" : [ false, true ]
+    }
+  }
+}

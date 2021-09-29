@@ -40,10 +40,10 @@ import com.valaphee.tesseract.net.PacketReader
  */
 data class ArmorPacket(
     val runtimeEntityId: Long,
-    val helmet: Stack/*<*>*/?,
-    val chestplate: Stack/*<*>*/?,
-    val leggings: Stack/*<*>*/?,
-    val boots: Stack/*<*>*/?
+    val helmet: Stack?,
+    val chestplate: Stack?,
+    val leggings: Stack?,
+    val boots: Stack?
 ) : Packet {
     override val id get() = 0x20
 

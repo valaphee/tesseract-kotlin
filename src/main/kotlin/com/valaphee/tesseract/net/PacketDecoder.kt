@@ -132,7 +132,6 @@ import com.valaphee.tesseract.world.chunk.BlockEntityPacketReader
 import com.valaphee.tesseract.world.chunk.BlockEventPacketReader
 import com.valaphee.tesseract.world.chunk.BlockUpdatePacketReader
 import com.valaphee.tesseract.world.chunk.BlockUpdateSyncedPacketReader
-import com.valaphee.tesseract.world.chunk.ChunkPacketReader
 import com.valaphee.tesseract.world.chunk.ChunkPublishPacketReader
 import com.valaphee.tesseract.world.map.MapCreateLockedCopyPacketReader
 import com.valaphee.tesseract.world.map.MapRequestPacketReader
@@ -217,7 +216,7 @@ class PacketDecoder(
             this[0x37] = AdventureSettingsPacketReader
             this[0x38] = BlockEntityPacketReader
             this[0x39] = SteerPacketReader
-            this[0x3A] = ChunkPacketReader
+            //this[0x3A] = ChunkPacketReader
             this[0x3B] = CommandSettingsPacketReader
             this[0x3C] = DifficultyPacketReader
             this[0x3D] = DimensionPacketReader

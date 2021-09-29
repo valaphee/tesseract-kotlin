@@ -1,0 +1,8 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:planks",
+    "properties" : {
+      "wood_type" : [ "oak", "spruce", "birch", "jungle", "acacia", "dark_oak" ]
+    }
+  }
+}

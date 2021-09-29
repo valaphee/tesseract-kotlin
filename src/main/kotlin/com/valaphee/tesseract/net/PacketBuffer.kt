@@ -27,7 +27,10 @@ package com.valaphee.tesseract.net
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
+import com.valaphee.tesseract.data.block.BlockState
+import com.valaphee.tesseract.data.item.Item
 import com.valaphee.tesseract.util.ByteBufWrapper
+import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
 import com.valaphee.tesseract.util.LittleEndianByteBufInputStream
 import com.valaphee.tesseract.util.LittleEndianByteBufOutputStream
 import com.valaphee.tesseract.util.LittleEndianVarIntByteBufInputStream
@@ -47,6 +50,9 @@ class PacketBuffer(
     buffer: ByteBuf,
     var local: Boolean = false
 ) : ByteBufWrapper(buffer) {
+    val blockStates = Int2ObjectOpenHashBiMap<BlockState>()
+    val items = Int2ObjectOpenHashBiMap<Item>()
+
     inline fun <reified T : Enum<T>> readByteFlags(): Collection<T> {
         val flagsValue = readByte().toInt()
         return EnumSet.noneOf(T::class.java).apply { enumValues<T>().filter { (flagsValue and (1 shl it.ordinal)) != 0 }.forEach { add(it) } }

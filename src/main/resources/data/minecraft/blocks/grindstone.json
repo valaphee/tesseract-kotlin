@@ -1,0 +1,9 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:grindstone",
+    "properties" : {
+      "attachment" : [ "standing", "hanging", "side", "multiple" ],
+      "direction" : [ 0, 1, 2, 3 ]
+    }
+  }
+}

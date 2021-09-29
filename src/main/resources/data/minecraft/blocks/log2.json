@@ -1,0 +1,9 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:log2",
+    "properties" : {
+      "new_log_type" : [ "acacia", "dark_oak" ],
+      "pillar_axis" : [ "y", "x", "z" ]
+    }
+  }
+}

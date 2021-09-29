@@ -1,0 +1,8 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:prismarine",
+    "properties" : {
+      "prismarine_block_type" : [ "default", "dark", "bricks" ]
+    }
+  }
+}

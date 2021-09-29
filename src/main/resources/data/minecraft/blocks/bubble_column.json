@@ -1,0 +1,8 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:bubble_column",
+    "properties" : {
+      "drag_down" : [ false, true ]
+    }
+  }
+}

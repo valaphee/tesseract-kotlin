@@ -1,0 +1,10 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:leaves2",
+    "properties" : {
+      "persistent_bit" : [ false, true ],
+      "update_bit" : [ false, true ],
+      "new_leaf_type" : [ "acacia", "dark_oak" ]
+    }
+  }
+}

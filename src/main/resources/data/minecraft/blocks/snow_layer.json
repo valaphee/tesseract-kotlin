@@ -1,0 +1,9 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:snow_layer",
+    "properties" : {
+      "covered_bit" : [ false, true ],
+      "height" : [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+    }
+  }
+}

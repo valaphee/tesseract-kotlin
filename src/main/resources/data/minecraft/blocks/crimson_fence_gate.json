@@ -1,0 +1,10 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:crimson_fence_gate",
+    "properties" : {
+      "in_wall_bit" : [ false, true ],
+      "open_bit" : [ false, true ],
+      "direction" : [ 0, 1, 2, 3 ]
+    }
+  }
+}

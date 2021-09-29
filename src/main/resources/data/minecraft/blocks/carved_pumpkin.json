@@ -1,0 +1,8 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:carved_pumpkin",
+    "properties" : {
+      "direction" : [ 0, 1, 2, 3 ]
+    }
+  }
+}

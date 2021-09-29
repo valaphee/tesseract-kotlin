@@ -1,0 +1,9 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:pink_candle",
+    "properties" : {
+      "lit" : [ false, true ],
+      "candles" : [ 0, 1, 2, 3 ]
+    }
+  }
+}

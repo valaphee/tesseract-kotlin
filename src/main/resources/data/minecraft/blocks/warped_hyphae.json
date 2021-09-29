@@ -1,0 +1,8 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:warped_hyphae",
+    "properties" : {
+      "pillar_axis" : [ "y", "x", "z" ]
+    }
+  }
+}

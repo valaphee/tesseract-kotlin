@@ -146,7 +146,10 @@ class CapturePacketHandler(
     override fun world(packet: WorldPacket) {
         connection.write(LocalPlayerAsInitializedPacket(packet.runtimeEntityId))
 
-        FileWriter(File("runtime_item_states.json")).use { objectMapper.writeValue(it, packet.items!!.map { it.value.key to it.key }.toMap()) }
+        return
+
+        File("data/minecraft/items").mkdirs()
+        packet.items!!.forEach { (id, item) -> if (id >= 256) FileWriter(File("data/minecraft/items/${item.key.replace("minecraft:", "")}.json")).use { objectMapper.writeValue(it, item) } }
     }
 
     override fun creativeInventory(packet: CreativeInventoryPacket) {

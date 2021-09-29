@@ -1,0 +1,12 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:polished_deepslate_wall",
+    "properties" : {
+      "wall_connection_type_east" : [ "none", "short", "tall" ],
+      "wall_post_bit" : [ false, true ],
+      "wall_connection_type_south" : [ "none", "short", "tall" ],
+      "wall_connection_type_west" : [ "none", "short", "tall" ],
+      "wall_connection_type_north" : [ "none", "short", "tall" ]
+    }
+  }
+}

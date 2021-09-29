@@ -1,0 +1,11 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:birch_door",
+    "properties" : {
+      "open_bit" : [ false, true ],
+      "upper_block_bit" : [ false, true ],
+      "door_hinge_bit" : [ false, true ],
+      "direction" : [ 0, 1, 2, 3 ]
+    }
+  }
+}

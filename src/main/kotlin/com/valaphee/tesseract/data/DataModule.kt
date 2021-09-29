@@ -24,6 +24,7 @@
 
 package com.valaphee.tesseract.data
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -41,9 +42,6 @@ import com.google.inject.util.Types
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.Argument
-import com.valaphee.tesseract.data.block.BlockState
-import com.valaphee.tesseract.data.block.IBlock
-import com.valaphee.tesseract.data.item.IItem
 import com.valaphee.tesseract.util.jackson.Float2Deserializer
 import com.valaphee.tesseract.util.jackson.Float2Serializer
 import com.valaphee.tesseract.util.jackson.Float3Deserializer
@@ -51,7 +49,6 @@ import com.valaphee.tesseract.util.jackson.Float3Serializer
 import io.github.classgraph.ClassGraph
 import org.apache.logging.log4j.LogManager
 import kotlin.reflect.KClass
-import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmName
 
 /**
@@ -67,16 +64,6 @@ class DataModule(
             dataTypeByKey.putAll(it.getClassesWithAnnotation(dataType).associate { it.getAnnotationInfo(dataType).parameterValues.getValue("value") as String to Class.forName(it.name).kotlin })
         }
 
-        ClassGraph().acceptPackages(this::class.java.packageName).enableClassInfo().enableAnnotationInfo().scan().use {
-            val index = Index::class.jvmName
-            it.getClassesWithAnnotation(index).forEach {
-                when (val data = Class.forName(it.name).kotlin.primaryConstructor!!.call()) {
-                    is IBlock -> BlockState.byKey(data.key).forEach { it.block = data }
-                    is IItem -> com.valaphee.tesseract.inventory.item.Item.byKey(data.key).item = data
-                }
-            }
-        }
-
         val objectMapper = jacksonObjectMapper().apply {
             registerModule(AfterburnerModule())
             registerModule(
@@ -87,12 +74,13 @@ class DataModule(
                     .addDeserializer(Float3::class.java, Float3Deserializer)
             )
             propertyNamingStrategy = PropertyNamingStrategies.SNAKE_CASE
+            setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)
             enable(SerializationFeature.INDENT_OUTPUT)
-            configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
             enable(JsonParser.Feature.ALLOW_COMMENTS)
         }.also { bind(ObjectMapper::class.java).toInstance(it) }
 
-        log.info("Searching in ${javaClass.classLoader}/data...")
+        log.info("Searching...")
         ClassGraph().acceptPaths("data").scan().use {
             val (keyed, other) = it.allResources
                 .map {

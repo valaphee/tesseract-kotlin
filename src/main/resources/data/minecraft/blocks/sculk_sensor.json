@@ -1,0 +1,8 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:sculk_sensor",
+    "properties" : {
+      "powered_bit" : [ false, true ]
+    }
+  }
+}

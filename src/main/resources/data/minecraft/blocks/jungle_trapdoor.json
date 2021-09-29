@@ -1,0 +1,10 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:jungle_trapdoor",
+    "properties" : {
+      "open_bit" : [ false, true ],
+      "upside_down_bit" : [ false, true ],
+      "direction" : [ 0, 1, 2, 3 ]
+    }
+  }
+}

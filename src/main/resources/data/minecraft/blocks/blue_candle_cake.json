@@ -1,0 +1,8 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:blue_candle_cake",
+    "properties" : {
+      "lit" : [ false, true ]
+    }
+  }
+}

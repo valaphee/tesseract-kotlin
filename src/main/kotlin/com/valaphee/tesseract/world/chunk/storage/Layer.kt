@@ -25,11 +25,7 @@
 
 package com.valaphee.tesseract.world.chunk.storage
 
-import com.valaphee.tesseract.data.block.BlockState
 import com.valaphee.tesseract.net.PacketBuffer
-import com.valaphee.tesseract.util.getCompoundTag
-import com.valaphee.tesseract.util.getString
-import com.valaphee.tesseract.util.nbt.compoundTag
 import it.unimi.dsi.fastutil.ints.IntArrayList
 import it.unimi.dsi.fastutil.ints.IntList
 
@@ -67,7 +63,7 @@ class Layer(
         buffer.writeByte((bitArray.version.bitsPerEntry shl 1) or if (runtime) 1 else 0)
         bitArray.data.forEach { buffer.writeIntLE(it) }
         buffer.writeVarInt(palette.size)
-        if (runtime) palette.forEach { buffer.writeVarInt(it) } else buffer.toNbtOutputStream().use { stream ->
+        if (runtime) palette.forEach { buffer.writeVarInt(it) }/* else buffer.toNbtOutputStream().use { stream ->
             palette.forEach {
                 stream.writeTag(compoundTag().apply {
                     val block = BlockState.byId(it)
@@ -75,7 +71,7 @@ class Layer(
                     set("states", block.propertiesNbt)
                 })
             }
-        }
+        } TODO*/
     }
 }
 
@@ -86,7 +82,7 @@ fun PacketBuffer.readLayer(default: Int): Layer {
     val blocks = version.bitArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize, IntArray(version.bitArrayDataSize(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize)) { readIntLE() })
     val paletteSize = readVarInt()
     return Layer(IntArrayList().apply {
-        if (runtime) repeat(paletteSize) { add(readVarInt()) } else {
+        if (runtime) repeat(paletteSize) { add(readVarInt()) }/* else {
             toNbtInputStream().use { stream ->
                 repeat(paletteSize) {
                     add(stream.readTag()?.asCompoundTag()?.let {
@@ -95,6 +91,6 @@ fun PacketBuffer.readLayer(default: Int): Layer {
                     } ?: default)
                 }
             }
-        }
+        } TODO*/
     }, blocks)
 }

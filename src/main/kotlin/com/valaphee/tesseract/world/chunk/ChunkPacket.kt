@@ -26,7 +26,6 @@
 package com.valaphee.tesseract.world.chunk
 
 import com.valaphee.foundry.math.Int2
-import com.valaphee.tesseract.data.block.BlockState
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
@@ -125,13 +124,13 @@ object ChunkPacketReader : PacketReader {
         buffer.readVarUInt()
         val blockStorage: BlockStorage
         if (!cache) {
-            blockStorage = BlockStorage(air.id, Array(sectionCount) { buffer.readSection(air.id) })
+            blockStorage = BlockStorage(/*air.id*/0, Array(sectionCount) { buffer.readSection(/*air.id*/0) })
             buffer.readBytes(ByteArray(BlockStorage.XZSize * BlockStorage.XZSize))
-        } else blockStorage = BlockStorage(air.id, sectionCount)
+        } else blockStorage = BlockStorage(/*air.id*/0, sectionCount)
         buffer.readByte()
         /*val blockExtraData = Int2ShortOpenHashMap().apply { repeat(buffer.readVarInt()) { this[buffer.readVarInt()] = buffer.readShortLE() } }*/
         return ChunkPacket(position, blockStorage, Int2ShortMaps.EMPTY_MAP, emptyArray(), cache, blobIds)
     }
 
-    private val air = BlockState.byKeyWithStates("minecraft:air")
+    /*private val air = BlockState.byKeyWithStates("minecraft:air")*/
 }

@@ -1,0 +1,9 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:colored_torch_bp",
+    "properties" : {
+      "color_bit" : [ false, true ],
+      "torch_facing_direction" : [ "unknown", "west", "east", "north", "south", "top" ]
+    }
+  }
+}

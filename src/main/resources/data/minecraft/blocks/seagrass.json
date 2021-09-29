@@ -1,0 +1,8 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:seagrass",
+    "properties" : {
+      "sea_grass_type" : [ "default", "double_top", "double_bot" ]
+    }
+  }
+}

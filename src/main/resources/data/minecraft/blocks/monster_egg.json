@@ -1,0 +1,8 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:monster_egg",
+    "properties" : {
+      "monster_egg_stone_type" : [ "stone", "cobblestone", "stone_brick", "mossy_stone_brick", "cracked_stone_brick", "chiseled_stone_brick" ]
+    }
+  }
+}

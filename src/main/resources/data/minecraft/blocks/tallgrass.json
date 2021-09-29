@@ -1,0 +1,8 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:tallgrass",
+    "properties" : {
+      "tall_grass_type" : [ "default", "tall", "fern", "snow" ]
+    }
+  }
+}

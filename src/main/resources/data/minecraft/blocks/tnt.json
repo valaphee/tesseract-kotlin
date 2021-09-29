@@ -1,0 +1,9 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:tnt",
+    "properties" : {
+      "explode_bit" : [ false, true ],
+      "allow_underwater_bit" : [ false, true ]
+    }
+  }
+}

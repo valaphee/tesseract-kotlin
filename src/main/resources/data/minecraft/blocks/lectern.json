@@ -1,0 +1,9 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:lectern",
+    "properties" : {
+      "powered_bit" : [ false, true ],
+      "direction" : [ 0, 1, 2, 3 ]
+    }
+  }
+}

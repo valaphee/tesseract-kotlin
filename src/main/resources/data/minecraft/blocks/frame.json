@@ -1,0 +1,10 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:frame",
+    "properties" : {
+      "facing_direction" : [ 0, 1, 2, 3, 4, 5 ],
+      "item_frame_photo_bit" : [ false, true ],
+      "item_frame_map_bit" : [ false, true ]
+    }
+  }
+}

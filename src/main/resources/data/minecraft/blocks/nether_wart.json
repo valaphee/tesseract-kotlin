@@ -1,0 +1,8 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:nether_wart",
+    "properties" : {
+      "age" : [ 0, 1, 2, 3 ]
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:chorus_flower",
+    "properties" : {
+      "age" : [ 0, 1, 2, 3, 4, 5 ]
+    }
+  }
+}

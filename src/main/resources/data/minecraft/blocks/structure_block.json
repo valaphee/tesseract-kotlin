@@ -1,0 +1,8 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:structure_block",
+    "properties" : {
+      "structure_block_type" : [ "data", "save", "load", "corner", "invalid", "export" ]
+    }
+  }
+}

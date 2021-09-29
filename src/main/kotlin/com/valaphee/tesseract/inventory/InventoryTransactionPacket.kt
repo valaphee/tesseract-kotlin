@@ -53,7 +53,7 @@ data class InventoryTransactionPacket(
     val position: Int3?,
     val auxInt: Int,
     val hotbarSlot: Int,
-    val stackInHand: Stack/*<*>*/?,
+    val stackInHand: Stack?,
     val fromPosition: Float3?,
     val clickPosition: Float3?,
     val headPosition: Float3?,
@@ -89,8 +89,8 @@ data class InventoryTransactionPacket(
     data class Action(
         val source: Source,
         val slotId: Int,
-        val fromStack: Stack/*<*>*/?,
-        val toStack: Stack/*<*>*/?,
+        val fromStack: Stack?,
+        val toStack: Stack?,
         val netId: Int? = null
     )
 
@@ -236,7 +236,7 @@ object InventoryTransactionPacketReader : PacketReader {
         val position: Int3?
         val auxInt: Int
         val hotbarSlot: Int
-        val stackInHand: Stack/*<*>*/?
+        val stackInHand: Stack?
         val fromPosition: Float3?
         val clickPosition: Float3?
         val headPosition: Float3?

@@ -1,0 +1,10 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:coral_fan_hang3",
+    "properties" : {
+      "coral_hang_type_bit" : [ false, true ],
+      "coral_direction" : [ 0, 1, 2, 3 ],
+      "dead_bit" : [ false, true ]
+    }
+  }
+}

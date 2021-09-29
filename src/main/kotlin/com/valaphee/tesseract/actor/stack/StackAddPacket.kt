@@ -45,7 +45,7 @@ import com.valaphee.tesseract.net.Restriction
 data class StackAddPacket(
     val uniqueEntityId: Long,
     val runtimeEntityId: Long,
-    val stack: Stack/*<*>*/?,
+    val stack: Stack?,
     val position: Float3,
     val velocity: Float3,
     val metadata: Metadata,

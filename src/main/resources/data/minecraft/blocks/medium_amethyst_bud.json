@@ -1,0 +1,8 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:medium_amethyst_bud",
+    "properties" : {
+      "facing_direction" : [ 0, 1, 2, 3, 4, 5 ]
+    }
+  }
+}

@@ -28,10 +28,10 @@ import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.actor.player.Rank
+import com.valaphee.tesseract.data.block.BlockData
 import com.valaphee.tesseract.data.block.Block
-import com.valaphee.tesseract.data.block.IBlock
-import com.valaphee.tesseract.data.item.IItem
 import com.valaphee.tesseract.data.item.Item
+import com.valaphee.tesseract.data.item.ItemData
 import com.valaphee.tesseract.net.GamePublishMode
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -107,9 +107,9 @@ data class WorldPacket(
     private val blocksData: ByteArray?,
     val blocksTag: ListTag?,
     private val blocks2Data: ByteArray?,
-    val blocks2: Array<IBlock>?,
+    val blocks2: Array<Block>?,
     private val itemsData: ByteArray?,
-    val items: Int2ObjectMap<IItem>?,
+    val items: Int2ObjectMap<Item>?,
     val multiplayerCorrelationId: String,
     val inventoriesServerAuthoritative: Boolean,
     val engine: String
@@ -513,21 +513,21 @@ object WorldPacketReader : PacketReader {
         val tick = buffer.readLongLE()
         val enchantmentSeed = buffer.readVarInt()
         val blocks: ListTag?
-        val block2: Array<IBlock>?
+        val block2: Array<Block>?
         if (version >= 419) {
             blocks = null
-            block2 = buffer.toNbtInputStream().use { stream -> Array(buffer.readVarUInt()) { Block(buffer.readString(), stream.readTag()?.asCompoundTag()) } }
+            block2 = buffer.toNbtInputStream().use { stream -> Array(buffer.readVarUInt()) { BlockData(buffer.readString(), component = stream.readTag()?.asCompoundTag()) } }
         } else {
             blocks = buffer.toNbtInputStream().use { it.readTag()!!.asListTag()!! }
             block2 = null
         }
         val itemCount = buffer.readVarUInt()
-        val items = Int2ObjectOpenHashMap<IItem>(itemCount).apply {
+        val items = Int2ObjectOpenHashMap<Item>(itemCount).apply {
             repeat(itemCount) {
                 val key = buffer.readString()
                 val id = buffer.readShortLE()
                 if (version >= 419 && buffer.readBoolean()) Unit
-                this[id.toInt()] = Item(key, null)
+                this[id.toInt()] = ItemData(key, null)
             }
         }
         val multiplayerCorrelationId = buffer.readString()

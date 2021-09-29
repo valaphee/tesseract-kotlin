@@ -1,0 +1,9 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:waxed_oxidized_cut_copper_stairs",
+    "properties" : {
+      "upside_down_bit" : [ false, true ],
+      "weirdo_direction" : [ 0, 1, 2, 3 ]
+    }
+  }
+}

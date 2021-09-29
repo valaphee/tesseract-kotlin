@@ -1,0 +1,8 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:waxed_weathered_cut_copper_slab",
+    "properties" : {
+      "top_slot_bit" : [ false, true ]
+    }
+  }
+}

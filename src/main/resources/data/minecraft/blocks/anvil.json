@@ -1,0 +1,9 @@
+{
+  "tesseract:block" : {
+    "key" : "minecraft:anvil",
+    "properties" : {
+      "damage" : [ "undamaged", "slightly_damaged", "very_damaged", "broken" ],
+      "direction" : [ 0, 1, 2, 3 ]
+    }
+  }
+}

@@ -35,8 +35,8 @@ import com.valaphee.tesseract.inventory.item.stack.Stack
 data class FurnaceRecipeData(
     override val key: String,
     val tags: Array<String>,
-    val input: Stack/*<*>*/,
-    val output: Stack/*<*>*/
+    val input: Stack,
+    val output: Stack
 ) : KeyedData {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
