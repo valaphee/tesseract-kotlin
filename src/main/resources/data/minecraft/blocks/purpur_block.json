@@ -1,9 +1,0 @@
-{
-  "tesseract:block" : {
-    "key" : "minecraft:purpur_block",
-    "properties" : {
-      "chisel_type" : [ "default", "chiseled", "lines", "smooth" ],
-      "pillar_axis" : [ "y", "x", "z" ]
-    }
-  }
-}

@@ -1,9 +1,0 @@
-{
-  "tesseract:block" : {
-    "key" : "minecraft:unpowered_repeater",
-    "properties" : {
-      "repeater_delay" : [ 0, 1, 2, 3 ],
-      "direction" : [ 0, 1, 2, 3 ]
-    }
-  }
-}

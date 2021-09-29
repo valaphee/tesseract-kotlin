@@ -1,9 +1,0 @@
-{
-  "tesseract:block" : {
-    "key" : "minecraft:sea_pickle",
-    "properties" : {
-      "cluster_count" : [ 0, 1, 2, 3 ],
-      "dead_bit" : [ false, true ]
-    }
-  }
-}

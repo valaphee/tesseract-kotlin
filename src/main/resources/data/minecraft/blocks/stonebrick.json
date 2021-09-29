@@ -1,8 +1,0 @@
-{
-  "tesseract:block" : {
-    "key" : "minecraft:stonebrick",
-    "properties" : {
-      "stone_brick_type" : [ "default", "mossy", "cracked", "chiseled", "smooth" ]
-    }
-  }
-}

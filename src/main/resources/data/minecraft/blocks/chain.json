@@ -1,8 +1,0 @@
-{
-  "tesseract:block" : {
-    "key" : "minecraft:chain",
-    "properties" : {
-      "pillar_axis" : [ "y", "x", "z" ]
-    }
-  }
-}

@@ -1,8 +1,0 @@
-{
-  "tesseract:block" : {
-    "key" : "minecraft:flower_pot",
-    "properties" : {
-      "update_bit" : [ false, true ]
-    }
-  }
-}

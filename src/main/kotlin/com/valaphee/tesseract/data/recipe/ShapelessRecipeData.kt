@@ -32,34 +32,10 @@ import com.valaphee.tesseract.inventory.item.stack.Stack
  * @author Kevin Ludwig
  */
 @DataType("tesseract:recipe_shapeless")
-data class ShapelessRecipeData(
+class ShapelessRecipeData(
     override val key: String,
     val tags: Array<String>,
     val ingredients: Array<Stack>,
     val priority: Int = 0,
     val result: Stack
-) : KeyedData {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as ShapelessRecipeData
-
-        if (key != other.key) return false
-        if (!tags.contentEquals(other.tags)) return false
-        if (!ingredients.contentEquals(other.ingredients)) return false
-        if (priority != other.priority) return false
-        if (result != other.result) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result1 = key.hashCode()
-        result1 = 31 * result1 + tags.contentHashCode()
-        result1 = 31 * result1 + ingredients.contentHashCode()
-        result1 = 31 * result1 + priority
-        result1 = 31 * result1 + result.hashCode()
-        return result1
-    }
-}
+) : KeyedData()

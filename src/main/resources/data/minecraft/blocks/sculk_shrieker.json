@@ -1,8 +1,0 @@
-{
-  "tesseract:block" : {
-    "key" : "minecraft:sculk_shrieker",
-    "properties" : {
-      "active" : [ false, true ]
-    }
-  }
-}

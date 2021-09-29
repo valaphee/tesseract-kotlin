@@ -24,43 +24,29 @@
 
 package com.valaphee.tesseract.data.block
 
-import com.valaphee.tesseract.data.Data
+import com.valaphee.tesseract.data.DataType
 import com.valaphee.tesseract.data.KeyedData
 import com.valaphee.tesseract.util.nbt.CompoundTag
 
 /**
  * @author Kevin Ludwig
  */
-abstract class Block(
-    val properties: Map<String, Set<*>> = mapOf(),
-    val component: CompoundTag? = null
-) : Data, KeyedData {
+@DataType("tesseract:block")
+class Block : KeyedData {
+    override val key: String
+    val properties: Map<String, Set<*>>
     val states: List<BlockState>
+    val component: CompoundTag? = null
 
-    init {
-        val states = mutableListOf<BlockState>()
-        properties.values.fold(listOf(listOf<Any?>())) { acc, set -> acc.flatMap { list -> set.map { list + it } } }.forEach { states.add(BlockState(this, properties.keys.zip(it).toMap())) }
-        this.states = states
+    constructor(key: String, properties: Map<String, Set<*>> = emptyMap()) {
+        this.key = key
+        this.properties = properties
+        this.states = mutableListOf<BlockState>().apply { properties.values.fold(listOf(listOf<Any?>())) { acc, set -> acc.flatMap { list -> set.map { list + it } } }.forEach { add(BlockState(this@Block, properties.keys.zip(it).toMap())) } }
     }
-}
 
-fun Map<String, @JvmSuppressWildcards Block>.byKeyWithStates(keyWithProperties: String) = checkNotNull(byKeyWithStatesOrNull(keyWithProperties))
-
-fun Map<String, @JvmSuppressWildcards Block>.byKeyWithStatesOrNull(keyWithProperties: String): BlockState? {
-    val propertiesBegin = keyWithProperties.indexOf('[')
-    val propertiesEnd = keyWithProperties.indexOf(']')
-    return if (propertiesBegin == -1 && propertiesEnd == -1) {
-        this[keyWithProperties]?.states?.firstOrNull()
-    } else if (propertiesEnd == keyWithProperties.length - 1) {
-        val properties = mutableMapOf<String, Any>()
-        keyWithProperties.substring(propertiesBegin + 1, propertiesEnd).split(',').forEach {
-            val property = it.split('=', limit = 2)
-            properties[property[0]] = when (val propertyValue = property[1]) {
-                "false" -> false
-                "true" -> true
-                else -> propertyValue.toIntOrNull() ?: propertyValue
-            }
-        }
-        this[keyWithProperties]?.states?.find { properties == it.properties }
-    } else null
+    constructor(key: String, states: List<Map<String, Any>>) {
+        this.key = key
+        this.properties = emptyMap()
+        this.states = states.map { BlockState(this@Block, it) }
+    }
 }

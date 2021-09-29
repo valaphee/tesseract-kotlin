@@ -32,31 +32,9 @@ import com.valaphee.tesseract.inventory.item.stack.Stack
  * @author Kevin Ludwig
  */
 @DataType("tesseract:recipe_furnace")
-data class FurnaceRecipeData(
+class FurnaceRecipeData(
     override val key: String,
     val tags: Array<String>,
     val input: Stack,
     val output: Stack
-) : KeyedData {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as FurnaceRecipeData
-
-        if (key != other.key) return false
-        if (!tags.contentEquals(other.tags)) return false
-        if (input != other.input) return false
-        if (output != other.output) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = key.hashCode()
-        result = 31 * result + tags.contentHashCode()
-        result = 31 * result + input.hashCode()
-        result = 31 * result + output.hashCode()
-        return result
-    }
-}
+) : KeyedData()

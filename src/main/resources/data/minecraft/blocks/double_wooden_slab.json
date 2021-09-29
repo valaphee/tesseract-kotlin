@@ -1,9 +1,0 @@
-{
-  "tesseract:block" : {
-    "key" : "minecraft:double_wooden_slab",
-    "properties" : {
-      "top_slot_bit" : [ false, true ],
-      "wood_type" : [ "oak", "spruce", "birch", "jungle", "acacia", "dark_oak" ]
-    }
-  }
-}

@@ -1,8 +1,0 @@
-{
-  "tesseract:block" : {
-    "key" : "minecraft:deepslate_brick_slab",
-    "properties" : {
-      "top_slot_bit" : [ false, true ]
-    }
-  }
-}

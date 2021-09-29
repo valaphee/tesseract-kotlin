@@ -32,37 +32,11 @@ import com.valaphee.tesseract.inventory.item.stack.Stack
  * @author Kevin Ludwig
  */
 @DataType("tesseract:recipe_shaped")
-data class ShapedRecipeData(
+class ShapedRecipeData(
     override val key: String,
     val tags: Array<String>,
     val map: Map<Char, Stack>,
     val pattern: Array<String>,
     val priority: Int = 0,
     val result: Stack
-) : KeyedData {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as ShapedRecipeData
-
-        if (key != other.key) return false
-        if (!tags.contentEquals(other.tags)) return false
-        if (map != other.map) return false
-        if (!pattern.contentEquals(other.pattern)) return false
-        if (priority != other.priority) return false
-        if (result != other.result) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result1 = key.hashCode()
-        result1 = 31 * result1 + tags.contentHashCode()
-        result1 = 31 * result1 + map.hashCode()
-        result1 = 31 * result1 + pattern.contentHashCode()
-        result1 = 31 * result1 + priority
-        result1 = 31 * result1 + result.hashCode()
-        return result1
-    }
-}
+) : KeyedData()

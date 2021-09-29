@@ -1,8 +1,0 @@
-{
-  "tesseract:block" : {
-    "key" : "minecraft:frosted_ice",
-    "properties" : {
-      "age" : [ 0, 1, 2, 3 ]
-    }
-  }
-}

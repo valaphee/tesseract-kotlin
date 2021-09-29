@@ -1,8 +1,0 @@
-{
-  "tesseract:block" : {
-    "key" : "minecraft:underwater_torch",
-    "properties" : {
-      "torch_facing_direction" : [ "unknown", "west", "east", "north", "south", "top" ]
-    }
-  }
-}

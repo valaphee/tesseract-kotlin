@@ -48,10 +48,17 @@ import java.util.UUID
  */
 class PacketBuffer(
     buffer: ByteBuf,
-    var local: Boolean = false
+    private val local: Boolean = false,
+    blockStates: Int2ObjectOpenHashBiMap<BlockState>? = null,
+    items: Int2ObjectOpenHashBiMap<Item>? = null
 ) : ByteBufWrapper(buffer) {
-    val blockStates = Int2ObjectOpenHashBiMap<BlockState>()
-    val items = Int2ObjectOpenHashBiMap<Item>()
+    lateinit var blockStates: Int2ObjectOpenHashBiMap<BlockState>
+    lateinit var items: Int2ObjectOpenHashBiMap<Item>
+
+    init {
+        blockStates?.let { this.blockStates = it }
+        items?.let { this.items = it }
+    }
 
     inline fun <reified T : Enum<T>> readByteFlags(): Collection<T> {
         val flagsValue = readByte().toInt()

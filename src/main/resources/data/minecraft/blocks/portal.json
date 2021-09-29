@@ -1,8 +1,0 @@
-{
-  "tesseract:block" : {
-    "key" : "minecraft:portal",
-    "properties" : {
-      "portal_axis" : [ "unknown", "x", "z" ]
-    }
-  }
-}

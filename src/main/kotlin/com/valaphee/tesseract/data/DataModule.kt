@@ -36,17 +36,26 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.common.collect.HashBiMap
 import com.google.inject.AbstractModule
+import com.google.inject.Key
 import com.google.inject.TypeLiteral
 import com.google.inject.binder.AnnotatedBindingBuilder
 import com.google.inject.util.Types
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.Argument
+import com.valaphee.tesseract.capture.CapturePacketHandler
+import com.valaphee.tesseract.data.block.Block
+import com.valaphee.tesseract.util.getCompoundTag
+import com.valaphee.tesseract.util.getString
 import com.valaphee.tesseract.util.jackson.Float2Deserializer
 import com.valaphee.tesseract.util.jackson.Float2Serializer
 import com.valaphee.tesseract.util.jackson.Float3Deserializer
 import com.valaphee.tesseract.util.jackson.Float3Serializer
+import com.valaphee.tesseract.util.nbt.NbtInputStream
+import com.valaphee.tesseract.util.nbt.TagType
 import io.github.classgraph.ClassGraph
+import io.netty.buffer.ByteBufInputStream
+import io.netty.buffer.PooledByteBufAllocator
 import org.apache.logging.log4j.LogManager
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
@@ -58,10 +67,10 @@ class DataModule(
     private val argument: Argument? = null
 ) : AbstractModule() {
     override fun configure() {
-        dataTypeByKey.clear()
+        classByType.clear()
         ClassGraph().acceptPackages(this::class.java.packageName).enableClassInfo().enableAnnotationInfo().scan().use {
             val dataType = DataType::class.jvmName
-            dataTypeByKey.putAll(it.getClassesWithAnnotation(dataType).associate { it.getAnnotationInfo(dataType).parameterValues.getValue("value") as String to Class.forName(it.name).kotlin })
+            classByType.putAll(it.getClassesWithAnnotation(dataType).associate { it.getAnnotationInfo(dataType).parameterValues.getValue("value") as String to Class.forName(it.name).kotlin })
         }
 
         val objectMapper = jacksonObjectMapper().apply {
@@ -95,7 +104,7 @@ class DataModule(
                 }
                 .partition { it is KeyedData }
             keyed.filterIsInstance<KeyedData>()
-                .groupBy { dataTypeByValueOrNull(it::class) }
+                .groupBy { typeByClassOrNull(it::class) }
                 .forEach { (key, value) ->
                     key?.let {
                         @Suppress("UNCHECKED_CAST")
@@ -110,6 +119,28 @@ class DataModule(
             }
         }
 
+        run {
+            val buffer = PooledByteBufAllocator.DEFAULT.directBuffer()
+            try {
+                buffer.writeBytes(CapturePacketHandler::class.java.getResourceAsStream("/runtime_block_states.dat")!!.readBytes())
+                val blocks = HashMap<String, ArrayList<Map<String, Any>>>()
+                NbtInputStream(ByteBufInputStream(buffer)).use { it.readTag() }?.asCompoundTag()?.get("blocks")?.asListTag()!!.toList().map { it.asCompoundTag()!! }.forEach {
+                    blocks.getOrPut(it.getString("name")) { ArrayList() }.add(it.getCompoundTag("states").toMap().mapValues {
+                        when (it.value.type) {
+                            TagType.Byte -> it.value.asNumberTag()!!.toByte() != 0.toByte()
+                            TagType.Int -> it.value.asNumberTag()!!.toInt()
+                            TagType.String -> it.value.asArrayTag()!!.valueToString()
+                            else -> TODO()
+                        }
+                    })
+                }
+                bind(object : Key<Map<String, @JvmSuppressWildcards Block>>() {}).toInstance(blocks.mapValues { Block(it.key, it.value) })
+                log.info("Bound tesseract:block, with ${blocks.size} entries")
+            } finally {
+                buffer.release()
+            }
+        }
+
         argument?.let {
             bind(Argument::class.java).toInstance(argument)
             bind(Config::class.java).toInstance((if (argument.config.exists()) objectMapper.readValue(argument.config) else Config()).also { objectMapper.writeValue(argument.config, it) })
@@ -118,10 +149,10 @@ class DataModule(
 
     companion object {
         private val log = LogManager.getLogger(DataModule::class.java)
-        internal val dataTypeByKey = HashBiMap.create<String, KClass<*>>()
+        internal val classByType = HashBiMap.create<String, KClass<*>>()
 
-        fun dataTypeByKeyOrNull(key: String) = dataTypeByKey[key]
+        fun classByTypeOrNull(key: String) = classByType[key]
 
-        fun dataTypeByValueOrNull(value: KClass<*>) = dataTypeByKey.inverse()[value]
+        fun typeByClassOrNull(value: KClass<*>) = classByType.inverse()[value]
     }
 }

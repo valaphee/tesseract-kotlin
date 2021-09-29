@@ -24,47 +24,49 @@
 
 package com.valaphee.tesseract.net
 
-import com.valaphee.tesseract.actor.ActorAddPacketReader
-import com.valaphee.tesseract.actor.ActorEquipmentPacketReader
-import com.valaphee.tesseract.actor.ActorEventPacketReader
-import com.valaphee.tesseract.actor.ActorRemovePacketReader
-import com.valaphee.tesseract.actor.AnimationPacketReader
-import com.valaphee.tesseract.actor.ArmorPacketReader
-import com.valaphee.tesseract.actor.ExperienceOrbAddPacketReader
-import com.valaphee.tesseract.actor.HealthPacketReader
-import com.valaphee.tesseract.actor.LinkPacketReader
-import com.valaphee.tesseract.actor.PaintingAddPacketReader
-import com.valaphee.tesseract.actor.attribute.AttributesPacketReader
-import com.valaphee.tesseract.actor.effect.EffectPacketReader
-import com.valaphee.tesseract.actor.location.MoveRotatePacketReader
-import com.valaphee.tesseract.actor.location.TeleportPacketReader
-import com.valaphee.tesseract.actor.location.VelocityPacketReader
-import com.valaphee.tesseract.actor.metadata.MetadataPacketReader
-import com.valaphee.tesseract.actor.player.ActorPickPacketReader
-import com.valaphee.tesseract.actor.player.AdventureSettingsPacketReader
-import com.valaphee.tesseract.actor.player.BlockPickPacketReader
-import com.valaphee.tesseract.actor.player.EmotePacketReader
-import com.valaphee.tesseract.actor.player.EmotesPacketReader
-import com.valaphee.tesseract.actor.player.InputCorrectPacketReader
-import com.valaphee.tesseract.actor.player.InputPacketReader
-import com.valaphee.tesseract.actor.player.InteractPacketReader
-import com.valaphee.tesseract.actor.player.PlayerActionPacketReader
-import com.valaphee.tesseract.actor.player.PlayerAddPacketReader
-import com.valaphee.tesseract.actor.player.PlayerLocationPacketReader
-import com.valaphee.tesseract.actor.player.RiderJumpPacketReader
-import com.valaphee.tesseract.actor.player.SteerPacketReader
-import com.valaphee.tesseract.actor.player.VelocityPredictionPacketReader
-import com.valaphee.tesseract.actor.player.appearance.AppearancePacketReader
-import com.valaphee.tesseract.actor.player.view.ViewDistancePacketReader
-import com.valaphee.tesseract.actor.player.view.ViewDistanceRequestPacketReader
-import com.valaphee.tesseract.actor.stack.StackAddPacketReader
-import com.valaphee.tesseract.actor.stack.StackTakePacketReader
+import com.valaphee.tesseract.entity.EntityAddPacketReader
+import com.valaphee.tesseract.entity.EntityEquipmentPacketReader
+import com.valaphee.tesseract.entity.EntityEventPacketReader
+import com.valaphee.tesseract.entity.EntityRemovePacketReader
+import com.valaphee.tesseract.entity.AnimationPacketReader
+import com.valaphee.tesseract.entity.ArmorPacketReader
+import com.valaphee.tesseract.entity.ExperienceOrbAddPacketReader
+import com.valaphee.tesseract.entity.HealthPacketReader
+import com.valaphee.tesseract.entity.LinkPacketReader
+import com.valaphee.tesseract.entity.PaintingAddPacketReader
+import com.valaphee.tesseract.entity.attribute.AttributesPacketReader
+import com.valaphee.tesseract.entity.effect.EffectPacketReader
+import com.valaphee.tesseract.entity.location.MoveRotatePacketReader
+import com.valaphee.tesseract.entity.location.TeleportPacketReader
+import com.valaphee.tesseract.entity.location.VelocityPacketReader
+import com.valaphee.tesseract.entity.metadata.MetadataPacketReader
+import com.valaphee.tesseract.entity.player.EntityPickPacketReader
+import com.valaphee.tesseract.entity.player.AdventureSettingsPacketReader
+import com.valaphee.tesseract.entity.player.BlockPickPacketReader
+import com.valaphee.tesseract.entity.player.EmotePacketReader
+import com.valaphee.tesseract.entity.player.EmotesPacketReader
+import com.valaphee.tesseract.entity.player.InputCorrectPacketReader
+import com.valaphee.tesseract.entity.player.InputPacketReader
+import com.valaphee.tesseract.entity.player.InteractPacketReader
+import com.valaphee.tesseract.entity.player.PlayerActionPacketReader
+import com.valaphee.tesseract.entity.player.PlayerAddPacketReader
+import com.valaphee.tesseract.entity.player.PlayerLocationPacketReader
+import com.valaphee.tesseract.entity.player.RiderJumpPacketReader
+import com.valaphee.tesseract.entity.player.SteerPacketReader
+import com.valaphee.tesseract.entity.player.VelocityPredictionPacketReader
+import com.valaphee.tesseract.entity.player.appearance.AppearancePacketReader
+import com.valaphee.tesseract.entity.player.view.ViewDistancePacketReader
+import com.valaphee.tesseract.entity.player.view.ViewDistanceRequestPacketReader
+import com.valaphee.tesseract.entity.stack.StackAddPacketReader
+import com.valaphee.tesseract.entity.stack.StackTakePacketReader
 import com.valaphee.tesseract.command.net.CommandPacketReader
 import com.valaphee.tesseract.command.net.CommandResponsePacketReader
 import com.valaphee.tesseract.command.net.CommandSettingsPacketReader
 import com.valaphee.tesseract.command.net.CommandSoftEnumerationPacketReader
 import com.valaphee.tesseract.command.net.CommandsPacketReader
 import com.valaphee.tesseract.command.net.LocalPlayerAsInitializedPacketReader
+import com.valaphee.tesseract.data.block.BlockState
+import com.valaphee.tesseract.data.item.Item
 import com.valaphee.tesseract.form.FormPacketReader
 import com.valaphee.tesseract.form.FormResponsePacketReader
 import com.valaphee.tesseract.form.ServerSettingsPacketReader
@@ -107,6 +109,7 @@ import com.valaphee.tesseract.net.init.pack.PackDataPacketReader
 import com.valaphee.tesseract.net.init.pack.PacksPacketReader
 import com.valaphee.tesseract.net.init.pack.PacksResponsePacketReader
 import com.valaphee.tesseract.net.init.pack.PacksStackPacketReader
+import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
 import com.valaphee.tesseract.world.BossBarPacketReader
 import com.valaphee.tesseract.world.DifficultyPacketReader
 import com.valaphee.tesseract.world.DimensionPacketReader
@@ -149,10 +152,12 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
  * @author Kevin Ludwig
  */
 class PacketDecoder(
-    var version: Int = -1
+    var version: Int = -1,
+    var blockStates: Int2ObjectOpenHashBiMap<BlockState>? = null,
+    var items: Int2ObjectOpenHashBiMap<Item>? = null
 ) : MessageToMessageDecoder<ByteBuf>() {
     override fun decode(context: ChannelHandlerContext, `in`: ByteBuf, out: MutableList<Any>) {
-        val buffer = PacketBuffer(`in`)
+        val buffer = PacketBuffer(`in`, false, blockStates, items)
         val header = buffer.readVarUInt()
         val id = header and Packet.idMask
         readers[id]?.let { out.add(it.read(buffer, version)) } ?: throw DecoderException("Unknown packet: 0x${id.toString(16).uppercase()}")
@@ -172,8 +177,8 @@ class PacketDecoder(
             this[0x0A] = TimePacketReader
             this[0x0B] = WorldPacketReader
             this[0x0C] = PlayerAddPacketReader
-            this[0x0D] = ActorAddPacketReader
-            this[0x0E] = ActorRemovePacketReader
+            this[0x0D] = EntityAddPacketReader
+            this[0x0E] = EntityRemovePacketReader
             this[0x0F] = StackAddPacketReader
             this[0x11] = StackTakePacketReader
             this[0x12] = TeleportPacketReader
@@ -185,15 +190,15 @@ class PacketDecoder(
             this[0x18] = SoundEventPacketV1Reader
             this[0x19] = WorldEventPacketReader
             this[0x1A] = BlockEventPacketReader
-            this[0x1B] = ActorEventPacketReader
+            this[0x1B] = EntityEventPacketReader
             this[0x1C] = EffectPacketReader
             this[0x1D] = AttributesPacketReader
             this[0x1E] = InventoryTransactionPacketReader
-            this[0x1F] = ActorEquipmentPacketReader
+            this[0x1F] = EntityEquipmentPacketReader
             this[0x20] = ArmorPacketReader
             this[0x21] = InteractPacketReader
             this[0x22] = BlockPickPacketReader
-            this[0x23] = ActorPickPacketReader
+            this[0x23] = EntityPickPacketReader
             this[0x24] = PlayerActionPacketReader
             //this[0x25] =
             //this[0x26] =

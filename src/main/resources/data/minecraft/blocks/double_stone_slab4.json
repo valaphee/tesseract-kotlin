@@ -1,9 +1,0 @@
-{
-  "tesseract:block" : {
-    "key" : "minecraft:double_stone_slab4",
-    "properties" : {
-      "top_slot_bit" : [ false, true ],
-      "stone_slab_type_4" : [ "mossy_stone_brick", "smooth_quartz", "stone", "cut_sandstone", "cut_red_sandstone" ]
-    }
-  }
-}

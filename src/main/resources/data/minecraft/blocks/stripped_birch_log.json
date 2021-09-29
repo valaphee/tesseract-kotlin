@@ -1,8 +1,0 @@
-{
-  "tesseract:block" : {
-    "key" : "minecraft:stripped_birch_log",
-    "properties" : {
-      "pillar_axis" : [ "y", "x", "z" ]
-    }
-  }
-}

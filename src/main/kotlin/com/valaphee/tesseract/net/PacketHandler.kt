@@ -24,42 +24,42 @@
 
 package com.valaphee.tesseract.net
 
-import com.valaphee.tesseract.actor.ActorAddPacket
-import com.valaphee.tesseract.actor.ActorEquipmentPacket
-import com.valaphee.tesseract.actor.ActorEventPacket
-import com.valaphee.tesseract.actor.ActorRemovePacket
-import com.valaphee.tesseract.actor.AnimatePacket
-import com.valaphee.tesseract.actor.AnimationPacket
-import com.valaphee.tesseract.actor.ArmorPacket
-import com.valaphee.tesseract.actor.ExperienceOrbAddPacket
-import com.valaphee.tesseract.actor.HealthPacket
-import com.valaphee.tesseract.actor.LinkPacket
-import com.valaphee.tesseract.actor.PaintingAddPacket
-import com.valaphee.tesseract.actor.attribute.AttributesPacket
-import com.valaphee.tesseract.actor.effect.EffectPacket
-import com.valaphee.tesseract.actor.location.MoveRotatePacket
-import com.valaphee.tesseract.actor.location.TeleportPacket
-import com.valaphee.tesseract.actor.location.VelocityPacket
-import com.valaphee.tesseract.actor.metadata.MetadataPacket
-import com.valaphee.tesseract.actor.player.ActorPickPacket
-import com.valaphee.tesseract.actor.player.AdventureSettingsPacket
-import com.valaphee.tesseract.actor.player.BlockPickPacket
-import com.valaphee.tesseract.actor.player.EmotePacket
-import com.valaphee.tesseract.actor.player.EmotesPacket
-import com.valaphee.tesseract.actor.player.InputCorrectPacket
-import com.valaphee.tesseract.actor.player.InputPacket
-import com.valaphee.tesseract.actor.player.InteractPacket
-import com.valaphee.tesseract.actor.player.PlayerActionPacket
-import com.valaphee.tesseract.actor.player.PlayerAddPacket
-import com.valaphee.tesseract.actor.player.PlayerLocationPacket
-import com.valaphee.tesseract.actor.player.RiderJumpPacket
-import com.valaphee.tesseract.actor.player.SteerPacket
-import com.valaphee.tesseract.actor.player.VelocityPredictionPacket
-import com.valaphee.tesseract.actor.player.appearance.AppearancePacket
-import com.valaphee.tesseract.actor.player.view.ViewDistancePacket
-import com.valaphee.tesseract.actor.player.view.ViewDistanceRequestPacket
-import com.valaphee.tesseract.actor.stack.StackAddPacket
-import com.valaphee.tesseract.actor.stack.StackTakePacket
+import com.valaphee.tesseract.entity.EntityAddPacket
+import com.valaphee.tesseract.entity.EntityEquipmentPacket
+import com.valaphee.tesseract.entity.EntityEventPacket
+import com.valaphee.tesseract.entity.EntityRemovePacket
+import com.valaphee.tesseract.entity.AnimatePacket
+import com.valaphee.tesseract.entity.AnimationPacket
+import com.valaphee.tesseract.entity.ArmorPacket
+import com.valaphee.tesseract.entity.ExperienceOrbAddPacket
+import com.valaphee.tesseract.entity.HealthPacket
+import com.valaphee.tesseract.entity.LinkPacket
+import com.valaphee.tesseract.entity.PaintingAddPacket
+import com.valaphee.tesseract.entity.attribute.AttributesPacket
+import com.valaphee.tesseract.entity.effect.EffectPacket
+import com.valaphee.tesseract.entity.location.MoveRotatePacket
+import com.valaphee.tesseract.entity.location.TeleportPacket
+import com.valaphee.tesseract.entity.location.VelocityPacket
+import com.valaphee.tesseract.entity.metadata.MetadataPacket
+import com.valaphee.tesseract.entity.player.EntityPickPacket
+import com.valaphee.tesseract.entity.player.AdventureSettingsPacket
+import com.valaphee.tesseract.entity.player.BlockPickPacket
+import com.valaphee.tesseract.entity.player.EmotePacket
+import com.valaphee.tesseract.entity.player.EmotesPacket
+import com.valaphee.tesseract.entity.player.InputCorrectPacket
+import com.valaphee.tesseract.entity.player.InputPacket
+import com.valaphee.tesseract.entity.player.InteractPacket
+import com.valaphee.tesseract.entity.player.PlayerActionPacket
+import com.valaphee.tesseract.entity.player.PlayerAddPacket
+import com.valaphee.tesseract.entity.player.PlayerLocationPacket
+import com.valaphee.tesseract.entity.player.RiderJumpPacket
+import com.valaphee.tesseract.entity.player.SteerPacket
+import com.valaphee.tesseract.entity.player.VelocityPredictionPacket
+import com.valaphee.tesseract.entity.player.appearance.AppearancePacket
+import com.valaphee.tesseract.entity.player.view.ViewDistancePacket
+import com.valaphee.tesseract.entity.player.view.ViewDistanceRequestPacket
+import com.valaphee.tesseract.entity.stack.StackAddPacket
+import com.valaphee.tesseract.entity.stack.StackTakePacket
 import com.valaphee.tesseract.command.net.CommandPacket
 import com.valaphee.tesseract.command.net.CommandResponsePacket
 import com.valaphee.tesseract.command.net.CommandSettingsPacket
@@ -176,9 +176,9 @@ interface PacketHandler : ProtocolHandler {
 
     fun playerAdd(packet: PlayerAddPacket) = other(packet)
 
-    fun actorAdd(packet: ActorAddPacket) = other(packet)
+    fun entityAdd(packet: EntityAddPacket) = other(packet)
 
-    fun actorRemove(packet: ActorRemovePacket) = other(packet)
+    fun entityRemove(packet: EntityRemovePacket) = other(packet)
 
     fun stackAdd(packet: StackAddPacket) = other(packet)
 
@@ -202,7 +202,7 @@ interface PacketHandler : ProtocolHandler {
 
     fun blockEvent(packet: BlockEventPacket) = other(packet)
 
-    fun actorEvent(packet: ActorEventPacket) = other(packet)
+    fun entityEvent(packet: EntityEventPacket) = other(packet)
 
     fun effect(packet: EffectPacket) = other(packet)
 
@@ -210,7 +210,7 @@ interface PacketHandler : ProtocolHandler {
 
     fun inventoryTransaction(packet: InventoryTransactionPacket) = other(packet)
 
-    fun actorEquipment(packet: ActorEquipmentPacket) = other(packet)
+    fun entityEquipment(packet: EntityEquipmentPacket) = other(packet)
 
     fun armor(packet: ArmorPacket) = other(packet)
 
@@ -218,7 +218,7 @@ interface PacketHandler : ProtocolHandler {
 
     fun blockPick(packet: BlockPickPacket) = other(packet)
 
-    fun actorPick(packet: ActorPickPacket) = other(packet)
+    fun entityPick(packet: EntityPickPacket) = other(packet)
 
     fun playerAction(packet: PlayerActionPacket) = other(packet)
 

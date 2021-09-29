@@ -29,10 +29,10 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.internal.Streams
 import com.google.gson.stream.JsonReader
-import com.valaphee.tesseract.actor.player.AuthExtra
-import com.valaphee.tesseract.actor.player.User
-import com.valaphee.tesseract.actor.player.asAuthExtra
-import com.valaphee.tesseract.actor.player.asUser
+import com.valaphee.tesseract.entity.player.AuthExtra
+import com.valaphee.tesseract.entity.player.User
+import com.valaphee.tesseract.entity.player.asAuthExtra
+import com.valaphee.tesseract.entity.player.asUser
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler

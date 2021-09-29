@@ -1,9 +1,0 @@
-{
-  "tesseract:block" : {
-    "key" : "minecraft:golden_rail",
-    "properties" : {
-      "rail_direction" : [ 0, 1, 2, 3, 4, 5 ],
-      "rail_data_bit" : [ false, true ]
-    }
-  }
-}

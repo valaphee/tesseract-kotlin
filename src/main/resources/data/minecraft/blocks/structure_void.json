@@ -1,8 +1,0 @@
-{
-  "tesseract:block" : {
-    "key" : "minecraft:structure_void",
-    "properties" : {
-      "structure_void_type" : [ "void", "air" ]
-    }
-  }
-}

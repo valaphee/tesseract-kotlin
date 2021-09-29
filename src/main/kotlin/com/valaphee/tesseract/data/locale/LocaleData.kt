@@ -33,10 +33,10 @@ import java.util.regex.Pattern
  * @author Kevin Ludwig
  */
 @DataType("tesseract:locale")
-data class LocaleData(
+class LocaleData(
     override val key: String,
     val entries: Map<String, Any>
-) : KeyedData {
+) : KeyedData() {
     @Transient private val entriesFlat = entries.flatMap { flatten(it.key, it.value) }.toMap()
     @Transient private val entryFormats = mutableMapOf<String, MessageFormat>()
 

@@ -44,11 +44,11 @@ interface Data
  * @author Kevin Ludwig
  */
 object DataTypeResolver : TypeIdResolverBase() {
-    override fun idFromValue(value: Any) = DataModule.dataTypeByValueOrNull(value::class) ?: throw UnknownDataTypeException(value::class.jvmName)
+    override fun idFromValue(value: Any) = DataModule.typeByClassOrNull(value::class) ?: throw UnknownDataTypeException(value::class.jvmName)
 
     override fun idFromValueAndType(value: Any, suggestedType: Class<*>) = idFromValue(value)
 
-    override fun typeFromId(context: DatabindContext, key: String) = DataModule.dataTypeByKeyOrNull(key)?.let { context.constructType(it.java) } ?: throw UnknownDataTypeException(key)
+    override fun typeFromId(context: DatabindContext, key: String) = DataModule.classByTypeOrNull(key)?.let { context.constructType(it.java) } ?: throw UnknownDataTypeException(key)
 
     override fun getMechanism() = JsonTypeInfo.Id.NAME
 }

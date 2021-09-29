@@ -1,8 +1,0 @@
-{
-  "tesseract:block" : {
-    "key" : "minecraft:sand",
-    "properties" : {
-      "sand_type" : [ "normal", "red" ]
-    }
-  }
-}

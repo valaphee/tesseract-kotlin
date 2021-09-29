@@ -1,9 +1,0 @@
-{
-  "tesseract:block" : {
-    "key" : "minecraft:double_stone_slab2",
-    "properties" : {
-      "stone_slab_type_2" : [ "red_sandstone", "purpur", "prismarine_rough", "prismarine_dark", "prismarine_brick", "mossy_cobblestone", "smooth_sandstone", "red_nether_brick" ],
-      "top_slot_bit" : [ false, true ]
-    }
-  }
-}

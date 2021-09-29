@@ -26,12 +26,14 @@ package com.valaphee.tesseract.capture
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.collect.HashBiMap
-import com.valaphee.tesseract.actor.player.AuthExtra
-import com.valaphee.tesseract.actor.player.User
-import com.valaphee.tesseract.actor.player.appearance.Appearance
-import com.valaphee.tesseract.actor.player.appearance.AppearanceImage
-import com.valaphee.tesseract.actor.player.appearance.readAppearanceImage
+import com.valaphee.tesseract.entity.player.AuthExtra
+import com.valaphee.tesseract.entity.player.User
+import com.valaphee.tesseract.entity.player.appearance.Appearance
+import com.valaphee.tesseract.entity.player.appearance.AppearanceImage
+import com.valaphee.tesseract.entity.player.appearance.readAppearanceImage
 import com.valaphee.tesseract.command.net.LocalPlayerAsInitializedPacket
+import com.valaphee.tesseract.data.block.Block
+import com.valaphee.tesseract.data.block.BlockState
 import com.valaphee.tesseract.data.recipe.ShapedRecipeData
 import com.valaphee.tesseract.data.recipe.ShapelessRecipeData
 import com.valaphee.tesseract.inventory.CreativeInventoryPacket
@@ -52,6 +54,7 @@ import com.valaphee.tesseract.net.init.ServerToClientHandshakePacket
 import com.valaphee.tesseract.net.init.pack.PacksPacket
 import com.valaphee.tesseract.net.init.pack.PacksResponsePacket
 import com.valaphee.tesseract.net.init.pack.PacksStackPacket
+import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
 import com.valaphee.tesseract.util.generateKeyPair
 import com.valaphee.tesseract.world.WorldPacket
 import io.netty.buffer.Unpooled
@@ -67,6 +70,7 @@ import java.util.UUID
  */
 class CapturePacketHandler(
     private val connection: Connection,
+    private val blocks: Map<String, Block>,
     private val objectMapper: ObjectMapper
 ) : PacketHandler {
     private val keyPair = generateKeyPair()
@@ -146,6 +150,12 @@ class CapturePacketHandler(
     override fun world(packet: WorldPacket) {
         connection.write(LocalPlayerAsInitializedPacket(packet.runtimeEntityId))
 
+        val blockStates = Int2ObjectOpenHashBiMap<BlockState>()
+        var i = 0
+        blocks.values.sortedWith(compareBy { it.key.split(":", limit = 2)[1].lowercase() }).forEach { it.states.forEach { blockStates[i++] = it } }
+
+        connection.blockStates = blockStates
+        connection.items = packet.items
         return
 
         File("data/minecraft/items").mkdirs()
@@ -153,8 +163,6 @@ class CapturePacketHandler(
     }
 
     override fun creativeInventory(packet: CreativeInventoryPacket) {
-        return
-
         FileWriter(File("creative_items.json")).use { objectMapper.writeValue(it, packet.content) }
     }
 

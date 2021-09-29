@@ -1,9 +1,0 @@
-{
-  "tesseract:block" : {
-    "key" : "minecraft:bamboo_sapling",
-    "properties" : {
-      "sapling_type" : [ "oak", "spruce", "birch", "jungle", "acacia", "dark_oak" ],
-      "age_bit" : [ false, true ]
-    }
-  }
-}

@@ -52,7 +52,7 @@ class Int2ObjectOpenHashBiMap<V> : Int2ObjectOpenHashMap<V>, Cloneable {
         reverse = Object2IntOpenHashMap<V>(initialCapacity).apply { defaultReturnValue(-1) }
     }
 
-    fun getKey(value: V) = reverse.getInt(value)
+    fun getKey(value: Any) = reverse.getInt(value)
 
     override fun put(key: Int, value: V): V? {
         reverse[value] = key

@@ -24,13 +24,15 @@
 
 package com.valaphee.tesseract.data.item
 
-import com.valaphee.tesseract.data.Data
+import com.valaphee.tesseract.data.DataType
 import com.valaphee.tesseract.data.KeyedData
 import com.valaphee.tesseract.util.nbt.CompoundTag
 
 /**
  * @author Kevin Ludwig
  */
-abstract class Item(
+@DataType("tesseract:item")
+class Item(
+    override val key: String,
     val component: CompoundTag?
-) : Data, KeyedData
+) : KeyedData()

@@ -27,6 +27,21 @@ package com.valaphee.tesseract.data
 /**
  * @author Kevin Ludwig
  */
-interface KeyedData : Data {
-    val key: String
+abstract class KeyedData : Data {
+    abstract val key: String
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as KeyedData
+
+        if (key != other.key) return false
+
+        return true
+    }
+
+    override fun hashCode() = key.hashCode()
+
+    override fun toString() = key
 }

@@ -1,9 +1,0 @@
-{
-  "tesseract:block" : {
-    "key" : "minecraft:lever",
-    "properties" : {
-      "open_bit" : [ false, true ],
-      "lever_direction" : [ "down_east_west", "east", "west", "south", "north", "up_north_south", "up_east_west", "down_north_south" ]
-    }
-  }
-}

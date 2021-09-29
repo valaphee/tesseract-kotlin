@@ -24,13 +24,13 @@
 
 package com.valaphee.tesseract.world
 
-import com.valaphee.tesseract.actor.player.User
-import com.valaphee.tesseract.actor.player.appearance.Appearance
-import com.valaphee.tesseract.actor.player.appearance.writeAppearance
-import com.valaphee.tesseract.actor.player.appearance.writeAppearancePre390
-import com.valaphee.tesseract.actor.player.appearance.writeAppearancePre419
-import com.valaphee.tesseract.actor.player.appearance.writeAppearancePre428
-import com.valaphee.tesseract.actor.player.appearance.writeAppearancePre465
+import com.valaphee.tesseract.entity.player.User
+import com.valaphee.tesseract.entity.player.appearance.Appearance
+import com.valaphee.tesseract.entity.player.appearance.writeAppearance
+import com.valaphee.tesseract.entity.player.appearance.writeAppearancePre390
+import com.valaphee.tesseract.entity.player.appearance.writeAppearancePre419
+import com.valaphee.tesseract.entity.player.appearance.writeAppearancePre428
+import com.valaphee.tesseract.entity.player.appearance.writeAppearancePre465
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler

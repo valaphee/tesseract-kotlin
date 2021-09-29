@@ -91,13 +91,13 @@ data class InventoryTransactionPacket(
         val slotId: Int,
         val fromStack: Stack?,
         val toStack: Stack?,
-        val netId: Int? = null
+        val netId: Int?
     )
 
     data class Source(
         val type: Type,
-        val windowId: Int = WindowId.None,
-        val action: Action = Action.None
+        val windowId: Int,
+        val action: Action
     ) {
         enum class Type(
             val id: Int
@@ -295,11 +295,11 @@ object InventoryTransactionPacketReader : PacketReader {
     }
 }
 
-fun PacketBuffer.readActionPre407() = InventoryTransactionPacket.Action(readSource(), readVarUInt(), readStackPre431(), readStackPre431())
+fun PacketBuffer.readActionPre407() = InventoryTransactionPacket.Action(readSource(), readVarUInt(), readStackPre431(), readStackPre431(), null)
 
 fun PacketBuffer.readActionPre431() = InventoryTransactionPacket.Action(readSource(), readVarUInt(), readStackPre431(), readStackPre431(), readVarInt())
 
-fun PacketBuffer.readAction() = InventoryTransactionPacket.Action(readSource(), readVarUInt(), readStack(), readStack())
+fun PacketBuffer.readAction() = InventoryTransactionPacket.Action(readSource(), readVarUInt(), readStack(), readStack(), null)
 
 fun PacketBuffer.writeActionPre407(value: InventoryTransactionPacket.Action) {
     writeSource(value.source)
@@ -324,9 +324,9 @@ fun PacketBuffer.writeAction(value: InventoryTransactionPacket.Action) {
 }
 
 fun PacketBuffer.readSource() = when (val type = InventoryTransactionPacket.Source.Type.byId(readVarUInt())) {
-    InventoryTransactionPacket.Source.Type.Invalid, InventoryTransactionPacket.Source.Type.Global, InventoryTransactionPacket.Source.Type.Creative -> InventoryTransactionPacket.Source(type)
-    InventoryTransactionPacket.Source.Type.Inventory, InventoryTransactionPacket.Source.Type.UntrackedInteractionUi, InventoryTransactionPacket.Source.Type.NonImplemented -> InventoryTransactionPacket.Source(type, readVarInt())
-    InventoryTransactionPacket.Source.Type.World -> InventoryTransactionPacket.Source(InventoryTransactionPacket.Source.Type.World, action = InventoryTransactionPacket.Source.Action.values()[readVarUInt()])
+    InventoryTransactionPacket.Source.Type.Invalid, InventoryTransactionPacket.Source.Type.Global, InventoryTransactionPacket.Source.Type.Creative -> InventoryTransactionPacket.Source(type, WindowId.None, InventoryTransactionPacket.Source.Action.None)
+    InventoryTransactionPacket.Source.Type.Inventory, InventoryTransactionPacket.Source.Type.UntrackedInteractionUi, InventoryTransactionPacket.Source.Type.NonImplemented -> InventoryTransactionPacket.Source(type, readVarInt(), InventoryTransactionPacket.Source.Action.None)
+    InventoryTransactionPacket.Source.Type.World -> InventoryTransactionPacket.Source(InventoryTransactionPacket.Source.Type.World, WindowId.None, InventoryTransactionPacket.Source.Action.values()[readVarUInt()])
     else -> throw IndexOutOfBoundsException()
 }
 

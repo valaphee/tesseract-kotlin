@@ -1,9 +1,0 @@
-{
-  "tesseract:block" : {
-    "key" : "minecraft:chemistry_table",
-    "properties" : {
-      "chemistry_table_type" : [ "compound_creator", "material_reducer", "element_constructor", "lab_table" ],
-      "direction" : [ 0, 1, 2, 3 ]
-    }
-  }
-}

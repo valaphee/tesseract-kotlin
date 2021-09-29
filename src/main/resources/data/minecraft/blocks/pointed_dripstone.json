@@ -1,9 +1,0 @@
-{
-  "tesseract:block" : {
-    "key" : "minecraft:pointed_dripstone",
-    "properties" : {
-      "dripstone_thickness" : [ "tip", "frustum", "middle", "base", "merge" ],
-      "hanging" : [ false, true ]
-    }
-  }
-}

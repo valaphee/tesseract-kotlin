@@ -1,9 +1,0 @@
-{
-  "tesseract:block" : {
-    "key" : "minecraft:warped_button",
-    "properties" : {
-      "button_pressed_bit" : [ false, true ],
-      "facing_direction" : [ 0, 1, 2, 3, 4, 5 ]
-    }
-  }
-}

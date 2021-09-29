@@ -31,7 +31,7 @@ class BlockState(
     val block: Block,
     val properties: Map<String, *>
 ) {
-    override fun toString() = StringBuilder().apply {
+    private val key = StringBuilder().apply {
         append(block.key)
         if (properties.isNotEmpty()) {
             append('[')
@@ -39,4 +39,19 @@ class BlockState(
             setCharAt(length - 1, ']')
         }
     }.toString()
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as BlockState
+
+        if (key != other.key) return false
+
+        return true
+    }
+
+    override fun hashCode() = key.hashCode()
+
+    override fun toString() = key
 }

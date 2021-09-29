@@ -1,8 +1,0 @@
-{
-  "tesseract:block" : {
-    "key" : "minecraft:stone",
-    "properties" : {
-      "stone_type" : [ "stone", "granite", "granite_smooth", "diorite", "diorite_smooth", "andesite", "andesite_smooth" ]
-    }
-  }
-}
