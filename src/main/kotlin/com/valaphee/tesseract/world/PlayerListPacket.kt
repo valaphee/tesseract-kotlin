@@ -26,6 +26,11 @@ package com.valaphee.tesseract.world
 
 import com.valaphee.tesseract.entity.player.User
 import com.valaphee.tesseract.entity.player.appearance.Appearance
+import com.valaphee.tesseract.entity.player.appearance.readAppearance
+import com.valaphee.tesseract.entity.player.appearance.readAppearancePre390
+import com.valaphee.tesseract.entity.player.appearance.readAppearancePre419
+import com.valaphee.tesseract.entity.player.appearance.readAppearancePre428
+import com.valaphee.tesseract.entity.player.appearance.readAppearancePre465
 import com.valaphee.tesseract.entity.player.appearance.writeAppearance
 import com.valaphee.tesseract.entity.player.appearance.writeAppearancePre390
 import com.valaphee.tesseract.entity.player.appearance.writeAppearancePre419
@@ -34,14 +39,10 @@ import com.valaphee.tesseract.entity.player.appearance.writeAppearancePre465
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 import java.util.UUID
-
-/*
- * Copyright (c) 2021, Valaphee.
- * All rights reserved.
- */
 
 /**
  * @author Kevin Ludwig
@@ -108,5 +109,33 @@ data class PlayerListPacket(
         var result = action.hashCode()
         result = 31 * result + entries.contentHashCode()
         return result
+    }
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+object PlayerListPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int): PlayerListPacket {
+        val action = PlayerListPacket.Action.values()[buffer.readUnsignedByte().toInt()]
+        val entries = Array(buffer.readVarUInt()) {
+            when (action) {
+                PlayerListPacket.Action.Add -> PlayerListPacket.Entry(
+                    buffer.readUuid(),
+                    buffer.readVarLong(),
+                    buffer.readString(),
+                    buffer.readString(),
+                    buffer.readString(),
+                    User.OperatingSystem.values()[buffer.readIntLE()],
+                    if (version >= 465) buffer.readAppearance() else if (version >= 428) buffer.readAppearancePre465() else if (version >= 419) buffer.readAppearancePre428() else if (version >= 390) buffer.readAppearancePre419() else buffer.readAppearancePre390(),
+                    buffer.readBoolean(),
+                    buffer.readBoolean()
+                )
+                else -> PlayerListPacket.Entry(buffer.readUuid())
+            }
+        }.apply {
+            if (version > 389 && action == PlayerListPacket.Action.Add) forEach { (_, _, _, _, _, _, appearance) -> appearance!!.trusted = buffer.readBoolean() }
+        }
+        return PlayerListPacket(action, entries)
     }
 }

@@ -226,7 +226,6 @@ fun PacketBuffer.readStackInstance(): Stack? {
     val subId = readVarUInt()
     val blockRuntimeId = readVarInt()
     readVarUInt()
-    println(itemKey)
     return Stack(
         itemKey,
         subId,
@@ -342,4 +341,4 @@ fun PacketBuffer.writeIngredient(value: Stack?) {
     } ?: writeVarInt(0)
 }
 
-private val shieldKey = "minecraft:shield"
+private const val shieldKey = "minecraft:shield"

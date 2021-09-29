@@ -20,55 +20,33 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
-package com.valaphee.tesseract.net.init.pack
+package com.valaphee.tesseract.net.base
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
-import com.valaphee.tesseract.net.Restrict
-import com.valaphee.tesseract.net.Restriction
-import io.netty.buffer.ByteBuf
-import java.util.UUID
 
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.ToClient)
-data class PackDataChunkPacket(
-    val packId: UUID,
-    val packVersion: String?,
-    val chunkIndex: Long,
-    val progress: Long,
-    val data: ByteBuf
+data class NetworkSettingsPacket(
+    val compressionThreshold: Int,
 ) : Packet {
-    override val id get() = 0x53
+    override val id get() = 0x8F
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeString("$packId${packVersion?.let { "_$packVersion" } ?: ""}")
-        buffer.writeIntLE(chunkIndex.toInt())
-        buffer.writeLongLE(progress)
-        buffer.writeVarUInt(data.readableBytes())
-        buffer.writeBytes(data)
+        buffer.writeShortLE(compressionThreshold)
     }
 
-    override fun handle(handler: PacketHandler) = handler.packDataChunk(this)
+    override fun handle(handler: PacketHandler) = handler.networkSettings(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object PackDataChunkPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int): PackDataChunkPacket {
-        val pack = buffer.readString().split("_".toRegex(), 2).toTypedArray()
-        val packId = UUID.fromString(pack[0])
-        val packVersion = if (pack.size == 2) pack[1] else null
-        val chunkIndex = buffer.readUnsignedIntLE()
-        val progress = buffer.readLongLE()
-        val data = buffer.readSlice(buffer.readVarUInt())
-        return PackDataChunkPacket(packId, packVersion, chunkIndex, progress, data)
-    }
+object NetworkSettingsPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = NetworkSettingsPacket(buffer.readUnsignedShortLE())
 }

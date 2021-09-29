@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.net.init
+package com.valaphee.tesseract.net.base
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -30,55 +30,37 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
-import com.valaphee.tesseract.util.nbt.CompoundTag
 
 /**
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class BiomeDefinitionsPacket private constructor(
-    val data: ByteArray?,
-    val tag: CompoundTag?
+data class StatusPacket(
+    val status: Status
 ) : Packet {
-    override val id get() = 0x7A
+    enum class Status {
+        LoginSuccess,
+        FailedClient,
+        FailedServer,
+        PlayerSpawn,
+        FailedInvalidTenant,
+        FailedVanillaEducation,
+        FailedEducationVanilla,
+        FailedServerFull
+    }
 
-    constructor(data: ByteArray) : this(data, null)
-
-    constructor(tag: CompoundTag?) : this(null, tag)
+    override val id get() = 0x02
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        data?.let { buffer.writeBytes(it) } ?: buffer.toNbtOutputStream().use { it.writeTag(tag) }
+        buffer.writeInt(status.ordinal)
     }
 
-    override fun handle(handler: PacketHandler) = handler.biomeDefinitions(this)
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as BiomeDefinitionsPacket
-
-        if (data != null) {
-            if (other.data == null) return false
-            if (!data.contentEquals(other.data)) return false
-        } else if (other.data != null) return false
-        if (tag != other.tag) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = data?.contentHashCode() ?: 0
-        result = 31 * result + (tag?.hashCode() ?: 0)
-        return result
-    }
-
-    override fun toString() = "BiomeDefinitionsPacket(tag=$tag)"
+    override fun handle(handler: PacketHandler) = handler.status(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object BiomeDefinitionsPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = BiomeDefinitionsPacket(buffer.toNbtInputStream().use { it.readTag()?.asCompoundTag() })
+object StatusPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = StatusPacket(StatusPacket.Status.values()[buffer.readInt()])
 }

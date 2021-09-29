@@ -28,27 +28,34 @@ import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
+import com.valaphee.tesseract.net.Restrict
+import com.valaphee.tesseract.net.Restriction
 
 /**
  * @author Kevin Ludwig
  */
-data class LatencyPacket(
-    val timestamp: Long,
-    val fromServer: Boolean
-) : Packet {
-    override val id get() = 0x73
+@Restrict(Restriction.ToServer)
+object ClientToServerHandshakePacket : Packet {
+    override val id get() = 0x04
 
-    override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeLongLE(timestamp)
-        buffer.writeBoolean(fromServer)
+    override fun write(buffer: PacketBuffer, version: Int) = Unit
+
+    override fun handle(handler: PacketHandler) = handler.clientToServerHandshake(this)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        return true
     }
 
-    override fun handle(handler: PacketHandler) = handler.latency(this)
+    override fun hashCode() = javaClass.hashCode()
+
+    override fun toString() = "ClientToServerHandshakePacket()"
 }
 
 /**
  * @author Kevin Ludwig
  */
-object LatencyPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = LatencyPacket(buffer.readLongLE(), buffer.readBoolean())
+object ClientToServerHandshakePacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = ClientToServerHandshakePacket
 }

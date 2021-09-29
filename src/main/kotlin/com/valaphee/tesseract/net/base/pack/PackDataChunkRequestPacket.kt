@@ -20,9 +20,10 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
  */
 
-package com.valaphee.tesseract.net.init
+package com.valaphee.tesseract.net.base.pack
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -30,37 +31,36 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import java.util.UUID
 
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.ToClient)
-data class StatusPacket(
-    val status: Status
+@Restrict(Restriction.ToServer)
+data class PackDataChunkRequestPacket(
+    val packId: UUID,
+    val packVersion: String?,
+    val chunkIndex: Long
 ) : Packet {
-    enum class Status {
-        LoginSuccess,
-        FailedClient,
-        FailedServer,
-        PlayerSpawn,
-        FailedInvalidTenant,
-        FailedVanillaEducation,
-        FailedEducationVanilla,
-        FailedServerFull
-    }
-
-    override val id get() = 0x02
+    override val id get() = 0x54
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeInt(status.ordinal)
+        buffer.writeString("$packId${packVersion?.let { "_$packVersion" } ?: ""}")
+        buffer.writeIntLE(chunkIndex.toInt())
     }
 
-    override fun handle(handler: PacketHandler) = handler.status(this)
+    override fun handle(handler: PacketHandler) = handler.packDataChunkRequest(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object StatusPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = StatusPacket(StatusPacket.Status.values()[buffer.readInt()])
+object PackDataChunkRequestPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int): PackDataChunkRequestPacket {
+        val pack = buffer.readString().split("_".toRegex(), 2).toTypedArray()
+        val packId = UUID.fromString(pack[0])
+        val packVersion = if (pack.size == 2) pack[1] else null
+        val chunkIndex = buffer.readUnsignedIntLE()
+        return PackDataChunkRequestPacket(packId, packVersion, chunkIndex)
+    }
 }

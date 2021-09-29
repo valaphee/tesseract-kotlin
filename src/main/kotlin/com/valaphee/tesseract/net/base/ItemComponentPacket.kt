@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.net.init
+package com.valaphee.tesseract.net.base
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -30,57 +30,49 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
-import com.valaphee.tesseract.util.LittleEndianVarIntByteBufOutputStream
 import com.valaphee.tesseract.util.nbt.CompoundTag
-import com.valaphee.tesseract.util.nbt.NbtOutputStream
 
 /**
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class EntityIdentifiersPacket private constructor(
-    val data: ByteArray?,
-    val tag: CompoundTag?
+data class ItemComponentPacket(
+    val entries: Array<Entry>
 ) : Packet {
-    override val id get() = 0x77
+    data class Entry(
+        val name: String,
+        val tag: CompoundTag?
+    )
 
-    constructor(data: ByteArray) : this(data, null)
-
-    constructor(tag: CompoundTag?) : this(null, tag)
+    override val id get() = 0xA2
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        data?.let { buffer.writeBytes(it) } ?: NbtOutputStream(LittleEndianVarIntByteBufOutputStream(buffer)).use { it.writeTag(tag) }
+        buffer.writeVarUInt(entries.size)
+        entries.forEach {
+            buffer.writeString(it.name)
+            buffer.toNbtOutputStream().use { stream -> stream.writeTag(it.tag) }
+        }
     }
 
-    override fun handle(handler: PacketHandler) = handler.entityIdentifiers(this)
+    override fun handle(handler: PacketHandler) = handler.itemComponent(this)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as EntityIdentifiersPacket
+        other as ItemComponentPacket
 
-        if (data != null) {
-            if (other.data == null) return false
-            if (!data.contentEquals(other.data)) return false
-        } else if (other.data != null) return false
-        if (tag != other.tag) return false
+        if (!entries.contentEquals(other.entries)) return false
 
         return true
     }
 
-    override fun hashCode(): Int {
-        var result = data?.contentHashCode() ?: 0
-        result = 31 * result + (tag?.hashCode() ?: 0)
-        return result
-    }
-
-    override fun toString() = "EntityIdentifiersPacket(tag=$tag)"
+    override fun hashCode() = entries.contentHashCode()
 }
 
 /**
  * @author Kevin Ludwig
  */
-object EntityIdentifiersPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = EntityIdentifiersPacket(buffer.toNbtInputStream().use { it.readTag()?.asCompoundTag() })
+object ItemComponentPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = ItemComponentPacket(Array(buffer.readVarUInt()) { ItemComponentPacket.Entry(buffer.readString(), buffer.toNbtInputStream().use { it.readTag()?.asCompoundTag() }) })
 }

@@ -40,7 +40,7 @@ import com.valaphee.tesseract.net.Restriction
 data class SpawnPositionPacket(
     val type: Type,
     val blockPosition: Int3,
-    val dimension: Dimension,
+    val dimensionId: Int,
     val position: Int3,
     val forced: Boolean
 ) : Packet {
@@ -54,7 +54,7 @@ data class SpawnPositionPacket(
         buffer.writeVarInt(type.ordinal)
         if (version >= 407) {
             buffer.writeInt3UnsignedY(blockPosition)
-            buffer.writeVarUInt(dimension.ordinal)
+            buffer.writeVarUInt(dimensionId)
         }
         buffer.writeInt3UnsignedY(position)
         if (version < 407) buffer.writeBoolean(forced)
@@ -70,16 +70,16 @@ object SpawnPositionPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int): SpawnPositionPacket {
         val type = SpawnPositionPacket.Type.values()[buffer.readVarInt()]
         val blockPosition: Int3
-        val dimension: Dimension
+        val dimensionId: Int
         if (version >= 407) {
             blockPosition = buffer.readInt3UnsignedY()
-            dimension = Dimension.values()[buffer.readVarUInt()]
+            dimensionId = buffer.readVarUInt()
         } else {
             blockPosition = Int3.Zero
-            dimension = Dimension.Overworld
+            dimensionId = 0
         }
         val position = buffer.readInt3UnsignedY()
         val forced = if (version < 407) buffer.readBoolean() else false
-        return SpawnPositionPacket(type, blockPosition, dimension, position, forced)
+        return SpawnPositionPacket(type, blockPosition, dimensionId, position, forced)
     }
 }

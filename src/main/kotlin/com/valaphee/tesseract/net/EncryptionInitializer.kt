@@ -24,7 +24,7 @@
 
 package com.valaphee.tesseract.net
 
-import com.valaphee.tesseract.net.init.ServerToClientHandshakePacket
+import com.valaphee.tesseract.net.base.ServerToClientHandshakePacket
 import com.valaphee.tesseract.util.MbedTlsAesCipher
 import com.valaphee.tesseract.util.aesCipher
 import com.valaphee.tesseract.util.generateSecret

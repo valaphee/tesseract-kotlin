@@ -20,10 +20,9 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
-package com.valaphee.tesseract.net.init
+package com.valaphee.tesseract.net.base
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
@@ -59,16 +58,18 @@ import java.util.Base64
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-data class SubLoginPacket(
+data class LoginPacket(
+    val protocolVersion: Int,
     val publicKey: PublicKey,
     val privateKey: PrivateKey?,
     val authExtra: AuthExtra,
     val user: User,
     val verified: Boolean
 ) : Packet {
-    override val id get() = 0x5E
+    override val id get() = 0x01
 
     override fun write(buffer: PacketBuffer, version: Int) {
+        buffer.writeInt(protocolVersion)
         val jwtLengthIndex = buffer.writerIndex()
         buffer.writeZero(PacketBuffer.MaximumVarUIntLength)
         buffer.writeAsciiStringLe(AsciiString(JsonObject().apply {
@@ -95,7 +96,7 @@ data class SubLoginPacket(
         buffer.setMaximumLengthVarUInt(jwtLengthIndex, buffer.writerIndex() - (jwtLengthIndex + PacketBuffer.MaximumVarUIntLength))
     }
 
-    override fun handle(handler: PacketHandler) = handler.subLogin(this)
+    override fun handle(handler: PacketHandler) = handler.login(this)
 
     companion object {
         private val base64Encoder: Base64.Encoder = Base64.getEncoder()
@@ -105,8 +106,14 @@ data class SubLoginPacket(
 /**
  * @author Kevin Ludwig
  */
-object SubLoginPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int): SubLoginPacket {
+object LoginPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int): LoginPacket {
+        val readerIndex = buffer.readerIndex()
+        var protocolVersion = buffer.readInt()
+        if (protocolVersion == 0) {
+            buffer.readerIndex(readerIndex + 2)
+            protocolVersion = buffer.readInt()
+        }
         buffer.readVarUInt()
         var verified = true
         var mojangKeyVerified = false
@@ -146,7 +153,8 @@ object SubLoginPacketReader : PacketReader {
             userJwtConsumerBuilder.setSkipSignatureVerification()
             userJwtClaims = userJwtConsumerBuilder.build().processToClaims(userJws)
         }
-        return SubLoginPacket(
+        return LoginPacket(
+            protocolVersion,
             verificationKey!!,
             null,
             authJwsJsonPayload!!.getJsonObject("extraData").asAuthExtra,

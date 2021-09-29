@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.net.init
+package com.valaphee.tesseract.net.base
 
 import com.google.gson.JsonObject
 import com.google.gson.internal.Streams

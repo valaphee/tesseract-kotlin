@@ -124,13 +124,14 @@ object ChunkPacketReader : PacketReader {
         buffer.readVarUInt()
         val blockStorage: BlockStorage
         if (!cache) {
-            blockStorage = BlockStorage(/*air.id*/0, Array(sectionCount) { buffer.readSection(/*air.id*/0) })
+
+            blockStorage = BlockStorage(buffer.blockStates.getKey(airKey), Array(sectionCount) { buffer.readSection(buffer.blockStates.getKey(airKey)) })
             buffer.readBytes(ByteArray(BlockStorage.XZSize * BlockStorage.XZSize))
-        } else blockStorage = BlockStorage(/*air.id*/0, sectionCount)
+        } else blockStorage = BlockStorage(buffer.blockStates.getKey(airKey), sectionCount)
         buffer.readByte()
         /*val blockExtraData = Int2ShortOpenHashMap().apply { repeat(buffer.readVarInt()) { this[buffer.readVarInt()] = buffer.readShortLE() } }*/
         return ChunkPacket(position, blockStorage, Int2ShortMaps.EMPTY_MAP, emptyArray(), cache, blobIds)
     }
 
-    /*private val air = BlockState.byKeyWithStates("minecraft:air")*/
+    private const val airKey = "minecraft:air"
 }

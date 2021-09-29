@@ -24,13 +24,19 @@
 
 package com.valaphee.tesseract.net
 
+import com.valaphee.tesseract.command.net.CommandPacket
+import com.valaphee.tesseract.command.net.CommandResponsePacket
+import com.valaphee.tesseract.command.net.CommandSettingsPacket
+import com.valaphee.tesseract.command.net.CommandSoftEnumerationPacket
+import com.valaphee.tesseract.command.net.CommandsPacket
+import com.valaphee.tesseract.command.net.LocalPlayerAsInitializedPacket
+import com.valaphee.tesseract.entity.AnimatePacket
+import com.valaphee.tesseract.entity.AnimationPacket
+import com.valaphee.tesseract.entity.ArmorPacket
 import com.valaphee.tesseract.entity.EntityAddPacket
 import com.valaphee.tesseract.entity.EntityEquipmentPacket
 import com.valaphee.tesseract.entity.EntityEventPacket
 import com.valaphee.tesseract.entity.EntityRemovePacket
-import com.valaphee.tesseract.entity.AnimatePacket
-import com.valaphee.tesseract.entity.AnimationPacket
-import com.valaphee.tesseract.entity.ArmorPacket
 import com.valaphee.tesseract.entity.ExperienceOrbAddPacket
 import com.valaphee.tesseract.entity.HealthPacket
 import com.valaphee.tesseract.entity.LinkPacket
@@ -41,11 +47,11 @@ import com.valaphee.tesseract.entity.location.MoveRotatePacket
 import com.valaphee.tesseract.entity.location.TeleportPacket
 import com.valaphee.tesseract.entity.location.VelocityPacket
 import com.valaphee.tesseract.entity.metadata.MetadataPacket
-import com.valaphee.tesseract.entity.player.EntityPickPacket
 import com.valaphee.tesseract.entity.player.AdventureSettingsPacket
 import com.valaphee.tesseract.entity.player.BlockPickPacket
 import com.valaphee.tesseract.entity.player.EmotePacket
 import com.valaphee.tesseract.entity.player.EmotesPacket
+import com.valaphee.tesseract.entity.player.EntityPickPacket
 import com.valaphee.tesseract.entity.player.InputCorrectPacket
 import com.valaphee.tesseract.entity.player.InputPacket
 import com.valaphee.tesseract.entity.player.InteractPacket
@@ -60,12 +66,6 @@ import com.valaphee.tesseract.entity.player.view.ViewDistancePacket
 import com.valaphee.tesseract.entity.player.view.ViewDistanceRequestPacket
 import com.valaphee.tesseract.entity.stack.StackAddPacket
 import com.valaphee.tesseract.entity.stack.StackTakePacket
-import com.valaphee.tesseract.command.net.CommandPacket
-import com.valaphee.tesseract.command.net.CommandResponsePacket
-import com.valaphee.tesseract.command.net.CommandSettingsPacket
-import com.valaphee.tesseract.command.net.CommandSoftEnumerationPacket
-import com.valaphee.tesseract.command.net.CommandsPacket
-import com.valaphee.tesseract.command.net.LocalPlayerAsInitializedPacket
 import com.valaphee.tesseract.form.FormPacket
 import com.valaphee.tesseract.form.FormResponsePacket
 import com.valaphee.tesseract.form.ServerSettingsPacket
@@ -85,30 +85,32 @@ import com.valaphee.tesseract.inventory.WindowOpenPacket
 import com.valaphee.tesseract.inventory.WindowPropertyPacket
 import com.valaphee.tesseract.inventory.item.craft.CraftingEventPacket
 import com.valaphee.tesseract.inventory.item.craft.RecipesPacket
+import com.valaphee.tesseract.net.base.BehaviorTreePacket
+import com.valaphee.tesseract.net.base.BiomeDefinitionsPacket
 import com.valaphee.tesseract.net.base.CacheBlobStatusPacket
 import com.valaphee.tesseract.net.base.CacheBlobsPacket
 import com.valaphee.tesseract.net.base.CacheStatusPacket
+import com.valaphee.tesseract.net.base.ClientToServerHandshakePacket
 import com.valaphee.tesseract.net.base.DisconnectPacket
+import com.valaphee.tesseract.net.base.EntityIdentifiersPacket
 import com.valaphee.tesseract.net.base.FilterPacket
+import com.valaphee.tesseract.net.base.ItemComponentPacket
 import com.valaphee.tesseract.net.base.LatencyPacket
+import com.valaphee.tesseract.net.base.LoginPacket
+import com.valaphee.tesseract.net.base.NetworkSettingsPacket
 import com.valaphee.tesseract.net.base.PositionTrackingDbClientRequestPacket
 import com.valaphee.tesseract.net.base.PositionTrackingDbServerBroadcastPacket
+import com.valaphee.tesseract.net.base.ServerToClientHandshakePacket
+import com.valaphee.tesseract.net.base.StatusPacket
+import com.valaphee.tesseract.net.base.SubLoginPacket
 import com.valaphee.tesseract.net.base.TransferPacket
 import com.valaphee.tesseract.net.base.ViolationPacket
-import com.valaphee.tesseract.net.init.BehaviorTreePacket
-import com.valaphee.tesseract.net.init.BiomeDefinitionsPacket
-import com.valaphee.tesseract.net.init.ClientToServerHandshakePacket
-import com.valaphee.tesseract.net.init.EntityIdentifiersPacket
-import com.valaphee.tesseract.net.init.LoginPacket
-import com.valaphee.tesseract.net.init.ServerToClientHandshakePacket
-import com.valaphee.tesseract.net.init.StatusPacket
-import com.valaphee.tesseract.net.init.SubLoginPacket
-import com.valaphee.tesseract.net.init.pack.PackDataChunkPacket
-import com.valaphee.tesseract.net.init.pack.PackDataChunkRequestPacket
-import com.valaphee.tesseract.net.init.pack.PackDataPacket
-import com.valaphee.tesseract.net.init.pack.PacksPacket
-import com.valaphee.tesseract.net.init.pack.PacksResponsePacket
-import com.valaphee.tesseract.net.init.pack.PacksStackPacket
+import com.valaphee.tesseract.net.base.pack.PackDataChunkPacket
+import com.valaphee.tesseract.net.base.pack.PackDataChunkRequestPacket
+import com.valaphee.tesseract.net.base.pack.PackDataPacket
+import com.valaphee.tesseract.net.base.pack.PacksPacket
+import com.valaphee.tesseract.net.base.pack.PacksResponsePacket
+import com.valaphee.tesseract.net.base.pack.PacksStackPacket
 import com.valaphee.tesseract.world.BossBarPacket
 import com.valaphee.tesseract.world.DifficultyPacket
 import com.valaphee.tesseract.world.DimensionPacket
@@ -364,6 +366,8 @@ interface PacketHandler : ProtocolHandler {
 
     fun emote(packet: EmotePacket) = other(packet)
 
+    fun networkSettings(packet: NetworkSettingsPacket) = other(packet)
+
     fun input(packet: InputPacket) = other(packet)
 
     fun creativeInventory(packet: CreativeInventoryPacket) = other(packet)
@@ -389,6 +393,8 @@ interface PacketHandler : ProtocolHandler {
     fun fog(packet: FogPacket) = other(packet)
 
     fun inputCorrect(packet: InputCorrectPacket) = other(packet)
+
+    fun itemComponent(packet: ItemComponentPacket) = other(packet)
 
     fun filter(packet: FilterPacket) = other(packet)
 

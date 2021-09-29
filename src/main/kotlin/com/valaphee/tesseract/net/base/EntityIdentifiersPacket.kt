@@ -22,38 +22,65 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.net.init
+package com.valaphee.tesseract.net.base
 
-import com.google.gson.JsonElement
-import com.google.gson.internal.Streams
-import com.google.gson.stream.JsonReader
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
-import com.valaphee.tesseract.util.ByteBufStringReader
+import com.valaphee.tesseract.util.LittleEndianVarIntByteBufOutputStream
+import com.valaphee.tesseract.util.nbt.CompoundTag
+import com.valaphee.tesseract.util.nbt.NbtOutputStream
 
 /**
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class BehaviorTreePacket(
-    val json: JsonElement
+data class EntityIdentifiersPacket private constructor(
+    val data: ByteArray?,
+    val tag: CompoundTag?
 ) : Packet {
-    override val id get() = 0x59
+    override val id get() = 0x77
+
+    constructor(data: ByteArray) : this(data, null)
+
+    constructor(tag: CompoundTag?) : this(null, tag)
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeString(json.toString())
+        data?.let { buffer.writeBytes(it) } ?: NbtOutputStream(LittleEndianVarIntByteBufOutputStream(buffer)).use { it.writeTag(tag) }
     }
 
-    override fun handle(handler: PacketHandler) = handler.behaviorTree(this)
+    override fun handle(handler: PacketHandler) = handler.entityIdentifiers(this)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as EntityIdentifiersPacket
+
+        if (data != null) {
+            if (other.data == null) return false
+            if (!data.contentEquals(other.data)) return false
+        } else if (other.data != null) return false
+        if (tag != other.tag) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = data?.contentHashCode() ?: 0
+        result = 31 * result + (tag?.hashCode() ?: 0)
+        return result
+    }
+
+    override fun toString() = "EntityIdentifiersPacket(tag=$tag)"
 }
 
 /**
  * @author Kevin Ludwig
  */
-object BehaviorTreePacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = BehaviorTreePacket(Streams.parse(JsonReader(ByteBufStringReader(buffer, buffer.readVarUInt()))))
+object EntityIdentifiersPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = EntityIdentifiersPacket(buffer.toNbtInputStream().use { it.readTag()?.asCompoundTag() })
 }

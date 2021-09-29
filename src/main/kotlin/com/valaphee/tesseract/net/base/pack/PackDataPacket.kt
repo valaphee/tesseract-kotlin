@@ -23,7 +23,7 @@
  *
  */
 
-package com.valaphee.tesseract.net.init.pack
+package com.valaphee.tesseract.net.base.pack
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
