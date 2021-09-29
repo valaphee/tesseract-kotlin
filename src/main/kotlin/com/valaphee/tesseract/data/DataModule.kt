@@ -43,7 +43,6 @@ import com.google.inject.util.Types
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.Argument
-import com.valaphee.tesseract.capture.CapturePacketHandler
 import com.valaphee.tesseract.data.block.Block
 import com.valaphee.tesseract.util.getCompoundTag
 import com.valaphee.tesseract.util.getString
@@ -67,10 +66,26 @@ class DataModule(
     private val argument: Argument? = null
 ) : AbstractModule() {
     override fun configure() {
-        classByType.clear()
-        ClassGraph().acceptPackages(this::class.java.packageName).enableClassInfo().enableAnnotationInfo().scan().use {
-            val dataType = DataType::class.jvmName
-            classByType.putAll(it.getClassesWithAnnotation(dataType).associate { it.getAnnotationInfo(dataType).parameterValues.getValue("value") as String to Class.forName(it.name).kotlin })
+        run {
+            val buffer = PooledByteBufAllocator.DEFAULT.directBuffer()
+            try {
+                buffer.writeBytes(DataModule::class.java.getResourceAsStream("/runtime_block_states.dat")!!.readBytes())
+                val blocks = HashMap<String, ArrayList<Map<String, Any>>>()
+                NbtInputStream(ByteBufInputStream(buffer)).use { it.readTag() }?.asCompoundTag()?.get("blocks")?.asListTag()!!.toList().map { it.asCompoundTag()!! }.forEach {
+                    blocks.getOrPut(it.getString("name")) { ArrayList() }.add(it.getCompoundTag("states").toMap().mapValues {
+                        when (it.value.type) {
+                            TagType.Byte -> it.value.asNumberTag()!!.toByte() != 0.toByte()
+                            TagType.Int -> it.value.asNumberTag()!!.toInt()
+                            TagType.String -> it.value.asArrayTag()!!.valueToString()
+                            else -> TODO()
+                        }
+                    })
+                }
+                bind(object : Key<Map<String, @JvmSuppressWildcards Block>>() {}).toInstance(blocks.mapValues { Block(it.key, it.value) })
+                log.info("Bound tesseract:block, with ${blocks.size} entries")
+            } finally {
+                buffer.release()
+            }
         }
 
         val objectMapper = jacksonObjectMapper().apply {
@@ -89,7 +104,12 @@ class DataModule(
             enable(JsonParser.Feature.ALLOW_COMMENTS)
         }.also { bind(ObjectMapper::class.java).toInstance(it) }
 
-        log.info("Searching...")
+        classByType.clear()
+        ClassGraph().acceptPackages(this::class.java.packageName).enableClassInfo().enableAnnotationInfo().scan().use {
+            val dataType = DataType::class.jvmName
+            classByType.putAll(it.getClassesWithAnnotation(dataType).associate { it.getAnnotationInfo(dataType).parameterValues.getValue("value") as String to Class.forName(it.name).kotlin })
+        }
+
         ClassGraph().acceptPaths("data").scan().use {
             val (keyed, other) = it.allResources
                 .map {
@@ -116,28 +136,6 @@ class DataModule(
                 @Suppress("UNCHECKED_CAST")
                 (bind(it::class.java) as AnnotatedBindingBuilder<Any>).toInstance(it)
                 log.info("Bound ${it::class.jvmName}")
-            }
-        }
-
-        run {
-            val buffer = PooledByteBufAllocator.DEFAULT.directBuffer()
-            try {
-                buffer.writeBytes(CapturePacketHandler::class.java.getResourceAsStream("/runtime_block_states.dat")!!.readBytes())
-                val blocks = HashMap<String, ArrayList<Map<String, Any>>>()
-                NbtInputStream(ByteBufInputStream(buffer)).use { it.readTag() }?.asCompoundTag()?.get("blocks")?.asListTag()!!.toList().map { it.asCompoundTag()!! }.forEach {
-                    blocks.getOrPut(it.getString("name")) { ArrayList() }.add(it.getCompoundTag("states").toMap().mapValues {
-                        when (it.value.type) {
-                            TagType.Byte -> it.value.asNumberTag()!!.toByte() != 0.toByte()
-                            TagType.Int -> it.value.asNumberTag()!!.toInt()
-                            TagType.String -> it.value.asArrayTag()!!.valueToString()
-                            else -> TODO()
-                        }
-                    })
-                }
-                bind(object : Key<Map<String, @JvmSuppressWildcards Block>>() {}).toInstance(blocks.mapValues { Block(it.key, it.value) })
-                log.info("Bound tesseract:block, with ${blocks.size} entries")
-            } finally {
-                buffer.release()
             }
         }
 
