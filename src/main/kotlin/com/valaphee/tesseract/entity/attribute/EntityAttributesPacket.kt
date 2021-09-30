@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.entity
+package com.valaphee.tesseract.entity.attribute
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -35,21 +35,25 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class LinkPacket(
-    val link: Link
+data class EntityAttributesPacket(
+    val runtimeEntityId: Long,
+    val attributes: Attributes,
+    val tick: Long
 ) : Packet {
-    override val id get() = 0x29
+    override val id get() = 0x1D
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        if (version >= 407) buffer.writeLink(link) else buffer.writeLinkPre407(link)
+        buffer.writeVarULong(runtimeEntityId)
+        attributes.writeToBuffer(buffer, true)
+        if (version >= 419) buffer.writeVarULong(tick)
     }
 
-    override fun handle(handler: PacketHandler) = handler.link(this)
+    override fun handle(handler: PacketHandler) = handler.entityAttributes(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object LinkPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = LinkPacket(if (version >= 407) buffer.readLink() else buffer.readLinkPre407())
+object EntityAttributesPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = EntityAttributesPacket(buffer.readVarULong(), Attributes().apply { readFromBuffer(buffer, true) }, if (version >= 419) buffer.readVarULong() else 0)
 }

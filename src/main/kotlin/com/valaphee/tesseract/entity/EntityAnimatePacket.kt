@@ -32,7 +32,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class AnimatePacket(
+data class EntityAnimatePacket(
     val animation: String,
     val nextState: String,
     val stopExpression: String,
@@ -53,13 +53,13 @@ data class AnimatePacket(
         runtimeEntityIds.forEach { buffer.writeVarULong(it) }
     }
 
-    override fun handle(handler: PacketHandler) = handler.animate(this)
+    override fun handle(handler: PacketHandler) = handler.entityAnimate(this)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as AnimatePacket
+        other as EntityAnimatePacket
 
         if (animation != other.animation) return false
         if (nextState != other.nextState) return false
@@ -85,8 +85,8 @@ data class AnimatePacket(
 /**
  * @author Kevin Ludwig
  */
-object AnimatePacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = AnimatePacket(
+object EntityAnimatePacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = EntityAnimatePacket(
         buffer.readString(),
         buffer.readString(),
         buffer.readString(),

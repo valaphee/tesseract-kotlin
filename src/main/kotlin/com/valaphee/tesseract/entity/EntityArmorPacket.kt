@@ -20,11 +20,16 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
  */
 
-package com.valaphee.tesseract.entity.location
+package com.valaphee.tesseract.entity
 
-import com.valaphee.foundry.math.Float3
+import com.valaphee.tesseract.inventory.item.stack.Stack
+import com.valaphee.tesseract.inventory.item.stack.readStack
+import com.valaphee.tesseract.inventory.item.stack.readStackPre431
+import com.valaphee.tesseract.inventory.item.stack.writeStack
+import com.valaphee.tesseract.inventory.item.stack.writeStackPre431
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
@@ -33,23 +38,35 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class VelocityPacket(
+data class EntityArmorPacket(
     val runtimeEntityId: Long,
-    val velocity: Float3
+    val helmet: Stack?,
+    val chestplate: Stack?,
+    val leggings: Stack?,
+    val boots: Stack?
 ) : Packet {
-    override val id get() = 0x28
+    override val id get() = 0x20
 
     override fun write(buffer: PacketBuffer, version: Int) {
         buffer.writeVarULong(runtimeEntityId)
-        buffer.writeFloat3(velocity)
+        if (version >= 431) buffer.writeStack(helmet) else buffer.writeStackPre431(helmet)
+        if (version >= 431) buffer.writeStack(chestplate) else buffer.writeStackPre431(chestplate)
+        if (version >= 431) buffer.writeStack(leggings) else buffer.writeStackPre431(leggings)
+        if (version >= 431) buffer.writeStack(boots) else buffer.writeStackPre431(boots)
     }
 
-    override fun handle(handler: PacketHandler) = handler.velocity(this)
+    override fun handle(handler: PacketHandler) = handler.entityArmor(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object VelocityPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = VelocityPacket(buffer.readVarULong(), buffer.readFloat3())
+object EntityArmorPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = EntityArmorPacket(
+        buffer.readVarULong(),
+        if (version >= 431) buffer.readStack() else buffer.readStackPre431(),
+        if (version >= 431) buffer.readStack() else buffer.readStackPre431(),
+        if (version >= 431) buffer.readStack() else buffer.readStackPre431(),
+        if (version >= 431) buffer.readStack() else buffer.readStackPre431()
+    )
 }

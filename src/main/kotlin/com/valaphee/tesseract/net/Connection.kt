@@ -65,22 +65,22 @@ class Connection : SimpleChannelInboundHandler<Packet>() {
         if (context.channel().isActive) {
             when (cause) {
                 is ReadTimeoutException -> {
-                    log.warn("{}: Read timed out", handler)
+                    log.warn("{}: read timed out", handler)
                     context.close()
                 }
-                else -> log.error("{}: Unhandled exception caught", handler, cause)
+                else -> log.error("{}: unhandled exception caught", handler, cause)
             }
             try {
                 handler.exceptionCaught(cause)
             } catch (thrown: Throwable) {
-                log.error("{}: Exception processing exception", handler, cause)
+                log.error("{}: exception processing exception", handler, cause)
             }
         }
     }
 
     override fun channelRead0(context: ChannelHandlerContext, packet: Packet) {
         if (notClosed) {
-            log.debug("In: {}", lazyToString(packet::toString))
+            log.debug("in: {}", lazyToString(packet::toString))
             packet.handle(handler)
         }
     }
@@ -120,7 +120,7 @@ class Connection : SimpleChannelInboundHandler<Packet>() {
 
     fun write(packet: Packet) {
         if (notClosed) {
-            log.debug("Out: {}", lazyToString(packet::toString))
+            log.debug("out: {}", lazyToString(packet::toString))
             context.write(packet, context.voidPromise())
         }
     }
@@ -129,7 +129,7 @@ class Connection : SimpleChannelInboundHandler<Packet>() {
         if (notClosed) {
             notClosed = false
             if (packet != null && context.channel().isActive) {
-                log.debug("Out: {}", lazyToString(packet::toString))
+                log.debug("out: {}", lazyToString(packet::toString))
                 context.writeAndFlush(packet).addListeners(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE, ChannelFutureListener.CLOSE)
             } else {
                 context.flush()

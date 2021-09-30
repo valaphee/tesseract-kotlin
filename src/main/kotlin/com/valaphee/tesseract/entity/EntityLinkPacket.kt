@@ -20,7 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
 package com.valaphee.tesseract.entity
@@ -36,21 +35,21 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class HealthPacket(
-    val health: Int
+data class EntityLinkPacket(
+    val link: Link
 ) : Packet {
-    override val id get() = 0x2A
+    override val id get() = 0x29
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarInt(health)
+        if (version >= 407) buffer.writeLink(link) else buffer.writeLinkPre407(link)
     }
 
-    override fun handle(handler: PacketHandler) = handler.health(this)
+    override fun handle(handler: PacketHandler) = handler.entityLink(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object HealthPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = HealthPacket(buffer.readVarInt())
+object EntityLinkPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = EntityLinkPacket(if (version >= 407) buffer.readLink() else buffer.readLinkPre407())
 }

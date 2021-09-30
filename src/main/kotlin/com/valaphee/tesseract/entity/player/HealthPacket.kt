@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.entity.metadata
+package com.valaphee.tesseract.entity.player
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -35,25 +35,21 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class MetadataPacket(
-    val runtimeEntityId: Long,
-    val metadata: Metadata,
-    val tick: Long
+data class HealthPacket(
+    val health: Int
 ) : Packet {
-    override val id get() = 0x27
+    override val id get() = 0x2A
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarULong(runtimeEntityId)
-        metadata.writeToBuffer(buffer)
-        if (version >= 419) buffer.writeVarULong(tick)
+        buffer.writeVarInt(health)
     }
 
-    override fun handle(handler: PacketHandler) = handler.metadata(this)
+    override fun handle(handler: PacketHandler) = handler.health(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object MetadataPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = MetadataPacket(buffer.readVarULong(), Metadata().apply { readFromBuffer(buffer) }, if (version >= 419) buffer.readVarULong() else 0)
+object HealthPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = HealthPacket(buffer.readVarInt())
 }

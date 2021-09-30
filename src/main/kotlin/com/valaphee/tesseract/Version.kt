@@ -22,38 +22,21 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.entity.attribute
+package com.valaphee.tesseract
 
-import com.valaphee.tesseract.net.Packet
-import com.valaphee.tesseract.net.PacketBuffer
-import com.valaphee.tesseract.net.PacketHandler
-import com.valaphee.tesseract.net.PacketReader
-import com.valaphee.tesseract.net.Restrict
-import com.valaphee.tesseract.net.Restriction
-
-/**
- * @author Kevin Ludwig
- */
-@Restrict(Restriction.ToClient)
-data class AttributesPacket(
-    val runtimeEntityId: Long,
-    val attributes: Attributes,
-    val tick: Long
-) : Packet {
-    override val id get() = 0x1D
-
-    override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarULong(runtimeEntityId)
-        attributes.writeToBuffer(buffer, true)
-        if (version >= 419) buffer.writeVarULong(tick)
-    }
-
-    override fun handle(handler: PacketHandler) = handler.attributes(this)
-}
-
-/**
- * @author Kevin Ludwig
- */
-object AttributesPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = AttributesPacket(buffer.readVarULong(), Attributes().apply { readFromBuffer(buffer, true) }, if (version >= 419) buffer.readVarULong() else 0)
-}
+val versionByProtocolVersion = mapOf(
+    388 to "1.13.0",
+    389 to "1.14.0",
+    390 to "1.14.60",
+    407 to "1.16.0",
+    408 to "1.16.20",
+    419 to "1.16.100.60",
+    422 to "1.16.200.5",
+    428 to "1.16.210",
+    431 to "1.16.220",
+    440 to "1.17.0",
+    448 to "1.17.10",
+    465 to "1.17.30",
+)
+const val latestVersion = "1.17.30"
+const val latestProtocolVersion = 465

@@ -38,15 +38,15 @@ class Layer(
 ) {
     constructor(default: Int, version: BitArray.Version) : this(IntArrayList(16).apply { add(default) }, version.bitArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize))
 
-    fun get(index: Int): Int = palette.getInt(bitArray[index])
+    operator fun get(index: Int) = palette.getInt(bitArray[index])
 
-    fun set(index: Int, id: Int) {
-        var value = palette.indexOf(id)
-        if (value == -1) {
-            value = palette.size
-            palette.add(id)
+    operator fun set(index: Int, value: Int) {
+        var paletteIndex = palette.indexOf(value)
+        if (paletteIndex == -1) {
+            paletteIndex = palette.size
+            palette.add(value)
             val blocksVersion = bitArray.version
-            if (value > blocksVersion.maximumEntryValue) {
+            if (paletteIndex > blocksVersion.maximumEntryValue) {
                 blocksVersion.next?.let {
                     val newBlockStorage = it.bitArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize)
                     repeat(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize) { newBlockStorage[it] = bitArray[it] }
@@ -54,7 +54,7 @@ class Layer(
                 }
             }
         }
-        bitArray[index] = value
+        bitArray[index] = paletteIndex
     }
 
     val empty get() = bitArray.empty

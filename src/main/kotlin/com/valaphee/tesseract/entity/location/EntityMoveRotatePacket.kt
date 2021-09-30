@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class MoveRotatePacket(
+data class EntityMoveRotatePacket(
     val runtimeEntityId: Long,
     val positionDelta: Int3,
     val position: Float3,
@@ -100,7 +100,7 @@ data class MoveRotatePacket(
         buffer.setShortLE(flagsIndex, flagsValue)
     }
 
-    override fun handle(handler: PacketHandler) = handler.moveRotate(this)
+    override fun handle(handler: PacketHandler) = handler.entityMoveRotate(this)
 
     companion object {
         internal const val flagHasX = 1 shl 0
@@ -118,35 +118,35 @@ data class MoveRotatePacket(
 /**
  * @author Kevin Ludwig
  */
-object MoveRotatePacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int): MoveRotatePacket {
+object EntityMoveRotatePacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int): EntityMoveRotatePacket {
         val runtimeEntityId = buffer.readVarULong()
         val flagsValue = buffer.readShortLE().toInt()
         val position: Float3
         val positionDelta: Int3
         if (version >= 419) {
             position = Float3(
-                if (flagsValue and MoveRotatePacket.flagHasX != 0) buffer.readFloatLE() else Float.NaN,
-                if (flagsValue and MoveRotatePacket.flagHasY != 0) buffer.readFloatLE() else Float.NaN,
-                if (flagsValue and MoveRotatePacket.flagHasZ != 0) buffer.readFloatLE() else Float.NaN
+                if (flagsValue and EntityMoveRotatePacket.flagHasX != 0) buffer.readFloatLE() else Float.NaN,
+                if (flagsValue and EntityMoveRotatePacket.flagHasY != 0) buffer.readFloatLE() else Float.NaN,
+                if (flagsValue and EntityMoveRotatePacket.flagHasZ != 0) buffer.readFloatLE() else Float.NaN
             )
             positionDelta = Int3.Zero
         } else {
             position = Float3.Zero
             positionDelta = Int3(
-                if (flagsValue and MoveRotatePacket.flagHasX != 0) buffer.readVarInt() else 0,
-                if (flagsValue and MoveRotatePacket.flagHasY != 0) buffer.readVarInt() else 0,
-                if (flagsValue and MoveRotatePacket.flagHasZ != 0) buffer.readVarInt() else 0
+                if (flagsValue and EntityMoveRotatePacket.flagHasX != 0) buffer.readVarInt() else 0,
+                if (flagsValue and EntityMoveRotatePacket.flagHasY != 0) buffer.readVarInt() else 0,
+                if (flagsValue and EntityMoveRotatePacket.flagHasZ != 0) buffer.readVarInt() else 0
             )
         }
         val rotation = Float2(
-            if (flagsValue and MoveRotatePacket.flagHasPitch != 0) buffer.readAngle() else Float.NaN,
-            if (flagsValue and MoveRotatePacket.flagHasYaw != 0) buffer.readAngle() else Float.NaN
+            if (flagsValue and EntityMoveRotatePacket.flagHasPitch != 0) buffer.readAngle() else Float.NaN,
+            if (flagsValue and EntityMoveRotatePacket.flagHasYaw != 0) buffer.readAngle() else Float.NaN
         )
-        val headRotationYaw = if (flagsValue and MoveRotatePacket.flagHasHeadYaw != 0) buffer.readAngle() else Float.NaN
-        val onGround = flagsValue and MoveRotatePacket.flagOnGround != 0
-        val immediate = flagsValue and MoveRotatePacket.flagImmediate != 0
-        val force = flagsValue and MoveRotatePacket.flagForce != 0
-        return MoveRotatePacket(runtimeEntityId, positionDelta, position, rotation, headRotationYaw, onGround, immediate, force)
+        val headRotationYaw = if (flagsValue and EntityMoveRotatePacket.flagHasHeadYaw != 0) buffer.readAngle() else Float.NaN
+        val onGround = flagsValue and EntityMoveRotatePacket.flagOnGround != 0
+        val immediate = flagsValue and EntityMoveRotatePacket.flagImmediate != 0
+        val force = flagsValue and EntityMoveRotatePacket.flagForce != 0
+        return EntityMoveRotatePacket(runtimeEntityId, positionDelta, position, rotation, headRotationYaw, onGround, immediate, force)
     }
 }

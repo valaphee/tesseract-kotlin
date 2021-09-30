@@ -82,7 +82,7 @@ class DataModule(
                     })
                 }
                 bind(object : Key<Map<String, @JvmSuppressWildcards Block>>() {}).toInstance(blocks.mapValues { Block(it.key, it.value) })
-                log.info("Bound tesseract:block, with ${blocks.size} entries")
+                log.info("Bound tesseract:block, with {} entries", blocks.size)
             } finally {
                 buffer.release()
             }
@@ -129,13 +129,13 @@ class DataModule(
                     key?.let {
                         @Suppress("UNCHECKED_CAST")
                         (bind(TypeLiteral.get(Types.mapOf(String::class.java, value.first()::class.java))) as AnnotatedBindingBuilder<Any>).toInstance(value.associateBy { it.key })
-                        log.info("Bound $it, with ${value.size} entries")
+                        log.info("Bound {}, with {} entries", it, value.size)
                     }
                 }
             other.forEach {
                 @Suppress("UNCHECKED_CAST")
                 (bind(it::class.java) as AnnotatedBindingBuilder<Any>).toInstance(it)
-                log.info("Bound ${it::class.jvmName}")
+                log.info("Bound {}", it::class.jvmName)
             }
         }
 

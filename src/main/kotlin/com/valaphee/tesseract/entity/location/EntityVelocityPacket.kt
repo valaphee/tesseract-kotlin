@@ -24,7 +24,6 @@
 
 package com.valaphee.tesseract.entity.location
 
-import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -34,46 +33,23 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class TeleportPacket(
+data class EntityVelocityPacket(
     val runtimeEntityId: Long,
-    val position: Float3,
-    val rotation: Float2,
-    val headRotationYaw: Float,
-    val onGround: Boolean,
-    val immediate: Boolean
+    val velocity: Float3
 ) : Packet {
-    override val id get() = 0x12
+    override val id get() = 0x28
 
     override fun write(buffer: PacketBuffer, version: Int) {
         buffer.writeVarULong(runtimeEntityId)
-        var flagsValue = if (onGround) flagOnGround else 0
-        if (immediate) flagsValue = flagsValue or flagImmediate
-        buffer.writeByte(flagsValue)
-        buffer.writeFloat3(position)
-        buffer.writeAngle2(rotation)
-        buffer.writeAngle(headRotationYaw)
+        buffer.writeFloat3(velocity)
     }
 
-    override fun handle(handler: PacketHandler) = handler.teleport(this)
-
-    companion object {
-        internal const val flagOnGround = 1 shl 0
-        internal const val flagImmediate = 1 shl 1
-    }
+    override fun handle(handler: PacketHandler) = handler.entityVelocity(this)
 }
 
 /**
  * @author Kevin Ludwig
  */
-object TeleportPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int): TeleportPacket {
-        val runtimeEntityId = buffer.readVarULong()
-        val flagsValue = buffer.readUnsignedByte().toInt()
-        val onGround = flagsValue and TeleportPacket.flagOnGround != 0
-        val immediate = flagsValue and TeleportPacket.flagImmediate != 0
-        val position = buffer.readFloat3()
-        val rotation = buffer.readAngle2()
-        val headRotationYaw = buffer.readAngle()
-        return TeleportPacket(runtimeEntityId, position, rotation, headRotationYaw, onGround, immediate)
-    }
+object EntityVelocityPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = EntityVelocityPacket(buffer.readVarULong(), buffer.readFloat3())
 }

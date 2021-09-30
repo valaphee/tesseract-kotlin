@@ -88,7 +88,7 @@ open class LittleEndianByteBufInputStream constructor(
 
     override fun readChar(): Char {
         checkAvailable(2)
-        return buffer.readShortLE().toChar()
+        return buffer.readShortLE().toInt().toChar()
     }
 
     override fun readInt(): Int {

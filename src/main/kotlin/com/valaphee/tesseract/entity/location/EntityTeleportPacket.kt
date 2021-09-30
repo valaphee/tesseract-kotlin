@@ -20,60 +20,60 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
-package com.valaphee.tesseract.entity.effect
+package com.valaphee.tesseract.entity.location
 
+import com.valaphee.foundry.math.Float2
+import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
-import com.valaphee.tesseract.net.Restrict
-import com.valaphee.tesseract.net.Restriction
 
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.ToClient)
-data class EffectPacket(
+data class EntityTeleportPacket(
     val runtimeEntityId: Long,
-    val action: Action,
-    val effect: Effect,
-    val amplifier: Int,
-    val particles: Boolean,
-    val duration: Int
+    val position: Float3,
+    val rotation: Float2,
+    val headRotationYaw: Float,
+    val onGround: Boolean,
+    val immediate: Boolean
 ) : Packet {
-    enum class Action {
-        Apply, Modify, Revoke
-    }
-
-    override val id get() = 0x1C
-
-    constructor(runtimeEntityId: Long, action: Action, effect: Effect) : this(runtimeEntityId, action, effect, 0, false, 0)
+    override val id get() = 0x12
 
     override fun write(buffer: PacketBuffer, version: Int) {
         buffer.writeVarULong(runtimeEntityId)
-        buffer.writeByte(action.ordinal + 1)
-        buffer.writeVarInt(effect.ordinal + 1)
-        buffer.writeVarInt(amplifier)
-        buffer.writeBoolean(particles)
-        buffer.writeVarInt(duration)
+        var flagsValue = if (onGround) flagOnGround else 0
+        if (immediate) flagsValue = flagsValue or flagImmediate
+        buffer.writeByte(flagsValue)
+        buffer.writeFloat3(position)
+        buffer.writeAngle2(rotation)
+        buffer.writeAngle(headRotationYaw)
     }
 
-    override fun handle(handler: PacketHandler) = handler.effect(this)
+    override fun handle(handler: PacketHandler) = handler.entityTeleport(this)
+
+    companion object {
+        internal const val flagOnGround = 1 shl 0
+        internal const val flagImmediate = 1 shl 1
+    }
 }
 
 /**
  * @author Kevin Ludwig
  */
-object EffectPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = EffectPacket(
-        buffer.readVarULong(),
-        EffectPacket.Action.values()[buffer.readByte().toInt() - 1],
-        Effect.values()[buffer.readVarInt() - 1],
-        buffer.readVarInt(),
-        buffer.readBoolean(),
-        buffer.readVarInt()
-    )
+object EntityTeleportPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int): EntityTeleportPacket {
+        val runtimeEntityId = buffer.readVarULong()
+        val flagsValue = buffer.readUnsignedByte().toInt()
+        val onGround = flagsValue and EntityTeleportPacket.flagOnGround != 0
+        val immediate = flagsValue and EntityTeleportPacket.flagImmediate != 0
+        val position = buffer.readFloat3()
+        val rotation = buffer.readAngle2()
+        val headRotationYaw = buffer.readAngle()
+        return EntityTeleportPacket(runtimeEntityId, position, rotation, headRotationYaw, onGround, immediate)
+    }
 }

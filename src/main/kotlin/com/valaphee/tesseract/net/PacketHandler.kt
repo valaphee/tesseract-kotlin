@@ -30,28 +30,28 @@ import com.valaphee.tesseract.command.net.CommandSettingsPacket
 import com.valaphee.tesseract.command.net.CommandSoftEnumerationPacket
 import com.valaphee.tesseract.command.net.CommandsPacket
 import com.valaphee.tesseract.command.net.LocalPlayerAsInitializedPacket
-import com.valaphee.tesseract.entity.AnimatePacket
-import com.valaphee.tesseract.entity.AnimationPacket
-import com.valaphee.tesseract.entity.ArmorPacket
 import com.valaphee.tesseract.entity.EntityAddPacket
+import com.valaphee.tesseract.entity.EntityAnimatePacket
+import com.valaphee.tesseract.entity.EntityAnimationPacket
+import com.valaphee.tesseract.entity.EntityArmorPacket
 import com.valaphee.tesseract.entity.EntityEquipmentPacket
 import com.valaphee.tesseract.entity.EntityEventPacket
+import com.valaphee.tesseract.entity.EntityLinkPacket
 import com.valaphee.tesseract.entity.EntityRemovePacket
 import com.valaphee.tesseract.entity.ExperienceOrbAddPacket
-import com.valaphee.tesseract.entity.HealthPacket
-import com.valaphee.tesseract.entity.LinkPacket
 import com.valaphee.tesseract.entity.PaintingAddPacket
-import com.valaphee.tesseract.entity.attribute.AttributesPacket
-import com.valaphee.tesseract.entity.effect.EffectPacket
-import com.valaphee.tesseract.entity.location.MoveRotatePacket
-import com.valaphee.tesseract.entity.location.TeleportPacket
-import com.valaphee.tesseract.entity.location.VelocityPacket
-import com.valaphee.tesseract.entity.metadata.MetadataPacket
+import com.valaphee.tesseract.entity.attribute.EntityAttributesPacket
+import com.valaphee.tesseract.entity.effect.EntityEffectPacket
+import com.valaphee.tesseract.entity.location.EntityMoveRotatePacket
+import com.valaphee.tesseract.entity.location.EntityTeleportPacket
+import com.valaphee.tesseract.entity.location.EntityVelocityPacket
+import com.valaphee.tesseract.entity.metadata.EntityMetadataPacket
 import com.valaphee.tesseract.entity.player.AdventureSettingsPacket
 import com.valaphee.tesseract.entity.player.BlockPickPacket
 import com.valaphee.tesseract.entity.player.EmotePacket
 import com.valaphee.tesseract.entity.player.EmotesPacket
 import com.valaphee.tesseract.entity.player.EntityPickPacket
+import com.valaphee.tesseract.entity.player.HealthPacket
 import com.valaphee.tesseract.entity.player.InputCorrectPacket
 import com.valaphee.tesseract.entity.player.InputPacket
 import com.valaphee.tesseract.entity.player.InteractPacket
@@ -186,7 +186,7 @@ interface PacketHandler : ProtocolHandler {
 
     fun stackTake(packet: StackTakePacket) = other(packet)
 
-    fun teleport(packet: TeleportPacket) = other(packet)
+    fun entityTeleport(packet: EntityTeleportPacket) = other(packet)
 
     fun playerLocation(packet: PlayerLocationPacket) = other(packet)
 
@@ -206,15 +206,15 @@ interface PacketHandler : ProtocolHandler {
 
     fun entityEvent(packet: EntityEventPacket) = other(packet)
 
-    fun effect(packet: EffectPacket) = other(packet)
+    fun entityEffect(packet: EntityEffectPacket) = other(packet)
 
-    fun attributes(packet: AttributesPacket) = other(packet)
+    fun entityAttributes(packet: EntityAttributesPacket) = other(packet)
 
     fun inventoryTransaction(packet: InventoryTransactionPacket) = other(packet)
 
     fun entityEquipment(packet: EntityEquipmentPacket) = other(packet)
 
-    fun armor(packet: ArmorPacket) = other(packet)
+    fun entityArmor(packet: EntityArmorPacket) = other(packet)
 
     fun interact(packet: InteractPacket) = other(packet)
 
@@ -224,17 +224,17 @@ interface PacketHandler : ProtocolHandler {
 
     fun playerAction(packet: PlayerActionPacket) = other(packet)
 
-    fun metadata(packet: MetadataPacket) = other(packet)
+    fun entityMetadata(packet: EntityMetadataPacket) = other(packet)
 
-    fun velocity(packet: VelocityPacket) = other(packet)
+    fun entityVelocity(packet: EntityVelocityPacket) = other(packet)
 
-    fun link(packet: LinkPacket) = other(packet)
+    fun entityLink(packet: EntityLinkPacket) = other(packet)
 
     fun health(packet: HealthPacket) = other(packet)
 
     fun spawnPosition(packet: SpawnPositionPacket) = other(packet)
 
-    fun animation(packet: AnimationPacket) = other(packet)
+    fun entityAnimation(packet: EntityAnimationPacket) = other(packet)
 
     fun respawn(packet: RespawnPacket) = other(packet)
 
@@ -334,7 +334,7 @@ interface PacketHandler : ProtocolHandler {
 
     fun blockUpdateSynced(packet: BlockUpdateSyncedPacket) = other(packet)
 
-    fun moveRotate(packet: MoveRotatePacket) = other(packet)
+    fun entityMoveRotate(packet: EntityMoveRotatePacket) = other(packet)
 
     fun scoreboardIdentity(packet: ScoreboardIdentityPacket) = other(packet)
 
@@ -388,7 +388,7 @@ interface PacketHandler : ProtocolHandler {
 
     fun velocityPrediction(packet: VelocityPredictionPacket) = other(packet)
 
-    fun animate(packet: AnimatePacket) = other(packet)
+    fun entityAnimate(packet: EntityAnimatePacket) = other(packet)
 
     fun fog(packet: FogPacket) = other(packet)
 
