@@ -253,7 +253,7 @@ fun PacketBuffer.readIngredient(): Stack? {
 
 fun PacketBuffer.writeStackPre431(value: Stack?) {
     value?.let {
-        writeVarInt(requireNotNull(items.getKey(it.itemKey)))
+        writeVarInt(checkNotNull(items.getKey(it.itemKey)))
         writeVarInt(((if (it.subId == -1) Short.MAX_VALUE.toInt() else it.subId) shl 8) or (it.count and 0xFF))
         it.tag?.let {
             writeShortLE(-1)
@@ -279,7 +279,7 @@ fun PacketBuffer.writeStackWithNetIdPre431(value: Stack?) {
 
 fun PacketBuffer.writeStack(value: Stack?) {
     value?.let {
-        writeVarInt(requireNotNull(items.getKey(it.itemKey)))
+        writeVarInt(checkNotNull(items.getKey(it.itemKey)))
         writeShortLE(it.count)
         writeVarUInt(it.subId)
         if (it.netId != 0) {
@@ -309,7 +309,7 @@ fun PacketBuffer.writeStack(value: Stack?) {
 
 fun PacketBuffer.writeStackInstance(value: Stack?) {
     value?.let {
-        writeVarInt(requireNotNull(items.getKey(it.itemKey)))
+        writeVarInt(checkNotNull(items.getKey(it.itemKey)))
         writeShortLE(it.count)
         writeVarUInt(it.subId)
         writeVarInt(it.blockStateKey?.let { blockStates.getKey(it) } ?: 0)
@@ -335,7 +335,7 @@ fun PacketBuffer.writeStackInstance(value: Stack?) {
 
 fun PacketBuffer.writeIngredient(value: Stack?) {
     value?.let {
-        writeVarInt(requireNotNull(items.getKey(it.itemKey)))
+        writeVarInt(checkNotNull(items.getKey(it.itemKey)))
         writeVarInt(if (value.subId == -1) Short.MAX_VALUE.toInt() else value.subId)
         writeVarInt(value.count)
     } ?: writeVarInt(0)

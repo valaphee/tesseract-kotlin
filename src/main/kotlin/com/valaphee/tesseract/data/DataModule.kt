@@ -44,7 +44,9 @@ import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.Argument
 import com.valaphee.tesseract.data.block.Block
+import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.util.getCompoundTag
+import com.valaphee.tesseract.util.getListTag
 import com.valaphee.tesseract.util.getString
 import com.valaphee.tesseract.util.jackson.Float2Deserializer
 import com.valaphee.tesseract.util.jackson.Float2Serializer
@@ -54,40 +56,21 @@ import com.valaphee.tesseract.util.nbt.NbtInputStream
 import com.valaphee.tesseract.util.nbt.TagType
 import io.github.classgraph.ClassGraph
 import io.netty.buffer.ByteBufInputStream
-import io.netty.buffer.PooledByteBufAllocator
+import io.netty.buffer.Unpooled
 import org.apache.logging.log4j.LogManager
+import java.io.File
 import kotlin.reflect.KClass
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.jvm.jvmName
 
 /**
  * @author Kevin Ludwig
  */
 class DataModule(
-    private val argument: Argument? = null
+    private val argument: Argument? = null,
+    private val path: File = File("data"),
 ) : AbstractModule() {
     override fun configure() {
-        run {
-            val buffer = PooledByteBufAllocator.DEFAULT.directBuffer()
-            try {
-                buffer.writeBytes(DataModule::class.java.getResourceAsStream("/runtime_block_states.dat")!!.readBytes())
-                val blocks = HashMap<String, ArrayList<Map<String, Any>>>()
-                NbtInputStream(ByteBufInputStream(buffer)).use { it.readTag() }?.asCompoundTag()?.get("blocks")?.asListTag()!!.toList().map { it.asCompoundTag()!! }.forEach {
-                    blocks.getOrPut(it.getString("name")) { ArrayList() }.add(it.getCompoundTag("states").toMap().mapValues {
-                        when (it.value.type) {
-                            TagType.Byte -> it.value.asNumberTag()!!.toByte() != 0.toByte()
-                            TagType.Int -> it.value.asNumberTag()!!.toInt()
-                            TagType.String -> it.value.asArrayTag()!!.valueToString()
-                            else -> TODO()
-                        }
-                    })
-                }
-                bind(object : Key<Map<String, @JvmSuppressWildcards Block>>() {}).toInstance(blocks.mapValues { Block(it.key, it.value) })
-                log.info("Bound tesseract:block, with {} entries", blocks.size)
-            } finally {
-                buffer.release()
-            }
-        }
-
         val objectMapper = jacksonObjectMapper().apply {
             registerModule(AfterburnerModule())
             registerModule(
@@ -105,19 +88,42 @@ class DataModule(
         }.also { bind(ObjectMapper::class.java).toInstance(it) }
 
         classByType.clear()
-        ClassGraph().acceptPackages(this::class.java.packageName).enableClassInfo().enableAnnotationInfo().scan().use {
+        ClassGraph().enableClassInfo().enableAnnotationInfo().scan().use {
             val dataType = DataType::class.jvmName
             classByType.putAll(it.getClassesWithAnnotation(dataType).associate { it.getAnnotationInfo(dataType).parameterValues.getValue("value") as String to Class.forName(it.name).kotlin })
         }
 
+        run {
+            var buffer: PacketBuffer? = null
+            try {
+                buffer = PacketBuffer(Unpooled.wrappedBuffer(DataModule::class.java.getResourceAsStream("/runtime_block_states.dat")!!.readBytes()))
+                val blocks = HashMap<String, ArrayList<Map<String, Any>>>()
+                NbtInputStream(ByteBufInputStream(buffer)).use { it.readTag()!!.asCompoundTag()!! }.getListTag("blocks").toList().map { it.asCompoundTag()!! }.forEach {
+                    blocks.getOrPut(it.getString("name")) { ArrayList() }.add(it.getCompoundTag("states").toMap().mapValues {
+                        when (it.value.type) {
+                            TagType.Byte -> it.value.asNumberTag()!!.toByte() != 0.toByte()
+                            TagType.Int -> it.value.asNumberTag()!!.toInt()
+                            TagType.String -> it.value.asArrayTag()!!.valueToString()
+                            else -> TODO()
+                        }
+                    })
+                }
+                bind(object : Key<Map<String, @JvmSuppressWildcards Block>>() {}).toInstance(blocks.mapValues { Block(it.key, it.value) })
+                log.info("Bound tesseract:block, with {} entries", blocks.size)
+            } finally {
+                buffer?.release()
+            }
+        }
+
+
+
         ClassGraph().acceptPaths("data").scan().use {
-            val (keyed, other) = it.allResources
+            val (keyed, other) = (it.allResources.map { it.url } + path.walk().filter { it.isFile }.map { it.toURI().toURL() })
                 .map {
-                    val url = it.url
-                    when (val extension = url.file.substring(url.file.lastIndexOf('.') + 1)) {
+                    when (val extension = it.file.substring(it.file.lastIndexOf('.') + 1)) {
                         "json" -> {
                             @Suppress("UNCHECKED_CAST")
-                            objectMapper.readValue<Data>(url)
+                            objectMapper.readValue<Data>(it)
                         }
                         else -> TODO(extension)
                     }
@@ -135,7 +141,7 @@ class DataModule(
             other.forEach {
                 @Suppress("UNCHECKED_CAST")
                 (bind(it::class.java) as AnnotatedBindingBuilder<Any>).toInstance(it)
-                log.info("Bound {}", it::class.jvmName)
+                log.info("Bound {}", it::class.findAnnotation<DataType>()!!.value)
             }
         }
 
