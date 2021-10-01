@@ -199,11 +199,11 @@ class PacketDecoder(
     var items: Int2ObjectOpenHashBiMap<String>? = null
 ) : MessageToMessageDecoder<ByteBuf>() {
     override fun decode(context: ChannelHandlerContext, `in`: ByteBuf, out: MutableList<Any>) {
-        val buffer = PacketBuffer(`in`, false, blockStates, items)
-        val header = buffer.readVarUInt()
+        val packetBuffer = PacketBuffer(`in`, false, blockStates, items)
+        val header = packetBuffer.readVarUInt()
         val id = header and Packet.idMask
-        readers[id]?.let { out.add(it.read(buffer, version)) } ?: throw DecoderException("No such packet: 0x${id.toString(16).uppercase()}")
-        if (buffer.readableBytes() > 0) throw DecoderException("Packet 0x${id.toString(16).uppercase()} not fully read")
+        readers[id]?.let { out.add(it.read(packetBuffer, version)) } ?: throw DecoderException("No such packet: 0x${id.toString(16).uppercase()}")
+        if (packetBuffer.readableBytes() > 0) throw DecoderException("Packet 0x${id.toString(16).uppercase()} not fully read")
     }
 
     companion object {

@@ -432,7 +432,7 @@ interface PacketHandler : ProtocolHandler {
 
     fun soundEvent(packet: SoundEventPacket) = other(packet)
 
-    fun worldGenericEvent(worldGenericEventPacket: WorldGenericEventPacket)
+    fun worldGenericEvent(packet: WorldGenericEventPacket) = other(packet)
 
     fun lecternUpdate(packet: LecternUpdatePacket) = other(packet)
 
@@ -462,7 +462,7 @@ interface PacketHandler : ProtocolHandler {
 
     fun anvilDamage(packet: AnvilDamagePacket) = other(packet)
 
-    fun itemAction(itemActionPacket: ItemActionPacket)
+    fun itemAction(packet: ItemActionPacket) = other(packet)
 
     fun networkSettings(packet: NetworkSettingsPacket) = other(packet)
 
