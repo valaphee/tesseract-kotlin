@@ -38,7 +38,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class FormPacket(
+class FormPacket(
     val formId: Int,
     val form: Form<*>
 ) : Packet {
@@ -50,6 +50,8 @@ data class FormPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.form(this)
+
+    override fun toString() = "FormPacket(formId=$formId, form=$form)"
 }
 
 /**

@@ -33,7 +33,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class ItemFrameDropItemPacket(
+class ItemFrameDropItemPacket(
     val position: Int3
 ) : Packet {
     override val id get() = 0x47
@@ -43,6 +43,8 @@ data class ItemFrameDropItemPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.itemFrameDropItem(this)
+
+    override fun toString() = "ItemFrameDropItemPacket(position=$position)"
 }
 
 /**

@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class LastHurtByPacket(
+class LastHurtByPacket(
     val entityTypeId: Int
 ) : Packet {
     override val id get() = 0x60
@@ -45,6 +45,8 @@ data class LastHurtByPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.lastHurtBy(this)
+
+    override fun toString() = "LastHurtByPacket(entityTypeId=$entityTypeId)"
 }
 
 /**

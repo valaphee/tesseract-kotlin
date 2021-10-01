@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-data class StructureTemplateDataExportRequestPacket(
+class StructureTemplateDataExportRequestPacket(
     val name: String,
     val position: Int3,
     val settings: StructureSettings,
@@ -56,6 +56,8 @@ data class StructureTemplateDataExportRequestPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.structureTemplateDataExportRequest(this)
+
+    override fun toString() = "StructureTemplateDataExportRequestPacket(name='$name', position=$position, settings=$settings, operation=$operation)"
 }
 
 /**

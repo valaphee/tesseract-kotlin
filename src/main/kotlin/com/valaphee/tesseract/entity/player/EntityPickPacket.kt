@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-data class EntityPickPacket(
+class EntityPickPacket(
     val runtimeEntityId: Long,
     val hotbarSlot: Int,
     val withMetadata: Boolean
@@ -50,6 +50,8 @@ data class EntityPickPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.entityPick(this)
+
+    override fun toString() = "EntityPickPacket(runtimeEntityId=$runtimeEntityId, hotbarSlot=$hotbarSlot, withMetadata=$withMetadata)"
 }
 
 /**

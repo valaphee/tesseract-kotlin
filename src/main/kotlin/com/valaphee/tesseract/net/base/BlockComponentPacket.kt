@@ -36,7 +36,7 @@ import com.valaphee.tesseract.util.nbt.CompoundTag
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class BlockComponentPacket private constructor(
+class BlockComponentPacket private constructor(
     val data: ByteArray?,
     val tag: CompoundTag?
 ) : Packet {
@@ -51,27 +51,6 @@ data class BlockComponentPacket private constructor(
     }
 
     override fun handle(handler: PacketHandler) = handler.blockComponent(this)
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as BlockComponentPacket
-
-        if (data != null) {
-            if (other.data == null) return false
-            if (!data.contentEquals(other.data)) return false
-        } else if (other.data != null) return false
-        if (tag != other.tag) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = data?.contentHashCode() ?: 0
-        result = 31 * result + (tag?.hashCode() ?: 0)
-        return result
-    }
 
     override fun toString() = "BlockComponentPacket(tag=$tag)"
 }

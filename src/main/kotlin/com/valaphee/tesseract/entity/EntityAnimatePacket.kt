@@ -32,7 +32,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class EntityAnimatePacket(
+class EntityAnimatePacket(
     val animation: String,
     val nextState: String,
     val stopExpression: String,
@@ -80,6 +80,8 @@ data class EntityAnimatePacket(
         result = 31 * result + runtimeEntityIds.contentHashCode()
         return result
     }
+
+    override fun toString() = "EntityAnimatePacket(animation='$animation', nextState='$nextState', stopExpression='$stopExpression', controller='$controller', blendOutTime=$blendOutTime, runtimeEntityIds=${runtimeEntityIds.contentToString()})"
 }
 
 /**

@@ -32,7 +32,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class ItemActionPacket(
+class ItemActionPacket(
     val itemId: Short,
     val action: Action
 ) : Packet {
@@ -64,6 +64,8 @@ data class ItemActionPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.itemAction(this)
+
+    override fun toString() = "ItemActionPacket(itemId=$itemId, action=$action)"
 }
 
 /**

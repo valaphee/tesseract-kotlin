@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class StackTakePacket(
+class StackTakePacket(
     val runtimeEntityId: Long,
     val stackRuntimeEntityId: Long
 ) : Packet {
@@ -48,6 +48,8 @@ data class StackTakePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.stackTake(this)
+
+    override fun toString() = "StackTakePacket(runtimeEntityId=$runtimeEntityId, stackRuntimeEntityId=$stackRuntimeEntityId)"
 }
 
 /**

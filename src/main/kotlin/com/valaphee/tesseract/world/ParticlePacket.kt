@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class ParticlePacket(
+class ParticlePacket(
     val dimension: Dimension,
     val uniqueEntityId: Long,
     val position: Float3,
@@ -56,6 +56,8 @@ data class ParticlePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.particle(this)
+
+    override fun toString() = "ParticlePacket(dimension=$dimension, uniqueEntityId=$uniqueEntityId, position=$position, particleName='$particleName')"
 }
 
 /**

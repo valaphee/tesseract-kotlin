@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class EntityMetadataPacket(
+class EntityMetadataPacket(
     val runtimeEntityId: Long,
     val metadata: Metadata,
     val tick: Long
@@ -49,6 +49,8 @@ data class EntityMetadataPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.entityMetadata(this)
+
+    override fun toString() = "EntityMetadataPacket(runtimeEntityId=$runtimeEntityId, metadata=$metadata, tick=$tick)"
 }
 
 /**

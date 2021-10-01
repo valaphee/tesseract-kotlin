@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-data class InputPacket(
+class InputPacket(
     val rotation: Float2,
     val position: Float3,
     val move: Float2,
@@ -126,6 +126,8 @@ data class InputPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.input(this)
+
+    override fun toString() = "InputPacket(rotation=$rotation, position=$position, move=$move, headRotationYaw=$headRotationYaw, input=$input, inputMode=$inputMode, playMode=$playMode, virtualRealityGazeDirection=$virtualRealityGazeDirection, tick=$tick, positionDelta=$positionDelta)"
 }
 
 /**

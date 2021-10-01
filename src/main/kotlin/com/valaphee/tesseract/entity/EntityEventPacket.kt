@@ -34,7 +34,7 @@ import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
 /**
  * @author Kevin Ludwig
  */
-data class EntityEventPacket(
+class EntityEventPacket(
     val runtimeEntityId: Long,
     val event: Event,
     val data: Int = 0
@@ -107,6 +107,8 @@ data class EntityEventPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.entityEvent(this)
+
+    override fun toString() = "EntityEventPacket(runtimeEntityId=$runtimeEntityId, event=$event, data=$data)"
 
     companion object {
         internal val events = Int2ObjectOpenHashBiMap<Event>().apply {

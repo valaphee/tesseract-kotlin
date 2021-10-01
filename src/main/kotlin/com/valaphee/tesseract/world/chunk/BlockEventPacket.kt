@@ -34,7 +34,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class BlockEventPacket(
+class BlockEventPacket(
     val position: Int3,
     val data1: Int,
     val data2: Int
@@ -48,6 +48,8 @@ data class BlockEventPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.blockEvent(this)
+
+    override fun toString() = "BlockEventPacket(position=$position, data1=$data1, data2=$data2)"
 }
 
 /**

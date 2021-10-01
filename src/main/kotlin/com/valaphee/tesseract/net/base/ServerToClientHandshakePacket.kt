@@ -47,7 +47,7 @@ import java.util.Base64
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class ServerToClientHandshakePacket(
+class ServerToClientHandshakePacket(
     val serverPublicKey: PublicKey,
     val serverPrivateKey: PrivateKey?,
     val salt: ByteArray
@@ -65,25 +65,7 @@ data class ServerToClientHandshakePacket(
 
     override fun handle(handler: PacketHandler) = handler.serverToClientHandshake(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as ServerToClientHandshakePacket
-
-        if (serverPublicKey != other.serverPublicKey) return false
-        if (serverPrivateKey != other.serverPrivateKey) return false
-        if (!salt.contentEquals(other.salt)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = serverPublicKey.hashCode()
-        result = 31 * result + serverPrivateKey.hashCode()
-        result = 31 * result + salt.contentHashCode()
-        return result
-    }
+    override fun toString() = "ServerToClientHandshakePacket(serverPublicKey=$serverPublicKey, serverPrivateKey=$serverPrivateKey, salt=${salt.contentToString()})"
 
     companion object {
         private val base64Encoder: Base64.Encoder = Base64.getEncoder()

@@ -37,7 +37,7 @@ import com.valaphee.tesseract.util.nbt.CompoundTag
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class PositionTrackingDbServerBroadcastPacket(
+class PositionTrackingDbServerBroadcastPacket(
     val action: Action,
     val trackingId: Int,
     val tag: CompoundTag? = null
@@ -55,6 +55,8 @@ data class PositionTrackingDbServerBroadcastPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.positionTrackingDbServerBroadcast(this)
+
+    override fun toString() = "PositionTrackingDbServerBroadcastPacket(action=$action, trackingId=$trackingId, tag=$tag)"
 }
 
 /**

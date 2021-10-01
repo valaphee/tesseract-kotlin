@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class EntityAttributesPacket(
+class EntityAttributesPacket(
     val runtimeEntityId: Long,
     val attributes: Attributes,
     val tick: Long
@@ -49,6 +49,8 @@ data class EntityAttributesPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.entityAttributes(this)
+
+    override fun toString() = "EntityAttributesPacket(runtimeEntityId=$runtimeEntityId, attributes=$attributes, tick=$tick)"
 }
 
 /**

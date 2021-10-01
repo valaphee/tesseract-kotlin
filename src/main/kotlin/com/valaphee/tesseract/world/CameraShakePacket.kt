@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class CameraShakePacket(
+class CameraShakePacket(
     val intensity: Float,
     val duration: Float,
     val type: Type,
@@ -59,6 +59,8 @@ data class CameraShakePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.cameraShake(this)
+
+    override fun toString() = "CameraShakePacket(intensity=$intensity, duration=$duration, type=$type, action=$action)"
 }
 
 /**

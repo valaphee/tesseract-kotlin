@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class OnScreenTextureAnimationPacket(
+class OnScreenTextureAnimationPacket(
     val animationId: Int
 ) : Packet {
     override val id get() = 0x82
@@ -45,6 +45,8 @@ data class OnScreenTextureAnimationPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.onScreenTextureAnimation(this)
+
+    override fun toString() = "OnScreenTextureAnimationPacket(animationId=$animationId)"
 }
 
 /**

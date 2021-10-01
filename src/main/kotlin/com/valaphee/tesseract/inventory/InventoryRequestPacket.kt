@@ -40,91 +40,37 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-data class InventoryRequestPacket(
+class InventoryRequestPacket(
     val requests: Array<Request>
 ) : Packet {
     enum class ActionType {
         Move, Place, Swap, Drop, Destroy, Consume, Create, LabTableCombine, BeaconPayment, MineBlock, CraftRecipe, CraftRecipeAuto, CraftCreative, CraftRecipeOptional, CraftNonImplementedDeprecated, CraftResultsDeprecated
     }
 
-    data class Action(
+    class Action(
         val result: Array<Stack?>?,
-        var type: ActionType,
-        var count: Int,
-        var sourceSlotType: WindowSlotType?,
-        var sourceSlotId: Int,
-        var sourceNetId: Int,
-        var random: Boolean,
-        var destinationSlotType: WindowSlotType?,
-        var destinationSlotId: Int,
-        var destinationNetId: Int,
-        var slotId: Int,
-        var auxInt: Int,
-        var auxInt2: Int
+        val type: ActionType,
+        val count: Int,
+        val sourceSlotType: WindowSlotType?,
+        val sourceSlotId: Int,
+        val sourceNetId: Int,
+        val random: Boolean,
+        val destinationSlotType: WindowSlotType?,
+        val destinationSlotId: Int,
+        val destinationNetId: Int,
+        val slotId: Int,
+        val auxInt: Int,
+        val auxInt2: Int
     ) {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as Action
-
-            if (!result.contentEquals(other.result)) return false
-            if (type != other.type) return false
-            if (count != other.count) return false
-            if (sourceSlotType != other.sourceSlotType) return false
-            if (sourceSlotId != other.sourceSlotId) return false
-            if (sourceNetId != other.sourceNetId) return false
-            if (random != other.random) return false
-            if (destinationSlotType != other.destinationSlotType) return false
-            if (destinationSlotId != other.destinationSlotId) return false
-            if (destinationNetId != other.destinationNetId) return false
-            if (slotId != other.slotId) return false
-            if (auxInt != other.auxInt) return false
-            if (auxInt2 != other.auxInt2) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            var result1 = result.contentHashCode()
-            result1 = 31 * result1 + type.hashCode()
-            result1 = 31 * result1 + count
-            result1 = 31 * result1 + sourceSlotType.hashCode()
-            result1 = 31 * result1 + sourceSlotId
-            result1 = 31 * result1 + sourceNetId
-            result1 = 31 * result1 + random.hashCode()
-            result1 = 31 * result1 + destinationSlotType.hashCode()
-            result1 = 31 * result1 + destinationSlotId
-            result1 = 31 * result1 + destinationNetId
-            result1 = 31 * result1 + slotId
-            result1 = 31 * result1 + auxInt
-            result1 = 31 * result1 + auxInt2
-            return result1
-        }
+        override fun toString() = "Action(result=${result?.contentToString()}, type=$type, count=$count, sourceSlotType=$sourceSlotType, sourceSlotId=$sourceSlotId, sourceNetId=$sourceNetId, random=$random, destinationSlotType=$destinationSlotType, destinationSlotId=$destinationSlotId, destinationNetId=$destinationNetId, slotId=$slotId, auxInt=$auxInt, auxInt2=$auxInt2)"
     }
 
-    data class Request(
-        var requestId: Int,
+    class Request(
+        val requestId: Int,
         val actions: Array<Action>,
         val filteredTexts: Array<String>
     ) {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as Request
-
-            if (!actions.contentEquals(other.actions)) return false
-            if (requestId != other.requestId) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            var result = actions.contentHashCode()
-            result = 31 * result + requestId
-            return result
-        }
+        override fun toString() = "Request(requestId=$requestId, actions=${actions.contentToString()}, filteredTexts=${filteredTexts.contentToString()})"
     }
 
     override val id get() = 0x93
@@ -198,18 +144,7 @@ data class InventoryRequestPacket(
 
     override fun handle(handler: PacketHandler) = handler.inventoryRequest(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as InventoryRequestPacket
-
-        if (!requests.contentEquals(other.requests)) return false
-
-        return true
-    }
-
-    override fun hashCode() = requests.contentHashCode()
+    override fun toString() = "InventoryRequestPacket(requests=${requests.contentToString()})"
 }
 
 /**

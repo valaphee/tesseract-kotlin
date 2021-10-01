@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-data class EntityFallPacket(
+class EntityFallPacket(
     val runtimeEntityId: Long,
     val fallDistance: Float,
     val inVoid: Boolean
@@ -49,6 +49,8 @@ data class EntityFallPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.entityFall(this)
+
+    override fun toString() = "EntityFallPacket(runtimeEntityId=$runtimeEntityId, fallDistance=$fallDistance, inVoid=$inVoid)"
 }
 
 /**

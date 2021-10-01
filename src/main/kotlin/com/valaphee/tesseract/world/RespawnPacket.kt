@@ -34,7 +34,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class RespawnPacket(
+class RespawnPacket(
     val runtimeEntityId: Long,
     val state: State,
     val position: Float3
@@ -52,6 +52,8 @@ data class RespawnPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.respawn(this)
+
+    override fun toString() = "RespawnPacket(runtimeEntityId=$runtimeEntityId, state=$state, position=$position)"
 }
 
 /**

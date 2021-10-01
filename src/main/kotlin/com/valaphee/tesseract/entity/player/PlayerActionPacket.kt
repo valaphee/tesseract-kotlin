@@ -33,7 +33,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class PlayerActionPacket(
+class PlayerActionPacket(
     val runtimeEntityId: Long,
     val action: Action,
     val blockPosition: Int3,
@@ -80,6 +80,8 @@ data class PlayerActionPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.playerAction(this)
+
+    override fun toString() = "PlayerActionPacket(runtimeEntityId=$runtimeEntityId, action=$action, blockPosition=$blockPosition, data=$data)"
 }
 
 /**

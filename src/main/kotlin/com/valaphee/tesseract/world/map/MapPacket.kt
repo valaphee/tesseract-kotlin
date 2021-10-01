@@ -36,7 +36,7 @@ import com.valaphee.tesseract.world.Dimension
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class MapPacket(
+class MapPacket(
     val mapId: Long,
     val dimension: Dimension,
     val locked: Boolean,
@@ -105,55 +105,7 @@ data class MapPacket(
 
     override fun handle(handler: PacketHandler) = handler.map(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as MapPacket
-
-        if (mapId != other.mapId) return false
-        if (dimension != other.dimension) return false
-        if (locked != other.locked) return false
-        if (trackedUniqueEntityIds != null) {
-            if (other.trackedUniqueEntityIds == null) return false
-            if (!trackedUniqueEntityIds.contentEquals(other.trackedUniqueEntityIds)) return false
-        } else if (other.trackedUniqueEntityIds != null) return false
-        if (scale != other.scale) return false
-        if (trackedObjects != null) {
-            if (other.trackedObjects == null) return false
-            if (!trackedObjects.contentEquals(other.trackedObjects)) return false
-        } else if (other.trackedObjects != null) return false
-        if (decorations != null) {
-            if (other.decorations == null) return false
-            if (!decorations.contentEquals(other.decorations)) return false
-        } else if (other.decorations != null) return false
-        if (width != other.width) return false
-        if (height != other.height) return false
-        if (offsetX != other.offsetX) return false
-        if (offsetY != other.offsetY) return false
-        if (data != null) {
-            if (other.data == null) return false
-            if (!data.contentEquals(other.data)) return false
-        } else if (other.data != null) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = mapId.hashCode()
-        result = 31 * result + dimension.hashCode()
-        result = 31 * result + locked.hashCode()
-        result = 31 * result + (trackedUniqueEntityIds?.contentHashCode() ?: 0)
-        result = 31 * result + scale
-        result = 31 * result + (trackedObjects?.contentHashCode() ?: 0)
-        result = 31 * result + (decorations?.contentHashCode() ?: 0)
-        result = 31 * result + width
-        result = 31 * result + height
-        result = 31 * result + offsetX
-        result = 31 * result + offsetY
-        result = 31 * result + (data?.contentHashCode() ?: 0)
-        return result
-    }
+    override fun toString() = "MapPacket(mapId=$mapId, dimension=$dimension, locked=$locked, trackedUniqueEntityIds=${trackedUniqueEntityIds?.contentToString()}, scale=$scale, trackedObjects=${trackedObjects?.contentToString()}, decorations=${decorations?.contentToString()}, width=$width, height=$height, offsetX=$offsetX, offsetY=$offsetY, data=${data?.contentToString()})"
 
     companion object {
         internal const val flagHasColor = 1 shl 1

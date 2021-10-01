@@ -32,7 +32,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class PhotoItemPacket(
+class PhotoItemPacket(
     val photoId: Long,
     val photoName: String,
     val photoItemName: String
@@ -46,6 +46,8 @@ data class PhotoItemPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.photoItem(this)
+
+    override fun toString() = "PhotoItemPacket(photoId=$photoId, photoName='$photoName', photoItemName='$photoItemName')"
 }
 
 /**

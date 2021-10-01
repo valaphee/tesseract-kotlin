@@ -36,7 +36,7 @@ import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class CommandsPacket(
+class CommandsPacket(
     val commands: Array<Command>
 ) : Packet {
     override val id get() = 0x4C
@@ -105,20 +105,7 @@ data class CommandsPacket(
 
     override fun handle(handler: PacketHandler) = handler.commands(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as CommandsPacket
-
-        if (!commands.contentEquals(other.commands)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return commands.contentHashCode()
-    }
+    override fun toString() = "CommandsPacket(commands=${commands.contentToString()})"
 
     companion object {
         internal val parameterTypesPre419 = Int2ObjectOpenHashBiMap<Parameter.Type>().apply {

@@ -36,7 +36,7 @@ import com.valaphee.tesseract.util.ByteBufStringReader
 /**
  * @author Kevin Ludwig
  */
-data class CustomEventPacket(
+class CustomEventPacket(
     val eventName: String,
     val json: JsonElement
 ) : Packet {
@@ -48,6 +48,8 @@ data class CustomEventPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.customEvent(this)
+
+    override fun toString() = "CustomEventPacket(eventName='$eventName', json=$json)"
 }
 
 /**

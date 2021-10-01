@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-data class NpcRequestPacket(
+class NpcRequestPacket(
     val runtimeEntityId: Long,
     val type: Type,
     val command: String,
@@ -57,6 +57,8 @@ data class NpcRequestPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.npcRequest(this)
+
+    override fun toString() = "NpcRequestPacket(runtimeEntityId=$runtimeEntityId, type=$type, command='$command', actionType=$actionType, scene='$scene')"
 }
 
 /**

@@ -33,7 +33,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class AnvilDamagePacket(
+class AnvilDamagePacket(
     val position: Int3,
     val damage: Int
 ) : Packet {
@@ -45,6 +45,8 @@ data class AnvilDamagePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.anvilDamage(this)
+
+    override fun toString() = "AnvilDamagePacket(position=$position, damage=$damage)"
 }
 
 /**

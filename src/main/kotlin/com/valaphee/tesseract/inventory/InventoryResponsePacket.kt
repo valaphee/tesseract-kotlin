@@ -34,7 +34,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class InventoryResponsePacket(
+class InventoryResponsePacket(
     val responses: Array<Response>
 ) : Packet {
     data class Response(
@@ -199,16 +199,5 @@ data class InventoryResponsePacket(
 
     override fun handle(handler: PacketHandler) = handler.inventoryResponse(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as InventoryResponsePacket
-
-        if (!responses.contentEquals(other.responses)) return false
-
-        return true
-    }
-
-    override fun hashCode() = responses.contentHashCode()
+    override fun toString() = "InventoryResponsePacket(responses=${responses.contentToString()})"
 }

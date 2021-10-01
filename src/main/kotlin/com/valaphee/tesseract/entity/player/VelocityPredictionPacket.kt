@@ -34,7 +34,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class VelocityPredictionPacket(
+class VelocityPredictionPacket(
     val runtimeEntityId: Long,
     val velocity: Float3,
     val onGround: Boolean,
@@ -48,6 +48,8 @@ data class VelocityPredictionPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.velocityPrediction(this)
+
+    override fun toString() = "VelocityPredictionPacket(runtimeEntityId=$runtimeEntityId, velocity=$velocity, onGround=$onGround)"
 }
 
 /**

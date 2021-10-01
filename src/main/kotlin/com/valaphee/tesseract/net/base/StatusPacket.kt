@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class StatusPacket(
+class StatusPacket(
     val status: Status
 ) : Packet {
     enum class Status {
@@ -56,6 +56,8 @@ data class StatusPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.status(this)
+
+    override fun toString() = "StatusPacket(status=$status)"
 }
 
 /**

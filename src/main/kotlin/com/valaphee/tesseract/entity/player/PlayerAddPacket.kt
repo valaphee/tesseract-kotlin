@@ -26,13 +26,13 @@ package com.valaphee.tesseract.entity.player
 
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
+import com.valaphee.tesseract.command.net.Permission
 import com.valaphee.tesseract.entity.Link
 import com.valaphee.tesseract.entity.metadata.Metadata
 import com.valaphee.tesseract.entity.readLink
 import com.valaphee.tesseract.entity.readLinkPre407
 import com.valaphee.tesseract.entity.writeLink
 import com.valaphee.tesseract.entity.writeLinkPre407
-import com.valaphee.tesseract.command.net.Permission
 import com.valaphee.tesseract.inventory.item.stack.Stack
 import com.valaphee.tesseract.inventory.item.stack.readStack
 import com.valaphee.tesseract.inventory.item.stack.readStackPre431
@@ -51,7 +51,7 @@ import java.util.UUID
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class PlayerAddPacket(
+class PlayerAddPacket(
     val userId: UUID,
     val userName: String,
     val uniqueEntityId: Long,
@@ -100,49 +100,7 @@ data class PlayerAddPacket(
 
     override fun handle(handler: PacketHandler) = handler.playerAdd(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as PlayerAddPacket
-
-        if (userId != other.userId) return false
-        if (userName != other.userName) return false
-        if (uniqueEntityId != other.uniqueEntityId) return false
-        if (runtimeEntityId != other.runtimeEntityId) return false
-        if (platformChatId != other.platformChatId) return false
-        if (position != other.position) return false
-        if (velocity != other.velocity) return false
-        if (rotation != other.rotation) return false
-        if (headRotationYaw != other.headRotationYaw) return false
-        if (stackInHand != other.stackInHand) return false
-        if (metadata != other.metadata) return false
-        if (customFlags != other.customFlags) return false
-        if (!links.contentEquals(other.links)) return false
-        if (deviceId != other.deviceId) return false
-        if (operatingSystem != other.operatingSystem) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = userId.hashCode()
-        result = 31 * result + userName.hashCode()
-        result = 31 * result + uniqueEntityId.hashCode()
-        result = 31 * result + runtimeEntityId.hashCode()
-        result = 31 * result + platformChatId.hashCode()
-        result = 31 * result + position.hashCode()
-        result = 31 * result + velocity.hashCode()
-        result = 31 * result + rotation.hashCode()
-        result = 31 * result + headRotationYaw.hashCode()
-        result = 31 * result + (stackInHand?.hashCode() ?: 0)
-        result = 31 * result + metadata.hashCode()
-        result = 31 * result + customFlags
-        result = 31 * result + links.contentHashCode()
-        result = 31 * result + deviceId.hashCode()
-        result = 31 * result + operatingSystem.hashCode()
-        return result
-    }
+    override fun toString() = "PlayerAddPacket(userId=$userId, userName='$userName', uniqueEntityId=$uniqueEntityId, runtimeEntityId=$runtimeEntityId, platformChatId='$platformChatId', position=$position, velocity=$velocity, rotation=$rotation, headRotationYaw=$headRotationYaw, stackInHand=$stackInHand, metadata=$metadata, playerFlags=$playerFlags, permission=$permission, worldFlags=$worldFlags, rank=$rank, customFlags=$customFlags, links=${links.contentToString()}, deviceId='$deviceId', operatingSystem=$operatingSystem)"
 }
 
 /**

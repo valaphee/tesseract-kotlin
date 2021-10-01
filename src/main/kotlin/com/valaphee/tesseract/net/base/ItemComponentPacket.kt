@@ -36,7 +36,7 @@ import com.valaphee.tesseract.util.nbt.CompoundTag
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class ItemComponentPacket(
+class ItemComponentPacket(
     val entries: Array<Entry>
 ) : Packet {
     data class Entry(
@@ -56,18 +56,7 @@ data class ItemComponentPacket(
 
     override fun handle(handler: PacketHandler) = handler.itemComponent(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as ItemComponentPacket
-
-        if (!entries.contentEquals(other.entries)) return false
-
-        return true
-    }
-
-    override fun hashCode() = entries.contentHashCode()
+    override fun toString() = "ItemComponentPacket(entries=${entries.contentToString()})"
 }
 
 /**

@@ -33,7 +33,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class FilterPacket(
+class FilterPacket(
     val message: String,
     val fromServer: Boolean
 ) : Packet {
@@ -45,6 +45,8 @@ data class FilterPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.filter(this)
+
+    override fun toString() = "FilterPacket(message='$message', fromServer=$fromServer)"
 }
 
 /**

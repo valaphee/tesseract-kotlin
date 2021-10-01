@@ -32,7 +32,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class GameModePacket(
+class GameModePacket(
     val gameMode: GameMode
 ) : Packet {
     override val id get() = 0x3E
@@ -42,6 +42,8 @@ data class GameModePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.gameMode(this)
+
+    override fun toString() = "GameModePacket(gameMode=$gameMode)"
 }
 
 /**

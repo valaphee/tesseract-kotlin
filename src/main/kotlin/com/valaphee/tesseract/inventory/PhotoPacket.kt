@@ -32,7 +32,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class PhotoPacket(
+class PhotoPacket(
     val name: String,
     val data: ByteArray,
     val bookId: String,
@@ -61,33 +61,7 @@ data class PhotoPacket(
 
     override fun handle(handler: PacketHandler) = handler.photo(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as PhotoPacket
-
-        if (name != other.name) return false
-        if (!data.contentEquals(other.data)) return false
-        if (bookId != other.bookId) return false
-        if (type != other.type) return false
-        if (sourceType != other.sourceType) return false
-        if (ownerId != other.ownerId) return false
-        if (newName != other.newName) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = name.hashCode()
-        result = 31 * result + data.contentHashCode()
-        result = 31 * result + bookId.hashCode()
-        result = 31 * result + type.hashCode()
-        result = 31 * result + sourceType.hashCode()
-        result = 31 * result + ownerId.hashCode()
-        result = 31 * result + newName.hashCode()
-        return result
-    }
+    override fun toString() = "PhotoPacket(name='$name', data=${data.contentToString()}, bookId='$bookId', type=$type, sourceType=$sourceType, ownerId=$ownerId, newName=$newName)"
 }
 
 /**

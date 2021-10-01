@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class ServerSettingsPacket(
+class ServerSettingsPacket(
     val formId: Int
 ) : Packet {
     override val id get() = 0x67
@@ -46,6 +46,8 @@ data class ServerSettingsPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.serverSettings(this)
+
+    override fun toString() = "ServerSettingsPacket(formId=$formId)"
 }
 
 /**

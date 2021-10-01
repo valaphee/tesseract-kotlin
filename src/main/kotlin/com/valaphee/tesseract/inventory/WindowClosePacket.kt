@@ -32,7 +32,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class WindowClosePacket(
+class WindowClosePacket(
     val windowId: Int,
     val serverside: Boolean
 ) : Packet {
@@ -44,6 +44,8 @@ data class WindowClosePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.windowClose(this)
+
+    override fun toString() = "WindowClosePacket(windowId=$windowId, serverside=$serverside)"
 }
 
 /**

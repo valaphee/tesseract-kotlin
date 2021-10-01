@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-data class CommandBlockUpdatePacket(
+class CommandBlockUpdatePacket(
     val block: Boolean,
     val blockPosition: Int3?,
     val minecartRuntimeEntityId: Long,
@@ -73,6 +73,8 @@ data class CommandBlockUpdatePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.commandBlockUpdate(this)
+
+    override fun toString() = "CommandBlockUpdatePacket(block=$block, blockPosition=$blockPosition, minecartRuntimeEntityId=$minecartRuntimeEntityId, name='$name', command='$command', lastOutput='$lastOutput', mode=$mode, powered=$powered, conditionMet=$conditionMet, outputTracked=$outputTracked, executeOnFirstTick=$executeOnFirstTick, tickDelay=$tickDelay)"
 }
 
 /**

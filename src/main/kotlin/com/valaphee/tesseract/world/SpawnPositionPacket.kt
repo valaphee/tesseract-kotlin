@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class SpawnPositionPacket(
+class SpawnPositionPacket(
     val type: Type,
     val blockPosition: Int3,
     val dimensionId: Int,
@@ -61,6 +61,8 @@ data class SpawnPositionPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.spawnPosition(this)
+
+    override fun toString() = "SpawnPositionPacket(type=$type, blockPosition=$blockPosition, dimensionId=$dimensionId, position=$position, forced=$forced)"
 }
 
 /**

@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class CommandSoftEnumerationPacket(
+class CommandSoftEnumerationPacket(
     val action: Action,
     val softEnumeration: Enumeration
 ) : Packet {
@@ -51,6 +51,8 @@ data class CommandSoftEnumerationPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.commandSoftEnumeration(this)
+
+    override fun toString() = "CommandSoftEnumerationPacket(action=$action, softEnumeration=$softEnumeration)"
 }
 
 /**

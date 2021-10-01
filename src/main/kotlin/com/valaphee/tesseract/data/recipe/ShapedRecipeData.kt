@@ -26,7 +26,10 @@ package com.valaphee.tesseract.data.recipe
 
 import com.valaphee.tesseract.data.DataType
 import com.valaphee.tesseract.data.KeyedData
+import com.valaphee.tesseract.inventory.item.craft.Recipe
+import com.valaphee.tesseract.inventory.item.craft.shapedRecipe
 import com.valaphee.tesseract.inventory.item.stack.Stack
+import java.util.UUID
 
 /**
  * @author Kevin Ludwig
@@ -39,4 +42,16 @@ class ShapedRecipeData(
     val pattern: Array<String>,
     val priority: Int = 0,
     val result: Stack
-) : KeyedData()
+) : KeyedData() {
+    fun toRecipe(netId: Int): Recipe {
+        val height = pattern.size
+        var width = 0
+        pattern.forEach {
+            val patternRowWidth = it.length
+            if (patternRowWidth > width) width = patternRowWidth
+        }
+        val inputs = arrayOfNulls<Stack?>(width * height)
+        pattern.forEachIndexed { i, patternRow -> patternRow.forEachIndexed { j, patternColumn -> inputs[i * width + j] = map[patternColumn] } }
+        return shapedRecipe(Recipe.Type.Shaped, UUID.nameUUIDFromBytes(key.toByteArray()), key, width, height, inputs, arrayOf(result), tags.first(), priority, netId)
+    }
+}

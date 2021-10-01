@@ -33,7 +33,7 @@ import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
 /**
  * @author Kevin Ludwig
  */
-data class EntityAnimationPacket(
+class EntityAnimationPacket(
     val animation: Animation,
     val runtimeEntityId: Long,
     val rowingTime: Float = 0.0f
@@ -51,6 +51,8 @@ data class EntityAnimationPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.entityAnimation(this)
+
+    override fun toString() = "EntityAnimationPacket(animation=$animation, runtimeEntityId=$runtimeEntityId, rowingTime=$rowingTime)"
 
     companion object {
         internal val animations = Int2ObjectOpenHashBiMap<Animation>().apply {

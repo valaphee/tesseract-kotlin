@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class StoreOfferPacket(
+class StoreOfferPacket(
     val offerId: String,
     val shownToAll: Boolean
 ) : Packet {
@@ -47,6 +47,8 @@ data class StoreOfferPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.storeOffer(this)
+
+    override fun toString() = "StoreOfferPacket(offerId='$offerId', shownToAll=$shownToAll)"
 }
 
 /**

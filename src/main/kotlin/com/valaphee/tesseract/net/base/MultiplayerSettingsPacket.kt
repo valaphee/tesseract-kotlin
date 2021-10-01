@@ -32,7 +32,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class MultiplayerSettingsPacket(
+class MultiplayerSettingsPacket(
     val mode: Mode
 ) : Packet {
     enum class Mode {
@@ -46,6 +46,8 @@ data class MultiplayerSettingsPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.multiplayerSettings(this)
+
+    override fun toString() = "MultiplayerSettingsPacket(mode=$mode)"
 }
 
 /**

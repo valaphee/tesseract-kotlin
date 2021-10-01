@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class ScoresPacket(
+class ScoresPacket(
     val action: Action,
     val scores: Array<Score>
 ) : Packet {
@@ -66,23 +66,7 @@ data class ScoresPacket(
 
     override fun handle(handler: PacketHandler) = handler.scores(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as ScoresPacket
-
-        if (action != other.action) return false
-        if (!scores.contentEquals(other.scores)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = action.hashCode()
-        result = 31 * result + scores.contentHashCode()
-        return result
-    }
+    override fun toString() = "ScoresPacket(action=$action, scores=${scores.contentToString()})"
 }
 
 /**

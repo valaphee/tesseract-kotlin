@@ -33,7 +33,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class BossBarPacket(
+class BossBarPacket(
     val uniqueEntityId: Long,
     val action: Action,
     val title: String?,
@@ -85,6 +85,8 @@ data class BossBarPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.bossBar(this)
+
+    override fun toString() = "BossBarPacket(uniqueEntityId=$uniqueEntityId, action=$action, title=$title, playerUniqueEntityId=$playerUniqueEntityId, percentage=$percentage, darkenSky=$darkenSky, color=$color, overlay=$overlay)"
 }
 
 /**

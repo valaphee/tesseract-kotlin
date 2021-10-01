@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class ObjectiveSetPacket(
+class ObjectiveSetPacket(
     val displaySlot: String,
     val name: String,
     val displayName: String,
@@ -58,6 +58,8 @@ data class ObjectiveSetPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.objectiveSet(this)
+
+    override fun toString() = "ObjectiveSetPacket(displaySlot='$displaySlot', name='$name', displayName='$displayName', criteria='$criteria', sortOrder=$sortOrder)"
 }
 
 /**

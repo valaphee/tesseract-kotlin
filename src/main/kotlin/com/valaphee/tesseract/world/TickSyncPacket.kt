@@ -33,7 +33,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class TickSyncPacket(
+class TickSyncPacket(
     val requestTicks: Long,
     val responseTicks: Long
 ) : Packet {
@@ -45,6 +45,8 @@ data class TickSyncPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.tickSync(this)
+
+    override fun toString() = "TickSyncPacket(requestTicks=$requestTicks, responseTicks=$responseTicks)"
 }
 
 /**

@@ -32,7 +32,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class ViolationPacket(
+class ViolationPacket(
     val type: Type,
     val severity: Severity,
     val packetId: Int,
@@ -56,6 +56,8 @@ data class ViolationPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.violation(this)
+
+    override fun toString() = "ViolationPacket(type=$type, severity=$severity, packetId=$packetId, context='$context')"
 }
 
 /**

@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class FogPacket(
+class FogPacket(
     val effects: Array<String>
 ) : Packet {
     override val id get() = 0xA0
@@ -48,18 +48,7 @@ data class FogPacket(
 
     override fun handle(handler: PacketHandler) = handler.fog(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as FogPacket
-
-        if (!effects.contentEquals(other.effects)) return false
-
-        return true
-    }
-
-    override fun hashCode() = effects.contentHashCode()
+    override fun toString() = "FogPacket(effects=${effects.contentToString()})"
 }
 
 /**

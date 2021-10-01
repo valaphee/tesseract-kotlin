@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-data class CacheBlobStatusPacket(
+class CacheBlobStatusPacket(
     val misses: LongArray,
     val hits: LongArray
 ) : Packet {
@@ -50,23 +50,7 @@ data class CacheBlobStatusPacket(
 
     override fun handle(handler: PacketHandler) = handler.cacheBlobStatus(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as CacheBlobStatusPacket
-
-        if (!misses.contentEquals(other.misses)) return false
-        if (!hits.contentEquals(other.hits)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = misses.contentHashCode()
-        result = 31 * result + hits.contentHashCode()
-        return result
-    }
+    override fun toString() = "CacheBlobStatusPacket(misses=${misses.contentToString()}, hits=${hits.contentToString()})"
 }
 
 /**

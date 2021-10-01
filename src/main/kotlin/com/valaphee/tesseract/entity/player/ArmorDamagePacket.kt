@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class ArmorDamagePacket(
+class ArmorDamagePacket(
     val cause: Int,
     val damage: Int,
     val armorSlots: Long
@@ -49,6 +49,8 @@ data class ArmorDamagePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.armorDamage(this)
+
+    override fun toString() = "ArmorDamagePacket(cause=$cause, damage=$damage, armorSlots=$armorSlots)"
 }
 
 /**

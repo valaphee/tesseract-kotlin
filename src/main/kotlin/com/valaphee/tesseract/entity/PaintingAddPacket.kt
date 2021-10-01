@@ -38,7 +38,7 @@ import com.valaphee.tesseract.util.math.Direction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class PaintingAddPacket(
+class PaintingAddPacket(
     val uniqueEntityId: Long,
     val runtimeEntityId: Long,
     val position: Float3,
@@ -101,6 +101,8 @@ data class PaintingAddPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.paintingAdd(this)
+
+    override fun toString() = "PaintingAddPacket(uniqueEntityId=$uniqueEntityId, runtimeEntityId=$runtimeEntityId, position=$position, direction=$direction, painting=$painting)"
 }
 
 /**

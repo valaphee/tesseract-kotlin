@@ -42,7 +42,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class InventorySlotPacket(
+class InventorySlotPacket(
     val windowId: Int,
     val slotId: Int,
     val stack: Stack?
@@ -56,6 +56,8 @@ data class InventorySlotPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.inventorySlot(this)
+
+    override fun toString() = "InventorySlotPacket(windowId=$windowId, slotId=$slotId, stack=$stack)"
 }
 
 /**

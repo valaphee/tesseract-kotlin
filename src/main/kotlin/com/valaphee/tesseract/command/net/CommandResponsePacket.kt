@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class CommandResponsePacket(
+class CommandResponsePacket(
     val origin: Origin,
     val type: Type,
     val successCount: Int,
@@ -61,29 +61,7 @@ data class CommandResponsePacket(
 
     override fun handle(handler: PacketHandler) = handler.commandResponse(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as CommandResponsePacket
-
-        if (origin != other.origin) return false
-        if (type != other.type) return false
-        if (successCount != other.successCount) return false
-        if (!messages.contentEquals(other.messages)) return false
-        if (data != other.data) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = origin.hashCode()
-        result = 31 * result + type.hashCode()
-        result = 31 * result + successCount
-        result = 31 * result + messages.contentHashCode()
-        result = 31 * result + data.hashCode()
-        return result
-    }
+    override fun toString() = "CommandResponsePacket(origin=$origin, type=$type, successCount=$successCount, messages=${messages.contentToString()}, data=$data)"
 }
 
 /**

@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class SoundStopPacket(
+class SoundStopPacket(
     val sound: Sound? = null,
     val soundKey: String? = null
 ) : Packet {
@@ -57,6 +57,8 @@ data class SoundStopPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.soundStop(this)
+
+    override fun toString() = "SoundStopPacket(sound=$sound, soundKey=$soundKey)"
 }
 
 /**

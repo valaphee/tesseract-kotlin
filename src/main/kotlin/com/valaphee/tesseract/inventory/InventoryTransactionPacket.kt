@@ -43,7 +43,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-data class InventoryTransactionPacket(
+class InventoryTransactionPacket(
     val legacySlots: Array<LegacySlot>?,
     val type: Type,
     val usingNetIds: Boolean,
@@ -173,50 +173,7 @@ data class InventoryTransactionPacket(
 
     override fun handle(handler: PacketHandler) = handler.inventoryTransaction(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as InventoryTransactionPacket
-
-        if (legacySlots != null) {
-            if (other.legacySlots == null) return false
-            if (!legacySlots.contentEquals(other.legacySlots)) return false
-        } else if (other.legacySlots != null) return false
-        if (type != other.type) return false
-        if (usingNetIds != other.usingNetIds) return false
-        if (!actions.contentEquals(other.actions)) return false
-        if (actionId != other.actionId) return false
-        if (runtimeEntityId != other.runtimeEntityId) return false
-        if (position != other.position) return false
-        if (auxInt != other.auxInt) return false
-        if (hotbarSlot != other.hotbarSlot) return false
-        if (stackInHand != other.stackInHand) return false
-        if (fromPosition != other.fromPosition) return false
-        if (clickPosition != other.clickPosition) return false
-        if (headPosition != other.headPosition) return false
-        if (blockRuntimeId != other.blockRuntimeId) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = legacySlots?.contentHashCode() ?: 0
-        result = 31 * result + type.hashCode()
-        result = 31 * result + usingNetIds.hashCode()
-        result = 31 * result + actions.contentHashCode()
-        result = 31 * result + actionId
-        result = 31 * result + runtimeEntityId.hashCode()
-        result = 31 * result + (position?.hashCode() ?: 0)
-        result = 31 * result + auxInt
-        result = 31 * result + hotbarSlot
-        result = 31 * result + (stackInHand?.hashCode() ?: 0)
-        result = 31 * result + (fromPosition?.hashCode() ?: 0)
-        result = 31 * result + (clickPosition?.hashCode() ?: 0)
-        result = 31 * result + (headPosition?.hashCode() ?: 0)
-        result = 31 * result + blockRuntimeId
-        return result
-    }
+    override fun toString() = "InventoryTransactionPacket(legacySlots=${legacySlots?.contentToString()}, type=$type, usingNetIds=$usingNetIds, actions=${actions.contentToString()}, actionId=$actionId, runtimeEntityId=$runtimeEntityId, position=$position, auxInt=$auxInt, hotbarSlot=$hotbarSlot, stackInHand=$stackInHand, fromPosition=$fromPosition, clickPosition=$clickPosition, headPosition=$headPosition, blockRuntimeId=$blockRuntimeId)"
 }
 
 /**

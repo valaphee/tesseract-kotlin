@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-data class MapRequestPacket(
+class MapRequestPacket(
     val mapId: Long
 ) : Packet {
     override val id get() = 0x44
@@ -46,6 +46,8 @@ data class MapRequestPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.mapRequest(this)
+
+    override fun toString() = "MapRequestPacket(mapId=$mapId)"
 }
 
 /**

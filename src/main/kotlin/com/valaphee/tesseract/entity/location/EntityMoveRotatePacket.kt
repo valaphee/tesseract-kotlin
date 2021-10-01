@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class EntityMoveRotatePacket(
+class EntityMoveRotatePacket(
     val runtimeEntityId: Long,
     val positionDelta: Int3,
     val position: Float3,
@@ -101,6 +101,8 @@ data class EntityMoveRotatePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.entityMoveRotate(this)
+
+    override fun toString() = "EntityMoveRotatePacket(runtimeEntityId=$runtimeEntityId, positionDelta=$positionDelta, position=$position, rotation=$rotation, headRotationYaw=$headRotationYaw, onGround=$onGround, immediate=$immediate, force=$force)"
 
     companion object {
         internal const val flagHasX = 1 shl 0

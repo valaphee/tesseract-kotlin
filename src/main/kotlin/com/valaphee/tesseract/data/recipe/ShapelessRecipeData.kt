@@ -26,7 +26,10 @@ package com.valaphee.tesseract.data.recipe
 
 import com.valaphee.tesseract.data.DataType
 import com.valaphee.tesseract.data.KeyedData
+import com.valaphee.tesseract.inventory.item.craft.Recipe
+import com.valaphee.tesseract.inventory.item.craft.shapelessRecipe
 import com.valaphee.tesseract.inventory.item.stack.Stack
+import java.util.UUID
 
 /**
  * @author Kevin Ludwig
@@ -38,4 +41,6 @@ class ShapelessRecipeData(
     val ingredients: Array<Stack>,
     val priority: Int = 0,
     val result: Stack
-) : KeyedData()
+) : KeyedData() {
+    fun toRecipe(netId: Int) = shapelessRecipe(Recipe.Type.Shapeless, UUID.nameUUIDFromBytes(key.toByteArray()), key, ingredients as Array<Stack?>, arrayOf(result), tags.first(), priority, netId)
+}

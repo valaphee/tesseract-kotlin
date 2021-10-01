@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class CameraPacket(
+class CameraPacket(
     val cameraUniqueEntityId: Long,
     val uniqueEntityId: Long
 ) : Packet {
@@ -47,6 +47,8 @@ data class CameraPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.camera(this)
+
+    override fun toString() = "CameraPacket(cameraUniqueEntityId=$cameraUniqueEntityId, uniqueEntityId=$uniqueEntityId)"
 }
 
 /**

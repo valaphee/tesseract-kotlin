@@ -32,7 +32,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class EventPacket(
+class EventPacket(
     val uniqueEntityId: Long,
     val type: Int
 ) : Packet {
@@ -45,6 +45,8 @@ data class EventPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.event(this)
+
+    override fun toString() = "EventPacket(uniqueEntityId=$uniqueEntityId, type=$type)"
 }
 
 /**

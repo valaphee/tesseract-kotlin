@@ -48,7 +48,7 @@ import java.util.UUID
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class PlayerListPacket(
+class PlayerListPacket(
     val action: Action,
     val entries: Array<Entry>
 ) : Packet {
@@ -93,23 +93,7 @@ data class PlayerListPacket(
 
     override fun handle(handler: PacketHandler) = handler.playerList(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as PlayerListPacket
-
-        if (action != other.action) return false
-        if (!entries.contentEquals(other.entries)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = action.hashCode()
-        result = 31 * result + entries.contentHashCode()
-        return result
-    }
+    override fun toString() = "PlayerListPacket(action=$action, entries=${entries.contentToString()})"
 }
 
 /**

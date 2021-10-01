@@ -34,7 +34,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class EntityTeleportPacket(
+class EntityTeleportPacket(
     val runtimeEntityId: Long,
     val position: Float3,
     val rotation: Float2,
@@ -55,6 +55,8 @@ data class EntityTeleportPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.entityTeleport(this)
+
+    override fun toString() = "EntityTeleportPacket(runtimeEntityId=$runtimeEntityId, position=$position, rotation=$rotation, headRotationYaw=$headRotationYaw, onGround=$onGround, immediate=$immediate)"
 
     companion object {
         internal const val flagOnGround = 1 shl 0

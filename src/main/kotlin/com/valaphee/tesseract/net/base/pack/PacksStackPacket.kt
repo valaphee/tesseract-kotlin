@@ -39,7 +39,7 @@ import java.util.UUID
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class PacksStackPacket(
+class PacksStackPacket(
     val forcedToAccept: Boolean,
     val behaviorPacks: Array<Pack>,
     val resourcePacks: Array<Pack>,
@@ -81,33 +81,7 @@ data class PacksStackPacket(
 
     override fun handle(handler: PacketHandler) = handler.packsStack(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as PacksStackPacket
-
-        if (forcedToAccept != other.forcedToAccept) return false
-        if (!behaviorPacks.contentEquals(other.behaviorPacks)) return false
-        if (!resourcePacks.contentEquals(other.resourcePacks)) return false
-        if (experimental != other.experimental) return false
-        if (version != other.version) return false
-        if (!experiments.contentEquals(other.experiments)) return false
-        if (experimentsPreviouslyToggled != other.experimentsPreviouslyToggled) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = forcedToAccept.hashCode()
-        result = 31 * result + behaviorPacks.contentHashCode()
-        result = 31 * result + resourcePacks.contentHashCode()
-        result = 31 * result + experimental.hashCode()
-        result = 31 * result + version.hashCode()
-        result = 31 * result + experiments.contentHashCode()
-        result = 31 * result + experimentsPreviouslyToggled.hashCode()
-        return result
-    }
+    override fun toString() = "PacksStackPacket(forcedToAccept=$forcedToAccept, behaviorPacks=${behaviorPacks.contentToString()}, resourcePacks=${resourcePacks.contentToString()}, experimental=$experimental, version='$version', experiments=${experiments.contentToString()}, experimentsPreviouslyToggled=$experimentsPreviouslyToggled)"
 }
 
 /**

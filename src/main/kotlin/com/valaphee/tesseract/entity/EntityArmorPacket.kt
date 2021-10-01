@@ -38,7 +38,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class EntityArmorPacket(
+class EntityArmorPacket(
     val runtimeEntityId: Long,
     val helmet: Stack?,
     val chestplate: Stack?,
@@ -56,6 +56,8 @@ data class EntityArmorPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.entityArmor(this)
+
+    override fun toString() = "EntityArmorPacket(runtimeEntityId=$runtimeEntityId, helmet=$helmet, chestplate=$chestplate, leggings=$leggings, boots=$boots)"
 }
 
 /**

@@ -38,7 +38,7 @@ import com.valaphee.tesseract.util.nbt.NbtOutputStream
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class EntityIdentifiersPacket private constructor(
+class EntityIdentifiersPacket private constructor(
     val data: ByteArray?,
     val tag: CompoundTag?
 ) : Packet {
@@ -53,27 +53,6 @@ data class EntityIdentifiersPacket private constructor(
     }
 
     override fun handle(handler: PacketHandler) = handler.entityIdentifiers(this)
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as EntityIdentifiersPacket
-
-        if (data != null) {
-            if (other.data == null) return false
-            if (!data.contentEquals(other.data)) return false
-        } else if (other.data != null) return false
-        if (tag != other.tag) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = data?.contentHashCode() ?: 0
-        result = 31 * result + (tag?.hashCode() ?: 0)
-        return result
-    }
 
     override fun toString() = "EntityIdentifiersPacket(tag=$tag)"
 }

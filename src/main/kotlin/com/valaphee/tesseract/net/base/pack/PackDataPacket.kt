@@ -37,7 +37,7 @@ import java.util.UUID
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class PackDataPacket(
+class PackDataPacket(
     val packId: UUID,
     val packVersion: String?,
     val maximumChunkSize: Long,
@@ -73,35 +73,7 @@ data class PackDataPacket(
 
     override fun handle(handler: PacketHandler) = handler.packData(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as PackDataPacket
-
-        if (packId != other.packId) return false
-        if (packVersion != other.packVersion) return false
-        if (maximumChunkSize != other.maximumChunkSize) return false
-        if (chunkCount != other.chunkCount) return false
-        if (compressedPackSize != other.compressedPackSize) return false
-        if (!hash.contentEquals(other.hash)) return false
-        if (premium != other.premium) return false
-        if (type != other.type) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = packId.hashCode()
-        result = 31 * result + (packVersion?.hashCode() ?: 0)
-        result = 31 * result + maximumChunkSize.hashCode()
-        result = 31 * result + chunkCount.hashCode()
-        result = 31 * result + compressedPackSize.hashCode()
-        result = 31 * result + hash.contentHashCode()
-        result = 31 * result + premium.hashCode()
-        result = 31 * result + type.hashCode()
-        return result
-    }
+    override fun toString() = "PackDataPacket(packId=$packId, packVersion=$packVersion, maximumChunkSize=$maximumChunkSize, chunkCount=$chunkCount, compressedPackSize=$compressedPackSize, hash=${hash.contentToString()}, premium=$premium, type=$type)"
 }
 
 /**

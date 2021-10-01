@@ -34,7 +34,7 @@ import java.util.UUID
 /**
  * @author Kevin Ludwig
  */
-data class AppearancePacket(
+class AppearancePacket(
     val userId: UUID,
     val appearance: Appearance,
     val newName: String,
@@ -51,6 +51,8 @@ data class AppearancePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.appearance(this)
+
+    override fun toString() = "AppearancePacket(userId=$userId, appearance=$appearance, newName='$newName', oldName='$oldName')"
 }
 
 /**

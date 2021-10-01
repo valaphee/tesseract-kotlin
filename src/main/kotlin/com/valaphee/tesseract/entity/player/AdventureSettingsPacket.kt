@@ -35,7 +35,7 @@ import com.valaphee.tesseract.world.WorldFlag
 /**
  * @author Kevin Ludwig
  */
-data class AdventureSettingsPacket(
+class AdventureSettingsPacket(
     var uniqueEntityId: Long,
     var playerFlags: Collection<PlayerFlag>,
     var permission: Permission,
@@ -55,6 +55,8 @@ data class AdventureSettingsPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.adventureSettings(this)
+
+    override fun toString() = "AdventureSettingsPacket(uniqueEntityId=$uniqueEntityId, playerFlags=$playerFlags, permission=$permission, worldFlags=$worldFlags, rank=$rank, customFlags=$customFlags)"
 }
 
 /**

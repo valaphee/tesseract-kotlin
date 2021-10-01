@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class DimensionPacket(
+class DimensionPacket(
     val dimension: Dimension? = null,
     val position: Float3? = null,
     val respawn: Boolean = false
@@ -50,6 +50,8 @@ data class DimensionPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.dimension(this)
+
+    override fun toString() = "DimensionPacket(dimension=$dimension, position=$position, respawn=$respawn)"
 }
 
 /**

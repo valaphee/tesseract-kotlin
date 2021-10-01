@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-data class CommandPacket(
+class CommandPacket(
     val command: String,
     val origin: Origin,
     val internal: Boolean
@@ -49,6 +49,8 @@ data class CommandPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.command(this)
+
+    override fun toString() = "CommandPacket(command='$command', origin=$origin, internal=$internal)"
 }
 
 /**

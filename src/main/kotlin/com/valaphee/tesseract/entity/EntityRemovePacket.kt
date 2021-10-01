@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class EntityRemovePacket(
+class EntityRemovePacket(
     val uniqueEntityId: Long = 0
 ) : Packet {
     override val id get() = 0x0E
@@ -45,6 +45,8 @@ data class EntityRemovePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.entityRemove(this)
+
+    override fun toString() = "EntityRemovePacket(uniqueEntityId=$uniqueEntityId)"
 }
 
 /**

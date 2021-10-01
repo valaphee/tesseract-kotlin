@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class GameRulesPacket(
+class GameRulesPacket(
     val gameRules: Array<GameRule<*>>
 ) : Packet {
     override val id get() = 0x48
@@ -47,18 +47,7 @@ data class GameRulesPacket(
 
     override fun handle(handler: PacketHandler) = handler.gameRules(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as GameRulesPacket
-
-        if (!gameRules.contentEquals(other.gameRules)) return false
-
-        return true
-    }
-
-    override fun hashCode() = gameRules.contentHashCode()
+    override fun toString() = "GameRulesPacket(gameRules=${gameRules.contentToString()})"
 }
 
 /**

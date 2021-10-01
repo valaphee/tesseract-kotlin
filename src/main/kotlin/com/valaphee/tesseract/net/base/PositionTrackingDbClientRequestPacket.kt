@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-data class PositionTrackingDbClientRequestPacket(
+class PositionTrackingDbClientRequestPacket(
     val action: Action,
     val trackingId: Int
 ) : Packet {
@@ -52,6 +52,8 @@ data class PositionTrackingDbClientRequestPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.positionTrackingDbClientRequest(this)
+
+    override fun toString() = "PositionTrackingDbClientRequestPacket(action=$action, trackingId=$trackingId)"
 }
 
 /**

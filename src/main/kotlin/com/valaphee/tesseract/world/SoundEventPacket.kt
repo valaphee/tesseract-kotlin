@@ -34,7 +34,7 @@ import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
 /**
  * @author Kevin Ludwig
  */
-data class SoundEventPacket(
+class SoundEventPacket(
     val soundEvent: SoundEvent,
     val position: Float3,
     val extraData: Int,
@@ -54,6 +54,8 @@ data class SoundEventPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.soundEvent(this)
+
+    override fun toString() = "SoundEventPacket(soundEvent=$soundEvent, position=$position, extraData=$extraData, identifier='$identifier', babySound=$babySound, relativeVolumeDisabled=$relativeVolumeDisabled)"
 
     companion object {
         internal val soundEvents = Int2ObjectOpenHashBiMap<SoundEvent>().apply {

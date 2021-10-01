@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class BlockUpdateSyncedPacket(
+class BlockUpdateSyncedPacket(
     val position: Int3,
     val runtimeId: Int,
     val flags: Collection<BlockUpdatePacket.Flag>,
@@ -61,6 +61,8 @@ data class BlockUpdateSyncedPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.blockUpdateSynced(this)
+
+    override fun toString() = "BlockUpdateSyncedPacket(position=$position, runtimeId=$runtimeId, flags=$flags, layerId=$layerId, runtimeEntityId=$runtimeEntityId, type=$type)"
 }
 
 /**

@@ -33,7 +33,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class LabTablePacket(
+class LabTablePacket(
     val action: Action,
     val position: Int3,
     val reactionType: ReactionType
@@ -67,6 +67,8 @@ data class LabTablePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.labTable(this)
+
+    override fun toString() = "LabTablePacket(action=$action, position=$position, reactionType=$reactionType)"
 }
 
 /**

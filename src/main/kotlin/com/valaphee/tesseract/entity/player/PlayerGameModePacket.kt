@@ -33,7 +33,7 @@ import com.valaphee.tesseract.world.GameMode
 /**
  * @author Kevin Ludwig
  */
-data class PlayerGameModePacket(
+class PlayerGameModePacket(
     val uniqueEntityId: Long,
     val gameMode: GameMode
 ) : Packet {
@@ -45,13 +45,15 @@ data class PlayerGameModePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.playerGameMode(this)
+
+    override fun toString() = "PlayerGameModePacket(uniqueEntityId=$uniqueEntityId, gameMode=$gameMode)"
 }
 
 /**
  * @author Kevin Ludwig
  */
 object PlayerGameModePacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int): PlayerGameModePacket{
+    override fun read(buffer: PacketBuffer, version: Int): PlayerGameModePacket {
         val gameMode = GameMode.values()[buffer.readVarInt()]
         val uniqueEntityId = buffer.readVarLong()
         return PlayerGameModePacket(uniqueEntityId, gameMode)

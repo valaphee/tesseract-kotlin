@@ -37,7 +37,7 @@ import java.util.UUID
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-data class PacksResponsePacket(
+class PacksResponsePacket(
     val status: Status,
     val packIds: Array<UUID>
 ) : Packet {
@@ -55,23 +55,7 @@ data class PacksResponsePacket(
 
     override fun handle(handler: PacketHandler) = handler.packsResponse(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as PacksResponsePacket
-
-        if (status != other.status) return false
-        if (!packIds.contentEquals(other.packIds)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = status.hashCode()
-        result = 31 * result + packIds.contentHashCode()
-        return result
-    }
+    override fun toString() = "PacksResponsePacket(status=$status, packIds=${packIds.contentToString()})"
 }
 
 /**

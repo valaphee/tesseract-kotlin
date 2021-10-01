@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class ProfilePacket(
+class ProfilePacket(
     val xboxUserId: String
 ) : Packet {
     override val id get() = 0x68
@@ -45,6 +45,8 @@ data class ProfilePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.profile(this)
+
+    override fun toString() = "ProfilePacket(xboxUserId='$xboxUserId')"
 }
 
 /**

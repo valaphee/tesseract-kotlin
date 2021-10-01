@@ -32,7 +32,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class PurchaseReceiptPacket(
+class PurchaseReceiptPacket(
     val offerIds: Array<String>
 ) : Packet {
     override val id get() = 0x5C
@@ -44,18 +44,7 @@ data class PurchaseReceiptPacket(
 
     override fun handle(handler: PacketHandler) = handler.purchaseReceipt(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as PurchaseReceiptPacket
-
-        if (!offerIds.contentEquals(other.offerIds)) return false
-
-        return true
-    }
-
-    override fun hashCode() = offerIds.contentHashCode()
+    override fun toString() = "PurchaseReceiptPacket(offerIds=${offerIds.contentToString()})"
 }
 
 /**

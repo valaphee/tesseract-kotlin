@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class ViewDistancePacket(
+class ViewDistancePacket(
     val distance: Int
 ) : Packet {
     override val id get() = 0x46
@@ -45,6 +45,8 @@ data class ViewDistancePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.viewDistance(this)
+
+    override fun toString() = "ViewDistancePacket(distance=$distance)"
 }
 
 /**

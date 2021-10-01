@@ -42,7 +42,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class InventoryContentPacket(
+class InventoryContentPacket(
     val windowId: Int,
     val content: Array<Stack?>
 ) : Packet {
@@ -56,23 +56,7 @@ data class InventoryContentPacket(
 
     override fun handle(handler: PacketHandler) = handler.inventoryContent(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as InventoryContentPacket
-
-        if (windowId != other.windowId) return false
-        if (!content.contentEquals(other.content)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = windowId
-        result = 31 * result + content.contentHashCode()
-        return result
-    }
+    override fun toString() = "InventoryContentPacket(windowId=$windowId, content=${content.contentToString()})"
 }
 
 /**

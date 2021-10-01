@@ -33,7 +33,7 @@ import java.util.UUID
 /**
  * @author Kevin Ludwig
  */
-data class EmotesPacket(
+class EmotesPacket(
     val runtimeEntityId: Long,
     val pieceIds: Array<UUID>
 ) : Packet {
@@ -47,23 +47,7 @@ data class EmotesPacket(
 
     override fun handle(handler: PacketHandler) = handler.emotes(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as EmotesPacket
-
-        if (runtimeEntityId != other.runtimeEntityId) return false
-        if (!pieceIds.contentEquals(other.pieceIds)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = runtimeEntityId.hashCode()
-        result = 31 * result + pieceIds.contentHashCode()
-        return result
-    }
+    override fun toString() = "EmotesPacket(runtimeEntityId=$runtimeEntityId, pieceIds=${pieceIds.contentToString()})"
 }
 
 /**

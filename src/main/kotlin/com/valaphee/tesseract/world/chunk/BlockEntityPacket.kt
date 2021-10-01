@@ -35,7 +35,7 @@ import com.valaphee.tesseract.util.nbt.CompoundTag
 /**
  * @author Kevin Ludwig
  */
-data class BlockEntityPacket(
+class BlockEntityPacket(
     val position: Int3,
     val tag: CompoundTag?
 ) : Packet {
@@ -47,6 +47,8 @@ data class BlockEntityPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.blockEntity(this)
+
+    override fun toString() = "BlockEntityPacket(position=$position, tag=$tag)"
 }
 
 /**

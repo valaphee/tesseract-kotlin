@@ -36,7 +36,7 @@ import com.valaphee.tesseract.util.nbt.Tag
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class StructureTemplateDataExportResponsePacket(
+class StructureTemplateDataExportResponsePacket(
     val name: String,
     val save: Boolean,
     val tag: Tag?,
@@ -56,6 +56,8 @@ data class StructureTemplateDataExportResponsePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.structureTemplateDataExportResponse(this)
+
+    override fun toString() = "StructureTemplateDataExportResponsePacket(name='$name', save=$save, tag=$tag, type=$type)"
 }
 
 /**

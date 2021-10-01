@@ -33,7 +33,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class EntityVelocityPacket(
+class EntityVelocityPacket(
     val runtimeEntityId: Long,
     val velocity: Float3
 ) : Packet {
@@ -45,6 +45,8 @@ data class EntityVelocityPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.entityVelocity(this)
+
+    override fun toString() = "EntityVelocityPacket(runtimeEntityId=$runtimeEntityId, velocity=$velocity)"
 }
 
 /**

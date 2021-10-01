@@ -58,7 +58,7 @@ import java.util.Base64
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-data class SubLoginPacket(
+class SubLoginPacket(
     val publicKey: PublicKey,
     val privateKey: PrivateKey?,
     val authExtra: AuthExtra,
@@ -95,6 +95,8 @@ data class SubLoginPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.subLogin(this)
+
+    override fun toString() = "SubLoginPacket(publicKey=$publicKey, privateKey=$privateKey, authExtra=$authExtra, user=$user, verified=$verified)"
 
     companion object {
         private val base64Encoder: Base64.Encoder = Base64.getEncoder()

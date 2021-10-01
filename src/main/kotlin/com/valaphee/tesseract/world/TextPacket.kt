@@ -33,7 +33,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class TextPacket(
+class TextPacket(
     val type: Type,
     val needsTranslation: Boolean,
     val sourceName: String?,
@@ -71,36 +71,7 @@ data class TextPacket(
 
     override fun handle(handler: PacketHandler) = handler.text(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as TextPacket
-
-        if (type != other.type) return false
-        if (needsTranslation != other.needsTranslation) return false
-        if (sourceName != other.sourceName) return false
-        if (message != other.message) return false
-        if (arguments != null) {
-            if (other.arguments == null) return false
-            if (!arguments.contentEquals(other.arguments)) return false
-        } else if (other.arguments != null) return false
-        if (xboxUserId != other.xboxUserId) return false
-        if (platformChatId != other.platformChatId) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = type.hashCode()
-        result = 31 * result + needsTranslation.hashCode()
-        result = 31 * result + (sourceName?.hashCode() ?: 0)
-        result = 31 * result + message.hashCode()
-        result = 31 * result + (arguments?.contentHashCode() ?: 0)
-        result = 31 * result + xboxUserId.hashCode()
-        result = 31 * result + platformChatId.hashCode()
-        return result
-    }
+    override fun toString() = "TextPacket(type=$type, needsTranslation=$needsTranslation, sourceName=$sourceName, message='$message', arguments=${arguments?.contentToString()}, xboxUserId='$xboxUserId', platformChatId='$platformChatId')"
 }
 
 /**

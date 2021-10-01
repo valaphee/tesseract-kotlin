@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class TimePacket(
+class TimePacket(
     val time: Int
 ) : Packet {
     override val id get() = 0x0A
@@ -45,6 +45,8 @@ data class TimePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.time(this)
+
+    override fun toString() = "TimePacket(time=$time)"
 }
 
 /**

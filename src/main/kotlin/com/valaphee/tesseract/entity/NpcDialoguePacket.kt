@@ -32,7 +32,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class NpcDialoguePacket(
+class NpcDialoguePacket(
     val uniqueEntityId: Long,
     val action: Action,
     val dialogue: String,
@@ -57,6 +57,8 @@ data class NpcDialoguePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.npcDialogue(this)
+
+    override fun toString() = "NpcDialoguePacket(uniqueEntityId=$uniqueEntityId, action=$action, dialogue='$dialogue', sceneName='$sceneName', npcName='$npcName', actionJson='$actionJson')"
 }
 
 /**

@@ -39,7 +39,7 @@ import java.util.UUID
 /**
  * @author Kevin Ludwig
  */
-data class CraftingEventPacket(
+class CraftingEventPacket(
     val windowId: Int,
     val type: Type,
     val recipeId: UUID,
@@ -64,29 +64,7 @@ data class CraftingEventPacket(
 
     override fun handle(handler: PacketHandler) = handler.craftingEvent(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as CraftingEventPacket
-
-        if (windowId != other.windowId) return false
-        if (type != other.type) return false
-        if (recipeId != other.recipeId) return false
-        if (!inputs.contentEquals(other.inputs)) return false
-        if (!outputs.contentEquals(other.outputs)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = windowId
-        result = 31 * result + type.hashCode()
-        result = 31 * result + recipeId.hashCode()
-        result = 31 * result + inputs.contentHashCode()
-        result = 31 * result + outputs.contentHashCode()
-        return result
-    }
+    override fun toString() = "CraftingEventPacket(windowId=$windowId, type=$type, recipeId=$recipeId, inputs=${inputs.contentToString()}, outputs=${outputs.contentToString()})"
 }
 
 /**

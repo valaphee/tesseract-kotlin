@@ -32,7 +32,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class DifficultyPacket(
+class DifficultyPacket(
     val difficulty: Difficulty
 ) : Packet {
     override val id get() = 0x3C
@@ -42,6 +42,8 @@ data class DifficultyPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.difficulty(this)
+
+    override fun toString() = "DifficultyPacket(difficulty=$difficulty)"
 }
 
 /**

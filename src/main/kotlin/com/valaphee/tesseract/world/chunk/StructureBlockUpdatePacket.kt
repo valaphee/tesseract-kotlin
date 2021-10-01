@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-data class StructureBlockUpdatePacket(
+class StructureBlockUpdatePacket(
     val position: Int3,
     val name: String,
     val metadata: String,
@@ -70,6 +70,8 @@ data class StructureBlockUpdatePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.structureBlockUpdate(this)
+
+    override fun toString() = "StructureBlockUpdatePacket(position=$position, name='$name', metadata='$metadata', includingPlayers=$includingPlayers, showBoundingBox=$showBoundingBox, mode=$mode, settings=$settings, redstoneSaveMode=$redstoneSaveMode, powered=$powered)"
 }
 
 /**

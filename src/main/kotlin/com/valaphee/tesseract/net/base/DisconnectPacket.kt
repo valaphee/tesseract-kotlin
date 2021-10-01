@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class DisconnectPacket(
+class DisconnectPacket(
     val message: String? = null
 ) : Packet {
     override val id get() = 0x05
@@ -48,6 +48,8 @@ data class DisconnectPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.disconnect(this)
+
+    override fun toString() = "DisconnectPacket(message=$message)"
 }
 
 /**

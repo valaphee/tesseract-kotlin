@@ -33,7 +33,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class MapCreateLockedCopyPacket(
+class MapCreateLockedCopyPacket(
     val mapId: Long,
     val newMapId: Long
 ) : Packet {
@@ -45,6 +45,8 @@ data class MapCreateLockedCopyPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.mapCreateLockedCopy(this)
+
+    override fun toString() = "MapCreateLockedCopyPacket(mapId=$mapId, newMapId=$newMapId)"
 }
 
 /**

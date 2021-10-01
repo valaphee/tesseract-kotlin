@@ -33,7 +33,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class HotbarPacket(
+class HotbarPacket(
     val hotbarSlot: Int,
     val windowId: Int,
     val selectHotbarSlot: Boolean
@@ -47,6 +47,8 @@ data class HotbarPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.hotbar(this)
+
+    override fun toString() = "HotbarPacket(hotbarSlot=$hotbarSlot, windowId=$windowId, selectHotbarSlot=$selectHotbarSlot)"
 }
 
 /**

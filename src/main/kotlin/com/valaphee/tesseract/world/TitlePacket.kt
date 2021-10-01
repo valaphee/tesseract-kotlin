@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class TitlePacket(
+class TitlePacket(
     val action: Action,
     val text: String,
     val fadeInTime: Int,
@@ -62,6 +62,8 @@ data class TitlePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.title(this)
+
+    override fun toString() = "TitlePacket(action=$action, text='$text', fadeInTime=$fadeInTime, stayTime=$stayTime, fadeOutTime=$fadeOutTime, xboxUserId='$xboxUserId', platformChatId='$platformChatId')"
 }
 
 /**

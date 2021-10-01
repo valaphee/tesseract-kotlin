@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-data class CacheStatusPacket(
+class CacheStatusPacket(
     val supported: Boolean
 ) : Packet {
     override val id get() = 0x81
@@ -45,6 +45,8 @@ data class CacheStatusPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.cacheStatus(this)
+
+    override fun toString() = "CacheStatusPacket(supported=$supported)"
 }
 
 /**

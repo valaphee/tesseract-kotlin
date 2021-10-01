@@ -58,7 +58,7 @@ import java.util.Base64
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-data class LoginPacket(
+class LoginPacket(
     val protocolVersion: Int,
     val publicKey: PublicKey,
     val privateKey: PrivateKey?,
@@ -97,6 +97,8 @@ data class LoginPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.login(this)
+
+    override fun toString() = "LoginPacket(protocolVersion=$protocolVersion, publicKey=$publicKey, privateKey=$privateKey, authExtra=$authExtra, user=$user, verified=$verified)"
 
     companion object {
         private val base64Encoder: Base64.Encoder = Base64.getEncoder()

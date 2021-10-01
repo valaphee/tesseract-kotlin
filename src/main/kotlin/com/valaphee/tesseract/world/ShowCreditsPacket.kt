@@ -33,7 +33,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class ShowCreditsPacket(
+class ShowCreditsPacket(
     val runtimeEntityId: Long,
     val status: Status
 ) : Packet {
@@ -49,6 +49,8 @@ data class ShowCreditsPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.showCredits(this)
+
+    override fun toString() = "ShowCreditsPacket(runtimeEntityId=$runtimeEntityId, status=$status)"
 }
 
 /**

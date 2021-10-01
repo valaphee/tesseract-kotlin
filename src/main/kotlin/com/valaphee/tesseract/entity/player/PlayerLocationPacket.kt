@@ -34,7 +34,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class PlayerLocationPacket(
+class PlayerLocationPacket(
     val runtimeEntityId: Long,
     val position: Float3,
     val rotation: Float2,
@@ -72,6 +72,8 @@ data class PlayerLocationPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.playerLocation(this)
+
+    override fun toString() = "PlayerLocationPacket(runtimeEntityId=$runtimeEntityId, position=$position, rotation=$rotation, headRotationYaw=$headRotationYaw, mode=$mode, onGround=$onGround, drivingRuntimeEntityId=$drivingRuntimeEntityId, teleportationCause=$teleportationCause, entityTypeId=$entityTypeId, tick=$tick)"
 }
 
 /**

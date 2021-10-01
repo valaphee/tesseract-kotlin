@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class ObjectiveRemovePacket(
+class ObjectiveRemovePacket(
     val name: String
 ) : Packet {
     override val id get() = 0x6A
@@ -46,6 +46,8 @@ data class ObjectiveRemovePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.objectiveRemove(this)
+
+    override fun toString() = "ObjectiveRemovePacket(name='$name')"
 }
 
 /**

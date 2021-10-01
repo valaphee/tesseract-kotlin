@@ -37,7 +37,7 @@ import com.valaphee.tesseract.util.ByteBufStringReader
 /**
  * @author Kevin Ludwig
  */
-data class FormResponsePacket(
+class FormResponsePacket(
     val formId: Int,
     val json: JsonElement
 ) : Packet {
@@ -49,6 +49,8 @@ data class FormResponsePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.formResponse(this)
+
+    override fun toString() = "FormResponsePacket(formId=$formId, json=$json)"
 }
 
 /**

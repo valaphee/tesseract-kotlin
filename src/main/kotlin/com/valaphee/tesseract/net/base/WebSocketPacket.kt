@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class WebSocketPacket(
+class WebSocketPacket(
     val url: String
 ) : Packet {
     override val id get() = 0x5F
@@ -45,6 +45,8 @@ data class WebSocketPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.webSocket(this)
+
+    override fun toString() = "WebSocketPacket(url='$url')"
 }
 
 /**

@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class ChunkPublishPacket(
+class ChunkPublishPacket(
     val position: Int3,
     val radius: Int
 ) : Packet {
@@ -49,6 +49,8 @@ data class ChunkPublishPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.chunkPublish(this)
+
+    override fun toString() = "ChunkPublishPacket(position=$position, radius=$radius)"
 }
 
 /**

@@ -42,6 +42,8 @@ object ServerSettingsRequestPacket : Packet {
     override fun write(buffer: PacketBuffer, version: Int) = Unit
 
     override fun handle(handler: PacketHandler) = handler.serverSettingsRequest(this)
+
+    override fun toString() = "ServerSettingsRequestPacket()"
 }
 
 /**

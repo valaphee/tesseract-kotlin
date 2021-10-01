@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-data class SteerPacket(
+class SteerPacket(
     val move: Float2,
     val jumping: Boolean,
     val sneaking: Boolean
@@ -51,6 +51,8 @@ data class SteerPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.steer(this)
+
+    override fun toString() = "SteerPacket(move=$move, jumping=$jumping, sneaking=$sneaking)"
 }
 
 /**

@@ -32,7 +32,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class LatencyPacket(
+class LatencyPacket(
     val timestamp: Long,
     val fromServer: Boolean
 ) : Packet {
@@ -44,6 +44,8 @@ data class LatencyPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.latency(this)
+
+    override fun toString() = "LatencyPacket(timestamp=$timestamp, fromServer=$fromServer)"
 }
 
 /**

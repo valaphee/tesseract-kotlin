@@ -37,7 +37,7 @@ import com.valaphee.tesseract.util.nbt.Tag
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class EquipmentPacket(
+class EquipmentPacket(
     val windowId: Int,
     val type: WindowType,
     val slotCount: Int,
@@ -55,6 +55,8 @@ data class EquipmentPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.equipment(this)
+
+    override fun toString() = "EquipmentPacket(windowId=$windowId, type=$type, slotCount=$slotCount, uniqueEntityId=$uniqueEntityId, tag=$tag)"
 }
 
 /**

@@ -33,7 +33,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class InputCorrectPacket(
+class InputCorrectPacket(
     val position: Float3,
     val positionDelta: Float3,
     val onGround: Boolean,
@@ -49,6 +49,8 @@ data class InputCorrectPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.inputCorrect(this)
+
+    override fun toString() = "InputCorrectPacket(position=$position, positionDelta=$positionDelta, onGround=$onGround, tick=$tick)"
 }
 
 /**

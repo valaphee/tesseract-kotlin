@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class SimulationPacket(
+class SimulationPacket(
     val type: Type
 ) : Packet {
     enum class Type {
@@ -49,6 +49,8 @@ data class SimulationPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.simulation(this)
+
+    override fun toString() = "SimulationPacket(type=$type)"
 }
 
 /**

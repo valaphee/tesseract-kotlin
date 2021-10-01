@@ -32,7 +32,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class SimpleEventPacket(
+class SimpleEventPacket(
     val event: Event
 ) : Packet {
     enum class Event {
@@ -46,6 +46,8 @@ data class SimpleEventPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.simpleEvent(this)
+
+    override fun toString() = "SimpleEventPacket(event=$event)"
 }
 
 /**

@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class EnchantOptionsPacket(
+class EnchantOptionsPacket(
     val options: Array<Option>
 ) : Packet {
     data class Slot(
@@ -112,18 +112,7 @@ data class EnchantOptionsPacket(
 
     override fun handle(handler: PacketHandler) = handler.enchantOptions(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as EnchantOptionsPacket
-
-        if (!options.contentEquals(other.options)) return false
-
-        return true
-    }
-
-    override fun hashCode() = options.contentHashCode()
+    override fun toString() = "EnchantOptionsPacket(options=${options.contentToString()})"
 }
 
 /**

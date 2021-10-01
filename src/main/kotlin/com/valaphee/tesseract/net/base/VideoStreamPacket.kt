@@ -35,13 +35,13 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class VideoStreamPacket(
+class VideoStreamPacket(
     val url: String,
     val screenshotFrequency: Float,
     val action: Action,
     val width: Int,
     val height: Int
-) : Packet{
+) : Packet {
     enum class Action {
         Open, Close
     }
@@ -57,6 +57,8 @@ data class VideoStreamPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.videoStream(this)
+
+    override fun toString() = "VideoStreamPacket(url='$url', screenshotFrequency=$screenshotFrequency, action=$action, width=$width, height=$height)"
 }
 
 /**

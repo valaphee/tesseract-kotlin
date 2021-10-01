@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class EntityEffectPacket(
+class EntityEffectPacket(
     val runtimeEntityId: Long,
     val action: Action,
     val effect: Effect,
@@ -62,6 +62,8 @@ data class EntityEffectPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.entityEffect(this)
+
+    override fun toString() = "EntityEffectPacket(runtimeEntityId=$runtimeEntityId, action=$action, effect=$effect, amplifier=$amplifier, particles=$particles, duration=$duration)"
 }
 
 /**

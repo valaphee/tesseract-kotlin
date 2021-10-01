@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class BlockUpdatesSyncedPacket(
+class BlockUpdatesSyncedPacket(
     val chunkSection: Int3,
     val updates1: Array<Update>,
     val updates2: Array<Update>
@@ -74,25 +74,7 @@ data class BlockUpdatesSyncedPacket(
 
     override fun handle(handler: PacketHandler) = handler.blockUpdatesSynced(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as BlockUpdatesSyncedPacket
-
-        if (chunkSection != other.chunkSection) return false
-        if (!updates1.contentEquals(other.updates1)) return false
-        if (!updates2.contentEquals(other.updates2)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = chunkSection.hashCode()
-        result = 31 * result + updates1.contentHashCode()
-        result = 31 * result + updates2.contentHashCode()
-        return result
-    }
+    override fun toString() = "BlockUpdatesSyncedPacket(chunkSection=$chunkSection, updates1=${updates1.contentToString()}, updates2=${updates2.contentToString()})"
 }
 
 /**

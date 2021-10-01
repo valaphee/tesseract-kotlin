@@ -40,7 +40,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class CreativeInventoryPacket(
+class CreativeInventoryPacket(
     val content: Array<Stack?>
 ) : Packet {
     override val id get() = 0x91
@@ -69,6 +69,8 @@ data class CreativeInventoryPacket(
     }
 
     override fun hashCode() = content.contentHashCode()
+
+    override fun toString() = "CreativeInventoryPacket(content=${content.contentToString()})"
 }
 
 /**

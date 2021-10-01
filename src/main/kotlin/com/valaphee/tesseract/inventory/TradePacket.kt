@@ -37,7 +37,7 @@ import com.valaphee.tesseract.util.nbt.Tag
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class TradePacket(
+class TradePacket(
     val windowId: Int,
     val type: WindowType,
     val experience: Int,
@@ -65,6 +65,8 @@ data class TradePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.trade(this)
+
+    override fun toString() = "TradePacket(windowId=$windowId, type=$type, experience=$experience, level=$level, uniqueEntityId=$uniqueEntityId, playerUniqueEntityId=$playerUniqueEntityId, title='$title', v2=$v2, restock=$restock, tag=$tag)"
 }
 
 /**

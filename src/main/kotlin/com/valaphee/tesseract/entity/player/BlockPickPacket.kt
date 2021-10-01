@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-data class BlockPickPacket(
+class BlockPickPacket(
     var position: Int3,
     var withEntity: Boolean,
     var hotbarSlot: Int
@@ -51,6 +51,8 @@ data class BlockPickPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.blockPick(this)
+
+    override fun toString() = "BlockPickPacket(position=$position, withEntity=$withEntity, hotbarSlot=$hotbarSlot)"
 }
 
 /**

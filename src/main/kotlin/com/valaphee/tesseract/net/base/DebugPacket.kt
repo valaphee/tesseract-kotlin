@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class DebugPacket(
+class DebugPacket(
     val uniqueEntityId: Long,
     val data: String
 ) : Packet {
@@ -47,6 +47,8 @@ data class DebugPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.debug(this)
+
+    override fun toString() = "DebugPacket(uniqueEntityId=$uniqueEntityId, data='$data')"
 }
 
 /**

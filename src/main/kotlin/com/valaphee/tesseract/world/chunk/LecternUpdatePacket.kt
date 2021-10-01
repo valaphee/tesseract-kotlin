@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-data class LecternUpdatePacket(
+class LecternUpdatePacket(
     val page: Int,
     val totalPages: Int,
     val position: Int3,
@@ -52,6 +52,8 @@ data class LecternUpdatePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.lecternUpdate(this)
+
+    override fun toString() = "LecternUpdatePacket(page=$page, totalPages=$totalPages, position=$position, droppingBook=$droppingBook)"
 }
 
 /**

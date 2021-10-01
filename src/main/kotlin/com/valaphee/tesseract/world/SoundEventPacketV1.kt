@@ -33,7 +33,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class SoundEventPacketV1(
+class SoundEventPacketV1(
     val soundEvent: SoundEvent,
     val position: Float3,
     val extraData: Int,
@@ -53,6 +53,8 @@ data class SoundEventPacketV1(
     }
 
     override fun handle(handler: PacketHandler) = handler.soundEventV1(this)
+
+    override fun toString() = "SoundEventPacketV1(soundEvent=$soundEvent, position=$position, extraData=$extraData, pitch=$pitch, babySound=$babySound, relativeVolumeDisabled=$relativeVolumeDisabled)"
 }
 
 /**

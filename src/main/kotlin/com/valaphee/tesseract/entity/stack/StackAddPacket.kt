@@ -42,7 +42,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class StackAddPacket(
+class StackAddPacket(
     val uniqueEntityId: Long,
     val runtimeEntityId: Long,
     val stack: Stack?,
@@ -64,6 +64,8 @@ data class StackAddPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.stackAdd(this)
+
+    override fun toString() = "StackAddPacket(uniqueEntityId=$uniqueEntityId, runtimeEntityId=$runtimeEntityId, stack=$stack, position=$position, velocity=$velocity, metadata=$metadata, fromFishing=$fromFishing)"
 }
 
 /**

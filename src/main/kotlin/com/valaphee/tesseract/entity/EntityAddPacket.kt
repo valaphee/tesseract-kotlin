@@ -39,7 +39,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class EntityAddPacket(
+class EntityAddPacket(
     val uniqueEntityId: Long,
     val runtimeEntityId: Long,
     val type: String,
@@ -69,39 +69,7 @@ data class EntityAddPacket(
 
     override fun handle(handler: PacketHandler) = handler.entityAdd(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as EntityAddPacket
-
-        if (uniqueEntityId != other.uniqueEntityId) return false
-        if (runtimeEntityId != other.runtimeEntityId) return false
-        if (type != other.type) return false
-        if (position != other.position) return false
-        if (velocity != other.velocity) return false
-        if (rotation != other.rotation) return false
-        if (headRotationYaw != other.headRotationYaw) return false
-        if (attributes != other.attributes) return false
-        if (metadata != other.metadata) return false
-        if (!links.contentEquals(other.links)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = uniqueEntityId.hashCode()
-        result = 31 * result + runtimeEntityId.hashCode()
-        result = 31 * result + type.hashCode()
-        result = 31 * result + position.hashCode()
-        result = 31 * result + velocity.hashCode()
-        result = 31 * result + rotation.hashCode()
-        result = 31 * result + headRotationYaw.hashCode()
-        result = 31 * result + attributes.hashCode()
-        result = 31 * result + metadata.hashCode()
-        result = 31 * result + links.contentHashCode()
-        return result
-    }
+    override fun toString() = "EntityAddPacket(uniqueEntityId=$uniqueEntityId, runtimeEntityId=$runtimeEntityId, type='$type', position=$position, velocity=$velocity, rotation=$rotation, headRotationYaw=$headRotationYaw, attributes=$attributes, metadata=$metadata, links=${links.contentToString()})"
 }
 
 /**

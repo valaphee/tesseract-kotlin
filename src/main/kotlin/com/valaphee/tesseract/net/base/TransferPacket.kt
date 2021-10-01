@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class TransferPacket(
+class TransferPacket(
     val host: String,
     val port: Int
 ) : Packet {
@@ -48,6 +48,8 @@ data class TransferPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.transfer(this)
+
+    override fun toString() = "TransferPacket(host='$host', port=$port)"
 }
 
 /**

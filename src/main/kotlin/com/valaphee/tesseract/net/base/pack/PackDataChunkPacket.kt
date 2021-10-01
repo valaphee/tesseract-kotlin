@@ -38,7 +38,7 @@ import java.util.UUID
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class PackDataChunkPacket(
+class PackDataChunkPacket(
     val packId: UUID,
     val packVersion: String?,
     val chunkIndex: Long,
@@ -56,6 +56,8 @@ data class PackDataChunkPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.packDataChunk(this)
+
+    override fun toString() = "PackDataChunkPacket(packId=$packId, packVersion=$packVersion, chunkIndex=$chunkIndex, progress=$progress, data=$data)"
 }
 
 /**

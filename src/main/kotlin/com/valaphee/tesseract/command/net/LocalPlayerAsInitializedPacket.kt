@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-data class LocalPlayerAsInitializedPacket(
+class LocalPlayerAsInitializedPacket(
     val runtimeEntityId: Long
 ) : Packet {
     override val id get() = 0x71
@@ -45,6 +45,8 @@ data class LocalPlayerAsInitializedPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.localPlayerAsInitialized(this)
+
+    override fun toString() = "LocalPlayerAsInitializedPacket(runtimeEntityId=$runtimeEntityId)"
 }
 
 /**

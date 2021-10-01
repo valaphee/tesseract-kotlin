@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-data class ExperienceOrbAddPacket(
+class ExperienceOrbAddPacket(
     val position: Float3,
     val amount: Int
 ) : Packet {
@@ -49,6 +49,8 @@ data class ExperienceOrbAddPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.experienceOrbAdd(this)
+
+    override fun toString() = "ExperienceOrbAddPacket(position=$position, amount=$amount)"
 }
 
 /**

@@ -42,9 +42,10 @@ import it.unimi.dsi.fastutil.ints.Int2ShortMaps
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class ChunkPacket(
+class ChunkPacket private constructor(
     val position: Int2,
     val blockStorage: BlockStorage,
+    val biomes: ByteArray?,
     val blockExtraData: Int2ShortMap,
     val blockEntities: Array<CompoundTag>,
     val cache: Boolean,
@@ -52,9 +53,9 @@ data class ChunkPacket(
 ) : Packet {
     override val id get() = 0x3A
 
-    constructor(position: Int2, blockStorage: BlockStorage, blockExtraData: Int2ShortMap, blockEntities: Array<CompoundTag>) : this(position, blockStorage, blockExtraData, blockEntities, false, null)
+    constructor(position: Int2, blockStorage: BlockStorage, biomes: ByteArray, blockExtraData: Int2ShortMap, blockEntities: Array<CompoundTag>) : this(position, blockStorage, biomes, blockExtraData, blockEntities, false, null)
 
-    constructor(position: Int2, blockStorage: BlockStorage, blockExtraData: Int2ShortMap, blockEntities: Array<CompoundTag>, blobIds: LongArray) : this(position, blockStorage, blockExtraData, blockEntities, true, blobIds)
+    constructor(position: Int2, blockStorage: BlockStorage, blockExtraData: Int2ShortMap, blockEntities: Array<CompoundTag>, blobIds: LongArray) : this(position, blockStorage, null, blockExtraData, blockEntities, true, blobIds)
 
     override fun write(buffer: PacketBuffer, version: Int) {
         val (x, z) = position
@@ -72,7 +73,7 @@ data class ChunkPacket(
         buffer.writeZero(PacketBuffer.MaximumVarUIntLength)
         if (!cache) {
             repeat(sectionCount) { i -> blockStorage.sections[i].writeToBuffer(buffer) }
-            buffer.writeBytes(ByteArray(BlockStorage.XZSize * BlockStorage.XZSize))
+            buffer.writeBytes(biomes!!)
         }
         buffer.writeByte(0)
         buffer.writeVarInt(blockExtraData.size)
@@ -86,30 +87,7 @@ data class ChunkPacket(
 
     override fun handle(handler: PacketHandler) = handler.chunk(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as ChunkPacket
-
-        if (position != other.position) return false
-        if (blockStorage != other.blockStorage) return false
-        if (cache != other.cache) return false
-        if (blobIds != null) {
-            if (other.blobIds == null) return false
-            if (!blobIds.contentEquals(other.blobIds)) return false
-        } else if (other.blobIds != null) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = position.hashCode()
-        result = 31 * result + blockStorage.hashCode()
-        result = 31 * result + cache.hashCode()
-        result = 31 * result + (blobIds?.contentHashCode() ?: 0)
-        return result
-    }
+    override fun toString() = "ChunkPacket(position=$position, blockStorage=$blockStorage, biomes=${biomes?.contentToString()}, blockExtraData=$blockExtraData, blockEntities=${blockEntities.contentToString()}, cache=$cache, blobIds=${blobIds?.contentToString()})"
 }
 
 /**
@@ -120,17 +98,20 @@ object ChunkPacketReader : PacketReader {
         val position = Int2(buffer.readVarInt(), buffer.readVarInt())
         val sectionCount = buffer.readVarUInt()
         val cache = buffer.readBoolean()
-        val blobIds = if (cache) LongArray(buffer.readVarUInt()) { buffer.readLongLE() } else null
-        buffer.readVarUInt()
-        val blockStorage: BlockStorage
-        if (!cache) {
-
-            blockStorage = BlockStorage(buffer.blockStates.getKey(airKey), Array(sectionCount) { buffer.readSection(buffer.blockStates.getKey(airKey)) })
-            buffer.readBytes(ByteArray(BlockStorage.XZSize * BlockStorage.XZSize))
-        } else blockStorage = BlockStorage(buffer.blockStates.getKey(airKey), sectionCount)
-        buffer.readByte()
-        /*val blockExtraData = Int2ShortOpenHashMap().apply { repeat(buffer.readVarInt()) { this[buffer.readVarInt()] = buffer.readShortLE() } }*/
-        return ChunkPacket(position, blockStorage, Int2ShortMaps.EMPTY_MAP, emptyArray(), cache, blobIds)
+        if (cache) {
+            val blobIds = LongArray(buffer.readVarUInt()) { buffer.readLongLE() }
+            buffer.readVarUInt()
+            val blockStorage = BlockStorage(buffer.blockStates.getKey(airKey), sectionCount)
+            buffer.readByte()
+            /*val blockExtraData = Int2ShortOpenHashMap().apply { repeat(buffer.readVarInt()) { this[buffer.readVarInt()] = buffer.readShortLE() } }*/
+            return ChunkPacket(position, blockStorage, Int2ShortMaps.EMPTY_MAP, emptyArray(), blobIds)
+        } else {
+            val blockStorage = BlockStorage(buffer.blockStates.getKey(airKey), Array(sectionCount) { buffer.readSection(buffer.blockStates.getKey(airKey)) })
+            val biomes = buffer.readBytes(ByteArray(BlockStorage.XZSize * BlockStorage.XZSize)).array()
+            buffer.readByte()
+            /*val blockExtraData = Int2ShortOpenHashMap().apply { repeat(buffer.readVarInt()) { this[buffer.readVarInt()] = buffer.readShortLE() } }*/
+            return ChunkPacket(position, blockStorage, biomes, Int2ShortMaps.EMPTY_MAP, emptyArray())
+        }
     }
 
     private const val airKey = "minecraft:air"

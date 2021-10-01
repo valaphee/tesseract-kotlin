@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-data class BookEditPacket(
+class BookEditPacket(
     val action: Action,
     val slotId: Int,
     val pageNumber: Int,
@@ -75,6 +75,8 @@ data class BookEditPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.bookEdit(this)
+
+    override fun toString() = "BookEditPacket(action=$action, slotId=$slotId, pageNumber=$pageNumber, text=$text, otherPageNumber=$otherPageNumber, title=$title, photoName=$photoName, author=$author, xboxUserId=$xboxUserId)"
 }
 
 /**

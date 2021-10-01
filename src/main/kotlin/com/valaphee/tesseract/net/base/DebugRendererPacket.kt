@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class DebugRendererPacket(
+class DebugRendererPacket(
     val type: Type,
     val markerText: String?,
     val markerPosition: Float3?,
@@ -67,7 +67,10 @@ data class DebugRendererPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.debugRenderer(this)
+
+    override fun toString() = "DebugRendererPacket(type=$type, markerText=$markerText, markerPosition=$markerPosition, markerColor=$markerColor, markerDuration=$markerDuration)"
 }
+
 /**
  * @author Kevin Ludwig
  */

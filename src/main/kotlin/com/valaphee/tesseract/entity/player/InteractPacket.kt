@@ -33,7 +33,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class InteractPacket(
+class InteractPacket(
     val action: Action,
     val runtimeEntityId: Long,
     val mousePosition: Float3?
@@ -51,6 +51,8 @@ data class InteractPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.interact(this)
+
+    override fun toString() = "InteractPacket(action=$action, runtimeEntityId=$runtimeEntityId, mousePosition=$mousePosition)"
 }
 
 /**

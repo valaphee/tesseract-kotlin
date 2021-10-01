@@ -38,7 +38,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class EntityEquipmentPacket(
+class EntityEquipmentPacket(
     val runtimeEntityId: Long,
     val stack: Stack?,
     val slotId: Int,
@@ -56,6 +56,8 @@ data class EntityEquipmentPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.entityEquipment(this)
+
+    override fun toString() = "EntityEquipmentPacket(runtimeEntityId=$runtimeEntityId, stack=$stack, slotId=$slotId, hotbarSlot=$hotbarSlot, windowId=$windowId)"
 }
 
 /**

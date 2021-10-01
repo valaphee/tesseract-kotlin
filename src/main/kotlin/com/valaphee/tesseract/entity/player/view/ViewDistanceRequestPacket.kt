@@ -32,7 +32,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class ViewDistanceRequestPacket(
+class ViewDistanceRequestPacket(
     val distance: Int = 0
 ) : Packet {
     override val id get() = 0x45
@@ -42,6 +42,8 @@ data class ViewDistanceRequestPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.viewDistanceRequest(this)
+
+    override fun toString() = "ViewDistanceRequestPacket(distance=$distance)"
 }
 
 /**

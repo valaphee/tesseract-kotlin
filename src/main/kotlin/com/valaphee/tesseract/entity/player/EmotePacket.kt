@@ -32,7 +32,7 @@ import com.valaphee.tesseract.net.PacketReader
 /**
  * @author Kevin Ludwig
  */
-data class EmotePacket(
+class EmotePacket(
     val runtimeEntityId: Long,
     val emoteId: String,
     val flags: Collection<Flag>
@@ -50,6 +50,8 @@ data class EmotePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.emote(this)
+
+    override fun toString() = "EmotePacket(runtimeEntityId=$runtimeEntityId, emoteId='$emoteId', flags=$flags)"
 }
 
 /**

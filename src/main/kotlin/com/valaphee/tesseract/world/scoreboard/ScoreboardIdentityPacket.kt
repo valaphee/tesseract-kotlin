@@ -37,7 +37,7 @@ import java.util.UUID
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class ScoreboardIdentityPacket(
+class ScoreboardIdentityPacket(
     val action: Action,
     val entries: Array<Entry>
 ) : Packet {
@@ -63,23 +63,7 @@ data class ScoreboardIdentityPacket(
 
     override fun handle(handler: PacketHandler) = handler.scoreboardIdentity(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as ScoreboardIdentityPacket
-
-        if (action != other.action) return false
-        if (!entries.contentEquals(other.entries)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = action.hashCode()
-        result = 31 * result + entries.contentHashCode()
-        return result
-    }
+    override fun toString() = "ScoreboardIdentityPacket(action=$action, entries=${entries.contentToString()})"
 }
 
 /**

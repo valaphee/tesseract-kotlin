@@ -38,7 +38,7 @@ import java.util.EnumSet
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class BlockUpdatePacket(
+class BlockUpdatePacket(
     val position: Int3,
     val runtimeId: Int,
     val flags: Collection<Flag>,
@@ -63,6 +63,8 @@ data class BlockUpdatePacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.blockUpdate(this)
+
+    override fun toString() = "BlockUpdatePacket(position=$position, runtimeId=$runtimeId, flags=$flags, layerId=$layerId)"
 }
 
 /**

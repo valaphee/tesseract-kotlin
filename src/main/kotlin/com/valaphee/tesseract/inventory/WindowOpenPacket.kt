@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class WindowOpenPacket(
+class WindowOpenPacket(
     val windowId: Int,
     val type: WindowType,
     val blockPosition: Int3,
@@ -52,6 +52,8 @@ data class WindowOpenPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.windowOpen(this)
+
+    override fun toString() = "WindowOpenPacket(windowId=$windowId, type=$type, blockPosition=$blockPosition, uniqueEntityId=$uniqueEntityId)"
 }
 
 /**

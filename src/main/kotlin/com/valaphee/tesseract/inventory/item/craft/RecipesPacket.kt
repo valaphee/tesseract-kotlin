@@ -42,7 +42,7 @@ import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class RecipesPacket(
+class RecipesPacket(
     val recipes: Array<Recipe>,
     val potionMixRecipes: Array<PotionMixRecipe>,
     val containerMixRecipes: Array<ContainerMixRecipe>,
@@ -129,27 +129,7 @@ data class RecipesPacket(
 
     override fun handle(handler: PacketHandler) = handler.recipes(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as RecipesPacket
-
-        if (!recipes.contentEquals(other.recipes)) return false
-        if (!potionMixRecipes.contentEquals(other.potionMixRecipes)) return false
-        if (!containerMixRecipes.contentEquals(other.containerMixRecipes)) return false
-        if (cleanRecipes != other.cleanRecipes) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = recipes.contentHashCode()
-        result = 31 * result + potionMixRecipes.contentHashCode()
-        result = 31 * result + containerMixRecipes.contentHashCode()
-        result = 31 * result + cleanRecipes.hashCode()
-        return result
-    }
+    override fun toString() = "RecipesPacket(recipes=${recipes.contentToString()}, potionMixRecipes=${potionMixRecipes.contentToString()}, containerMixRecipes=${containerMixRecipes.contentToString()}, materialReducers=${materialReducers.contentToString()}, cleanRecipes=$cleanRecipes)"
 }
 
 /**

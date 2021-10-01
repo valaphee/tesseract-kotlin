@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class PlayerArmorDamagePacket(
+class PlayerArmorDamagePacket(
     val damages: Array<Int?>
 ) : Packet {
     init {
@@ -59,20 +59,7 @@ data class PlayerArmorDamagePacket(
 
     override fun handle(handler: PacketHandler) = handler.playerArmorDamage(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as PlayerArmorDamagePacket
-
-        if (!damages.contentEquals(other.damages)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return damages.contentHashCode()
-    }
+    override fun toString() = "PlayerArmorDamagePacket(damages=${damages.contentToString()})"
 }
 
 /**

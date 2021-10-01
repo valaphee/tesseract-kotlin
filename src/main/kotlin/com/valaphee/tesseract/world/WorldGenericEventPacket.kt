@@ -36,7 +36,7 @@ import com.valaphee.tesseract.util.nbt.Tag
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class WorldGenericEventPacket(
+class WorldGenericEventPacket(
     val eventId: Int,
     val tag: Tag?
 ) : Packet {
@@ -48,6 +48,8 @@ data class WorldGenericEventPacket(
     }
 
     override fun handle(handler: PacketHandler) = handler.worldGenericEvent(this)
+
+    override fun toString() = "WorldGenericEventPacket(eventId=$eventId, tag=$tag)"
 }
 
 /**

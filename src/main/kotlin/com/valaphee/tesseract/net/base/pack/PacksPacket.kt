@@ -37,7 +37,7 @@ import java.util.UUID
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-data class PacksPacket(
+class PacksPacket(
     val forcedToAccept: Boolean,
     val scriptingEnabled: Boolean,
     val forcingServerPacksEnabled: Boolean,
@@ -86,29 +86,7 @@ data class PacksPacket(
 
     override fun handle(handler: PacketHandler) = handler.packs(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as PacksPacket
-
-        if (forcedToAccept != other.forcedToAccept) return false
-        if (scriptingEnabled != other.scriptingEnabled) return false
-        if (forcingServerPacksEnabled != other.forcingServerPacksEnabled) return false
-        if (!behaviorPacks.contentEquals(other.behaviorPacks)) return false
-        if (!resourcePacks.contentEquals(other.resourcePacks)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = forcedToAccept.hashCode()
-        result = 31 * result + scriptingEnabled.hashCode()
-        result = 31 * result + forcingServerPacksEnabled.hashCode()
-        result = 31 * result + behaviorPacks.contentHashCode()
-        result = 31 * result + resourcePacks.contentHashCode()
-        return result
-    }
+    override fun toString() = "PacksPacket(forcedToAccept=$forcedToAccept, scriptingEnabled=$scriptingEnabled, forcingServerPacksEnabled=$forcingServerPacksEnabled, behaviorPacks=${behaviorPacks.contentToString()}, resourcePacks=${resourcePacks.contentToString()})"
 }
 
 /**
