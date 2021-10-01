@@ -24,8 +24,6 @@
 
 package com.valaphee.tesseract.net
 
-import com.valaphee.tesseract.data.block.BlockState
-import com.valaphee.tesseract.data.item.Item
 import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
 import com.valaphee.tesseract.util.lazyToString
 import io.netty.channel.ChannelFutureListener
@@ -103,14 +101,14 @@ class Connection : SimpleChannelInboundHandler<Packet>() {
             field = value
         }
 
-    var blockStates: Int2ObjectOpenHashBiMap<BlockState>? = null
+    var blockStates: Int2ObjectOpenHashBiMap<String>? = null
         set(value) {
             val channelPipeline = context.pipeline()
             channelPipeline[PacketEncoder::class.java].blockStates = value
             channelPipeline[PacketDecoder::class.java].blockStates = value
             field = value
         }
-    var items: Int2ObjectOpenHashBiMap<Item>? = null
+    var items: Int2ObjectOpenHashBiMap<String>? = null
         set(value) {
             val channelPipeline = context.pipeline()
             channelPipeline[PacketEncoder::class.java].items = value

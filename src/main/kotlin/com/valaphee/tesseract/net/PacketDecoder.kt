@@ -30,17 +30,14 @@ import com.valaphee.tesseract.command.net.CommandSettingsPacketReader
 import com.valaphee.tesseract.command.net.CommandSoftEnumerationPacketReader
 import com.valaphee.tesseract.command.net.CommandsPacketReader
 import com.valaphee.tesseract.command.net.LocalPlayerAsInitializedPacketReader
-import com.valaphee.tesseract.data.block.BlockState
-import com.valaphee.tesseract.data.item.Item
+import com.valaphee.tesseract.entity.EntityAddPacketReader
 import com.valaphee.tesseract.entity.EntityAnimationPacketReader
 import com.valaphee.tesseract.entity.EntityArmorPacketReader
-import com.valaphee.tesseract.entity.EntityAddPacketReader
 import com.valaphee.tesseract.entity.EntityEquipmentPacketReader
 import com.valaphee.tesseract.entity.EntityEventPacketReader
+import com.valaphee.tesseract.entity.EntityLinkPacketReader
 import com.valaphee.tesseract.entity.EntityRemovePacketReader
 import com.valaphee.tesseract.entity.ExperienceOrbAddPacketReader
-import com.valaphee.tesseract.entity.player.HealthPacketReader
-import com.valaphee.tesseract.entity.EntityLinkPacketReader
 import com.valaphee.tesseract.entity.PaintingAddPacketReader
 import com.valaphee.tesseract.entity.attribute.EntityAttributesPacketReader
 import com.valaphee.tesseract.entity.effect.EntityEffectPacketReader
@@ -53,6 +50,7 @@ import com.valaphee.tesseract.entity.player.BlockPickPacketReader
 import com.valaphee.tesseract.entity.player.EmotePacketReader
 import com.valaphee.tesseract.entity.player.EmotesPacketReader
 import com.valaphee.tesseract.entity.player.EntityPickPacketReader
+import com.valaphee.tesseract.entity.player.HealthPacketReader
 import com.valaphee.tesseract.entity.player.InputCorrectPacketReader
 import com.valaphee.tesseract.entity.player.InputPacketReader
 import com.valaphee.tesseract.entity.player.InteractPacketReader
@@ -157,8 +155,8 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
  */
 class PacketDecoder(
     var version: Int = -1,
-    var blockStates: Int2ObjectOpenHashBiMap<BlockState>? = null,
-    var items: Int2ObjectOpenHashBiMap<Item>? = null
+    var blockStates: Int2ObjectOpenHashBiMap<String>? = null,
+    var items: Int2ObjectOpenHashBiMap<String>? = null
 ) : MessageToMessageDecoder<ByteBuf>() {
     override fun decode(context: ChannelHandlerContext, `in`: ByteBuf, out: MutableList<Any>) {
         val buffer = PacketBuffer(`in`, false, blockStates, items)

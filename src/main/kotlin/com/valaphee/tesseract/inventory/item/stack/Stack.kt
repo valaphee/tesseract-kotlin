@@ -164,7 +164,7 @@ fun CompoundTag.asStack() = Stack(getString("Name"), getIntOrNull("Damage") ?: 0
 fun PacketBuffer.readStackPre431(): Stack? {
     val id = readVarInt()
     if (id == 0) return null
-    val itemKey = checkNotNull(items[id]).key
+    val itemKey = checkNotNull(items[id])
     val countAndSubId = readVarInt()
     return Stack(
         itemKey,
@@ -193,7 +193,7 @@ fun PacketBuffer.readStackWithNetIdPre431(): Stack? {
 fun PacketBuffer.readStack(): Stack? {
     val id = readVarInt()
     if (id == 0) return null
-    val itemKey = checkNotNull(items[id]).key
+    val itemKey = checkNotNull(items[id])
     val count = readUnsignedShortLE()
     val subId = readVarUInt()
     val netId = if (readBoolean()) readVarInt() else 0
@@ -221,7 +221,7 @@ fun PacketBuffer.readStack(): Stack? {
 fun PacketBuffer.readStackInstance(): Stack? {
     val id = readVarInt()
     if (id == 0) return null
-    val itemKey = checkNotNull(items[id]).key
+    val itemKey = checkNotNull(items[id])
     val count = readUnsignedShortLE()
     val subId = readVarUInt()
     val blockRuntimeId = readVarInt()
@@ -248,12 +248,12 @@ fun PacketBuffer.readStackInstance(): Stack? {
 fun PacketBuffer.readIngredient(): Stack? {
     val id = readVarInt()
     if (id == 0) return null
-    return Stack(items[id].key, readVarInt().let { if (it == Short.MAX_VALUE.toInt()) -1 else it }, readVarInt())
+    return Stack(items[id], readVarInt().let { if (it == Short.MAX_VALUE.toInt()) -1 else it }, readVarInt())
 }
 
 fun PacketBuffer.writeStackPre431(value: Stack?) {
     value?.let {
-        writeVarInt(checkNotNull(items.getKey(it.itemKey)))
+        writeVarInt(items.getKey(it.itemKey))
         writeVarInt(((if (it.subId == -1) Short.MAX_VALUE.toInt() else it.subId) shl 8) or (it.count and 0xFF))
         it.tag?.let {
             writeShortLE(-1)
@@ -279,7 +279,7 @@ fun PacketBuffer.writeStackWithNetIdPre431(value: Stack?) {
 
 fun PacketBuffer.writeStack(value: Stack?) {
     value?.let {
-        writeVarInt(checkNotNull(items.getKey(it.itemKey)))
+        writeVarInt(items.getKey(it.itemKey))
         writeShortLE(it.count)
         writeVarUInt(it.subId)
         if (it.netId != 0) {
@@ -309,7 +309,7 @@ fun PacketBuffer.writeStack(value: Stack?) {
 
 fun PacketBuffer.writeStackInstance(value: Stack?) {
     value?.let {
-        writeVarInt(checkNotNull(items.getKey(it.itemKey)))
+        writeVarInt(items.getKey(it.itemKey))
         writeShortLE(it.count)
         writeVarUInt(it.subId)
         writeVarInt(it.blockStateKey?.let { blockStates.getKey(it) } ?: 0)

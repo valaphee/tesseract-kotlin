@@ -35,24 +35,24 @@ class Int2ObjectOpenHashBiMap<V> : Int2ObjectOpenHashMap<V>, Cloneable {
         private set
 
     constructor() {
-        reverse = Object2IntOpenHashMap<V>().apply { defaultReturnValue(-1) }
+        reverse = Object2IntOpenHashMap<V>()
     }
 
     constructor(initialCapacity: Int) : super(initialCapacity) {
-        reverse = Object2IntOpenHashMap<V>(initialCapacity).apply { defaultReturnValue(-1) }
+        reverse = Object2IntOpenHashMap<V>(initialCapacity)
     }
 
     constructor(noEntryValue: V) {
         defaultReturnValue(noEntryValue)
-        reverse = Object2IntOpenHashMap<V>().apply { defaultReturnValue(-1) }
+        reverse = Object2IntOpenHashMap<V>()
     }
 
     constructor(initialCapacity: Int, noEntryValue: V) : super(initialCapacity) {
         defaultReturnValue(noEntryValue)
-        reverse = Object2IntOpenHashMap<V>(initialCapacity).apply { defaultReturnValue(-1) }
+        reverse = Object2IntOpenHashMap<V>(initialCapacity)
     }
 
-    fun getKey(value: Any) = reverse.getInt(value)
+    fun getKey(value: V) = reverse.getInt(value)
 
     override fun put(key: Int, value: V): V? {
         reverse[value] = key

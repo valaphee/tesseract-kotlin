@@ -27,8 +27,6 @@ package com.valaphee.tesseract.net
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
-import com.valaphee.tesseract.data.block.BlockState
-import com.valaphee.tesseract.data.item.Item
 import com.valaphee.tesseract.util.ByteBufWrapper
 import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
 import com.valaphee.tesseract.util.LittleEndianByteBufInputStream
@@ -49,11 +47,11 @@ import java.util.UUID
 class PacketBuffer(
     buffer: ByteBuf,
     private val local: Boolean = false,
-    blockStates: Int2ObjectOpenHashBiMap<BlockState>? = null,
-    items: Int2ObjectOpenHashBiMap<Item>? = null
+    blockStates: Int2ObjectOpenHashBiMap<String>? = null,
+    items: Int2ObjectOpenHashBiMap<String>? = null
 ) : ByteBufWrapper(buffer) {
-    lateinit var blockStates: Int2ObjectOpenHashBiMap<BlockState>
-    lateinit var items: Int2ObjectOpenHashBiMap<Item>
+    lateinit var blockStates: Int2ObjectOpenHashBiMap<String>
+    lateinit var items: Int2ObjectOpenHashBiMap<String>
 
     init {
         blockStates?.let { this.blockStates = it }

@@ -24,8 +24,6 @@
 
 package com.valaphee.tesseract.net
 
-import com.valaphee.tesseract.data.block.BlockState
-import com.valaphee.tesseract.data.item.Item
 import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
 import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
@@ -37,8 +35,8 @@ import io.netty.handler.codec.MessageToByteEncoder
 class PacketEncoder(
     private val server: Boolean,
     var version: Int = -1,
-    var blockStates: Int2ObjectOpenHashBiMap<BlockState>? = null,
-    var items: Int2ObjectOpenHashBiMap<Item>? = null
+    var blockStates: Int2ObjectOpenHashBiMap<String>? = null,
+    var items: Int2ObjectOpenHashBiMap<String>? = null
 ) : MessageToByteEncoder<Packet>() {
     /*override fun acceptOutboundMessage(message: Any): Boolean {
         val restrictions = message::class.findAnnotation<Restrict>()?.value ?: return true

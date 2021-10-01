@@ -27,9 +27,9 @@ package com.valaphee.tesseract.world
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
-import com.valaphee.tesseract.entity.player.Rank
 import com.valaphee.tesseract.data.block.Block
 import com.valaphee.tesseract.data.item.Item
+import com.valaphee.tesseract.entity.player.Rank
 import com.valaphee.tesseract.net.GamePublishMode
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -37,8 +37,9 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
-import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
 import com.valaphee.tesseract.util.nbt.ListTag
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 
 /**
  * @author Kevin Ludwig
@@ -106,7 +107,7 @@ data class WorldPacket(
     private val blocks2Data: ByteArray?,
     val blocks2: Array<Block>?,
     private val itemsData: ByteArray?,
-    val items: Int2ObjectOpenHashBiMap<Item>?,
+    val items: Int2ObjectMap<Item>?,
     val multiplayerCorrelationId: String,
     val inventoriesServerAuthoritative: Boolean,
     val engine: String
@@ -519,7 +520,7 @@ object WorldPacketReader : PacketReader {
             block2 = null
         }
         val itemCount = buffer.readVarUInt()
-        val items = Int2ObjectOpenHashBiMap<Item>(itemCount).apply {
+        val items = Int2ObjectOpenHashMap<Item>(itemCount).apply {
             repeat(itemCount) {
                 val key = buffer.readString()
                 val id = buffer.readShortLE()

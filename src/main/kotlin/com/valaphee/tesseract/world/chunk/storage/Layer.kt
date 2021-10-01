@@ -26,6 +26,13 @@
 package com.valaphee.tesseract.world.chunk.storage
 
 import com.valaphee.tesseract.net.PacketBuffer
+import com.valaphee.tesseract.util.getCompoundTag
+import com.valaphee.tesseract.util.getString
+import com.valaphee.tesseract.util.nbt.TagType
+import com.valaphee.tesseract.util.nbt.compoundTag
+import com.valaphee.tesseract.util.nbt.ofBool
+import com.valaphee.tesseract.util.nbt.ofInt
+import com.valaphee.tesseract.util.nbt.ofString
 import it.unimi.dsi.fastutil.ints.IntArrayList
 import it.unimi.dsi.fastutil.ints.IntList
 
@@ -63,15 +70,31 @@ class Layer(
         buffer.writeByte((bitArray.version.bitsPerEntry shl 1) or if (runtime) 1 else 0)
         bitArray.data.forEach { buffer.writeIntLE(it) }
         buffer.writeVarInt(palette.size)
-        if (runtime) palette.forEach { buffer.writeVarInt(it) }/* else buffer.toNbtOutputStream().use { stream ->
+        if (runtime) palette.forEach { buffer.writeVarInt(it) } else buffer.toNbtOutputStream().use { stream ->
             palette.forEach {
                 stream.writeTag(compoundTag().apply {
-                    val block = BlockState.byId(it)
-                    setString("name", block.key)
-                    set("states", block.propertiesNbt)
+                    val keyWithProperties = buffer.blockStates[it]
+                    val propertiesBegin = keyWithProperties.indexOf('[')
+                    val propertiesEnd = keyWithProperties.indexOf(']')
+                    if (propertiesBegin == -1 && propertiesEnd == -1) {
+                        setString("name", keyWithProperties)
+                        set("states", compoundTag())
+                    } else if (propertiesEnd == keyWithProperties.length - 1) {
+                        val propertiesTag = compoundTag()
+                        keyWithProperties.substring(propertiesBegin + 1, propertiesEnd).split(',').forEach {
+                            val property = it.split('=', limit = 2)
+                            propertiesTag[property[0]] = when (val propertyValue = property[1]) {
+                                "false" -> ofBool(false)
+                                "true" -> ofBool(true)
+                                else -> propertyValue.toIntOrNull()?.let { ofInt(it) } ?: ofString(propertyValue)
+                            }
+                        }
+                        setString("name", keyWithProperties.substring(0, propertiesBegin))
+                        set("states", propertiesTag)
+                    }
                 })
             }
-        } TODO*/
+        }
     }
 }
 
@@ -82,15 +105,29 @@ fun PacketBuffer.readLayer(default: Int): Layer {
     val blocks = version.bitArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize, IntArray(version.bitArrayDataSize(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize)) { readIntLE() })
     val paletteSize = readVarInt()
     return Layer(IntArrayList().apply {
-        if (runtime) repeat(paletteSize) { add(readVarInt()) }/* else {
+        if (runtime) repeat(paletteSize) { add(readVarInt()) } else {
             toNbtInputStream().use { stream ->
                 repeat(paletteSize) {
                     add(stream.readTag()?.asCompoundTag()?.let {
-                        val propertiesNbt = it.getCompoundTag("states")
-                        BlockState.byKey(it.getString("name")).find { it.propertiesNbt == propertiesNbt }?.id
+                        blockStates.getKey(StringBuilder().apply {
+                            append(it.getString("name"))
+                            val properties = it.getCompoundTag("states").toMap().mapValues {
+                                when (it.value.type) {
+                                    TagType.Byte -> it.value.asNumberTag()!!.toByte() != 0.toByte()
+                                    TagType.Int -> it.value.asNumberTag()!!.toInt()
+                                    TagType.String -> it.value.asArrayTag()!!.valueToString()
+                                    else -> TODO()
+                                }
+                            }
+                            if (properties.isNotEmpty()) {
+                                append('[')
+                                properties.forEach { (name, value) -> append(name).append('=').append(value).append(',') }
+                                setCharAt(length - 1, ']')
+                            }
+                        }.toString())
                     } ?: default)
                 }
             }
-        } TODO*/
+        }
     }, blocks)
 }
