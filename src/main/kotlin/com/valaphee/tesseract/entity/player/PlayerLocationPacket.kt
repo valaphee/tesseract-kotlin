@@ -43,6 +43,7 @@ data class PlayerLocationPacket(
     val onGround: Boolean,
     val drivingRuntimeEntityId: Long,
     val teleportationCause: TeleportationCause = TeleportationCause.Unknown,
+    val entityTypeId: Int,
     val tick: Long
 ) : Packet {
     enum class Mode {
@@ -65,7 +66,7 @@ data class PlayerLocationPacket(
         buffer.writeVarULong(drivingRuntimeEntityId)
         if (mode == Mode.Teleport) {
             buffer.writeIntLE(teleportationCause.ordinal)
-            buffer.writeIntLE(0) // TODO
+            buffer.writeIntLE(entityTypeId)
         }
         if (version >= 419) buffer.writeVarULong(tick)
     }
@@ -86,13 +87,15 @@ object PlayerLocationPacketReader : PacketReader {
         val onGround = buffer.readBoolean()
         val drivingRuntimeEntityId = buffer.readVarULong()
         val teleportationCause: PlayerLocationPacket.TeleportationCause
+        val entityTypeId: Int
         if (mode == PlayerLocationPacket.Mode.Teleport) {
             teleportationCause = PlayerLocationPacket.TeleportationCause.values()[buffer.readIntLE()]
-            buffer.readIntLE() // TODO
+            entityTypeId = buffer.readIntLE()
         } else {
             teleportationCause = PlayerLocationPacket.TeleportationCause.Unknown
+            entityTypeId = 0
         }
         val tick = if (version >= 419) buffer.readVarULong() else 0
-        return PlayerLocationPacket(runtimeEntityId, position, rotation, headRotationYaw, mode, onGround, drivingRuntimeEntityId, teleportationCause, tick)
+        return PlayerLocationPacket(runtimeEntityId, position, rotation, headRotationYaw, mode, onGround, drivingRuntimeEntityId, teleportationCause, entityTypeId, tick)
     }
 }

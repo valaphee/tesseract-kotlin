@@ -20,31 +20,38 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
-package com.valaphee.tesseract.world.scoreboard
+package com.valaphee.tesseract.entity
+
+import com.valaphee.tesseract.net.Packet
+import com.valaphee.tesseract.net.PacketBuffer
+import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
+import com.valaphee.tesseract.net.Restrict
+import com.valaphee.tesseract.net.Restriction
 
 /**
  * @author Kevin Ludwig
  */
-data class Score private constructor(
-    val scoreboardId: Long,
-    val objectiveName: String,
-    val value: Int,
-    val type: ScorerType,
-    val name: String?,
-    val entityId: Long
-) {
-    enum class ScorerType {
-        None, Player, Entity, Fake
+@Restrict(Restriction.ToClient)
+data class CameraPacket(
+    val cameraUniqueEntityId: Long,
+    val uniqueEntityId: Long
+) : Packet {
+    override val id get() = 0x49
+
+    override fun write(buffer: PacketBuffer, version: Int) {
+        buffer.writeVarLong(cameraUniqueEntityId)
+        buffer.writeVarLong(uniqueEntityId)
     }
 
-    constructor(scoreboardId: Long, objectiveName: String) : this(scoreboardId, objectiveName, 0, ScorerType.None, null, 0)
+    override fun handle(handler: PacketHandler) = handler.camera(this)
+}
 
-    constructor(scoreboardId: Long, objectiveName: String, value: Int) : this(scoreboardId, objectiveName, value, ScorerType.None, null, 0)
-
-    constructor(scoreboardId: Long, objectiveName: String, value: Int, name: String) : this(scoreboardId, objectiveName, value, ScorerType.Fake, name, 0)
-
-    constructor(scoreboardId: Long, objectiveName: String, value: Int, type: ScorerType, entityId: Long) : this(scoreboardId, objectiveName, value, type, null, entityId)
+/**
+ * @author Kevin Ludwig
+ */
+object CameraPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = CameraPacket(buffer.readVarLong(), buffer.readVarLong())
 }

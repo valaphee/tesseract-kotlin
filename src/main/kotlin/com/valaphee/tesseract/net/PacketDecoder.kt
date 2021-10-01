@@ -30,14 +30,21 @@ import com.valaphee.tesseract.command.net.CommandSettingsPacketReader
 import com.valaphee.tesseract.command.net.CommandSoftEnumerationPacketReader
 import com.valaphee.tesseract.command.net.CommandsPacketReader
 import com.valaphee.tesseract.command.net.LocalPlayerAsInitializedPacketReader
+import com.valaphee.tesseract.command.net.SettingsCommandPacketReader
+import com.valaphee.tesseract.entity.CameraPacketReader
 import com.valaphee.tesseract.entity.EntityAddPacketReader
+import com.valaphee.tesseract.entity.EntityAnimatePacketReader
 import com.valaphee.tesseract.entity.EntityAnimationPacketReader
 import com.valaphee.tesseract.entity.EntityArmorPacketReader
 import com.valaphee.tesseract.entity.EntityEquipmentPacketReader
 import com.valaphee.tesseract.entity.EntityEventPacketReader
+import com.valaphee.tesseract.entity.EntityFallPacketReader
 import com.valaphee.tesseract.entity.EntityLinkPacketReader
 import com.valaphee.tesseract.entity.EntityRemovePacketReader
+import com.valaphee.tesseract.entity.EventPacketReader
 import com.valaphee.tesseract.entity.ExperienceOrbAddPacketReader
+import com.valaphee.tesseract.entity.NpcDialoguePacketReader
+import com.valaphee.tesseract.entity.NpcRequestPacketReader
 import com.valaphee.tesseract.entity.PaintingAddPacketReader
 import com.valaphee.tesseract.entity.attribute.EntityAttributesPacketReader
 import com.valaphee.tesseract.entity.effect.EntityEffectPacketReader
@@ -46,6 +53,7 @@ import com.valaphee.tesseract.entity.location.EntityTeleportPacketReader
 import com.valaphee.tesseract.entity.location.EntityVelocityPacketReader
 import com.valaphee.tesseract.entity.metadata.EntityMetadataPacketReader
 import com.valaphee.tesseract.entity.player.AdventureSettingsPacketReader
+import com.valaphee.tesseract.entity.player.ArmorDamagePacketReader
 import com.valaphee.tesseract.entity.player.BlockPickPacketReader
 import com.valaphee.tesseract.entity.player.EmotePacketReader
 import com.valaphee.tesseract.entity.player.EmotesPacketReader
@@ -54,8 +62,11 @@ import com.valaphee.tesseract.entity.player.HealthPacketReader
 import com.valaphee.tesseract.entity.player.InputCorrectPacketReader
 import com.valaphee.tesseract.entity.player.InputPacketReader
 import com.valaphee.tesseract.entity.player.InteractPacketReader
+import com.valaphee.tesseract.entity.player.LastHurtByPacketReader
 import com.valaphee.tesseract.entity.player.PlayerActionPacketReader
 import com.valaphee.tesseract.entity.player.PlayerAddPacketReader
+import com.valaphee.tesseract.entity.player.PlayerArmorDamagePacketReader
+import com.valaphee.tesseract.entity.player.PlayerGameModePacketReader
 import com.valaphee.tesseract.entity.player.PlayerLocationPacketReader
 import com.valaphee.tesseract.entity.player.RiderJumpPacketReader
 import com.valaphee.tesseract.entity.player.SteerPacketReader
@@ -69,6 +80,7 @@ import com.valaphee.tesseract.form.FormPacketReader
 import com.valaphee.tesseract.form.FormResponsePacketReader
 import com.valaphee.tesseract.form.ServerSettingsPacketReader
 import com.valaphee.tesseract.form.ServerSettingsRequestPacketReader
+import com.valaphee.tesseract.inventory.BookEditPacketReader
 import com.valaphee.tesseract.inventory.CreativeInventoryPacketReader
 import com.valaphee.tesseract.inventory.EnchantOptionsPacketReader
 import com.valaphee.tesseract.inventory.EquipmentPacketReader
@@ -77,32 +89,48 @@ import com.valaphee.tesseract.inventory.InventoryContentPacketReader
 import com.valaphee.tesseract.inventory.InventoryRequestPacketReader
 import com.valaphee.tesseract.inventory.InventorySlotPacketReader
 import com.valaphee.tesseract.inventory.InventoryTransactionPacketReader
+import com.valaphee.tesseract.inventory.PhotoItemPacketReader
+import com.valaphee.tesseract.inventory.PhotoPacketReader
 import com.valaphee.tesseract.inventory.TradePacketReader
 import com.valaphee.tesseract.inventory.WindowClosePacketReader
 import com.valaphee.tesseract.inventory.WindowOpenPacketReader
 import com.valaphee.tesseract.inventory.WindowPropertyPacketReader
+import com.valaphee.tesseract.inventory.item.ItemActionPacketReader
 import com.valaphee.tesseract.inventory.item.craft.CraftingEventPacketReader
 import com.valaphee.tesseract.inventory.item.craft.RecipesPacketReader
 import com.valaphee.tesseract.net.base.BehaviorTreePacketReader
 import com.valaphee.tesseract.net.base.BiomeDefinitionsPacketReader
+import com.valaphee.tesseract.net.base.BlockComponentPacketReader
 import com.valaphee.tesseract.net.base.CacheBlobStatusPacketReader
 import com.valaphee.tesseract.net.base.CacheBlobsPacketReader
 import com.valaphee.tesseract.net.base.CacheStatusPacketReader
 import com.valaphee.tesseract.net.base.ClientToServerHandshakePacketReader
+import com.valaphee.tesseract.net.base.CustomEventPacketReader
+import com.valaphee.tesseract.net.base.DebugPacketReader
+import com.valaphee.tesseract.net.base.DebugRendererPacketReader
 import com.valaphee.tesseract.net.base.DisconnectPacketReader
 import com.valaphee.tesseract.net.base.EntityIdentifiersPacketReader
 import com.valaphee.tesseract.net.base.FilterPacketReader
 import com.valaphee.tesseract.net.base.ItemComponentPacketReader
+import com.valaphee.tesseract.net.base.LabTablePacketReader
 import com.valaphee.tesseract.net.base.LatencyPacketReader
 import com.valaphee.tesseract.net.base.LoginPacketReader
+import com.valaphee.tesseract.net.base.MultiplayerSettingsPacketReader
 import com.valaphee.tesseract.net.base.NetworkSettingsPacketReader
+import com.valaphee.tesseract.net.base.OnScreenTextureAnimationPacketReader
 import com.valaphee.tesseract.net.base.PositionTrackingDbClientRequestPacketReader
 import com.valaphee.tesseract.net.base.PositionTrackingDbServerBroadcastPacketReader
+import com.valaphee.tesseract.net.base.ProfilePacketReader
+import com.valaphee.tesseract.net.base.PurchaseReceiptPacketReader
 import com.valaphee.tesseract.net.base.ServerToClientHandshakePacketReader
+import com.valaphee.tesseract.net.base.SimulationPacketReader
 import com.valaphee.tesseract.net.base.StatusPacketReader
+import com.valaphee.tesseract.net.base.StoreOfferPacketReader
 import com.valaphee.tesseract.net.base.SubLoginPacketReader
 import com.valaphee.tesseract.net.base.TransferPacketReader
+import com.valaphee.tesseract.net.base.VideoStreamPacketReader
 import com.valaphee.tesseract.net.base.ViolationPacketReader
+import com.valaphee.tesseract.net.base.WebSocketPacketReader
 import com.valaphee.tesseract.net.base.pack.PackDataChunkPacketReader
 import com.valaphee.tesseract.net.base.pack.PackDataChunkRequestPacketReader
 import com.valaphee.tesseract.net.base.pack.PackDataPacketReader
@@ -111,6 +139,8 @@ import com.valaphee.tesseract.net.base.pack.PacksResponsePacketReader
 import com.valaphee.tesseract.net.base.pack.PacksStackPacketReader
 import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
 import com.valaphee.tesseract.world.BossBarPacketReader
+import com.valaphee.tesseract.world.CameraShakePacketReader
+import com.valaphee.tesseract.world.DefaultGameModePacketReader
 import com.valaphee.tesseract.world.DifficultyPacketReader
 import com.valaphee.tesseract.world.DimensionPacketReader
 import com.valaphee.tesseract.world.FogPacketReader
@@ -120,6 +150,7 @@ import com.valaphee.tesseract.world.ParticlePacketReader
 import com.valaphee.tesseract.world.PlayerListPacketReader
 import com.valaphee.tesseract.world.RespawnPacketReader
 import com.valaphee.tesseract.world.ShowCreditsPacketReader
+import com.valaphee.tesseract.world.SimpleEventPacketReader
 import com.valaphee.tesseract.world.SoundEventPacketReader
 import com.valaphee.tesseract.world.SoundEventPacketV1Reader
 import com.valaphee.tesseract.world.SoundEventPacketV2Reader
@@ -131,13 +162,21 @@ import com.valaphee.tesseract.world.TickSyncPacketReader
 import com.valaphee.tesseract.world.TimePacketReader
 import com.valaphee.tesseract.world.TitlePacketReader
 import com.valaphee.tesseract.world.WorldEventPacketReader
+import com.valaphee.tesseract.world.WorldGenericEventPacketReader
 import com.valaphee.tesseract.world.WorldPacketReader
+import com.valaphee.tesseract.world.chunk.AnvilDamagePacketReader
 import com.valaphee.tesseract.world.chunk.BlockEntityPacketReader
 import com.valaphee.tesseract.world.chunk.BlockEventPacketReader
 import com.valaphee.tesseract.world.chunk.BlockUpdatePacketReader
 import com.valaphee.tesseract.world.chunk.BlockUpdateSyncedPacketReader
 import com.valaphee.tesseract.world.chunk.ChunkPacketReader
 import com.valaphee.tesseract.world.chunk.ChunkPublishPacketReader
+import com.valaphee.tesseract.world.chunk.CommandBlockUpdatePacketReader
+import com.valaphee.tesseract.world.chunk.ItemFrameDropItemPacketReader
+import com.valaphee.tesseract.world.chunk.LecternUpdatePacketReader
+import com.valaphee.tesseract.world.chunk.StructureBlockUpdatePacketReader
+import com.valaphee.tesseract.world.chunk.StructureTemplateDataExportRequestPacketReader
+import com.valaphee.tesseract.world.chunk.StructureTemplateDataExportResponsePacketReader
 import com.valaphee.tesseract.world.map.MapCreateLockedCopyPacketReader
 import com.valaphee.tesseract.world.map.MapRequestPacketReader
 import com.valaphee.tesseract.world.scoreboard.ObjectiveRemovePacketReader
@@ -154,6 +193,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
  * @author Kevin Ludwig
  */
 class PacketDecoder(
+    private val server: Boolean,
     var version: Int = -1,
     var blockStates: Int2ObjectOpenHashBiMap<String>? = null,
     var items: Int2ObjectOpenHashBiMap<String>? = null
@@ -162,7 +202,8 @@ class PacketDecoder(
         val buffer = PacketBuffer(`in`, false, blockStates, items)
         val header = buffer.readVarUInt()
         val id = header and Packet.idMask
-        readers[id]?.let { out.add(it.read(buffer, version)) } ?: throw DecoderException("Unknown packet: 0x${id.toString(16).uppercase()}")
+        readers[id]?.let { out.add(it.read(buffer, version)) } ?: throw DecoderException("No such packet: 0x${id.toString(16).uppercase()}")
+        if (buffer.readableBytes() > 0) throw DecoderException("Packet 0x${id.toString(16).uppercase()} not fully read")
     }
 
     companion object {
@@ -202,8 +243,8 @@ class PacketDecoder(
             this[0x22] = BlockPickPacketReader
             this[0x23] = EntityPickPacketReader
             this[0x24] = PlayerActionPacketReader
-            //this[0x25] =
-            //this[0x26] =
+            this[0x25] = EntityFallPacketReader
+            this[0x26] = ArmorDamagePacketReader
             this[0x27] = EntityMetadataPacketReader
             this[0x28] = EntityVelocityPacketReader
             this[0x29] = EntityLinkPacketReader
@@ -229,21 +270,21 @@ class PacketDecoder(
             this[0x3D] = DimensionPacketReader
             this[0x3E] = GameModePacketReader
             this[0x3F] = PlayerListPacketReader
-            //this[0x40] =
-            //this[0x41] =
+            this[0x40] = SimpleEventPacketReader
+            this[0x41] = EventPacketReader
             this[0x42] = ExperienceOrbAddPacketReader
             //this[0x43] = MapPacketReader
             this[0x44] = MapRequestPacketReader
             this[0x45] = ViewDistanceRequestPacketReader
             this[0x46] = ViewDistancePacketReader
-            //this[0x47] =
+            this[0x47] = ItemFrameDropItemPacketReader
             this[0x48] = GameRulesPacketReader
-            //this[0x49] =
+            this[0x49] = CameraPacketReader
             this[0x4A] = BossBarPacketReader
             this[0x4B] = ShowCreditsPacketReader
             this[0x4C] = CommandsPacketReader
             this[0x4D] = CommandPacketReader
-            //this[0x4E] =
+            this[0x4E] = CommandBlockUpdatePacketReader
             this[0x4F] = CommandResponsePacketReader
             this[0x50] = TradePacketReader
             this[0x51] = EquipmentPacketReader
@@ -255,26 +296,26 @@ class PacketDecoder(
             this[0x57] = SoundStopPacketReader
             this[0x58] = TitlePacketReader
             this[0x59] = BehaviorTreePacketReader
-            //this[0x5A] =
-            //this[0x5B] =
-            //this[0x5C] =
+            this[0x5A] = StructureBlockUpdatePacketReader
+            this[0x5B] = StoreOfferPacketReader
+            this[0x5C] = PurchaseReceiptPacketReader
             this[0x5D] = AppearancePacketReader
             this[0x5E] = SubLoginPacketReader
-            //this[0x5F] =
-            //this[0x60] =
-            //this[0x61] =
-            //this[0x62] =
-            //this[0x63] =
+            this[0x5F] = WebSocketPacketReader
+            this[0x60] = LastHurtByPacketReader
+            this[0x61] = BookEditPacketReader
+            this[0x62] = NpcRequestPacketReader
+            this[0x63] = PhotoPacketReader
             this[0x64] = FormPacketReader
             this[0x65] = FormResponsePacketReader
             this[0x66] = ServerSettingsRequestPacketReader
             this[0x67] = ServerSettingsPacketReader
-            //this[0x68] =
-            //this[0x69] =
+            this[0x68] = ProfilePacketReader
+            this[0x69] = DefaultGameModePacketReader
             this[0x6A] = ObjectiveRemovePacketReader
             this[0x6B] = ObjectiveSetPacketReader
             this[0x6C] = ScoresPacketReader
-            //this[0x6D] =
+            this[0x6D] = LabTablePacketReader
             this[0x6E] = BlockUpdateSyncedPacketReader
             this[0x6F] = EntityMoveRotatePacketReader
             this[0x70] = ScoreboardIdentityPacketReader
@@ -282,61 +323,61 @@ class PacketDecoder(
             this[0x72] = CommandSoftEnumerationPacketReader
             this[0x73] = LatencyPacketReader
             //this[0x74] =
-            //this[0x75] =
+            this[0x75] = CustomEventPacketReader
             this[0x76] = ParticlePacketReader
             this[0x77] = EntityIdentifiersPacketReader
             this[0x78] = SoundEventPacketV2Reader
             this[0x79] = ChunkPublishPacketReader
             this[0x7A] = BiomeDefinitionsPacketReader
             this[0x7B] = SoundEventPacketReader
-            //this[0x7C] =
-            //this[0x7D] =
-            //this[0x7E] =
+            this[0x7C] = WorldGenericEventPacketReader
+            this[0x7D] = LecternUpdatePacketReader
+            this[0x7E] = VideoStreamPacketReader
             //this[0x7F] =
             //this[0x80] =
             this[0x81] = CacheStatusPacketReader
-            //this[0x82] =
+            this[0x82] = OnScreenTextureAnimationPacketReader
             this[0x83] = MapCreateLockedCopyPacketReader
-            //this[0x84] =
-            //this[0x85] =
-            //this[0x86] =
+            this[0x84] = StructureTemplateDataExportRequestPacketReader
+            this[0x85] = StructureTemplateDataExportResponsePacketReader
+            this[0x86] = BlockComponentPacketReader
             this[0x87] = CacheBlobStatusPacketReader
             this[0x88] = CacheBlobsPacketReader
             //this[0x89] =
             this[0x8A] = EmotePacketReader
-            //this[0x8B] =
-            //this[0x8C] =
-            //this[0x8D] =
-            //this[0x8E] =
+            this[0x8B] = MultiplayerSettingsPacketReader
+            this[0x8C] = SettingsCommandPacketReader
+            this[0x8D] = AnvilDamagePacketReader
+            this[0x8E] = ItemActionPacketReader
             this[0x8F] = NetworkSettingsPacketReader
             this[0x90] = InputPacketReader
             this[0x91] = CreativeInventoryPacketReader
             this[0x92] = EnchantOptionsPacketReader
             this[0x93] = InventoryRequestPacketReader
             //this[0x94] = InventoryResponsePacketReader
-            //this[0x95] =
+            this[0x95] = PlayerArmorDamagePacketReader
             //this[0x96] =
-            //this[0x97] =
+            this[0x97] = PlayerGameModePacketReader
             this[0x98] = EmotesPacketReader
             this[0x99] = PositionTrackingDbServerBroadcastPacketReader
             this[0x9A] = PositionTrackingDbClientRequestPacketReader
-            //this[0x9B] =
+            this[0x9B] = DebugPacketReader
             this[0x9C] = ViolationPacketReader
             this[0x9D] = VelocityPredictionPacketReader
-            //this[0x9E] =
-            //this[0x9F] =
+            this[0x9E] = EntityAnimatePacketReader
+            this[0x9F] = CameraShakePacketReader
             this[0xA0] = FogPacketReader
             this[0xA1] = InputCorrectPacketReader
             this[0xA2] = ItemComponentPacketReader
             this[0xA3] = FilterPacketReader
-            //this[0xA4] =
+            this[0xA4] = DebugRendererPacketReader
             //this[0xA5] =
             //this[0xA6] =
             //this[0xA7] =
-            //this[0xA8] =
-            //this[0xA9] =
+            this[0xA8] = SimulationPacketReader
+            this[0xA9] = NpcDialoguePacketReader
             //this[0xAA] =
-            //this[0xAB] =
+            this[0xAB] = PhotoItemPacketReader
             this[0xAC] = BlockUpdateSyncedPacketReader
         }
 

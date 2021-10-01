@@ -38,11 +38,6 @@ class PacketEncoder(
     var blockStates: Int2ObjectOpenHashBiMap<String>? = null,
     var items: Int2ObjectOpenHashBiMap<String>? = null
 ) : MessageToByteEncoder<Packet>() {
-    /*override fun acceptOutboundMessage(message: Any): Boolean {
-        val restrictions = message::class.findAnnotation<Restrict>()?.value ?: return true
-        return server && !restrictions.contains(Restriction.Clientbound) || !server && !restrictions.contains(Restriction.Serverbound)
-    }*/
-
     override fun encode(context: ChannelHandlerContext, message: Packet, out: ByteBuf) {
         val packetBuffer = PacketBuffer(out, false, blockStates, items)
         packetBuffer.writeVarUInt(message.id and Packet.idMask)

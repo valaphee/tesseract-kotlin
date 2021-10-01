@@ -20,31 +20,37 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
-package com.valaphee.tesseract.world.scoreboard
+package com.valaphee.tesseract.world
+
+import com.valaphee.tesseract.net.Packet
+import com.valaphee.tesseract.net.PacketBuffer
+import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 
 /**
  * @author Kevin Ludwig
  */
-data class Score private constructor(
-    val scoreboardId: Long,
-    val objectiveName: String,
-    val value: Int,
-    val type: ScorerType,
-    val name: String?,
-    val entityId: Long
-) {
-    enum class ScorerType {
-        None, Player, Entity, Fake
+data class SimpleEventPacket(
+    val event: Event
+) : Packet {
+    enum class Event {
+        EnableCommands, DisableCommands, UnlockWorldTemplateSettings
     }
 
-    constructor(scoreboardId: Long, objectiveName: String) : this(scoreboardId, objectiveName, 0, ScorerType.None, null, 0)
+    override val id get() = 0x40
 
-    constructor(scoreboardId: Long, objectiveName: String, value: Int) : this(scoreboardId, objectiveName, value, ScorerType.None, null, 0)
+    override fun write(buffer: PacketBuffer, version: Int) {
+        buffer.writeShortLE(event.ordinal)
+    }
 
-    constructor(scoreboardId: Long, objectiveName: String, value: Int, name: String) : this(scoreboardId, objectiveName, value, ScorerType.Fake, name, 0)
+    override fun handle(handler: PacketHandler) = handler.simpleEvent(this)
+}
 
-    constructor(scoreboardId: Long, objectiveName: String, value: Int, type: ScorerType, entityId: Long) : this(scoreboardId, objectiveName, value, type, null, entityId)
+/**
+ * @author Kevin Ludwig
+ */
+object SimpleEventPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = SimpleEventPacket(SimpleEventPacket.Event.values()[buffer.readShortLE().toInt()])
 }

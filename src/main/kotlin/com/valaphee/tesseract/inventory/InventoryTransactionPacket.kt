@@ -102,7 +102,7 @@ data class InventoryTransactionPacket(
         enum class Type(
             val id: Int
         ) {
-            Invalid(-1),
+            None(-1),
             Inventory(0),
             Global(1),
             World(2),
@@ -324,10 +324,9 @@ fun PacketBuffer.writeAction(value: InventoryTransactionPacket.Action) {
 }
 
 fun PacketBuffer.readSource() = when (val type = InventoryTransactionPacket.Source.Type.byId(readVarUInt())) {
-    InventoryTransactionPacket.Source.Type.Invalid, InventoryTransactionPacket.Source.Type.Global, InventoryTransactionPacket.Source.Type.Creative -> InventoryTransactionPacket.Source(type, WindowId.None, InventoryTransactionPacket.Source.Action.None)
+    InventoryTransactionPacket.Source.Type.None, InventoryTransactionPacket.Source.Type.Global, InventoryTransactionPacket.Source.Type.Creative -> InventoryTransactionPacket.Source(type, WindowId.None, InventoryTransactionPacket.Source.Action.None)
     InventoryTransactionPacket.Source.Type.Inventory, InventoryTransactionPacket.Source.Type.UntrackedInteractionUi, InventoryTransactionPacket.Source.Type.NonImplemented -> InventoryTransactionPacket.Source(type, readVarInt(), InventoryTransactionPacket.Source.Action.None)
     InventoryTransactionPacket.Source.Type.World -> InventoryTransactionPacket.Source(InventoryTransactionPacket.Source.Type.World, WindowId.None, InventoryTransactionPacket.Source.Action.values()[readVarUInt()])
-    else -> throw IndexOutOfBoundsException()
 }
 
 fun PacketBuffer.writeSource(value: InventoryTransactionPacket.Source) {

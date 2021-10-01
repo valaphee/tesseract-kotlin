@@ -20,31 +20,40 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
-package com.valaphee.tesseract.world.scoreboard
+package com.valaphee.tesseract.world.chunk
+
+import com.valaphee.foundry.math.Int3
+import com.valaphee.tesseract.net.Packet
+import com.valaphee.tesseract.net.PacketBuffer
+import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
 
 /**
  * @author Kevin Ludwig
  */
-data class Score private constructor(
-    val scoreboardId: Long,
-    val objectiveName: String,
-    val value: Int,
-    val type: ScorerType,
-    val name: String?,
-    val entityId: Long
-) {
-    enum class ScorerType {
-        None, Player, Entity, Fake
+data class AnvilDamagePacket(
+    val position: Int3,
+    val damage: Int
+) : Packet {
+    override val id get() = 0x8D
+
+    override fun write(buffer: PacketBuffer, version: Int) {
+        buffer.writeByte(damage)
+        buffer.writeInt3UnsignedY(position)
     }
 
-    constructor(scoreboardId: Long, objectiveName: String) : this(scoreboardId, objectiveName, 0, ScorerType.None, null, 0)
+    override fun handle(handler: PacketHandler) = handler.anvilDamage(this)
+}
 
-    constructor(scoreboardId: Long, objectiveName: String, value: Int) : this(scoreboardId, objectiveName, value, ScorerType.None, null, 0)
-
-    constructor(scoreboardId: Long, objectiveName: String, value: Int, name: String) : this(scoreboardId, objectiveName, value, ScorerType.Fake, name, 0)
-
-    constructor(scoreboardId: Long, objectiveName: String, value: Int, type: ScorerType, entityId: Long) : this(scoreboardId, objectiveName, value, type, null, entityId)
+/**
+ * @author Kevin Ludwig
+ */
+object AnvilDamagePacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int): AnvilDamagePacket {
+        val damage = buffer.readByte().toInt()
+        val position = buffer.readInt3UnsignedY()
+        return AnvilDamagePacket(position, damage)
+    }
 }
