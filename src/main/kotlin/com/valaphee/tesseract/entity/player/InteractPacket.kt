@@ -62,7 +62,7 @@ object InteractPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int): InteractPacket {
         val action = InteractPacket.Action.values()[buffer.readByte().toInt()]
         val runtimeEntityId = buffer.readVarULong()
-        val mousePosition = if (action == InteractPacket.Action.Mouseover || action == InteractPacket.Action.NpcOpen) buffer.readFloat3() else null
+        val mousePosition = if (action == InteractPacket.Action.LeaveVehicle || action == InteractPacket.Action.Mouseover) buffer.readFloat3() else null
         return InteractPacket(action, runtimeEntityId, mousePosition)
     }
 }

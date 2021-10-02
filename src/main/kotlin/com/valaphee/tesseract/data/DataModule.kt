@@ -97,9 +97,9 @@ class DataModule(
             var buffer: PacketBuffer? = null
             try {
                 buffer = PacketBuffer(Unpooled.wrappedBuffer(DataModule::class.java.getResourceAsStream("/runtime_block_states.dat")!!.readBytes()))
-                val blocks = HashMap<String, ArrayList<Map<String, Any>>>()
+                val blocks = mutableMapOf<String, MutableList<Map<String, Any>>>()
                 NbtInputStream(ByteBufInputStream(buffer)).use { it.readTag()!!.asCompoundTag()!! }.getListTag("blocks").toList().map { it.asCompoundTag()!! }.forEach {
-                    blocks.getOrPut(it.getString("name")) { ArrayList() }.add(it.getCompoundTag("states").toMap().mapValues {
+                    blocks.getOrPut(it.getString("name")) { mutableListOf() }.add(it.getCompoundTag("states").toMap().mapValues {
                         when (it.value.type) {
                             TagType.Byte -> it.value.asNumberTag()!!.toByte() != 0.toByte()
                             TagType.Int -> it.value.asNumberTag()!!.toInt()

@@ -32,7 +32,7 @@ import java.io.DataOutput
  */
 internal class ListTagImpl(
     override var name: String,
-    private val value: MutableList<Tag> = ArrayList(),
+    private val value: MutableList<Tag> = mutableListOf(),
     private var valueType: TagType? = null
 ) : ListTag {
     override val type get() = TagType.List

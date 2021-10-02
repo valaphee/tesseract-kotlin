@@ -42,10 +42,10 @@ class CommandsPacket(
     override val id get() = 0x4C
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        val values = ArrayList<String>()
-        val enumerationsMap = HashMap<String, Enumeration>()
-        val softEnumerationsMap = HashMap<String, Enumeration>()
-        val postfixes = ArrayList<String>()
+        val values = mutableListOf<String>()
+        val enumerationsMap = mutableMapOf<String, Enumeration>()
+        val softEnumerationsMap = mutableMapOf<String, Enumeration>()
+        val postfixes = mutableListOf<String>()
         commands.forEach { command ->
             command.aliases?.let {
                 values.addAll(it.values)
@@ -65,8 +65,6 @@ class CommandsPacket(
         }
         buffer.writeVarUInt(values.size)
         values.forEach { buffer.writeString(it) }
-        val enumerations = ArrayList(enumerationsMap.values)
-        val softEnumerations = ArrayList(softEnumerationsMap.values)
         buffer.writeVarUInt(postfixes.size)
         postfixes.forEach { buffer.writeString(it) }
         val indexWriter: (Int) -> Unit = when {
@@ -74,8 +72,8 @@ class CommandsPacket(
             values.size <= 0xFFFF -> buffer::writeShortLE
             else -> buffer::writeIntLE
         }
-        buffer.writeVarUInt(enumerations.size)
-        enumerations.forEach {
+        buffer.writeVarUInt(enumerationsMap.values.size)
+        enumerationsMap.values.forEach {
             buffer.writeString(it.name)
             buffer.writeVarUInt(it.values.size)
             it.values.forEach { indexWriter(values.indexOf(it)) }
@@ -86,20 +84,20 @@ class CommandsPacket(
             buffer.writeString(command.description)
             if (version >= 448) buffer.writeShortLEFlags(command.flags) else buffer.writeByteFlags(command.flags)
             buffer.writeByte(command.permission.ordinal)
-            buffer.writeIntLE(enumerations.indexOf(command.aliases))
+            buffer.writeIntLE(enumerationsMap.values.indexOf(command.aliases))
             buffer.writeVarUInt(command.overloads.size)
             command.overloads.forEach { overload ->
                 buffer.writeVarUInt(overload.size)
                 overload.forEach { parameter ->
                     buffer.writeString(parameter.name)
-                    buffer.writeIntLE(parameter.postfix?.let { postfixes.indexOf(it) or parameterFlagPostfix } ?: parameter.enumeration?.let { (if (it.soft) softEnumerations.indexOf(parameter.enumeration!!) or parameterFlagSoftEnumeration else enumerations.indexOf(parameter.enumeration!!) or parameterFlagEnumeration) or parameterFlagValid } ?: parameter.type?.let { (if (version >= 419) parameterTypes else parameterTypesPre419).getKey(it) or parameterFlagValid } ?: throw IllegalStateException())
+                    buffer.writeIntLE(parameter.postfix?.let { postfixes.indexOf(it) or parameterFlagPostfix } ?: parameter.enumeration?.let { (if (it.soft) softEnumerationsMap.values.indexOf(parameter.enumeration) or parameterFlagSoftEnumeration else enumerationsMap.values.indexOf(parameter.enumeration) or parameterFlagEnumeration) or parameterFlagValid } ?: parameter.type?.let { (if (version >= 419) parameterTypes else parameterTypesPre419).getKey(it) or parameterFlagValid } ?: error(""))
                     buffer.writeBoolean(parameter.optional)
                     buffer.writeByteFlags(parameter.options)
                 }
             }
         }
-        buffer.writeVarUInt(softEnumerations.size)
-        softEnumerations.forEach { buffer.writeEnumeration(it) }
+        buffer.writeVarUInt(softEnumerationsMap.values.size)
+        softEnumerationsMap.values.forEach { buffer.writeEnumeration(it) }
         buffer.writeVarUInt(0)
     }
 

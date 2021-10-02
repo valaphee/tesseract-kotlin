@@ -169,25 +169,17 @@ val JsonObject.asAppearance
         "",
         getStringOrNull("SkinResourcePatch")?.let {
             val jsonSkinResourcePatch = Streams.parse(JsonReader(StringReader(String(base64Decoder.decode(it), StandardCharsets.UTF_8))))
-            val skinResourcePatch: MutableMap<String, Any> = HashMap()
-            if (jsonSkinResourcePatch.isJsonObject) jsonSkinResourcePatch.asJsonObject.entrySet().forEach { skinResourcePatch[it.key] = gson.fromJson(it.value, Any::class.java) }
-            skinResourcePatch
+            if (jsonSkinResourcePatch.isJsonObject) jsonSkinResourcePatch.asJsonObject.entrySet().associate { it.key to gson.fromJson(it.value, Any::class.java) } else emptyMap()
         } ?: emptyMap(),
         getAsAppearanceImage("Skin"),
-        run {
-            val animations: MutableList<AppearanceAnimation> = ArrayList()
-            getJsonArray("AnimatedImageData").forEach {
-                val jsonAnimation = it.asJsonObject
-                animations.add(
-                    AppearanceAnimation(
-                        jsonAnimation.getAsAppearanceImage(null),
-                        AppearanceAnimation.Type.values()[jsonAnimation.getInt("Type")],
-                        jsonAnimation.getFloat("Frames"),
-                        AppearanceAnimation.Expression.values()[jsonAnimation.getIntOrNull("AnimationExpression") ?: 0],
-                    )
-                )
-            }
-            animations
+        getJsonArray("AnimatedImageData").map {
+            val jsonAnimation = it.asJsonObject
+            AppearanceAnimation(
+                jsonAnimation.getAsAppearanceImage(null),
+                AppearanceAnimation.Type.values()[jsonAnimation.getInt("Type")],
+                jsonAnimation.getFloat("Frames"),
+                AppearanceAnimation.Expression.values()[jsonAnimation.getIntOrNull("AnimationExpression") ?: 0],
+            )
         },
         getAsAppearanceImage("Cape"),
         String(base64Decoder.decode(getString("SkinGeometryData")), StandardCharsets.UTF_8),

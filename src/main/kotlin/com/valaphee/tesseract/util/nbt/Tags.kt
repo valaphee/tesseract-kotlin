@@ -45,7 +45,7 @@ fun ofDouble(value: Double): NumberTag = DoubleTagImpl("", value)
 
 fun listTag(): ListTag = ListTagImpl("")
 
-fun listTag(type: TagType): ListTag = ListTagImpl("", ArrayList(), type)
+fun listTag(type: TagType): ListTag = ListTagImpl("", mutableListOf(), type)
 
 fun ofList(value: MutableList<Tag>): ListTag = ListTagImpl("", value, value[0].type)
 

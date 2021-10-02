@@ -57,8 +57,8 @@ data class AppearanceImage(
     )
 
     fun toJson(json: JsonObject, name: String? = null) {
-        json.addProperty("${name}ImageWidth", width)
-        json.addProperty("${name}ImageHeight", height)
+        json.addProperty("${name ?: ""}ImageWidth", width)
+        json.addProperty("${name ?: ""}ImageHeight", height)
         json.addProperty(if (null != name) "${name}Data" else "Image", base64Encoder.encodeToString(data))
     }
 
@@ -96,36 +96,16 @@ fun JsonObject.getAsAppearanceImage(name: String?): AppearanceImage {
     if (has("${name ?: ""}ImageWidth") && has("${name ?: ""}ImageHeight")) {
         width = this["${name ?: ""}ImageWidth"].asInt
         height = this["${name ?: ""}ImageHeight"].asInt
-    } else when (data.size) {
-        64 * 32 * bytesPerPixel -> {
-            width = 64
-            height = 32
+    } else if (data.size.countOneBits() > 1) error("Image size is not power of two") else {
+        val sizePow = (data.size shr 2).countTrailingZeroBits()
+        if (sizePow % 2 == 0) {
+            width = 1 shl sizePow / 2
+            height = width
+        } else {
+            val sizePow2 = (sizePow - 1) / 2
+            width = 1 shl sizePow2 + 1
+            height = 1 shl sizePow2
         }
-        64 * 64 * bytesPerPixel -> {
-            width = 64
-            height = 64
-        }
-        128 * 64 * bytesPerPixel -> {
-            width = 128
-            height = 64
-        }
-        128 * 128 * bytesPerPixel -> {
-            width = 128
-            height = 128
-        }
-        256 * 256 * bytesPerPixel -> {
-            width = 256
-            height = 256
-        }
-        512 * 256 * bytesPerPixel -> {
-            width = 512
-            height = 256
-        }
-        512 * 512 * bytesPerPixel -> {
-            width = 512
-            height = 512
-        }
-        else -> error("Unable to detect image dimensions, image was ${data.size}")
     }
     return AppearanceImage(width, height, data)
 }
