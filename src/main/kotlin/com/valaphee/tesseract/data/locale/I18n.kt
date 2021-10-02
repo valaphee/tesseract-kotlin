@@ -24,33 +24,16 @@
 
 package com.valaphee.tesseract.data.locale
 
-import com.valaphee.tesseract.data.DataType
-import com.valaphee.tesseract.data.KeyedData
-import java.text.MessageFormat
-import java.util.regex.Pattern
+import java.util.Locale
 
 /**
  * @author Kevin Ludwig
  */
-@DataType("tesseract:locale")
-class LocaleData(
-    override val key: String,
-    val entries: Map<String, Any>
-) : KeyedData() {
-    @Transient private val entriesFlat = entries.flatMap { flatten(it.key, it.value) }.toMap()
-    @Transient private val entryFormats = mutableMapOf<String, MessageFormat>()
+class I18n(
+    private val namespace: String,
+    private val locales: Map<String, LocaleData>
+) {
+    val default = locales["${namespace}:en_us"] ?: LocaleData("${namespace}:en_us", emptyMap())
 
-    operator fun get(key: String, vararg arguments: Any?) = entriesFlat[key]?.let {
-        (entryFormats[key] ?: (try {
-            MessageFormat(it)
-        } catch (_: IllegalArgumentException) {
-            MessageFormat(pattern.matcher(it).replaceAll("\\[$1\\]"))
-        }).also { entryFormats[key] = it }).format(arguments)
-    } ?: key
-
-    companion object {
-        private val pattern = Pattern.compile("\\{(\\D*?)}")
-
-        private fun flatten(key: String, value: Any): Iterable<Pair<String, String>> = if (value !is Map<*, *>) listOf(key to value.toString()) else value.flatMap { flatten("$key.${(it.key as String)}", it.value!!) }
-    }
+    operator fun get(locale: Locale) = locales["${namespace}:${locale.toLanguageTag().replace('-', '_')}"] ?: default
 }

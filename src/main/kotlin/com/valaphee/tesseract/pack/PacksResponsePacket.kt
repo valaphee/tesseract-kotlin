@@ -22,47 +22,47 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.entity.player
+package com.valaphee.tesseract.pack
 
-import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
+import com.valaphee.tesseract.net.Restrict
+import com.valaphee.tesseract.net.Restriction
+import java.util.UUID
 
 /**
  * @author Kevin Ludwig
  */
-class InteractPacket(
-    val action: Action,
-    val runtimeEntityId: Long,
-    val mousePosition: Float3?
+@Restrict(Restriction.ToServer)
+class PacksResponsePacket(
+    val status: Status,
+    val packIds: Array<UUID>
 ) : Packet {
-    enum class Action {
-        None, Interact, Damage, LeaveVehicle, Mouseover, NpcOpen, OpenInventory
+    enum class Status {
+        None, Refused, TransferPacks, HaveAllPacks, Completed
     }
 
-    override val id get() = 0x21
+    override val id get() = 0x08
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeByte(action.ordinal)
-        buffer.writeVarULong(runtimeEntityId)
-        if (action == Action.LeaveVehicle || action == Action.Mouseover) buffer.writeFloat3(mousePosition!!)
+        buffer.writeByte(status.ordinal)
+        buffer.writeShortLE(packIds.size)
+        packIds.forEach { buffer.writeString(it.toString()) }
     }
 
-    override fun handle(handler: PacketHandler) = handler.interact(this)
+    override fun handle(handler: PacketHandler) = handler.packsResponse(this)
 
-    override fun toString() = "InteractPacket(action=$action, runtimeEntityId=$runtimeEntityId, mousePosition=$mousePosition)"
+    override fun toString() = "PacksResponsePacket(status=$status, packIds=${packIds.contentToString()})"
 }
 
 /**
  * @author Kevin Ludwig
  */
-object InteractPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int): InteractPacket {
-        val action = InteractPacket.Action.values()[buffer.readByte().toInt()]
-        val runtimeEntityId = buffer.readVarULong()
-        val mousePosition = if (action == InteractPacket.Action.Mouseover || action == InteractPacket.Action.NpcOpen) buffer.readFloat3() else null
-        return InteractPacket(action, runtimeEntityId, mousePosition)
-    }
+object PacksResponsePacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = PacksResponsePacket(
+        PacksResponsePacket.Status.values()[buffer.readUnsignedByte().toInt()],
+        Array(buffer.readUnsignedShortLE()) { UUID.fromString(buffer.readString().split("_".toRegex(), 2).toTypedArray()[0]) }
+    )
 }

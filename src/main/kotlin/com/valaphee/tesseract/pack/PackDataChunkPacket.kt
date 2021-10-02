@@ -20,10 +20,9 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
-package com.valaphee.tesseract.net.base.pack
+package com.valaphee.tesseract.pack
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -31,39 +30,46 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import io.netty.buffer.ByteBuf
 import java.util.UUID
 
 /**
  * @author Kevin Ludwig
  */
-@Restrict(Restriction.ToServer)
-class PacksResponsePacket(
-    val status: Status,
-    val packIds: Array<UUID>
+@Restrict(Restriction.ToClient)
+class PackDataChunkPacket(
+    val packId: UUID,
+    val packVersion: String?,
+    val chunkIndex: Long,
+    val progress: Long,
+    val data: ByteBuf
 ) : Packet {
-    enum class Status {
-        None, Refused, TransferPacks, HaveAllPacks, Completed
-    }
-
-    override val id get() = 0x08
+    override val id get() = 0x53
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeByte(status.ordinal)
-        buffer.writeShortLE(packIds.size)
-        packIds.forEach { buffer.writeString(it.toString()) }
+        buffer.writeString("$packId${packVersion?.let { "_$packVersion" } ?: ""}")
+        buffer.writeIntLE(chunkIndex.toInt())
+        buffer.writeLongLE(progress)
+        buffer.writeVarUInt(data.readableBytes())
+        buffer.writeBytes(data)
     }
 
-    override fun handle(handler: PacketHandler) = handler.packsResponse(this)
+    override fun handle(handler: PacketHandler) = handler.packDataChunk(this)
 
-    override fun toString() = "PacksResponsePacket(status=$status, packIds=${packIds.contentToString()})"
+    override fun toString() = "PackDataChunkPacket(packId=$packId, packVersion=$packVersion, chunkIndex=$chunkIndex, progress=$progress, data=$data)"
 }
 
 /**
  * @author Kevin Ludwig
  */
-object PacksResponsePacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = PacksResponsePacket(
-        PacksResponsePacket.Status.values()[buffer.readUnsignedByte().toInt()],
-        Array(buffer.readUnsignedShortLE()) { UUID.fromString(buffer.readString().split("_".toRegex(), 2).toTypedArray()[0]) }
-    )
+object PackDataChunkPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int): PackDataChunkPacket {
+        val pack = buffer.readString().split("_".toRegex(), 2).toTypedArray()
+        val packId = UUID.fromString(pack[0])
+        val packVersion = if (pack.size == 2) pack[1] else null
+        val chunkIndex = buffer.readUnsignedIntLE()
+        val progress = buffer.readLongLE()
+        val data = buffer.readSlice(buffer.readVarUInt())
+        return PackDataChunkPacket(packId, packVersion, chunkIndex, progress, data)
+    }
 }

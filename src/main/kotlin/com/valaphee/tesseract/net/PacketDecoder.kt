@@ -131,12 +131,12 @@ import com.valaphee.tesseract.net.base.TransferPacketReader
 import com.valaphee.tesseract.net.base.VideoStreamPacketReader
 import com.valaphee.tesseract.net.base.ViolationPacketReader
 import com.valaphee.tesseract.net.base.WebSocketPacketReader
-import com.valaphee.tesseract.net.base.pack.PackDataChunkPacketReader
-import com.valaphee.tesseract.net.base.pack.PackDataChunkRequestPacketReader
-import com.valaphee.tesseract.net.base.pack.PackDataPacketReader
-import com.valaphee.tesseract.net.base.pack.PacksPacketReader
-import com.valaphee.tesseract.net.base.pack.PacksResponsePacketReader
-import com.valaphee.tesseract.net.base.pack.PacksStackPacketReader
+import com.valaphee.tesseract.pack.PackDataChunkPacketReader
+import com.valaphee.tesseract.pack.PackDataChunkRequestPacketReader
+import com.valaphee.tesseract.pack.PackDataPacketReader
+import com.valaphee.tesseract.pack.PacksPacketReader
+import com.valaphee.tesseract.pack.PacksResponsePacketReader
+import com.valaphee.tesseract.pack.PacksStackPacketReader
 import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
 import com.valaphee.tesseract.world.BossBarPacketReader
 import com.valaphee.tesseract.world.CameraShakePacketReader
@@ -198,7 +198,7 @@ class PacketDecoder(
     var blockStates: Int2ObjectOpenHashBiMap<String>? = null,
     var items: Int2ObjectOpenHashBiMap<String>? = null
 ) : MessageToMessageDecoder<ByteBuf>() {
-    override fun decode(context: ChannelHandlerContext, `in`: ByteBuf, out: MutableList<Any>) {
+    public override fun decode(context: ChannelHandlerContext, `in`: ByteBuf, out: MutableList<Any>) {
         val packetBuffer = PacketBuffer(`in`, false, blockStates, items)
         val header = packetBuffer.readVarUInt()
         val id = header and Packet.idMask

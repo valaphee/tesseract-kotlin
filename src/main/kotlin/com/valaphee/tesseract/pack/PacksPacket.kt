@@ -20,10 +20,9 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
-package com.valaphee.tesseract.net.base.pack
+package com.valaphee.tesseract.pack
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -31,70 +30,73 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
-import com.valaphee.tesseract.world.Experiment
-import com.valaphee.tesseract.world.writeExperiment
 import java.util.UUID
 
 /**
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
-class PacksStackPacket(
+class PacksPacket(
     val forcedToAccept: Boolean,
+    val scriptingEnabled: Boolean,
+    val forcingServerPacksEnabled: Boolean,
     val behaviorPacks: Array<Pack>,
-    val resourcePacks: Array<Pack>,
-    val experimental: Boolean,
-    val version: String,
-    val experiments: Array<Experiment>,
-    val experimentsPreviouslyToggled: Boolean
+    val resourcePacks: Array<Pack>
 ) : Packet {
     data class Pack(
         val id: UUID,
         val version: String,
-        val subPackName: String
+        val size: Long,
+        val encryptionKey: String,
+        val subPackName: String,
+        val contentId: String,
+        val scripting: Boolean,
+        val raytracingCapable: Boolean = false
     )
 
-    override val id get() = 0x07
+    override val id get() = 0x06
 
     override fun write(buffer: PacketBuffer, version: Int) {
         buffer.writeBoolean(forcedToAccept)
-        buffer.writeVarUInt(behaviorPacks.size)
+        buffer.writeBoolean(scriptingEnabled)
+        if (version >= 448) buffer.writeBoolean(forcingServerPacksEnabled)
+        buffer.writeShortLE(behaviorPacks.size)
         behaviorPacks.forEach {
             buffer.writeString(it.id.toString())
             buffer.writeString(it.version)
+            buffer.writeLongLE(it.size)
+            buffer.writeString(it.encryptionKey)
             buffer.writeString(it.subPackName)
+            buffer.writeString(it.contentId)
+            buffer.writeBoolean(it.scripting)
         }
-        buffer.writeVarUInt(resourcePacks.size)
+        buffer.writeShortLE(resourcePacks.size)
         resourcePacks.forEach {
             buffer.writeString(it.id.toString())
             buffer.writeString(it.version)
+            buffer.writeLongLE(it.size)
+            buffer.writeString(it.encryptionKey)
             buffer.writeString(it.subPackName)
-        }
-        if (version < 419) buffer.writeBoolean(experimental)
-        buffer.writeString(this.version)
-        if (version >= 419) {
-            buffer.writeIntLE(experiments.size)
-            experiments.forEach { buffer.writeExperiment(it) }
-            buffer.writeBoolean(experimentsPreviouslyToggled)
+            buffer.writeString(it.contentId)
+            buffer.writeBoolean(it.scripting)
+            if (version >= 422) buffer.writeBoolean(it.raytracingCapable)
         }
     }
 
-    override fun handle(handler: PacketHandler) = handler.packsStack(this)
+    override fun handle(handler: PacketHandler) = handler.packs(this)
 
-    override fun toString() = "PacksStackPacket(forcedToAccept=$forcedToAccept, behaviorPacks=${behaviorPacks.contentToString()}, resourcePacks=${resourcePacks.contentToString()}, experimental=$experimental, version='$version', experiments=${experiments.contentToString()}, experimentsPreviouslyToggled=$experimentsPreviouslyToggled)"
+    override fun toString() = "PacksPacket(forcedToAccept=$forcedToAccept, scriptingEnabled=$scriptingEnabled, forcingServerPacksEnabled=$forcingServerPacksEnabled, behaviorPacks=${behaviorPacks.contentToString()}, resourcePacks=${resourcePacks.contentToString()})"
 }
 
 /**
  * @author Kevin Ludwig
  */
-object PacksStackPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = PacksStackPacket(
+object PacksPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = PacksPacket(
         buffer.readBoolean(),
-        Array(buffer.readVarUInt()) { PacksStackPacket.Pack(UUID.fromString(buffer.readString()), buffer.readString(), buffer.readString()) },
-        Array(buffer.readVarUInt()) { PacksStackPacket.Pack(UUID.fromString(buffer.readString()), buffer.readString(), buffer.readString()) },
-        if (version < 419) buffer.readBoolean() else false,
-        "", emptyArray(), false/*buffer.readString(),
-        if (version >= 419) Array(buffer.readIntLE()) { buffer.readExperiment() } else emptyArray(),
-        if (version >= 419) buffer.readBoolean() else false TODO*/
+        buffer.readBoolean(),
+        if (version >= 448) buffer.readBoolean() else false,
+        Array(buffer.readUnsignedShortLE()) { PacksPacket.Pack(UUID.fromString(buffer.readString()), buffer.readString(), buffer.readLongLE(), buffer.readString(), buffer.readString(), buffer.readString(), buffer.readBoolean()) },
+        Array(buffer.readUnsignedShortLE()) { PacksPacket.Pack(UUID.fromString(buffer.readString()), buffer.readString(), buffer.readLongLE(), buffer.readString(), buffer.readString(), buffer.readString(), buffer.readBoolean(), if (version >= 422) buffer.readBoolean() else false) }
     )
 }
