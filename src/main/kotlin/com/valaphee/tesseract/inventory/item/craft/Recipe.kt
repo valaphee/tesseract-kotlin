@@ -38,7 +38,7 @@ fun multiRecipe(id: UUID, netId: Int) = Recipe(id, null, Recipe.Type.Multi, 0, 0
 /**
  * @author Kevin Ludwig
  */
-data class Recipe(
+class Recipe(
     val id: UUID?,
     val name: String?,
     val type: Type,
@@ -61,49 +61,5 @@ data class Recipe(
         ShulkerBox,
         ShapelessChemistry,
         ShapedChemistry
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Recipe
-
-        if (id != other.id) return false
-        if (name != other.name) return false
-        if (type != other.type) return false
-        if (inputId != other.inputId) return false
-        if (inputSubId != other.inputSubId) return false
-        if (width != other.width) return false
-        if (height != other.height) return false
-        if (inputs != null) {
-            if (other.inputs == null) return false
-            if (!inputs.contentEquals(other.inputs)) return false
-        } else if (other.inputs != null) return false
-        if (outputs != null) {
-            if (other.outputs == null) return false
-            if (!outputs.contentEquals(other.outputs)) return false
-        } else if (other.outputs != null) return false
-        if (tag != other.tag) return false
-        if (priority != other.priority) return false
-        if (netId != other.netId) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = id?.hashCode() ?: 0
-        result = 31 * result + (name?.hashCode() ?: 0)
-        result = 31 * result + (type?.hashCode() ?: 0)
-        result = 31 * result + inputId
-        result = 31 * result + inputSubId
-        result = 31 * result + width
-        result = 31 * result + height
-        result = 31 * result + (inputs?.contentHashCode() ?: 0)
-        result = 31 * result + (outputs?.contentHashCode() ?: 0)
-        result = 31 * result + (tag?.hashCode() ?: 0)
-        result = 31 * result + priority
-        result = 31 * result + netId
-        return result
     }
 }

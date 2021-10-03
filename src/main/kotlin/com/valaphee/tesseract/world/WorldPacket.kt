@@ -49,8 +49,8 @@ class WorldPacket(
     val uniqueEntityId: Long,
     val runtimeEntityId: Long,
     val gameMode: GameMode,
-    val position: Float3,
-    val rotation: Float2,
+    var position: Float3?, // needed for je-be protocol translation
+    var rotation: Float2?, // needed for je-be protocol translation
     val seed: Int,
     val biomeType: BiomeType,
     val biomeName: String,
@@ -58,7 +58,7 @@ class WorldPacket(
     val generatorId: Int,
     val defaultGameMode: GameMode,
     val difficulty: Difficulty,
-    val defaultSpawn: Int3,
+    var defaultSpawn: Int3?, // needed for je-be protocol translation
     val achievementsDisabled: Boolean,
     val time: Int,
     val educationEditionOffer: EducationEditionOffer,
@@ -138,8 +138,8 @@ class WorldPacket(
         buffer.writeVarLong(uniqueEntityId)
         buffer.writeVarULong(runtimeEntityId)
         buffer.writeVarInt(gameMode.ordinal)
-        buffer.writeFloat3(position)
-        buffer.writeFloat2(rotation)
+        buffer.writeFloat3(position!!)
+        buffer.writeFloat2(rotation!!)
         buffer.writeVarInt(seed)
         if (version >= 407) {
             buffer.writeShortLE(biomeType.ordinal)
@@ -149,7 +149,7 @@ class WorldPacket(
         buffer.writeVarInt(generatorId)
         buffer.writeVarInt(defaultGameMode.ordinal)
         buffer.writeVarInt(difficulty.ordinal)
-        buffer.writeInt3UnsignedY(defaultSpawn)
+        buffer.writeInt3UnsignedY(defaultSpawn!!)
         buffer.writeBoolean(achievementsDisabled)
         buffer.writeVarInt(time)
         if (version >= 407) {
@@ -173,7 +173,7 @@ class WorldPacket(
         buffer.writeVarUInt(gameRules.size)
         if (version >= 440) gameRules.forEach(buffer::writeGameRule) else gameRules.forEach(buffer::writeGameRulePre440)
         if (version >= 419) {
-            experiments!!.let {
+            experiments.let {
                 buffer.writeIntLE(it.size)
                 it.forEach(buffer::writeExperiment)
             }
@@ -239,8 +239,7 @@ class WorldPacket(
 
     override fun handle(handler: PacketHandler) = handler.world(this)
 
-    override fun toString() =
-        "WorldPacket(uniqueEntityId=$uniqueEntityId, runtimeEntityId=$runtimeEntityId, gameMode=$gameMode, position=$position, rotation=$rotation, seed=$seed, biomeType=$biomeType, biomeName='$biomeName', dimension=$dimension, generatorId=$generatorId, defaultGameMode=$defaultGameMode, difficulty=$difficulty, defaultSpawn=$defaultSpawn, achievementsDisabled=$achievementsDisabled, time=$time, educationEditionOffer=$educationEditionOffer, educationModeId=$educationModeId, educationFeaturesEnabled=$educationFeaturesEnabled, educationProductId='$educationProductId', rainLevel=$rainLevel, thunderLevel=$thunderLevel, platformLockedContentConfirmed=$platformLockedContentConfirmed, multiplayerGame=$multiplayerGame, broadcastingToLan=$broadcastingToLan, xboxLiveBroadcastMode=$xboxLiveBroadcastMode, platformBroadcastMode=$platformBroadcastMode, commandsEnabled=$commandsEnabled, resourcePacksRequired=$resourcePacksRequired, gameRules=${gameRules.contentToString()}, experiments=${experiments.contentToString()}, experimentsPreviouslyToggled=$experimentsPreviouslyToggled, bonusChestEnabled=$bonusChestEnabled, startingWithMap=$startingWithMap, defaultRank=$defaultRank, serverChunkTickRange=$serverChunkTickRange, behaviorPackLocked=$behaviorPackLocked, resourcePackLocked=$resourcePackLocked, fromLockedWorldTemplate=$fromLockedWorldTemplate, usingMsaGamerTagsOnly=$usingMsaGamerTagsOnly, fromWorldTemplate=$fromWorldTemplate, worldTemplateOptionLocked=$worldTemplateOptionLocked, onlySpawningV1Villagers=$onlySpawningV1Villagers, version='$version', limitedWorldRadius=$limitedWorldRadius, limitedWorldHeight=$limitedWorldHeight, v2Nether=$v2Nether, experimentalGameplay=$experimentalGameplay, worldId='$worldId', worldName='$worldName', premiumWorldTemplateId='$premiumWorldTemplateId', trial=$trial, movementAuthoritative=$movementAuthoritative, movementRewindHistory=$movementRewindHistory, blockBreakingServerAuthoritative=$blockBreakingServerAuthoritative, tick=$tick, enchantmentSeed=$enchantmentSeed, blocksData=${blocksData?.contentToString()}, blocksTag=$blocksTag, blocks2Data=${blocks2Data?.contentToString()}, blocks2=${blocks2?.contentToString()}, itemsData=${itemsData?.contentToString()}, items=$items, multiplayerCorrelationId='$multiplayerCorrelationId', inventoriesServerAuthoritative=$inventoriesServerAuthoritative, engine='$engine')"
+    override fun toString() = "WorldPacket(uniqueEntityId=$uniqueEntityId, runtimeEntityId=$runtimeEntityId, gameMode=$gameMode, position=$position, rotation=$rotation, seed=$seed, biomeType=$biomeType, biomeName='$biomeName', dimension=$dimension, generatorId=$generatorId, defaultGameMode=$defaultGameMode, difficulty=$difficulty, defaultSpawn=$defaultSpawn, achievementsDisabled=$achievementsDisabled, time=$time, educationEditionOffer=$educationEditionOffer, educationModeId=$educationModeId, educationFeaturesEnabled=$educationFeaturesEnabled, educationProductId='$educationProductId', rainLevel=$rainLevel, thunderLevel=$thunderLevel, platformLockedContentConfirmed=$platformLockedContentConfirmed, multiplayerGame=$multiplayerGame, broadcastingToLan=$broadcastingToLan, xboxLiveBroadcastMode=$xboxLiveBroadcastMode, platformBroadcastMode=$platformBroadcastMode, commandsEnabled=$commandsEnabled, resourcePacksRequired=$resourcePacksRequired, gameRules=${gameRules.contentToString()}, experiments=${experiments.contentToString()}, experimentsPreviouslyToggled=$experimentsPreviouslyToggled, bonusChestEnabled=$bonusChestEnabled, startingWithMap=$startingWithMap, defaultRank=$defaultRank, serverChunkTickRange=$serverChunkTickRange, behaviorPackLocked=$behaviorPackLocked, resourcePackLocked=$resourcePackLocked, fromLockedWorldTemplate=$fromLockedWorldTemplate, usingMsaGamerTagsOnly=$usingMsaGamerTagsOnly, fromWorldTemplate=$fromWorldTemplate, worldTemplateOptionLocked=$worldTemplateOptionLocked, onlySpawningV1Villagers=$onlySpawningV1Villagers, version='$version', limitedWorldRadius=$limitedWorldRadius, limitedWorldHeight=$limitedWorldHeight, v2Nether=$v2Nether, experimentalGameplay=$experimentalGameplay, worldId='$worldId', worldName='$worldName', premiumWorldTemplateId='$premiumWorldTemplateId', trial=$trial, movementAuthoritative=$movementAuthoritative, movementRewindHistory=$movementRewindHistory, blockBreakingServerAuthoritative=$blockBreakingServerAuthoritative, tick=$tick, enchantmentSeed=$enchantmentSeed, blocksData=${blocksData?.contentToString()}, blocksTag=$blocksTag, blocks2Data=${blocks2Data?.contentToString()}, blocks2=${blocks2?.contentToString()}, itemsData=${itemsData?.contentToString()}, items=$items, multiplayerCorrelationId='$multiplayerCorrelationId', inventoriesServerAuthoritative=$inventoriesServerAuthoritative, engine='$engine')"
 }
 
 /**

@@ -70,23 +70,23 @@ class MapPacket(
         if (flagsValue and flagHasDecorationAndTrackedObjects != 0) {
             trackedObjects?.let {
                 buffer.writeVarUInt(it.size)
-                it.forEach { (trackedObjectType, uniqueEntityId, blockPosition) ->
-                    buffer.writeIntLE(trackedObjectType.ordinal)
-                    when (trackedObjectType) {
-                        TrackedObject.Type.Entity -> buffer.writeVarLong(uniqueEntityId!!)
-                        TrackedObject.Type.Block -> buffer.writeInt3UnsignedY(blockPosition!!)
+                it.forEach {
+                    buffer.writeIntLE(it.type.ordinal)
+                    when (it.type) {
+                        TrackedObject.Type.Entity -> buffer.writeVarLong(it.uniqueEntityId!!)
+                        TrackedObject.Type.Block -> buffer.writeInt3UnsignedY(it.blockPosition!!)
                     }
                 }
             } ?: buffer.writeVarUInt(0)
             decorations?.let {
                 buffer.writeVarUInt(it.size)
-                it.forEach { (type, rotation, positionX, positionY, label, color) ->
-                    buffer.writeByte(type.ordinal)
-                    buffer.writeByte(rotation.toInt())
-                    buffer.writeByte(positionX.toInt())
-                    buffer.writeByte(positionY.toInt())
-                    buffer.writeString(label)
-                    buffer.writeVarUInt(color)
+                it.forEach {
+                    buffer.writeByte(it.type.ordinal)
+                    buffer.writeByte(it.rotation.toInt())
+                    buffer.writeByte(it.positionX.toInt())
+                    buffer.writeByte(it.positionY.toInt())
+                    buffer.writeString(it.label)
+                    buffer.writeVarUInt(it.color)
                 }
             } ?: buffer.writeVarUInt(0)
         }

@@ -31,7 +31,7 @@ import java.util.UUID
 /**
  * @author Kevin Ludwig
  */
-data class AuthExtra(
+class AuthExtra(
     val userId: UUID,
     val xboxUserId: String,
     val userName: String

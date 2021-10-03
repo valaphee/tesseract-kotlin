@@ -25,6 +25,8 @@
 
 package com.valaphee.tesseract.form
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
@@ -37,22 +39,24 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.ToClient)
 class ServerSettingsPacket(
-    val formId: Int
+    val formId: Int,
+    val form: Form<*>
 ) : Packet {
     override val id get() = 0x67
 
     override fun write(buffer: PacketBuffer, version: Int) {
         buffer.writeVarUInt(formId)
+        buffer.writeString(jacksonObjectMapper().writeValueAsString(form))
     }
 
     override fun handle(handler: PacketHandler) = handler.serverSettings(this)
 
-    override fun toString() = "ServerSettingsPacket(formId=$formId)"
+    override fun toString() = "ServerSettingsPacket(formId=$formId, form=$form)"
 }
 
 /**
  * @author Kevin Ludwig
  */
 object ServerSettingsPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = ServerSettingsPacket(buffer.readVarUInt())
+    override fun read(buffer: PacketBuffer, version: Int) = ServerSettingsPacket(buffer.readVarUInt(), jacksonObjectMapper().readValue(buffer.readString()))
 }

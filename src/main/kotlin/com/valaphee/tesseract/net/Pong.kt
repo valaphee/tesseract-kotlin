@@ -30,7 +30,7 @@ import java.util.StringJoiner
 /**
  * @author Kevin Ludwig
  */
-data class Pong(
+class Pong(
     val serverId: Long,
     val serverName: String? = null,
     val version: String? = null,

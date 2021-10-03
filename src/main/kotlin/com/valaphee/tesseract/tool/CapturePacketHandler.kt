@@ -27,8 +27,10 @@ package com.valaphee.tesseract.tool
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.google.common.collect.HashBiMap
+import com.google.inject.Inject
 import com.valaphee.tesseract.command.net.CommandsPacket
 import com.valaphee.tesseract.command.net.LocalPlayerAsInitializedPacket
+import com.valaphee.tesseract.data.block.Block
 import com.valaphee.tesseract.data.recipe.ShapedRecipeData
 import com.valaphee.tesseract.data.recipe.ShapelessRecipeData
 import com.valaphee.tesseract.entity.player.AuthExtra
@@ -54,6 +56,7 @@ import com.valaphee.tesseract.net.base.ServerToClientHandshakePacket
 import com.valaphee.tesseract.pack.PacksPacket
 import com.valaphee.tesseract.pack.PacksResponsePacket
 import com.valaphee.tesseract.pack.PacksStackPacket
+import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
 import com.valaphee.tesseract.util.generateKeyPair
 import com.valaphee.tesseract.world.WorldPacket
 import io.netty.buffer.Unpooled
@@ -67,9 +70,10 @@ import java.util.UUID
  * @author Kevin Ludwig
  */
 class CapturePacketHandler(
-    private val connection: Connection,
-    private val objectMapper: ObjectMapper
+    private val connection: Connection
 ) : PacketHandler {
+    @Inject private lateinit var blocks: Map<String, @JvmSuppressWildcards Block>
+    @Inject private lateinit var objectMapper: ObjectMapper
     private val keyPair = generateKeyPair()
 
     override fun initialize() {
@@ -145,6 +149,17 @@ class CapturePacketHandler(
     }
 
     override fun world(packet: WorldPacket) {
+        val blockStates = Int2ObjectOpenHashBiMap<String>()
+        var runtimeId = 0
+        blocks.values.sortedWith(compareBy { it.key.split(":", limit = 2)[1].lowercase() }).forEach {
+            if (it.states.size != 1) blockStates.reverse[it.key] = runtimeId
+            it.states.forEach { blockStates[runtimeId++] = it.toString() }
+        }
+        connection.blockStates = blockStates
+        val items = Int2ObjectOpenHashBiMap<String>()
+        packet.items!!.forEach { items[it.key] = it.value.key }
+        connection.items = items
+
         connection.write(LocalPlayerAsInitializedPacket(packet.runtimeEntityId))
     }
 
@@ -183,6 +198,7 @@ class CapturePacketHandler(
     }
 
     override fun recipes(packet: RecipesPacket) {
+        packet.recipes.forEach { if (it.type == Recipe.Type.Multi) println(it.id) }
         return
 
         File("data/minecraft/recipes").mkdirs()
@@ -229,10 +245,16 @@ class CapturePacketHandler(
                 }
             }
         }
+
+        objectMapper.writeValue(File("potion_mix_recipes.json"), packet.potionMixRecipes)
+        objectMapper.writeValue(File("container_mix_recipes.json"), packet.containerMixRecipes)
     }
 
     override fun commands(packet: CommandsPacket) {
-        jacksonObjectMapper().writeValue(File("commands.json"), packet.commands)
-        jacksonObjectMapper().writeValue(File("constraints.json"), packet.constraints)
+        return
+
+        val objectMapper = jacksonObjectMapper()
+        objectMapper.writeValue(File("commands.json"), packet.commands)
+        objectMapper.writeValue(File("constraints.json"), packet.constraints)
     }
 }

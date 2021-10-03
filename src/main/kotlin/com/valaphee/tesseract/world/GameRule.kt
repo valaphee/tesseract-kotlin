@@ -29,7 +29,7 @@ import com.valaphee.tesseract.net.PacketBuffer
 /**
  * @author Kevin Ludwig
  */
-data class GameRule<T>(
+class GameRule<T>(
     val name: String,
     val editable: Boolean,
     val value: T

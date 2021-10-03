@@ -27,8 +27,8 @@ package com.valaphee.tesseract.inventory.item.craft
 /**
  * @author Kevin Ludwig
  */
-data class ContainerMixRecipe(
-    val inputId: Int,
-    val reagentId: Int,
-    val outputId: Int
+class ContainerMixRecipe(
+    val inputKey: String,
+    val reagentKey: String,
+    val outputKey: String
 )

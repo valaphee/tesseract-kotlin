@@ -47,7 +47,7 @@ import java.util.Base64
 /**
  * @author Kevin Ludwig
  */
-data class Appearance constructor(
+class Appearance constructor(
     val skinId: String,
     val playFabId: String,
     val skinResourcePatch: Map<String, Any>,
@@ -69,7 +69,7 @@ data class Appearance constructor(
     val primaryUser: Boolean,
     var trusted: Boolean,
 ) {
-    data class PersonaPiece(
+    class PersonaPiece(
         val id: String,
         val type: String,
         val packId: String,
@@ -77,7 +77,7 @@ data class Appearance constructor(
         val productId: String
     )
 
-    data class PersonaPieceTint(
+    class PersonaPieceTint(
         val pieceType: String,
         val colors: Array<String>
     ) {
@@ -125,12 +125,12 @@ data class Appearance constructor(
         capeImage.toJson(json, "Cape")
         json.addProperty("CapeOnClassicSkin", capeOnClassicSkin)
         val jsonAnimations = JsonArray()
-        animations.forEach { (image, type, frames, expression) ->
+        animations.forEach {
             val jsonAnimation = JsonObject()
-            jsonAnimation.addProperty("Type", type.ordinal)
-            jsonAnimation.addProperty("Frames", frames)
-            image.toJson(jsonAnimation)
-            jsonAnimation.addProperty("AnimationExpression", expression.ordinal)
+            jsonAnimation.addProperty("Type", it.type.ordinal)
+            jsonAnimation.addProperty("Frames", it.frames)
+            it.image.toJson(jsonAnimation)
+            jsonAnimation.addProperty("AnimationExpression", it.expression.ordinal)
             jsonAnimations.add(jsonAnimation)
         }
         json.add("AnimatedImageData", jsonAnimations)
@@ -326,10 +326,10 @@ fun PacketBuffer.writeAppearancePre390(value: Appearance) {
     writeString(JsonObject().apply { value.skinResourcePatch.forEach { add(it.key, gson.toJsonTree(it.value)) } }.toString())
     writeAppearanceImage(value.skinImage)
     writeIntLE(value.animations.size)
-    value.animations.forEach { (image, type, frames) ->
-        writeAppearanceImage(image)
-        writeIntLE(type.ordinal)
-        writeFloatLE(frames)
+    value.animations.forEach {
+        writeAppearanceImage(it.image)
+        writeIntLE(it.type.ordinal)
+        writeFloatLE(it.frames)
     }
     writeAppearanceImage(value.capeImage)
     writeString(value.geometryData)
@@ -367,11 +367,11 @@ fun PacketBuffer.writeAppearancePre428(value: Appearance) {
     writeString(JsonObject().apply { value.skinResourcePatch.forEach { add(it.key, gson.toJsonTree(it.value)) } }.toString())
     writeAppearanceImage(value.skinImage)
     writeIntLE(value.animations.size)
-    value.animations.forEach { (image, type, frames, expression) ->
-        writeAppearanceImage(image)
-        writeIntLE(type.ordinal)
-        writeFloatLE(frames)
-        writeIntLE(expression.ordinal)
+    value.animations.forEach {
+        writeAppearanceImage(it.image)
+        writeIntLE(it.type.ordinal)
+        writeFloatLE(it.frames)
+        writeIntLE(it.expression.ordinal)
     }
     writeAppearanceImage(value.capeImage)
     writeString(value.geometryData)
@@ -406,15 +406,14 @@ fun PacketBuffer.writeAppearancePre465(value: Appearance) {
     writeString(JsonObject().apply { value.skinResourcePatch.forEach { add(it.key, gson.toJsonTree(it.value)) } }.toString())
     writeAppearanceImage(value.skinImage)
     writeIntLE(value.animations.size)
-    value.animations.forEach { (image, type, frames, expression) ->
-        writeAppearanceImage(image)
-        writeIntLE(type.ordinal)
-        writeFloatLE(frames)
-        writeIntLE(expression.ordinal)
+    value.animations.forEach {
+        writeAppearanceImage(it.image)
+        writeIntLE(it.type.ordinal)
+        writeFloatLE(it.frames)
+        writeIntLE(it.expression.ordinal)
     }
     writeAppearanceImage(value.capeImage)
     writeString(value.geometryData)
-
     writeString(value.animationData)
     writeBoolean(value.premiumSkin)
     writeBoolean(value.personaSkin)
@@ -446,11 +445,11 @@ fun PacketBuffer.writeAppearance(value: Appearance) {
     writeString(JsonObject().apply { value.skinResourcePatch.forEach { add(it.key, gson.toJsonTree(it.value)) } }.toString())
     writeAppearanceImage(value.skinImage)
     writeIntLE(value.animations.size)
-    value.animations.forEach { (image, type, frames, expression) ->
-        writeAppearanceImage(image)
-        writeIntLE(type.ordinal)
-        writeFloatLE(frames)
-        writeIntLE(expression.ordinal)
+    value.animations.forEach {
+        writeAppearanceImage(it.image)
+        writeIntLE(it.type.ordinal)
+        writeFloatLE(it.frames)
+        writeIntLE(it.expression.ordinal)
     }
     writeAppearanceImage(value.capeImage)
     writeString(value.geometryData)

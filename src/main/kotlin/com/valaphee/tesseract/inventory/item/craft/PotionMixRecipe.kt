@@ -27,11 +27,11 @@ package com.valaphee.tesseract.inventory.item.craft
 /**
  * @author Kevin Ludwig
  */
-data class PotionMixRecipe(
-    val inputId: Int,
+class PotionMixRecipe(
+    val inputKey: String,
     val inputSubId: Int,
-    val reagentId: Int,
+    val reagentKey: String,
     val reagentSubId: Int,
-    val outputId: Int,
+    val outputKey: String,
     val outputSubId: Int
 )

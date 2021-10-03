@@ -29,7 +29,7 @@ import com.valaphee.tesseract.net.PacketBuffer
 /**
  * @author Kevin Ludwig
  */
-data class Experiment(
+class Experiment(
     val name: String,
     val enabled: Boolean
 )

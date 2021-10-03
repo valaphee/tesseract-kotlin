@@ -43,7 +43,7 @@ class PacksPacket(
     val behaviorPacks: Array<Pack>,
     val resourcePacks: Array<Pack>
 ) : Packet {
-    data class Pack(
+    class Pack(
         val id: UUID,
         val version: String,
         val size: Long,

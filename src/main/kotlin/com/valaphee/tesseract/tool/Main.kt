@@ -63,7 +63,7 @@ fun main() {
         .handler(object : ChannelInitializer<Channel>() {
             override fun initChannel(channel: Channel) {
                 val connection = Connection()
-                connection.setHandler(CapturePacketHandler(connection, injector.getInstance(ObjectMapper::class.java)))
+                connection.setHandler(CapturePacketHandler(connection).apply { injector.injectMembers(this) })
                 channel.pipeline()
                     .addLast(UserDataCodec.NAME, userDataCodec)
                     .addLast(Compressor.NAME, Compressor())

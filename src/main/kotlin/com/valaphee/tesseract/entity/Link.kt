@@ -29,7 +29,7 @@ import com.valaphee.tesseract.net.PacketBuffer
 /**
  * @author Kevin Ludwig
  */
-data class Link(
+class Link(
     val type: Type,
     val fromUniqueEntityId: Long,
     val toUniqueEntityId: Long,

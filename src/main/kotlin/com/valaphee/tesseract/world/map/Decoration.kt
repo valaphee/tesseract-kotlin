@@ -28,7 +28,7 @@ package com.valaphee.tesseract.world.map
 /**
  * @author Kevin Ludwig
  */
-data class Decoration(
+class Decoration(
     val type: Type,
     val rotation: Byte,
     val positionX: Byte,

@@ -29,7 +29,7 @@ import it.unimi.dsi.fastutil.ints.Int2IntMap
 /**
  * @author Kevin Ludwig
  */
-data class MaterialReducer(
-    val inputId: Int,
+class MaterialReducer(
+    val inputKey: String,
     val itemCounts: Int2IntMap
 )

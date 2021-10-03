@@ -28,7 +28,7 @@ package com.valaphee.tesseract.world.scoreboard
 /**
  * @author Kevin Ludwig
  */
-data class Score private constructor(
+class Score private constructor(
     val scoreboardId: Long,
     val objectiveName: String,
     val value: Int,

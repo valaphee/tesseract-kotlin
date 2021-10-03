@@ -40,12 +40,12 @@ import com.valaphee.tesseract.net.Restriction
 class EnchantOptionsPacket(
     val options: Array<Option>
 ) : Packet {
-    data class Slot(
+    class Slot(
         val enchantment: Enchantment,
         val level: Short
     )
 
-    data class Option(
+    class Option(
         val cost: Int,
         val primarySlotId: Int,
         val slots1: Array<Slot>,

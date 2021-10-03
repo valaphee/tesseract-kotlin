@@ -35,7 +35,7 @@ import java.util.UUID
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class Manifest(
+class Manifest(
     @get:JsonProperty("format_version") val version: String,
     @get:JsonProperty("header") val header: Header,
     @get:JsonProperty("modules") val modules: List<Module>?,
@@ -46,7 +46,7 @@ data class Manifest(
 ) {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
-    data class Header(
+    class Header(
         @get:JsonProperty("uuid") val id: UUID,
         @get:JsonProperty("name") val name: String,
         @get:JsonProperty("version") val version: SemanticVersion,
@@ -63,7 +63,7 @@ data class Manifest(
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
-    data class Module(
+    class Module(
         @get:JsonProperty("uuid") val id: UUID,
         @get:JsonProperty("version") val version: SemanticVersion,
         @get:JsonProperty("description") val description: String?,
@@ -91,7 +91,7 @@ data class Manifest(
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
-    data class Metadata(
+    class Metadata(
         val authors: List<String>?,
         @get:JsonProperty("license") val license: String?,
         @get:JsonProperty("url") val website: String?
@@ -99,14 +99,14 @@ data class Manifest(
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
-    data class Dependency(
+    class Dependency(
         @get:JsonProperty("uuid") val id: UUID,
         @get:JsonProperty("version") val version: SemanticVersion
     )
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
-    data class SubPack(
+    class SubPack(
         @get:JsonProperty("folder_name") val path: String? = null,
         @get:JsonProperty("name") val name: String? = null,
         @get:JsonProperty("memory_tier") val memoryTier: Int = 0

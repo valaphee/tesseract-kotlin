@@ -37,31 +37,11 @@ import com.valaphee.tesseract.net.Restriction
 class InventoryResponsePacket(
     val responses: Array<Response>
 ) : Packet {
-    data class Response(
+    class Response(
         val status: ResponseStatus,
         val requestId: Int,
         val windows: Array<ResponseWindow>
-    ) {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as Response
-
-            if (status != other.status) return false
-            if (requestId != other.requestId) return false
-            if (!windows.contentEquals(other.windows)) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            var result = status.hashCode()
-            result = 31 * result + requestId
-            result = 31 * result + windows.contentHashCode()
-            return result
-        }
-    }
+    )
 
     enum class ResponseStatus {
         Ok,
@@ -133,30 +113,12 @@ class InventoryResponsePacket(
         CannotConsumeItem
     }
 
-    data class ResponseWindow(
+    class ResponseWindow(
         val windowId: Int,
         val slots: Array<ResponseWindowSlot>
-    ) {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
+    )
 
-            other as ResponseWindow
-
-            if (windowId != other.windowId) return false
-            if (!slots.contentEquals(other.slots)) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            var result = windowId
-            result = 31 * result + slots.contentHashCode()
-            return result
-        }
-    }
-
-    data class ResponseWindowSlot(
+    class ResponseWindowSlot(
         val slotId: Int,
         val hotbarSlot: Int,
         val count: Int,

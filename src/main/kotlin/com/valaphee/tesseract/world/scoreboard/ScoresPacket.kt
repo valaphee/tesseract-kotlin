@@ -49,16 +49,16 @@ class ScoresPacket(
     override fun write(buffer: PacketBuffer, version: Int) {
         buffer.writeByte(action.ordinal)
         buffer.writeVarUInt(scores.size)
-        scores.forEach { (scoreboardId, objectiveName, value, scorerType, name, entityId) ->
-            buffer.writeVarLong(scoreboardId)
-            buffer.writeString(objectiveName)
-            buffer.writeIntLE(value)
+        scores.forEach {
+            buffer.writeVarLong(it.scoreboardId)
+            buffer.writeString(it.objectiveName)
+            buffer.writeIntLE(it.value)
             if (action == Action.Set) {
-                buffer.writeByte(scorerType.ordinal)
+                buffer.writeByte(it.type.ordinal)
                 @Suppress("NON_EXHAUSTIVE_WHEN")
-                when (scorerType) {
-                    Score.ScorerType.Entity, Score.ScorerType.Player -> buffer.writeVarLong(entityId)
-                    Score.ScorerType.Fake -> buffer.writeString(name!!)
+                when (it.type) {
+                    Score.ScorerType.Entity, Score.ScorerType.Player -> buffer.writeVarLong(it.entityId)
+                    Score.ScorerType.Fake -> buffer.writeString(it.name!!)
                 }
             }
         }

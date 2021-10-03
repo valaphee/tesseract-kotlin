@@ -45,7 +45,7 @@ class ScoreboardIdentityPacket(
         Add, Remove
     }
 
-    data class Entry(
+    class Entry(
         var scoreboardId: Long,
         var userId: UUID?
     )

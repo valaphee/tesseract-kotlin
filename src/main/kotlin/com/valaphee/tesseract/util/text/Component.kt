@@ -46,14 +46,14 @@ sealed class Component
 /**
  * @author Kevin Ludwig
  */
-data class TextComponent(
+class TextComponent(
     @get:JsonProperty("text") var text: String
 ) : Component()
 
 /**
  * @author Kevin Ludwig
  */
-data class TranslateComponent(
+class TranslateComponent(
     @get:JsonProperty("translate") var name: String,
     @get:JsonProperty("with") var arguments: Array<Component> = emptyArray()
 ) : Component() {
@@ -79,7 +79,7 @@ data class TranslateComponent(
 /**
  * @author Kevin Ludwig
  */
-data class ScoreComponent(
+class ScoreComponent(
     @get:JsonProperty("name") var name: String,
     @get:JsonProperty("objective") var objective: String,
     @get:JsonProperty("value") var value: String

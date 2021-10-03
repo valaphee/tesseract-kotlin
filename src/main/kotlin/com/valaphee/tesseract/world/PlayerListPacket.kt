@@ -56,7 +56,7 @@ class PlayerListPacket(
         Add, Remove
     }
 
-    data class Entry(
+    class Entry(
         val userId: UUID,
         val uniqueEntityId: Long,
         val userName: String?,
@@ -117,9 +117,7 @@ object PlayerListPacketReader : PacketReader {
                 )
                 else -> PlayerListPacket.Entry(buffer.readUuid())
             }
-        }.apply {
-            if (version > 389 && action == PlayerListPacket.Action.Add) forEach { (_, _, _, _, _, _, appearance) -> appearance!!.trusted = buffer.readBoolean() }
-        }
+        }.apply { if (version > 389 && action == PlayerListPacket.Action.Add) forEach { it.appearance!!.trusted = buffer.readBoolean() } }
         return PlayerListPacket(action, entries)
     }
 }

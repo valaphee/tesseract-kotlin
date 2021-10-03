@@ -42,7 +42,7 @@ import javax.imageio.ImageIO
 /**
  * @author Kevin Ludwig
  */
-data class AppearanceImage(
+class AppearanceImage(
     var width: Int,
     var height: Int,
     val data: ByteArray

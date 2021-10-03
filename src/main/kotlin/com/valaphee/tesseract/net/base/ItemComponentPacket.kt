@@ -39,7 +39,7 @@ import com.valaphee.tesseract.util.nbt.CompoundTag
 class ItemComponentPacket(
     val entries: Array<Entry>
 ) : Packet {
-    data class Entry(
+    class Entry(
         val name: String,
         val tag: CompoundTag?
     )

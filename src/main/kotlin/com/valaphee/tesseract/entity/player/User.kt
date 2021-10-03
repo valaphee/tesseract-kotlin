@@ -39,7 +39,7 @@ import java.util.UUID
 /**
  * @author Kevin Ludwig
  */
-data class User constructor(
+class User constructor(
     val selfSignedId: UUID,
     val clientId: Long,
     val thirdPartyName: String,
