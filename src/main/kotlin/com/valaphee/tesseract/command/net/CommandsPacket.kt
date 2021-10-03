@@ -37,7 +37,8 @@ import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
  */
 @Restrict(Restriction.ToClient)
 class CommandsPacket(
-    val commands: Array<Command>
+    val commands: Array<Command>,
+    val constraints: Array<EnumerationConstraint>
 ) : Packet {
     override val id get() = 0x4C
 
@@ -90,7 +91,7 @@ class CommandsPacket(
                 buffer.writeVarUInt(overload.size)
                 overload.forEach { parameter ->
                     buffer.writeString(parameter.name)
-                    buffer.writeIntLE(parameter.postfix?.let { postfixes.indexOf(it) or parameterFlagPostfix } ?: parameter.enumeration?.let { (if (it.soft) softEnumerationsMap.values.indexOf(parameter.enumeration) or parameterFlagSoftEnumeration else enumerationsMap.values.indexOf(parameter.enumeration) or parameterFlagEnumeration) or parameterFlagValid } ?: parameter.type?.let { (if (version >= 419) parameterTypes else parameterTypesPre419).getKey(it) or parameterFlagValid } ?: error(""))
+                    buffer.writeIntLE(parameter.postfix?.let { postfixes.indexOf(it) or parameterFlagPostfix } ?: parameter.enumeration?.let { (if (it.soft) softEnumerationsMap.values.indexOf(parameter.enumeration) or parameterFlagSoftEnumeration else enumerationsMap.values.indexOf(parameter.enumeration) or parameterFlagEnumeration) or parameterFlagValid } ?: parameter.type?.let { /*(if (version >= 419) parameterTypes else parameterTypesPre419).getKey(*/it/*)*/ or parameterFlagValid } ?: error("Unknown type in ${parameter.name}"))
                     buffer.writeBoolean(parameter.optional)
                     buffer.writeByteFlags(parameter.options)
                 }
@@ -98,12 +99,13 @@ class CommandsPacket(
         }
         buffer.writeVarUInt(softEnumerationsMap.values.size)
         softEnumerationsMap.values.forEach { buffer.writeEnumeration(it) }
-        buffer.writeVarUInt(0)
+        buffer.writeVarUInt(constraints.size)
+        constraints.forEach { buffer.writeEnumerationConstraint(it, values, enumerationsMap.values) }
     }
 
     override fun handle(handler: PacketHandler) = handler.commands(this)
 
-    override fun toString() = "CommandsPacket(commands=${commands.contentToString()})"
+    override fun toString() = "CommandsPacket(commands=${commands.contentToString()}, constraints=${constraints.contentToString()})"
 
     companion object {
         internal val parameterTypesPre419 = Int2ObjectOpenHashBiMap<Parameter.Type>().apply {
@@ -194,6 +196,7 @@ object CommandsPacketReader : PacketReader {
             Command.Structure(name, description, flags, permission, aliasesIndex, overloadStructures)
         }
         val softEnumerations = Array(buffer.readVarUInt()) { buffer.readEnumeration(true) }
+        val constraints = Array(buffer.readVarUInt()) { buffer.readEnumerationConstraint(values, enumerations) }
         return CommandsPacket(Array(commandStructures.size) {
             val commandStructure = commandStructures[it]
             val aliasesIndex = commandStructure.aliasesIndex
@@ -204,17 +207,17 @@ object CommandsPacketReader : PacketReader {
                     val overloadStructure = overloadStructures[i][j]
                     var postfix: String? = null
                     var enumeration: Enumeration? = null
-                    var type: Parameter.Type? = null
+                    var type: Int? = null
                     when {
                         overloadStructure.postfix -> postfix = postfixes[overloadStructure.index]
                         overloadStructure.enumeration -> enumeration = enumerations[overloadStructure.index]
                         overloadStructure.softEnumeration -> enumeration = softEnumerations[overloadStructure.index]
-                        else -> type = CommandsPacket.parameterTypesPre419[overloadStructure.index]
+                        else -> type = overloadStructure.index/*if (version >= 419) CommandsPacket.parameterTypes[overloadStructure.index] else CommandsPacket.parameterTypesPre419[overloadStructure.index]*/
                     }
                     Parameter(overloadStructure.name, overloadStructure.optional, overloadStructure.options, enumeration, postfix, type)
                 }
             }
             Command(commandStructure.name, commandStructure.description, commandStructure.flags, commandStructure.permission, aliases, overloads)
-        })
+        }, constraints)
     }
 }

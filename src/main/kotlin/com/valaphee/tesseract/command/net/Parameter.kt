@@ -27,13 +27,13 @@ package com.valaphee.tesseract.command.net
 /**
  * @author Kevin Ludwig
  */
-data class Parameter(
+class Parameter(
     val name: String,
     val optional: Boolean,
     val options: Collection<Option>,
     val enumeration: Enumeration?,
     val postfix: String?,
-    val type: Type?
+    val type: Int?
 ) {
     enum class Option {
         SuppressEnumerationAutoCompletion, HasSemanticConstraint, EnumAsChainedCommand

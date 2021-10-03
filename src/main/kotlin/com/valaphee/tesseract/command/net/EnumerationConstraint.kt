@@ -24,15 +24,26 @@
 
 package com.valaphee.tesseract.command.net
 
+import com.valaphee.tesseract.net.PacketBuffer
+
 /**
  * @author Kevin Ludwig
  */
-data class EnumerationConstraint(
-    val option: String,
+class EnumerationConstraint(
+    val value: String,
     val enumeration: Enumeration,
-    val flags: Collection<Flag>
+    val constraints: Array<Constraint>
 ) {
-    enum class Flag {
+    enum class Constraint {
         CheatsEnabled, OperatorPermissions, HostPermissions, Unknown3
     }
+}
+
+fun PacketBuffer.readEnumerationConstraint(values: Array<String>, enumerations: Array<Enumeration>) = EnumerationConstraint(values[buffer.readIntLE()], enumerations[buffer.readIntLE()], Array(readVarUInt()) { EnumerationConstraint.Constraint.values()[buffer.readByte().toInt()] })
+
+fun PacketBuffer.writeEnumerationConstraint(value: EnumerationConstraint, values: Collection<String>, enumerations: Collection<Enumeration>) {
+    writeIntLE(values.indexOf(value.value))
+    writeIntLE(enumerations.indexOf(value.enumeration))
+    writeVarUInt(value.constraints.size)
+    value.constraints.forEach { buffer.writeByte(it.ordinal) }
 }

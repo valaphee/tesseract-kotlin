@@ -98,6 +98,7 @@ import com.valaphee.tesseract.inventory.WindowPropertyPacketReader
 import com.valaphee.tesseract.inventory.item.ItemActionPacketReader
 import com.valaphee.tesseract.inventory.item.craft.CraftingEventPacketReader
 import com.valaphee.tesseract.inventory.item.craft.RecipesPacketReader
+import com.valaphee.tesseract.latestProtocolVersion
 import com.valaphee.tesseract.net.base.BehaviorTreePacketReader
 import com.valaphee.tesseract.net.base.BiomeDefinitionsPacketReader
 import com.valaphee.tesseract.net.base.BlockComponentPacketReader
@@ -194,7 +195,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
  */
 class PacketDecoder(
     private val server: Boolean,
-    var version: Int = -1,
+    var version: Int = latestProtocolVersion,
     var blockStates: Int2ObjectOpenHashBiMap<String>? = null,
     var items: Int2ObjectOpenHashBiMap<String>? = null
 ) : MessageToMessageDecoder<ByteBuf>() {
