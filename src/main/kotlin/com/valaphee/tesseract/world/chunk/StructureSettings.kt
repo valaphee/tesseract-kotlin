@@ -31,7 +31,7 @@ import com.valaphee.tesseract.net.PacketBuffer
 /**
  * @author Kevin Ludwig
  */
-class StructureSettings(
+data class StructureSettings(
     val paletteName: String,
     val ignoringEntities: Boolean,
     val ignoringBlocks: Boolean,

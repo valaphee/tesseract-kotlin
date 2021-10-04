@@ -28,7 +28,7 @@ package com.valaphee.tesseract.entity.player.appearance
 /**
  * @author Kevin Ludwig
  */
-class AppearanceAnimation constructor(
+data class AppearanceAnimation constructor(
     val image: AppearanceImage,
     val type: Type,
     val frames: Float,

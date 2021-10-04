@@ -59,16 +59,34 @@ class InventoryTransactionPacket(
     val headPosition: Float3?,
     val blockRuntimeId: Int
 ) : Packet {
-    class LegacySlot(
+    data class LegacySlot(
         val windowId: Int,
         val slotIds: ByteArray
-    )
+    ) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as LegacySlot
+
+            if (windowId != other.windowId) return false
+            if (!slotIds.contentEquals(other.slotIds)) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = windowId
+            result = 31 * result + slotIds.contentHashCode()
+            return result
+        }
+    }
 
     enum class Type {
         Normal, Mismatch, ItemUse, ItemUseOnEntity, ItemRelease
     }
 
-    class Action(
+    data class Action(
         val source: Source,
         val slotId: Int,
         val fromStack: Stack?,
@@ -76,7 +94,7 @@ class InventoryTransactionPacket(
         val netId: Int?
     )
 
-    class Source(
+    data class Source(
         val type: Type,
         val windowId: Int,
         val action: Action

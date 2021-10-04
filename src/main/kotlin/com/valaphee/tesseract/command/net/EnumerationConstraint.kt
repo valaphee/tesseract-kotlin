@@ -29,13 +29,33 @@ import com.valaphee.tesseract.net.PacketBuffer
 /**
  * @author Kevin Ludwig
  */
-class EnumerationConstraint(
+data class EnumerationConstraint(
     val value: String,
     val enumeration: Enumeration,
     val constraints: Array<Constraint>
 ) {
     enum class Constraint {
         CheatsEnabled, OperatorPermissions, HostPermissions, Unknown3
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as EnumerationConstraint
+
+        if (value != other.value) return false
+        if (enumeration != other.enumeration) return false
+        if (!constraints.contentEquals(other.constraints)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = value.hashCode()
+        result = 31 * result + enumeration.hashCode()
+        result = 31 * result + constraints.contentHashCode()
+        return result
     }
 }
 

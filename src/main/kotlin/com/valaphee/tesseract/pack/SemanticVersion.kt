@@ -39,7 +39,7 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer
  */
 @JsonSerialize(using = SemanticVersion.Serializer::class)
 @JsonDeserialize(using = SemanticVersion.Deserializer::class)
-class SemanticVersion(
+data class SemanticVersion(
     val major: Int,
     val minor: Int,
     val patch: Int

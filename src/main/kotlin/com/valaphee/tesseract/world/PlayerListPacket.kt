@@ -56,7 +56,7 @@ class PlayerListPacket(
         Add, Remove
     }
 
-    class Entry(
+    data class Entry(
         val userId: UUID,
         val uniqueEntityId: Long,
         val userName: String?,

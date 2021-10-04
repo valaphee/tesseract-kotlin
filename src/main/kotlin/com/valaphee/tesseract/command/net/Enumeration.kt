@@ -29,11 +29,31 @@ import com.valaphee.tesseract.net.PacketBuffer
 /**
  * @author Kevin Ludwig
  */
-class Enumeration constructor(
+data class Enumeration constructor(
     val name: String,
     val values: Array<String>,
     val soft: Boolean = false
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Enumeration
+
+        if (name != other.name) return false
+        if (!values.contentEquals(other.values)) return false
+        if (soft != other.soft) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + values.contentHashCode()
+        result = 31 * result + soft.hashCode()
+        return result
+    }
+}
 
 fun PacketBuffer.readEnumeration(soft: Boolean) = Enumeration(readString(), Array(readVarUInt()) { readString() }, soft)
 

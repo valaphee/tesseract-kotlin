@@ -27,7 +27,7 @@ package com.valaphee.tesseract.command.net
 /**
  * @author Kevin Ludwig
  */
-class Parameter(
+data class Parameter(
     val name: String,
     val optional: Boolean,
     val options: Collection<Option>,

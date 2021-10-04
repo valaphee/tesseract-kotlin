@@ -47,7 +47,7 @@ import java.util.Base64
 /**
  * @author Kevin Ludwig
  */
-class Appearance constructor(
+data class Appearance constructor(
     val skinId: String,
     val playFabId: String,
     val skinResourcePatch: Map<String, Any>,

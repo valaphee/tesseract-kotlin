@@ -41,7 +41,7 @@ class ButtonList(
     override fun toString() = "ButtonList(title=$title, content=$content, buttons=$buttons)"
 }
 
-class Button(
+data class Button(
     @Transient val id: String,
     @get:JsonProperty("text") val text: String
 )

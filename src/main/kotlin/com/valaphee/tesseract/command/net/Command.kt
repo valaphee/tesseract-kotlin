@@ -27,7 +27,7 @@ package com.valaphee.tesseract.command.net
 /**
  * @author Kevin Ludwig
  */
-class Command(
+data class Command(
     val name: String,
     val description: String,
     val flags: Collection<Flag>,
@@ -47,4 +47,30 @@ class Command(
         val aliasesIndex: Int,
         val overloadStructures: Array<Array<Parameter.Structure>>
     )
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Command
+
+        if (name != other.name) return false
+        if (description != other.description) return false
+        if (flags != other.flags) return false
+        if (permission != other.permission) return false
+        if (aliases != other.aliases) return false
+        if (!overloads.contentDeepEquals(other.overloads)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + description.hashCode()
+        result = 31 * result + flags.hashCode()
+        result = 31 * result + permission.hashCode()
+        result = 31 * result + (aliases?.hashCode() ?: 0)
+        result = 31 * result + overloads.contentDeepHashCode()
+        return result
+    }
 }

@@ -30,7 +30,7 @@ import java.util.UUID
 /**
  * @author Kevin Ludwig
  */
-class Origin(
+data class Origin(
     val where: Where,
     val requestId: UUID,
     val purpose: String,

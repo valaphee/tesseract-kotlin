@@ -42,7 +42,7 @@ class BlockUpdatesSyncedPacket(
     val updates1: Array<Update>,
     val updates2: Array<Update>
 ) : Packet {
-    class Update(
+    data class Update(
         val position: Int3,
         val runtimeId: Int,
         val flags: Collection<BlockUpdatePacket.Flag>,

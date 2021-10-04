@@ -35,7 +35,7 @@ import java.util.UUID
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-class Manifest(
+data class Manifest(
     @get:JsonProperty("format_version") val version: String,
     @get:JsonProperty("header") val header: Header,
     @get:JsonProperty("modules") val modules: List<Module>?,
