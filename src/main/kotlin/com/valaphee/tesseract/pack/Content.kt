@@ -22,31 +22,16 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.data.block
-
-import com.valaphee.tesseract.data.DataType
-import com.valaphee.tesseract.data.KeyedData
-import com.valaphee.tesseract.util.nbt.CompoundTag
+package com.valaphee.tesseract.pack
 
 /**
  * @author Kevin Ludwig
  */
-@DataType("tesseract:block")
-class Block : KeyedData {
-    override val key: String
-    val properties: Map<String, Set<*>>
-    val states: List<BlockState>
-    val component: CompoundTag? = null
-
-    constructor(key: String, properties: Map<String, Set<*>> = emptyMap()) {
-        this.key = key
-        this.properties = properties
-        this.states = mutableListOf<BlockState>().apply { properties.values.fold(listOf(listOf<Any?>())) { acc, set -> acc.flatMap { list -> set.map { list + it } } }.forEach { add(BlockState(this@Block, properties.keys.zip(it).toMap())) } }.toList()
-    }
-
-    constructor(key: String, states: List<Map<String, Any>>) {
-        this.key = key
-        this.properties = emptyMap()
-        this.states = states.map { BlockState(this@Block, it) }
-    }
+class Content(
+    val content: List<Entry>
+) {
+    class Entry(
+        val path: String,
+        val key: String?
+    )
 }

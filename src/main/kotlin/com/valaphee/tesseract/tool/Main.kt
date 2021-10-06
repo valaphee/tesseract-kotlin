@@ -24,7 +24,12 @@
 
 package com.valaphee.tesseract.tool
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.google.inject.Guice
 import com.valaphee.tesseract.data.DataModule
@@ -35,6 +40,7 @@ import com.valaphee.tesseract.net.Connection
 import com.valaphee.tesseract.net.Decompressor
 import com.valaphee.tesseract.net.PacketDecoder
 import com.valaphee.tesseract.net.PacketEncoder
+import com.valaphee.tesseract.pack.Content
 import io.netty.bootstrap.Bootstrap
 import io.netty.channel.Channel
 import io.netty.channel.ChannelFactory
@@ -46,12 +52,18 @@ import network.ycc.raknet.RakNet
 import network.ycc.raknet.client.channel.RakNetClientChannel
 import network.ycc.raknet.pipeline.UserDataCodec
 import org.apache.logging.log4j.LogManager
+import java.io.File
 import java.net.InetSocketAddress
 
 fun main() {
     initializeConsole()
     initializeLogging()
 
+    //capture()
+    encryptPack()
+}
+
+fun capture() {
     val injector = Guice.createInjector(DataModule())
     val group = NioEventLoopGroup(0, ThreadFactoryBuilder().setNameFormat("capture-%d").build())
     val userDataCodec = UserDataCodec(0xFE)
@@ -78,4 +90,16 @@ fun main() {
         if (it.isSuccess) log.info("Capturing {}", it.channel().remoteAddress())
         else log.error("Failed to capture {}", it.channel().remoteAddress(), it.cause())
     })
+}
+
+fun encryptPack() {
+    val path = File("pack")
+    val objectMapper = jacksonObjectMapper().apply {
+        registerModule(AfterburnerModule())
+        propertyNamingStrategy = PropertyNamingStrategies.SNAKE_CASE
+        setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)
+        disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        enable(JsonParser.Feature.ALLOW_COMMENTS)
+    }
+    objectMapper.writeValue(File(path, "contents.json"), Content(path.walkTopDown().filter { it.isFile }.map { Content.Entry(it.path.replace('\\', '/'), null) }.toList()))
 }
