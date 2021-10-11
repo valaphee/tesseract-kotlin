@@ -23,7 +23,7 @@ But it uses a different concept then most servers out there, some are for exampl
   higher-order functions, etc. Which all are powerful tools to write more complex software with lesser code (and failures to make)
 
 **Warning:** This project is currently only in use a library, because it has all packets built-in. And has other features which can be used by other server software. In its self it isn't currently an own server software.<br>
-It can also be used to capture and extract data from bds offline servers, simply look in the `com.valaphee.tesseract.CapturePacketHandler` class and uncomment return statements, and then start the Main class<br/>
+It can also be used to capture and extract data from bds offline servers, simply look in the `com.valaphee.tesseract.CapturePacketHandler` class and uncomment return statements, and then start the Main class.<br/>
 Soon it will be possible to let Tesseract generate encrypted resource packs.
 
 ## Installation

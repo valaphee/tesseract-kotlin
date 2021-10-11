@@ -34,24 +34,28 @@ class BlockStorage(
     val default: Int,
     val sections: Array<out Section>
 ) : ReadWriteBlockAccess {
-    private val sectionCount get() = sections.size
+    val sectionCount: Int get() {
+        var sectionCount = sections.size - 1
+        while (sectionCount >= 0 && sections[sectionCount].empty) sectionCount--
+        return ++sectionCount
+    }
 
     constructor(default: Int, sectionCount: Int = 16) : this(default, Array(sectionCount) { SectionCompact(default, BitArray.Version.V1) })
 
-    override operator fun get(x: Int, y: Int, z: Int) = if (x in 0 until XZSize && y in 0 until sectionCount * Section.YSize && z in 0 until XZSize) sections[y shr YShift].get(x, y and YMask, z) else default
+    override operator fun get(x: Int, y: Int, z: Int) = if (x in 0 until XZSize && y in 0 until sections.size * Section.YSize && z in 0 until XZSize) sections[y shr YShift][x, y and YMask, z] else default
 
-    operator fun get(x: Int, y: Int, z: Int, layer: Int) = if (x in 0 until XZSize && y in 0 until sectionCount * Section.YSize && z in 0 until XZSize) sections[y shr YShift].get(x, y and YMask, z, layer) else default
+    operator fun get(x: Int, y: Int, z: Int, layer: Int) = if (x in 0 until XZSize && y in 0 until sections.size * Section.YSize && z in 0 until XZSize) sections[y shr YShift][x, y and YMask, z, layer] else default
 
     override operator fun set(x: Int, y: Int, z: Int, value: Int) {
-        if (!(x in 0 until XZSize && y in 0 until sectionCount * Section.YSize && z in 0 until XZSize)) return
+        if (!(x in 0 until XZSize && y in 0 until sections.size * Section.YSize && z in 0 until XZSize)) return
 
-        sections[y shr YShift].set(x, y and YMask, z, value)
+        sections[y shr YShift][x, y and YMask, z] = value
     }
 
     operator fun set(x: Int, y: Int, z: Int, value: Int, layer: Int) {
-        if (!(x in 0 until XZSize && y in 0 until sectionCount * Section.YSize && z in 0 until XZSize)) return
+        if (!(x in 0 until XZSize && y in 0 until sections.size * Section.YSize && z in 0 until XZSize)) return
 
-        sections[y shr YShift].set(x, y and YMask, z, value, layer)
+        sections[y shr YShift][x, y and YMask, z, value] = layer
     }
 
     companion object {

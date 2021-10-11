@@ -465,7 +465,7 @@ class WorldEventPacket(
             this[0x4000 + 79] = Event.ParticleWax
             this[0x4000 + 80] = Event.ParticleElectricSpark
         }
-        internal val events = eventsPre440.clone().apply {
+        internal val events = eventsPre448.clone().apply {
             this[0x4000 + 9] = Event.ParticleCandleFlame
             this[0x4000 + 10] = Event.ParticleLava
             this[0x4000 + 11] = Event.ParticleLargeSmoke
