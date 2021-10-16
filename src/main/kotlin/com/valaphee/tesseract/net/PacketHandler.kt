@@ -178,6 +178,8 @@ import com.valaphee.tesseract.world.chunk.LecternUpdatePacket
 import com.valaphee.tesseract.world.chunk.StructureBlockUpdatePacket
 import com.valaphee.tesseract.world.chunk.StructureTemplateDataExportRequestPacket
 import com.valaphee.tesseract.world.chunk.StructureTemplateDataExportResponsePacket
+import com.valaphee.tesseract.world.chunk.SubChunkPacket
+import com.valaphee.tesseract.world.chunk.SubChunkRequestPacket
 import com.valaphee.tesseract.world.map.MapCreateLockedCopyPacket
 import com.valaphee.tesseract.world.map.MapPacket
 import com.valaphee.tesseract.world.map.MapRequestPacket
@@ -513,4 +515,8 @@ interface PacketHandler : ProtocolHandler {
     fun photoItem(packet: PhotoItemPacket) = other(packet)
 
     fun blockUpdatesSynced(packet: BlockUpdatesSyncedPacket) = other(packet)
+
+    fun subChunk(packet: SubChunkPacket) = other(packet)
+
+    fun subChunkRequest(packet: SubChunkRequestPacket) = other(packet)
 }

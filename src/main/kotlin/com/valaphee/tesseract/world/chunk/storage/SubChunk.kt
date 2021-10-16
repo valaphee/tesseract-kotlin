@@ -32,7 +32,7 @@ import com.valaphee.tesseract.util.nibbleArray
 /**
  * @author Kevin Ludwig
  */
-interface Section {
+interface SubChunk {
     val empty: Boolean
 
     operator fun get(x: Int, y: Int, z: Int): Int
@@ -55,17 +55,17 @@ interface Section {
 /**
  * @author Kevin Ludwig
  */
-class SectionLegacy(
-    var blockIds: ByteArray = ByteArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize),
-    var blockSubIds: NibbleArray = nibbleArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize)
-) : Section {
+class LegacySubChunk(
+    var blockIds: ByteArray = ByteArray(BlockStorage.XZSize * SubChunk.YSize * BlockStorage.XZSize),
+    var blockSubIds: NibbleArray = nibbleArray(BlockStorage.XZSize * SubChunk.YSize * BlockStorage.XZSize)
+) : SubChunk {
     override fun get(x: Int, y: Int, z: Int): Int {
-        val index = (x shl Section.XShift) or (z shl Section.ZShift) or y
+        val index = (x shl SubChunk.XShift) or (z shl SubChunk.ZShift) or y
         return (blockIds[index].toInt() and (blockIdMask shl blockIdShift)) or blockSubIds[index]
     }
 
     override fun set(x: Int, y: Int, z: Int, value: Int) {
-        val index = (x shl Section.XShift) or (z shl Section.ZShift) or y
+        val index = (x shl SubChunk.XShift) or (z shl SubChunk.ZShift) or y
         blockIds[index] = ((value shr blockIdShift) and blockIdMask).toByte()
         blockSubIds[index] = (value and blockSubIdMask)
     }
@@ -82,7 +82,7 @@ class SectionLegacy(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as SectionLegacy
+        other as LegacySubChunk
 
         if (!blockIds.contentEquals(other.blockIds)) return false
         if (blockSubIds != other.blockSubIds) return false
@@ -106,18 +106,18 @@ class SectionLegacy(
 /**
  * @author Kevin Ludwig
  */
-class SectionCompact(
+class CompactSubChunk(
     var layers: Array<Layer>
-) : Section {
+) : SubChunk {
     constructor(default: Int, version: BitArray.Version) : this(arrayOf(Layer(default, version), Layer(default, version)))
 
     override fun get(x: Int, y: Int, z: Int) = get(x, y, z, 0)
 
-    override fun get(x: Int, y: Int, z: Int, layer: Int) = layers[layer].get((x shl Section.XShift) or (z shl Section.ZShift) or y)
+    override fun get(x: Int, y: Int, z: Int, layer: Int) = layers[layer].get((x shl SubChunk.XShift) or (z shl SubChunk.ZShift) or y)
 
     override fun set(x: Int, y: Int, z: Int, value: Int) = set(x, y, z, value, 0)
 
-    override fun set(x: Int, y: Int, z: Int, value: Int, layer: Int) = layers[layer].set((x shl Section.XShift) or (z shl Section.ZShift) or y, value)
+    override fun set(x: Int, y: Int, z: Int, value: Int, layer: Int) = layers[layer].set((x shl SubChunk.XShift) or (z shl SubChunk.ZShift) or y, value)
 
     override val empty get() = layers.all { it.empty }
 
@@ -132,14 +132,14 @@ class SectionCompact(
     }
 }
 
-fun PacketBuffer.readSection(default: Int) = when (val version = readUnsignedByte().toInt()) {
-    0, 2, 3, 4, 5, 6 -> SectionLegacy(ByteArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize).apply { readBytes(this) }, nibbleArray(ByteArray((BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize) / 2).apply { readBytes(this) })).also { if (isReadable(4096)) skipBytes(4096) }
-    1 -> SectionCompact(arrayOf(readLayer(default)))
-    8 -> SectionCompact(Array(readUnsignedByte().toInt()) { readLayer(default) })
+fun PacketBuffer.readSubChunk(default: Int) = when (val version = readUnsignedByte().toInt()) {
+    0, 2, 3, 4, 5, 6 -> LegacySubChunk(ByteArray(BlockStorage.XZSize * SubChunk.YSize * BlockStorage.XZSize).apply { readBytes(this) }, nibbleArray(ByteArray((BlockStorage.XZSize * SubChunk.YSize * BlockStorage.XZSize) / 2).apply { readBytes(this) })).also { if (isReadable(4096)) skipBytes(4096) }
+    1 -> CompactSubChunk(arrayOf(readLayer(default)))
+    8 -> CompactSubChunk(Array(readUnsignedByte().toInt()) { readLayer(default) })
     9 -> {
         val layerCount = readUnsignedByte().toInt()
         readByte() // absolute index for data-driven dimension heights
-        SectionCompact(Array(layerCount) { readLayer(default) })
+        CompactSubChunk(Array(layerCount) { readLayer(default) })
     }
     else -> TODO(version.toString())
 }

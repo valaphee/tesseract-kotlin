@@ -43,7 +43,7 @@ class Layer(
     var palette: IntList,
     var bitArray: BitArray,
 ) {
-    constructor(default: Int, version: BitArray.Version) : this(IntArrayList(16).apply { add(default) }, version.bitArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize))
+    constructor(default: Int, version: BitArray.Version) : this(IntArrayList(16).apply { add(default) }, version.bitArray(BlockStorage.XZSize * SubChunk.YSize * BlockStorage.XZSize))
 
     operator fun get(index: Int) = palette.getInt(bitArray[index])
 
@@ -55,8 +55,8 @@ class Layer(
             val blocksVersion = bitArray.version
             if (paletteIndex > blocksVersion.maximumEntryValue) {
                 blocksVersion.next?.let {
-                    val newBlockStorage = it.bitArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize)
-                    repeat(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize) { newBlockStorage[it] = bitArray[it] }
+                    val newBlockStorage = it.bitArray(BlockStorage.XZSize * SubChunk.YSize * BlockStorage.XZSize)
+                    repeat(BlockStorage.XZSize * SubChunk.YSize * BlockStorage.XZSize) { newBlockStorage[it] = bitArray[it] }
                     bitArray = newBlockStorage
                 }
             }
@@ -102,7 +102,7 @@ fun PacketBuffer.readLayer(default: Int): Layer {
     val header = readByte().toInt()
     val version = BitArray.Version.byBitsPerEntry(header shr 1)
     val runtime = header and 1 == 1
-    val blocks = version.bitArray(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize, IntArray(version.bitArrayDataSize(BlockStorage.XZSize * Section.YSize * BlockStorage.XZSize)) { readIntLE() })
+    val blocks = version.bitArray(BlockStorage.XZSize * SubChunk.YSize * BlockStorage.XZSize, IntArray(version.bitArrayDataSize(BlockStorage.XZSize * SubChunk.YSize * BlockStorage.XZSize)) { readIntLE() })
     val paletteSize = readVarInt()
     return Layer(IntArrayList().apply {
         if (runtime) repeat(paletteSize) { add(readVarInt()) } else {

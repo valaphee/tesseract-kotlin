@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("com.palantir.git-version") version "0.12.3"
-    id("edu.sc.seis.launch4j") version "2.5.0"
     kotlin("jvm") version "1.5.30"
     `maven-publish`
     signing
@@ -51,8 +50,8 @@ dependencies {
     api("com.valaphee:foundry-databind:1.3.0.0")
     api("com.valaphee:foundry-math:1.3.0.0")
     api("commons-cli:commons-cli:1.4")
-    api("io.github.classgraph:classgraph:4.8.123")
-    api("io.netty:netty-all:4.1.68.Final")
+    api("io.github.classgraph:classgraph:4.8.126")
+    api("io.netty:netty-all:4.1.69.Final")
     api("it.unimi.dsi:fastutil:8.5.6")
     api("jline:jline:2.14.6")
     api("network.ycc:netty-raknet-client:0.8-SNAPSHOT")
@@ -79,11 +78,6 @@ tasks {
     withType<KotlinCompile>().configureEach { kotlinOptions { jvmTarget = "16" } }
 
     withType<Test> { useJUnitPlatform() }
-
-    task<Copy>("copyDependencies") {
-        from(configurations.default)
-        into("build/libs/libs")
-    }
 }
 
 signing {
@@ -122,16 +116,4 @@ publishing {
             from(components["java"])
         }
     }
-}
-
-launch4j {
-    mainClassName = "com.valaphee.tesseract.MainKt"
-    headerType = "console"
-    icon = "${projectDir}/app.ico"
-    copyright = "Copyright (c) 2021, Valaphee"
-    companyName = "Valaphee"
-    fileDescription = "Experience Minecraft in a different way."
-    productName = "Tesseract"
-    jvmOptions = setOf("--add-opens java.base/jdk.internal.misc=ALL-UNNAMED", "--add-opens=java.base/java.nio=ALL-UNNAMED", "-Dio.netty.tryReflectionSetAccessible=true")
-    copyConfigurable = emptyArray<Any>()
 }

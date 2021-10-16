@@ -34,7 +34,7 @@ import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 import com.valaphee.tesseract.util.nbt.CompoundTag
 import com.valaphee.tesseract.world.chunk.storage.BlockStorage
-import com.valaphee.tesseract.world.chunk.storage.readSection
+import com.valaphee.tesseract.world.chunk.storage.readSubChunk
 
 /**
  * @author Kevin Ludwig
@@ -42,7 +42,7 @@ import com.valaphee.tesseract.world.chunk.storage.readSection
 @Restrict(Restriction.ToClient)
 class ChunkPacket private constructor(
     val position: Int2,
-    val sectionCount: Int,
+    val subChunkCount: Int,
     val blockStorage: BlockStorage?,
     val biomes: ByteArray?,
     val blockEntities: Array<CompoundTag>,
@@ -51,15 +51,15 @@ class ChunkPacket private constructor(
 ) : Packet {
     override val id get() = 0x3A
 
-    constructor(position: Int2, blockStorage: BlockStorage, biomes: ByteArray,  blockEntities: Array<CompoundTag>) : this(position, blockStorage.sectionCount, blockStorage, biomes, blockEntities, false, null)
+    constructor(position: Int2, blockStorage: BlockStorage, biomes: ByteArray,  blockEntities: Array<CompoundTag>) : this(position, blockStorage.subChunkCount, blockStorage, biomes, blockEntities, false, null)
 
-    constructor(position: Int2, sectionCount: Int, blockEntities: Array<CompoundTag>, blobIds: LongArray) : this(position, sectionCount, null, null, blockEntities, true, blobIds)
+    constructor(position: Int2, subChunkCount: Int, blockEntities: Array<CompoundTag>, blobIds: LongArray) : this(position, subChunkCount, null, null, blockEntities, true, blobIds)
 
     override fun write(buffer: PacketBuffer, version: Int) {
         val (x, z) = position
         buffer.writeVarInt(x)
         buffer.writeVarInt(z)
-        buffer.writeVarUInt(sectionCount)
+        buffer.writeVarUInt(subChunkCount)
         buffer.writeBoolean(cache)
         if (cache) blobIds!!.let {
             buffer.writeVarUInt(it.size)
@@ -68,7 +68,7 @@ class ChunkPacket private constructor(
         val dataLengthIndex = buffer.writerIndex()
         buffer.writeZero(PacketBuffer.MaximumVarUIntLength)
         if (!cache) {
-            blockStorage!!.let { repeat(sectionCount) { i -> it.sections[i].writeToBuffer(buffer) } }
+            blockStorage!!.let { repeat(subChunkCount) { i -> it.subChunks[i].writeToBuffer(buffer) } }
             buffer.writeBytes(biomes!!)
         }
         buffer.writeByte(0) // border blocks
@@ -78,7 +78,7 @@ class ChunkPacket private constructor(
 
     override fun handle(handler: PacketHandler) = handler.chunk(this)
 
-    override fun toString() = "ChunkPacket(position=$position, sectionCount=$sectionCount, blockStorage=$blockStorage, blockEntities=${blockEntities.contentToString()}, cache=$cache, blobIds=${blobIds?.contentToString()})"
+    override fun toString() = "ChunkPacket(position=$position, subChunkCount=$subChunkCount, blockStorage=$blockStorage, blockEntities=${blockEntities.contentToString()}, cache=$cache, blobIds=${blobIds?.contentToString()})"
 }
 
 /**
@@ -87,15 +87,15 @@ class ChunkPacket private constructor(
 object ChunkPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int): ChunkPacket {
         val position = Int2(buffer.readVarInt(), buffer.readVarInt())
-        val sectionCount = buffer.readVarUInt()
+        val subChunkCount = buffer.readVarUInt()
         return if (buffer.readBoolean()) {
             val blobIds = LongArray(buffer.readVarUInt()) { buffer.readLongLE() }
             buffer.readVarUInt() // data length
             buffer.readByte() // border blocks
-            ChunkPacket(position, sectionCount, emptyArray(), blobIds)
+            ChunkPacket(position, subChunkCount, emptyArray(), blobIds)
         } else {
             buffer.readVarUInt() // data length
-            val blockStorage = BlockStorage(buffer.blockStates.getKey(airKey), Array(sectionCount) { buffer.readSection(buffer.blockStates.getKey(airKey)) })
+            val blockStorage = BlockStorage(buffer.blockStates.getKey(airKey), Array(subChunkCount) { buffer.readSubChunk(buffer.blockStates.getKey(airKey)) })
             val biomes = ByteArray(BlockStorage.XZSize * BlockStorage.XZSize) // TODO caves_and_cliffs
             buffer.readBytes(biomes)
             buffer.readByte() // border blocks

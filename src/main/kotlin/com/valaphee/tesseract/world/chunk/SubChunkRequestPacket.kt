@@ -20,26 +20,45 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
  */
 
-package com.valaphee.tesseract.util
+package com.valaphee.tesseract.world.chunk
 
-fun String.padLeft(length: Int, pad: Char): String {
-    val padLeft = StringBuilder()
-    for (i in length - 1 downTo 0) padLeft.append(pad)
-    return padLeft.append(this).toString()
+import com.valaphee.foundry.math.Int3
+import com.valaphee.tesseract.net.Packet
+import com.valaphee.tesseract.net.PacketBuffer
+import com.valaphee.tesseract.net.PacketHandler
+import com.valaphee.tesseract.net.PacketReader
+import com.valaphee.tesseract.net.Restrict
+import com.valaphee.tesseract.net.Restriction
+
+/**
+ * @author Kevin Ludwig
+ */
+@Restrict(Restriction.ToServer)
+class SubChunkRequestPacket(
+    val dimension: Int,
+    val position: Int3,
+) : Packet {
+    override val id get() = 0xAF
+
+    override fun write(buffer: PacketBuffer, version: Int) {
+        buffer.writeVarInt(dimension)
+        buffer.writeInt3(position)
+    }
+
+    override fun handle(handler: PacketHandler) = handler.subChunkRequest(this)
+
+    override fun toString() = "SubChunkRequestPacket(dimension=$dimension, position=$position)"
 }
 
-fun String.padRight(length: Int, pad: Char): String {
-    val padRight = StringBuilder().append(this)
-    for (i in length - 1 downTo 0) padRight.append(pad)
-    return padRight.toString()
-}
-
-fun String.center(width: Int, padLeft: Char, padRight: Char = padLeft): String {
-    val paddingLeft = (width - length) / 2
-    val paddingRight = width - length - paddingLeft
-    return (if (padLeft != ' ') {
-        padRight(paddingRight, padLeft)
-    } else "").padLeft(paddingLeft, padRight)
+/**
+ * @author Kevin Ludwig
+ */
+object SubChunkRequestPacketReader : PacketReader {
+    override fun read(buffer: PacketBuffer, version: Int) = SubChunkRequestPacket(
+        buffer.readVarInt(),
+        buffer.readInt3()
+    )
 }

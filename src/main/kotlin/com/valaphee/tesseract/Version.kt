@@ -37,6 +37,7 @@ val versionByProtocolVersion = mapOf(
     440 to "1.17.0",
     448 to "1.17.10",
     465 to "1.17.30",
+    471 to "1.17.40"
 )
-const val latestVersion = "1.17.30"
-const val latestProtocolVersion = 465
+const val latestVersion = "1.17.40"
+const val latestProtocolVersion = 471

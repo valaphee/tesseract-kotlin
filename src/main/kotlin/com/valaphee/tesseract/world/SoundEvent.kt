@@ -386,6 +386,7 @@ enum class SoundEvent {
     AmbientCandle,
     BlockClick,
     BlockClickFail,
+    SculkCatalystBloom,
     SculkShriekerShriek,
     WardenNearbyClose,
     WardenNearbyCloser,

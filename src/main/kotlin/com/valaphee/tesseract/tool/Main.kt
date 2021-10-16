@@ -59,8 +59,8 @@ fun main() {
     initializeConsole()
     initializeLogging()
 
-    //capture()
-    encryptPack()
+    capture()
+    //encryptPack()
 }
 
 fun capture() {

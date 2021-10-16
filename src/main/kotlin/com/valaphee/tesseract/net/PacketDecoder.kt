@@ -170,6 +170,7 @@ import com.valaphee.tesseract.world.chunk.BlockEntityPacketReader
 import com.valaphee.tesseract.world.chunk.BlockEventPacketReader
 import com.valaphee.tesseract.world.chunk.BlockUpdatePacketReader
 import com.valaphee.tesseract.world.chunk.BlockUpdateSyncedPacketReader
+import com.valaphee.tesseract.world.chunk.BlockUpdatesSyncedPacketReader
 import com.valaphee.tesseract.world.chunk.ChunkPacketReader
 import com.valaphee.tesseract.world.chunk.ChunkPublishPacketReader
 import com.valaphee.tesseract.world.chunk.CommandBlockUpdatePacketReader
@@ -178,6 +179,8 @@ import com.valaphee.tesseract.world.chunk.LecternUpdatePacketReader
 import com.valaphee.tesseract.world.chunk.StructureBlockUpdatePacketReader
 import com.valaphee.tesseract.world.chunk.StructureTemplateDataExportRequestPacketReader
 import com.valaphee.tesseract.world.chunk.StructureTemplateDataExportResponsePacketReader
+import com.valaphee.tesseract.world.chunk.SubChunkPacketReader
+import com.valaphee.tesseract.world.chunk.SubChunkRequestPacketReader
 import com.valaphee.tesseract.world.map.MapCreateLockedCopyPacketReader
 import com.valaphee.tesseract.world.map.MapRequestPacketReader
 import com.valaphee.tesseract.world.scoreboard.ObjectiveRemovePacketReader
@@ -379,7 +382,9 @@ class PacketDecoder(
             this[0xA9] = NpcDialoguePacketReader
             //this[0xAA] =
             this[0xAB] = PhotoItemPacketReader
-            this[0xAC] = BlockUpdateSyncedPacketReader
+            this[0xAC] = BlockUpdatesSyncedPacketReader
+            this[0xAE] = SubChunkPacketReader
+            this[0xAF] = SubChunkRequestPacketReader
         }
 
         const val NAME = "ta-packet-decoder"

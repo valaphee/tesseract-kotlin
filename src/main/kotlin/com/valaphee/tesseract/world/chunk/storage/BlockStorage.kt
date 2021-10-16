@@ -32,30 +32,30 @@ import com.valaphee.tesseract.world.chunk.ReadWriteBlockAccess
  */
 class BlockStorage(
     val default: Int,
-    val sections: Array<out Section>
+    val subChunks: Array<out SubChunk>
 ) : ReadWriteBlockAccess {
-    val sectionCount: Int get() {
-        var sectionCount = sections.size - 1
-        while (sectionCount >= 0 && sections[sectionCount].empty) sectionCount--
-        return ++sectionCount
+    val subChunkCount: Int get() {
+        var subChunkCount = subChunks.size - 1
+        while (subChunkCount >= 0 && subChunks[subChunkCount].empty) subChunkCount--
+        return ++subChunkCount
     }
 
-    constructor(default: Int, sectionCount: Int = 16) : this(default, Array(sectionCount) { SectionCompact(default, BitArray.Version.V1) })
+    constructor(default: Int, subChunkCount: Int = 16) : this(default, Array(subChunkCount) { CompactSubChunk(default, BitArray.Version.V1) })
 
-    override operator fun get(x: Int, y: Int, z: Int) = if (x in 0 until XZSize && y in 0 until sections.size * Section.YSize && z in 0 until XZSize) sections[y shr YShift][x, y and YMask, z] else default
+    override operator fun get(x: Int, y: Int, z: Int) = if (x in 0 until XZSize && y in 0 until subChunks.size * SubChunk.YSize && z in 0 until XZSize) subChunks[y shr YShift][x, y and YMask, z] else default
 
-    operator fun get(x: Int, y: Int, z: Int, layer: Int) = if (x in 0 until XZSize && y in 0 until sections.size * Section.YSize && z in 0 until XZSize) sections[y shr YShift][x, y and YMask, z, layer] else default
+    operator fun get(x: Int, y: Int, z: Int, layer: Int) = if (x in 0 until XZSize && y in 0 until subChunks.size * SubChunk.YSize && z in 0 until XZSize) subChunks[y shr YShift][x, y and YMask, z, layer] else default
 
     override operator fun set(x: Int, y: Int, z: Int, value: Int) {
-        if (!(x in 0 until XZSize && y in 0 until sections.size * Section.YSize && z in 0 until XZSize)) return
+        if (!(x in 0 until XZSize && y in 0 until subChunks.size * SubChunk.YSize && z in 0 until XZSize)) return
 
-        sections[y shr YShift][x, y and YMask, z] = value
+        subChunks[y shr YShift][x, y and YMask, z] = value
     }
 
     operator fun set(x: Int, y: Int, z: Int, value: Int, layer: Int) {
-        if (!(x in 0 until XZSize && y in 0 until sections.size * Section.YSize && z in 0 until XZSize)) return
+        if (!(x in 0 until XZSize && y in 0 until subChunks.size * SubChunk.YSize && z in 0 until XZSize)) return
 
-        sections[y shr YShift][x, y and YMask, z, value] = layer
+        subChunks[y shr YShift][x, y and YMask, z, value] = layer
     }
 
     companion object {
