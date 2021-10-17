@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("com.palantir.git-version") version "0.12.3"
-    kotlin("jvm") version "1.5.30"
+    kotlin("jvm") version "1.5.31"
     `maven-publish`
     signing
 }

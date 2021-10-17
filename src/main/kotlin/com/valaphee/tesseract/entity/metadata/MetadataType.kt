@@ -39,20 +39,6 @@ interface MetadataType<T> {
     fun write(buffer: PacketBuffer, value: T)
 
     companion object {
-        val registry = Registry<MetadataType<*>>().apply {
-            this[0] = Byte
-            this[1] = Short
-            this[2] = Int
-            this[3] = Float
-            this[4] = String
-            this[5] = Tag
-            this[6] = Int3
-            this[7] = Long
-            this[7] = Flags
-            this[7] = Flags2
-            this[8] = Float3
-        }
-
         val Byte = object : MetadataType<Number> {
             override fun read(buffer: PacketBuffer) = buffer.readByte()
 
@@ -139,6 +125,20 @@ interface MetadataType<T> {
             override fun write(buffer: PacketBuffer, value: Collection<Flag2>) {
                 buffer.writeVarLongFlags(value)
             }
+        }
+
+        val registry = Registry<MetadataType<*>>().apply {
+            this[0] = Byte
+            this[1] = Short
+            this[2] = Int
+            this[3] = Float
+            this[4] = String
+            this[5] = Tag
+            this[6] = Int3
+            this[7] = Long
+            this[7] = Flags
+            this[7] = Flags2
+            this[8] = Float3
         }
     }
 }

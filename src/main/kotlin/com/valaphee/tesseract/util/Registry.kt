@@ -64,9 +64,9 @@ class Registry<T> : Cloneable {
         valueToId = Object2IntOpenHashMap(initialCapacity)
     }
 
-    operator fun set(index: Int, value: T) {
-        idToValue[index] = value
-        valueToId[value] = index
+    operator fun set(id: Int, value: T) {
+        idToValue[id] = value
+        valueToId[value] = id
     }
 
     operator fun get(id: Int): T = idToValue.get(id)
