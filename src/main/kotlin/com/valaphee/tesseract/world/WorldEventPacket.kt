@@ -43,7 +43,9 @@ class WorldEventPacket(
     val data: Int = 0
 ) : Packet {
     enum class Event {
-        Unknown,
+        Undefined,
+
+        // sound
         SoundClick,
         SoundClickFail,
         SoundLaunch,
@@ -79,6 +81,8 @@ class WorldEventPacket(
         SoundPointedDripstoneLand,
         SoundDyeUsed,
         SoundInkSaceUsed,
+
+        // particle
         ParticleShoot,
         ParticleDestroyBlock,
         ParticlePotionSplash,
@@ -113,6 +117,11 @@ class WorldEventPacket(
         ParticleWaxOff,
         ParticleScrape,
         ParticleElectricSpark,
+        ParticleTurtleEgg,
+        ParticleSculkShriek,
+        ParticleSculkCatalystBloom,
+
+        // world
         StartRaining,
         StartThunderstorm,
         StopRaining,
@@ -120,6 +129,8 @@ class WorldEventPacket(
         GlobalPause,
         SimTimeStep,
         SimTimeScale,
+
+        // block
         ActivateBlock,
         CauldronExplode,
         CauldronDyeArmor,
@@ -136,12 +147,17 @@ class WorldEventPacket(
         CauldronTakeLava,
         CauldronFillPowderSnow,
         CauldronTakePowderSnow,
+
         BlockStartBreak,
         BlockStopBreak,
         BlockUpdateBreak,
+
         SetData,
+
         AllPlayersSleeping,
         JumpPrevented,
+
+        // more particle
         ParticleBubble,
         ParticleBubbleManual,
         ParticleCritical,
@@ -220,320 +236,348 @@ class WorldEventPacket(
         ParticleSculkSensorRedstone,
         ParticleSporeBlossomShower,
         ParticleSporeBlossomAmbient,
-        ParticleWax;
+        ParticleWax,
+        ParticleElectricSparkOnly,
+        ParticleCandleFlameOnly,
+        ParticleShriek,
+        ParticleSculkSoul;
 
         companion object {
-            val registryPre407 = Registry<Event>().apply {
-                this[0] = Unknown
-                this[1000] = SoundClick
-                this[1001] = SoundClickFail
-                this[1002] = SoundLaunch
-                this[1003] = SoundDoorOpen
-                this[1004] = SoundFizz
-                this[1005] = SoundFuse
-                this[1006] = SoundPlayRecording
-                this[1007] = SoundGhastWarning
-                this[1008] = SoundGhastFireball
-                this[1009] = SoundBlazeFireball
-                this[1010] = SoundZombieDoorBump
-                this[1012] = SoundZombieDoorCrash
-                this[1016] = SoundZombieInfected
-                this[1017] = SoundZombieConverted
-                this[1018] = SoundEndermanTeleport
-                this[1020] = SoundAnvilBroken
-                this[1021] = SoundAnvilUsed
-                this[1022] = SoundAnvilLand
-                this[1030] = SoundInfinityArrowPickup
-                this[1032] = SoundTeleportEnderpearl
-                this[1040] = SoundItemframeItemAdd
-                this[1041] = SoundItemframeBreak
-                this[1042] = SoundItemframePlace
-                this[1043] = SoundItemframeItemRemove
-                this[1044] = SoundItemframeItemRotate
-                this[1051] = SoundExperienceOrbPickup
-                this[1052] = SoundTotemUsed
-                this[1060] = SoundArmorStandBreak
-                this[1061] = SoundArmorStandHit
-                this[1062] = SoundArmorStandLand
-                this[1063] = SoundArmorStandPlace
-                this[2000] = ParticleShoot
-                this[2001] = ParticleDestroyBlock
-                this[2002] = ParticlePotionSplash
-                this[2003] = ParticleEyeOfEnderDeath
-                this[2004] = ParticleMobBlockSpawn
-                this[2005] = ParticleCropGrowth
-                this[2006] = ParticleSoundGuardianGhost
-                this[2007] = ParticleDeathSmoke
-                this[2008] = ParticleDenyBlock
-                this[2009] = ParticleGenericSpawn
-                this[2010] = ParticleDragonEgg
-                this[2011] = ParticleCropEaten
-                this[2012] = ParticleCrit
-                this[2013] = ParticleTeleport
-                this[2014] = ParticleCrackBlock
-                this[2015] = ParticleBubbles
-                this[2016] = ParticleEvaporate
-                this[2017] = ParticleDestroyArmorStand
-                this[2018] = ParticleBreakingEgg
-                this[2019] = ParticleDestroyEgg
-                this[2020] = ParticleEvaporateWater
-                this[2021] = ParticleDestroyBlockNoSound
-                this[2023] = ParticleTeleportTrail
-                this[2024] = ParticlePointCloud
-                this[2025] = ParticleExplosion
-                this[2026] = ParticleBlockExplosion
-                this[3001] = StartRaining
-                this[3002] = StartThunderstorm
-                this[3003] = StopRaining
-                this[3004] = StopThunderstorm
-                this[3005] = GlobalPause
-                this[3006] = SimTimeStep
-                this[3007] = SimTimeScale
-                this[3500] = ActivateBlock
-                this[3501] = CauldronExplode
-                this[3502] = CauldronDyeArmor
-                this[3503] = CauldronCleanArmor
-                this[3504] = CauldronFillPotion
-                this[3505] = CauldronTakePotion
-                this[3506] = CauldronFillWater
-                this[3507] = CauldronTakeWater
-                this[3508] = CauldronAddDye
-                this[3509] = CauldronCleanBanner
-                this[3510] = CauldronFlush
-                this[3511] = AgentSpawnEffect
-                this[3512] = CauldronFillLava
-                this[3513] = CauldronTakeLava
-                this[0x4000 + 1] = ParticleBubble
-                this[0x4000 + 2] = ParticleBubbleManual
-                this[0x4000 + 3] = ParticleCritical
-                this[0x4000 + 4] = ParticleBlockForceField
-                this[0x4000 + 5] = ParticleSmoke
-                this[0x4000 + 6] = ParticleExplode
-                this[0x4000 + 7] = ParticleEvaporation
-                this[0x4000 + 8] = ParticleFlame
-                this[0x4000 + 9] = ParticleLava
-                this[0x4000 + 10] = ParticleLargeSmoke
-                this[0x4000 + 11] = ParticleRedstone
-                this[0x4000 + 12] = ParticleRisingRedDust
-                this[0x4000 + 13] = ParticleItemBreak
-                this[0x4000 + 14] = ParticleSnowballPoof
-                this[0x4000 + 15] = ParticleHugeExplode
-                this[0x4000 + 16] = ParticleHugeExplodeSeed
-                this[0x4000 + 17] = ParticleMobFlame
-                this[0x4000 + 18] = ParticleHeart
-                this[0x4000 + 19] = ParticleTerrain
-                this[0x4000 + 20] = ParticleTownAura
-                this[0x4000 + 21] = ParticlePortal
-                this[0x4000 + 22] = ParticleMobPortal
-                this[0x4000 + 23] = ParticleSplash
-                this[0x4000 + 24] = ParticleSplashManual
-                this[0x4000 + 25] = ParticleWaterWake
-                this[0x4000 + 26] = ParticleDripWater
-                this[0x4000 + 27] = ParticleDripLava
-                this[0x4000 + 28] = ParticleDripHoney
-                this[0x4000 + 29] = ParticleFallingDust
-                this[0x4000 + 30] = ParticleMobSpell
-                this[0x4000 + 31] = ParticleMobSpellAmbient
-                this[0x4000 + 32] = ParticleMobSpellInstantaneous
-                this[0x4000 + 33] = ParticleInk
-                this[0x4000 + 34] = ParticleSlime
-                this[0x4000 + 35] = ParticleRainSplash
-                this[0x4000 + 36] = ParticleVillagerAngry
-                this[0x4000 + 37] = ParticleVillagerHappy
-                this[0x4000 + 38] = ParticleEnchantmentTable
-                this[0x4000 + 39] = ParticleTrackingEmitter
-                this[0x4000 + 40] = ParticleNote
-                this[0x4000 + 41] = ParticleWitchSpell
-                this[0x4000 + 42] = ParticleCarrot
-                this[0x4000 + 43] = ParticleMobAppearance
-                this[0x4000 + 44] = ParticleEndRod
-                this[0x4000 + 45] = ParticleDragonsBreath
-                this[0x4000 + 46] = ParticleSpit
-                this[0x4000 + 47] = ParticleTotem
-                this[0x4000 + 48] = ParticleFood
-                this[0x4000 + 49] = ParticleFireworksStarter
-                this[0x4000 + 50] = ParticleFireworksSpark
-                this[0x4000 + 51] = ParticleFireworksOverlay
-                this[0x4000 + 52] = ParticleBalloonGas
-                this[0x4000 + 53] = ParticleColoredFlame
-                this[0x4000 + 54] = ParticleSparkler
-                this[0x4000 + 55] = ParticleConduit
-                this[0x4000 + 56] = ParticleBubbleColumnUp
-                this[0x4000 + 57] = ParticleBubbleColumnDown
-                this[0x4000 + 58] = ParticleSneeze
-                this[0x4000 + 59] = ParticleShulkerBullet
-                this[0x4000 + 60] = ParticleBleach
-                this[0x4000 + 61] = ParticleDragonDestroyBlock
-                this[0x4000 + 62] = ParticleMyceliumDust
-                this[0x4000 + 63] = ParticleFallingRedDust
-                this[0x4000 + 64] = ParticleCampfireSmoke
-                this[0x4000 + 65] = ParticleTallCampfireSmoke
-                this[0x4000 + 66] = ParticleRisingDragonsBreath
-                this[0x4000 + 67] = ParticleDragonsBreath
+            private const val soundOffset = 1000
+            private const val particleOffset = 2000
+            private const val worldOffset = 3000
+            private const val blockOffset = 3500
+            private const val particleLegacyOffset = 0x4000
+            val registryPre407 = Registry(Undefined).apply {
+                this[soundOffset + 0] = SoundClick
+                this[soundOffset + 1] = SoundClickFail
+                this[soundOffset + 2] = SoundLaunch
+                this[soundOffset + 3] = SoundDoorOpen
+                this[soundOffset + 4] = SoundFizz
+                this[soundOffset + 5] = SoundFuse
+                this[soundOffset + 6] = SoundPlayRecording
+                this[soundOffset + 7] = SoundGhastWarning
+                this[soundOffset + 8] = SoundGhastFireball
+                this[soundOffset + 9] = SoundBlazeFireball
+                this[soundOffset + 10] = SoundZombieDoorBump
+                this[soundOffset + 12] = SoundZombieDoorCrash
+                this[soundOffset + 16] = SoundZombieInfected
+                this[soundOffset + 17] = SoundZombieConverted
+                this[soundOffset + 18] = SoundEndermanTeleport
+                this[soundOffset + 20] = SoundAnvilBroken
+                this[soundOffset + 21] = SoundAnvilUsed
+                this[soundOffset + 22] = SoundAnvilLand
+                this[soundOffset + 30] = SoundInfinityArrowPickup
+                this[soundOffset + 32] = SoundTeleportEnderpearl
+                this[soundOffset + 40] = SoundItemframeItemAdd
+                this[soundOffset + 41] = SoundItemframeBreak
+                this[soundOffset + 42] = SoundItemframePlace
+                this[soundOffset + 43] = SoundItemframeItemRemove
+                this[soundOffset + 44] = SoundItemframeItemRotate
+                this[soundOffset + 51] = SoundExperienceOrbPickup
+                this[soundOffset + 52] = SoundTotemUsed
+                this[soundOffset + 60] = SoundArmorStandBreak
+                this[soundOffset + 61] = SoundArmorStandHit
+                this[soundOffset + 62] = SoundArmorStandLand
+                this[soundOffset + 63] = SoundArmorStandPlace
+                this[particleOffset + 0] = ParticleShoot
+                this[particleOffset + 1] = ParticleDestroyBlock
+                this[particleOffset + 2] = ParticlePotionSplash
+                this[particleOffset + 3] = ParticleEyeOfEnderDeath
+                this[particleOffset + 4] = ParticleMobBlockSpawn
+                this[particleOffset + 5] = ParticleCropGrowth
+                this[particleOffset + 6] = ParticleSoundGuardianGhost
+                this[particleOffset + 7] = ParticleDeathSmoke
+                this[particleOffset + 8] = ParticleDenyBlock
+                this[particleOffset + 9] = ParticleGenericSpawn
+                this[particleOffset + 10] = ParticleDragonEgg
+                this[particleOffset + 11] = ParticleCropEaten
+                this[particleOffset + 12] = ParticleCrit
+                this[particleOffset + 13] = ParticleTeleport
+                this[particleOffset + 14] = ParticleCrackBlock
+                this[particleOffset + 15] = ParticleBubbles
+                this[particleOffset + 16] = ParticleEvaporate
+                this[particleOffset + 17] = ParticleDestroyArmorStand
+                this[particleOffset + 18] = ParticleBreakingEgg
+                this[particleOffset + 19] = ParticleDestroyEgg
+                this[particleOffset + 20] = ParticleEvaporateWater
+                this[particleOffset + 21] = ParticleDestroyBlockNoSound
+                this[particleOffset + 23] = ParticleTeleportTrail
+                this[particleOffset + 24] = ParticlePointCloud
+                this[particleOffset + 25] = ParticleExplosion
+                this[particleOffset + 26] = ParticleBlockExplosion
+                this[worldOffset + 1] = StartRaining
+                this[worldOffset + 2] = StartThunderstorm
+                this[worldOffset + 3] = StopRaining
+                this[worldOffset + 4] = StopThunderstorm
+                this[worldOffset + 5] = GlobalPause
+                this[worldOffset + 6] = SimTimeStep
+                this[worldOffset + 7] = SimTimeScale
+                this[blockOffset + 0] = ActivateBlock
+                this[blockOffset + 1] = CauldronExplode
+                this[blockOffset + 2] = CauldronDyeArmor
+                this[blockOffset + 3] = CauldronCleanArmor
+                this[blockOffset + 4] = CauldronFillPotion
+                this[blockOffset + 5] = CauldronTakePotion
+                this[blockOffset + 6] = CauldronFillWater
+                this[blockOffset + 7] = CauldronTakeWater
+                this[blockOffset + 8] = CauldronAddDye
+                this[blockOffset + 9] = CauldronCleanBanner
+                this[blockOffset + 10] = CauldronFlush
+                this[blockOffset + 11] = AgentSpawnEffect
+                this[blockOffset + 12] = CauldronFillLava
+                this[blockOffset + 13] = CauldronTakeLava
+                this[9810] = JumpPrevented
+                this[particleLegacyOffset + 1] = ParticleBubble
+                this[particleLegacyOffset + 2] = ParticleBubbleManual
+                this[particleLegacyOffset + 3] = ParticleCritical
+                this[particleLegacyOffset + 4] = ParticleBlockForceField
+                this[particleLegacyOffset + 5] = ParticleSmoke
+                this[particleLegacyOffset + 6] = ParticleExplode
+                this[particleLegacyOffset + 7] = ParticleEvaporation
+                this[particleLegacyOffset + 8] = ParticleFlame
+                this[particleLegacyOffset + 9] = ParticleLava
+                this[particleLegacyOffset + 10] = ParticleLargeSmoke
+                this[particleLegacyOffset + 11] = ParticleRedstone
+                this[particleLegacyOffset + 12] = ParticleRisingRedDust
+                this[particleLegacyOffset + 13] = ParticleItemBreak
+                this[particleLegacyOffset + 14] = ParticleSnowballPoof
+                this[particleLegacyOffset + 15] = ParticleHugeExplode
+                this[particleLegacyOffset + 16] = ParticleHugeExplodeSeed
+                this[particleLegacyOffset + 17] = ParticleMobFlame
+                this[particleLegacyOffset + 18] = ParticleHeart
+                this[particleLegacyOffset + 19] = ParticleTerrain
+                this[particleLegacyOffset + 20] = ParticleTownAura
+                this[particleLegacyOffset + 21] = ParticlePortal
+                this[particleLegacyOffset + 22] = ParticleMobPortal
+                this[particleLegacyOffset + 23] = ParticleSplash
+                this[particleLegacyOffset + 24] = ParticleSplashManual
+                this[particleLegacyOffset + 25] = ParticleWaterWake
+                this[particleLegacyOffset + 26] = ParticleDripWater
+                this[particleLegacyOffset + 27] = ParticleDripLava
+                this[particleLegacyOffset + 28] = ParticleDripHoney
+                this[particleLegacyOffset + 29] = ParticleFallingDust
+                this[particleLegacyOffset + 30] = ParticleMobSpell
+                this[particleLegacyOffset + 31] = ParticleMobSpellAmbient
+                this[particleLegacyOffset + 32] = ParticleMobSpellInstantaneous
+                this[particleLegacyOffset + 33] = ParticleInk
+                this[particleLegacyOffset + 34] = ParticleSlime
+                this[particleLegacyOffset + 35] = ParticleRainSplash
+                this[particleLegacyOffset + 36] = ParticleVillagerAngry
+                this[particleLegacyOffset + 37] = ParticleVillagerHappy
+                this[particleLegacyOffset + 38] = ParticleEnchantmentTable
+                this[particleLegacyOffset + 39] = ParticleTrackingEmitter
+                this[particleLegacyOffset + 40] = ParticleNote
+                this[particleLegacyOffset + 41] = ParticleWitchSpell
+                this[particleLegacyOffset + 42] = ParticleCarrot
+                this[particleLegacyOffset + 43] = ParticleMobAppearance
+                this[particleLegacyOffset + 44] = ParticleEndRod
+                this[particleLegacyOffset + 45] = ParticleDragonsBreath
+                this[particleLegacyOffset + 46] = ParticleSpit
+                this[particleLegacyOffset + 47] = ParticleTotem
+                this[particleLegacyOffset + 48] = ParticleFood
+                this[particleLegacyOffset + 49] = ParticleFireworksStarter
+                this[particleLegacyOffset + 50] = ParticleFireworksSpark
+                this[particleLegacyOffset + 51] = ParticleFireworksOverlay
+                this[particleLegacyOffset + 52] = ParticleBalloonGas
+                this[particleLegacyOffset + 53] = ParticleColoredFlame
+                this[particleLegacyOffset + 54] = ParticleSparkler
+                this[particleLegacyOffset + 55] = ParticleConduit
+                this[particleLegacyOffset + 56] = ParticleBubbleColumnUp
+                this[particleLegacyOffset + 57] = ParticleBubbleColumnDown
+                this[particleLegacyOffset + 58] = ParticleSneeze
+                this[particleLegacyOffset + 59] = ParticleShulkerBullet
+                this[particleLegacyOffset + 60] = ParticleBleach
+                this[particleLegacyOffset + 61] = ParticleDragonDestroyBlock
+                this[particleLegacyOffset + 62] = ParticleMyceliumDust
+                this[particleLegacyOffset + 63] = ParticleFallingRedDust
+                this[particleLegacyOffset + 64] = ParticleCampfireSmoke
+                this[particleLegacyOffset + 65] = ParticleTallCampfireSmoke
+                this[particleLegacyOffset + 66] = ParticleRisingDragonsBreath
+                this[particleLegacyOffset + 67] = ParticleDragonsBreath
             }
             val registryPre428 = registryPre407.clone().apply {
-                this[1050] = SoundCamera
-                this[3600] = BlockStartBreak
-                this[3601] = BlockStopBreak
-                this[3602] = BlockUpdateBreak
+                this[soundOffset + 50] = SoundCamera
+                this[blockOffset + 100] = BlockStartBreak
+                this[blockOffset + 101] = BlockStopBreak
+                this[blockOffset + 102] = BlockUpdateBreak
                 this[4000] = SetData
                 this[9800] = AllPlayersSleeping
-                this[0x4000 + 68] = ParticleBlueFlame
-                this[0x4000 + 69] = ParticleSoul
-                this[0x4000 + 70] = ParticleObsidianTear
+                this[particleLegacyOffset + 68] = ParticleBlueFlame
+                this[particleLegacyOffset + 69] = ParticleSoul
+                this[particleLegacyOffset + 70] = ParticleObsidianTear
             }
             val registryPre431 = registryPre428.clone().apply {
-                this[2027] = ParticleVibrationSignal
-                this[3514] = CauldronFillPowderSnow
-                this[3515] = CauldronTakePowderSnow
+                this[particleOffset + 27] = ParticleVibrationSignal
+                this[blockOffset + 14] = CauldronFillPowderSnow
+                this[blockOffset + 15] = CauldronTakePowderSnow
             }
             val registryPre440 = registryPre431.clone().apply {
-                this[1064] = SoundPointedDripstoneLand
-                this[1065] = SoundDyeUsed
-                this[1066] = SoundInkSaceUsed
-                this[2028] = ParticleDripstoneDrip
-                this[2029] = ParticleFizzEffect
-                this[2030] = ParticleWaxOn
-                this[2031] = ParticleWaxOff
-                this[2032] = ParticleScrape
-                this[2033] = ParticleElectricSpark
-                this[0x4000 + 29] = ParticleStalactiteDripWater
-                this[0x4000 + 30] = ParticleStalactiteDripLava
-                this[0x4000 + 31] = ParticleFallingDust
-                this[0x4000 + 32] = ParticleMobSpell
-                this[0x4000 + 33] = ParticleMobSpellAmbient
-                this[0x4000 + 34] = ParticleMobSpellInstantaneous
-                this[0x4000 + 35] = ParticleInk
-                this[0x4000 + 36] = ParticleSlime
-                this[0x4000 + 37] = ParticleRainSplash
-                this[0x4000 + 38] = ParticleVillagerAngry
-                this[0x4000 + 39] = ParticleVillagerHappy
-                this[0x4000 + 40] = ParticleEnchantmentTable
-                this[0x4000 + 41] = ParticleTrackingEmitter
-                this[0x4000 + 42] = ParticleNote
-                this[0x4000 + 43] = ParticleWitchSpell
-                this[0x4000 + 44] = ParticleCarrot
-                this[0x4000 + 45] = ParticleMobAppearance
-                this[0x4000 + 46] = ParticleEndRod
-                this[0x4000 + 47] = ParticleDragonsBreath
-                this[0x4000 + 48] = ParticleSpit
-                this[0x4000 + 49] = ParticleTotem
-                this[0x4000 + 50] = ParticleFood
-                this[0x4000 + 51] = ParticleFireworksStarter
-                this[0x4000 + 52] = ParticleFireworksSpark
-                this[0x4000 + 53] = ParticleFireworksOverlay
-                this[0x4000 + 54] = ParticleBalloonGas
-                this[0x4000 + 55] = ParticleColoredFlame
-                this[0x4000 + 56] = ParticleSparkler
-                this[0x4000 + 57] = ParticleConduit
-                this[0x4000 + 58] = ParticleBubbleColumnUp
-                this[0x4000 + 59] = ParticleBubbleColumnDown
-                this[0x4000 + 60] = ParticleSneeze
-                this[0x4000 + 61] = ParticleShulkerBullet
-                this[0x4000 + 62] = ParticleBleach
-                this[0x4000 + 63] = ParticleDragonDestroyBlock
-                this[0x4000 + 64] = ParticleMyceliumDust
-                this[0x4000 + 65] = ParticleFallingRedDust
-                this[0x4000 + 66] = ParticleCampfireSmoke
-                this[0x4000 + 67] = ParticleTallCampfireSmoke
-                this[0x4000 + 68] = ParticleRisingDragonsBreath
-                this[0x4000 + 69] = ParticleDragonsBreath
-                this[0x4000 + 70] = ParticleBlueFlame
-                this[0x4000 + 71] = ParticleSoul
-                this[0x4000 + 72] = ParticleObsidianTear
+                this[soundOffset + 64] = SoundPointedDripstoneLand
+                this[soundOffset + 65] = SoundDyeUsed
+                this[soundOffset + 66] = SoundInkSaceUsed
+                this[particleOffset + 28] = ParticleDripstoneDrip
+                this[particleOffset + 29] = ParticleFizzEffect
+                this[particleOffset + 30] = ParticleWaxOn
+                this[particleOffset + 31] = ParticleWaxOff
+                this[particleOffset + 32] = ParticleScrape
+                this[particleOffset + 33] = ParticleElectricSpark
+                this[particleLegacyOffset + 29] = ParticleStalactiteDripWater
+                this[particleLegacyOffset + 30] = ParticleStalactiteDripLava
+                this[particleLegacyOffset + 31] = ParticleFallingDust
+                this[particleLegacyOffset + 32] = ParticleMobSpell
+                this[particleLegacyOffset + 33] = ParticleMobSpellAmbient
+                this[particleLegacyOffset + 34] = ParticleMobSpellInstantaneous
+                this[particleLegacyOffset + 35] = ParticleInk
+                this[particleLegacyOffset + 36] = ParticleSlime
+                this[particleLegacyOffset + 37] = ParticleRainSplash
+                this[particleLegacyOffset + 38] = ParticleVillagerAngry
+                this[particleLegacyOffset + 39] = ParticleVillagerHappy
+                this[particleLegacyOffset + 40] = ParticleEnchantmentTable
+                this[particleLegacyOffset + 41] = ParticleTrackingEmitter
+                this[particleLegacyOffset + 42] = ParticleNote
+                this[particleLegacyOffset + 43] = ParticleWitchSpell
+                this[particleLegacyOffset + 44] = ParticleCarrot
+                this[particleLegacyOffset + 45] = ParticleMobAppearance
+                this[particleLegacyOffset + 46] = ParticleEndRod
+                this[particleLegacyOffset + 47] = ParticleDragonsBreath
+                this[particleLegacyOffset + 48] = ParticleSpit
+                this[particleLegacyOffset + 49] = ParticleTotem
+                this[particleLegacyOffset + 50] = ParticleFood
+                this[particleLegacyOffset + 51] = ParticleFireworksStarter
+                this[particleLegacyOffset + 52] = ParticleFireworksSpark
+                this[particleLegacyOffset + 53] = ParticleFireworksOverlay
+                this[particleLegacyOffset + 54] = ParticleBalloonGas
+                this[particleLegacyOffset + 55] = ParticleColoredFlame
+                this[particleLegacyOffset + 56] = ParticleSparkler
+                this[particleLegacyOffset + 57] = ParticleConduit
+                this[particleLegacyOffset + 58] = ParticleBubbleColumnUp
+                this[particleLegacyOffset + 59] = ParticleBubbleColumnDown
+                this[particleLegacyOffset + 60] = ParticleSneeze
+                this[particleLegacyOffset + 61] = ParticleShulkerBullet
+                this[particleLegacyOffset + 62] = ParticleBleach
+                this[particleLegacyOffset + 63] = ParticleDragonDestroyBlock
+                this[particleLegacyOffset + 64] = ParticleMyceliumDust
+                this[particleLegacyOffset + 65] = ParticleFallingRedDust
+                this[particleLegacyOffset + 66] = ParticleCampfireSmoke
+                this[particleLegacyOffset + 67] = ParticleTallCampfireSmoke
+                this[particleLegacyOffset + 68] = ParticleRisingDragonsBreath
+                this[particleLegacyOffset + 69] = ParticleDragonsBreath
+                this[particleLegacyOffset + 70] = ParticleBlueFlame
+                this[particleLegacyOffset + 71] = ParticleSoul
+                this[particleLegacyOffset + 72] = ParticleObsidianTear
             }
             val registryPre448 = registryPre440.clone().apply {
-                this[0x4000 + 73] = ParticlePortalReverse
-                this[0x4000 + 74] = ParticleSnowflake
-                this[0x4000 + 75] = ParticleVibrationSignal
-                this[0x4000 + 76] = ParticleSculkSensorRedstone
-                this[0x4000 + 77] = ParticleSporeBlossomShower
-                this[0x4000 + 78] = ParticleSporeBlossomAmbient
-                this[0x4000 + 79] = ParticleWax
-                this[0x4000 + 80] = ParticleElectricSpark
+                this[particleLegacyOffset + 73] = ParticlePortalReverse
+                this[particleLegacyOffset + 74] = ParticleSnowflake
+                this[particleLegacyOffset + 75] = ParticleVibrationSignal
+                this[particleLegacyOffset + 76] = ParticleSculkSensorRedstone
+                this[particleLegacyOffset + 77] = ParticleSporeBlossomShower
+                this[particleLegacyOffset + 78] = ParticleSporeBlossomAmbient
+                this[particleLegacyOffset + 79] = ParticleWax
+                this[particleLegacyOffset + 80] = ParticleElectricSpark
             }
-            val registry = registryPre448.clone().apply {
-                this[0x4000 + 9] = ParticleCandleFlame
-                this[0x4000 + 10] = ParticleLava
-                this[0x4000 + 11] = ParticleLargeSmoke
-                this[0x4000 + 12] = ParticleRedstone
-                this[0x4000 + 13] = ParticleRisingRedDust
-                this[0x4000 + 14] = ParticleItemBreak
-                this[0x4000 + 15] = ParticleSnowballPoof
-                this[0x4000 + 16] = ParticleHugeExplode
-                this[0x4000 + 17] = ParticleHugeExplodeSeed
-                this[0x4000 + 18] = ParticleMobFlame
-                this[0x4000 + 19] = ParticleHeart
-                this[0x4000 + 20] = ParticleTerrain
-                this[0x4000 + 21] = ParticleTownAura
-                this[0x4000 + 22] = ParticlePortal
-                this[0x4000 + 23] = ParticleMobPortal
-                this[0x4000 + 24] = ParticleSplash
-                this[0x4000 + 25] = ParticleSplashManual
-                this[0x4000 + 26] = ParticleWaterWake
-                this[0x4000 + 27] = ParticleDripWater
-                this[0x4000 + 28] = ParticleDripLava
-                this[0x4000 + 29] = ParticleDripHoney
-                this[0x4000 + 30] = ParticleStalactiteDripWater
-                this[0x4000 + 31] = ParticleStalactiteDripLava
-                this[0x4000 + 32] = ParticleFallingDust
-                this[0x4000 + 33] = ParticleMobSpell
-                this[0x4000 + 34] = ParticleMobSpellAmbient
-                this[0x4000 + 35] = ParticleMobSpellInstantaneous
-                this[0x4000 + 36] = ParticleInk
-                this[0x4000 + 37] = ParticleSlime
-                this[0x4000 + 38] = ParticleRainSplash
-                this[0x4000 + 39] = ParticleVillagerAngry
-                this[0x4000 + 40] = ParticleVillagerHappy
-                this[0x4000 + 41] = ParticleEnchantmentTable
-                this[0x4000 + 42] = ParticleTrackingEmitter
-                this[0x4000 + 43] = ParticleNote
-                this[0x4000 + 44] = ParticleWitchSpell
-                this[0x4000 + 45] = ParticleCarrot
-                this[0x4000 + 46] = ParticleMobAppearance
-                this[0x4000 + 47] = ParticleEndRod
-                this[0x4000 + 48] = ParticleDragonsBreath
-                this[0x4000 + 49] = ParticleSpit
-                this[0x4000 + 50] = ParticleTotem
-                this[0x4000 + 51] = ParticleFood
-                this[0x4000 + 52] = ParticleFireworksStarter
-                this[0x4000 + 53] = ParticleFireworksSpark
-                this[0x4000 + 54] = ParticleFireworksOverlay
-                this[0x4000 + 55] = ParticleBalloonGas
-                this[0x4000 + 56] = ParticleColoredFlame
-                this[0x4000 + 57] = ParticleSparkler
-                this[0x4000 + 58] = ParticleConduit
-                this[0x4000 + 59] = ParticleBubbleColumnUp
-                this[0x4000 + 60] = ParticleBubbleColumnDown
-                this[0x4000 + 61] = ParticleSneeze
-                this[0x4000 + 62] = ParticleShulkerBullet
-                this[0x4000 + 63] = ParticleBleach
-                this[0x4000 + 64] = ParticleDragonDestroyBlock
-                this[0x4000 + 65] = ParticleMyceliumDust
-                this[0x4000 + 66] = ParticleFallingRedDust
-                this[0x4000 + 67] = ParticleCampfireSmoke
-                this[0x4000 + 68] = ParticleTallCampfireSmoke
-                this[0x4000 + 69] = ParticleRisingDragonsBreath
-                this[0x4000 + 70] = ParticleDragonsBreath
-                this[0x4000 + 71] = ParticleBlueFlame
-                this[0x4000 + 72] = ParticleSoul
-                this[0x4000 + 73] = ParticleObsidianTear
-                this[0x4000 + 74] = ParticlePortalReverse
-                this[0x4000 + 75] = ParticleSnowflake
-                this[0x4000 + 76] = ParticleVibrationSignal
-                this[0x4000 + 77] = ParticleSculkSensorRedstone
-                this[0x4000 + 78] = ParticleSporeBlossomShower
-                this[0x4000 + 79] = ParticleSporeBlossomAmbient
-                this[0x4000 + 80] = ParticleWax
-                this[0x4000 + 81] = ParticleElectricSpark
+            val registryPre465 = registryPre448.clone().apply {
+                this[particleLegacyOffset + 9] = ParticleCandleFlame
+                this[particleLegacyOffset + 10] = ParticleLava
+                this[particleLegacyOffset + 11] = ParticleLargeSmoke
+                this[particleLegacyOffset + 12] = ParticleRedstone
+                this[particleLegacyOffset + 13] = ParticleRisingRedDust
+                this[particleLegacyOffset + 14] = ParticleItemBreak
+                this[particleLegacyOffset + 15] = ParticleSnowballPoof
+                this[particleLegacyOffset + 16] = ParticleHugeExplode
+                this[particleLegacyOffset + 17] = ParticleHugeExplodeSeed
+                this[particleLegacyOffset + 18] = ParticleMobFlame
+                this[particleLegacyOffset + 19] = ParticleHeart
+                this[particleLegacyOffset + 20] = ParticleTerrain
+                this[particleLegacyOffset + 21] = ParticleTownAura
+                this[particleLegacyOffset + 22] = ParticlePortal
+                this[particleLegacyOffset + 23] = ParticleMobPortal
+                this[particleLegacyOffset + 24] = ParticleSplash
+                this[particleLegacyOffset + 25] = ParticleSplashManual
+                this[particleLegacyOffset + 26] = ParticleWaterWake
+                this[particleLegacyOffset + 27] = ParticleDripWater
+                this[particleLegacyOffset + 28] = ParticleDripLava
+                this[particleLegacyOffset + 29] = ParticleDripHoney
+                this[particleLegacyOffset + 30] = ParticleStalactiteDripWater
+                this[particleLegacyOffset + 31] = ParticleStalactiteDripLava
+                this[particleLegacyOffset + 32] = ParticleFallingDust
+                this[particleLegacyOffset + 33] = ParticleMobSpell
+                this[particleLegacyOffset + 34] = ParticleMobSpellAmbient
+                this[particleLegacyOffset + 35] = ParticleMobSpellInstantaneous
+                this[particleLegacyOffset + 36] = ParticleInk
+                this[particleLegacyOffset + 37] = ParticleSlime
+                this[particleLegacyOffset + 38] = ParticleRainSplash
+                this[particleLegacyOffset + 39] = ParticleVillagerAngry
+                this[particleLegacyOffset + 40] = ParticleVillagerHappy
+                this[particleLegacyOffset + 41] = ParticleEnchantmentTable
+                this[particleLegacyOffset + 42] = ParticleTrackingEmitter
+                this[particleLegacyOffset + 43] = ParticleNote
+                this[particleLegacyOffset + 44] = ParticleWitchSpell
+                this[particleLegacyOffset + 45] = ParticleCarrot
+                this[particleLegacyOffset + 46] = ParticleMobAppearance
+                this[particleLegacyOffset + 47] = ParticleEndRod
+                this[particleLegacyOffset + 48] = ParticleDragonsBreath
+                this[particleLegacyOffset + 49] = ParticleSpit
+                this[particleLegacyOffset + 50] = ParticleTotem
+                this[particleLegacyOffset + 51] = ParticleFood
+                this[particleLegacyOffset + 52] = ParticleFireworksStarter
+                this[particleLegacyOffset + 53] = ParticleFireworksSpark
+                this[particleLegacyOffset + 54] = ParticleFireworksOverlay
+                this[particleLegacyOffset + 55] = ParticleBalloonGas
+                this[particleLegacyOffset + 56] = ParticleColoredFlame
+                this[particleLegacyOffset + 57] = ParticleSparkler
+                this[particleLegacyOffset + 58] = ParticleConduit
+                this[particleLegacyOffset + 59] = ParticleBubbleColumnUp
+                this[particleLegacyOffset + 60] = ParticleBubbleColumnDown
+                this[particleLegacyOffset + 61] = ParticleSneeze
+                this[particleLegacyOffset + 62] = ParticleShulkerBullet
+                this[particleLegacyOffset + 63] = ParticleBleach
+                this[particleLegacyOffset + 64] = ParticleDragonDestroyBlock
+                this[particleLegacyOffset + 65] = ParticleMyceliumDust
+                this[particleLegacyOffset + 66] = ParticleFallingRedDust
+                this[particleLegacyOffset + 67] = ParticleCampfireSmoke
+                this[particleLegacyOffset + 68] = ParticleTallCampfireSmoke
+                this[particleLegacyOffset + 69] = ParticleRisingDragonsBreath
+                this[particleLegacyOffset + 70] = ParticleDragonsBreath
+                this[particleLegacyOffset + 71] = ParticleBlueFlame
+                this[particleLegacyOffset + 72] = ParticleSoul
+                this[particleLegacyOffset + 73] = ParticleObsidianTear
+                this[particleLegacyOffset + 74] = ParticlePortalReverse
+                this[particleLegacyOffset + 75] = ParticleSnowflake
+                this[particleLegacyOffset + 76] = ParticleVibrationSignal
+                this[particleLegacyOffset + 77] = ParticleSculkSensorRedstone
+                this[particleLegacyOffset + 78] = ParticleSporeBlossomShower
+                this[particleLegacyOffset + 79] = ParticleSporeBlossomAmbient
+                this[particleLegacyOffset + 80] = ParticleWax
+                this[particleLegacyOffset + 81] = ParticleElectricSpark
             }
+            val registryPre471 = registryPre465.clone().apply {
+                this[particleOffset + 34] = ParticleTurtleEgg
+                this[particleOffset + 35] = ParticleSculkShriek
+                this[particleLegacyOffset + 82] = ParticleShriek
+            }
+            val registry = registryPre471.clone().apply {
+                this[particleOffset + 36] = ParticleSculkCatalystBloom
+                this[particleLegacyOffset + 83] = ParticleSculkSoul
+            }
+
+            fun registryByVersion(version: Int): Registry<Event> =
+                if (version >= 471) registry
+                else if (version >= 465) registryPre471
+                else if (version >= 448) registryPre465
+                else if (version >= 440) registryPre448
+                else if (version >= 431) registryPre440
+                else if (version >= 428) registryPre431
+                else if (version >= 407) registryPre428
+                else registryPre407
         }
     }
 
     override val id get() = 0x19
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarInt((if (version >= 448) Event.registry else if (version >= 440) Event.registryPre448 else if (version >= 431) Event.registryPre440 else if (version >= 428) Event.registryPre431 else if (version >= 407) Event.registryPre428 else Event.registryPre407).getId(eventOrParticleType))
+        buffer.writeVarInt(Event.registryByVersion(version).getId(eventOrParticleType))
         buffer.writeFloat3(position)
         buffer.writeVarInt(data)
     }
@@ -547,9 +591,5 @@ class WorldEventPacket(
  * @author Kevin Ludwig
  */
 object WorldEventPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = WorldEventPacket(
-        (if (version >= 448) WorldEventPacket.Event.registry else if (version >= 440) WorldEventPacket.Event.registryPre448 else if (version >= 431) WorldEventPacket.Event.registryPre440 else if (version >= 428) WorldEventPacket.Event.registryPre431 else if (version >= 407) WorldEventPacket.Event.registryPre428 else WorldEventPacket.Event.registryPre407)[buffer.readVarInt()],
-        buffer.readFloat3(),
-        buffer.readVarInt()
-    )
+    override fun read(buffer: PacketBuffer, version: Int) = WorldEventPacket(WorldEventPacket.Event.registryByVersion(version)[buffer.readVarInt()], buffer.readFloat3(), buffer.readVarInt())
 }

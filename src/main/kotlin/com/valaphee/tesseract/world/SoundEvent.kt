@@ -397,7 +397,7 @@ enum class SoundEvent {
     Undefined;
 
     companion object {
-        val registry = Registry<SoundEvent>().apply {
+        val registry = Registry(Undefined).apply {
             this[0x000] = ItemUseOn
             this[0x001] = Hit
             this[0x002] = Step
@@ -753,8 +753,15 @@ enum class SoundEvent {
             this[0x167] = ConvertToStray
             this[0x168] = CakeAddCandle
             this[0x169] = ExtinguishCandle
-            this[0x170] = AmbientCandle
-            default = Undefined
+            this[0x16A] = AmbientCandle
+            this[0x16B] = BlockClick
+            this[0x16C] = BlockClickFail
+            this[0x16D] = SculkCatalystBloom
+            this[0x16E] = SculkShriekerShriek
+            this[0x16F] = WardenNearbyClose
+            this[0x170] = WardenNearbyCloser
+            this[0x171] = WardenNearbyClosest
+            this[0x172] = WardenSlightlyAngry
         }
     }
 }
