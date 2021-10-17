@@ -109,7 +109,7 @@ fun PacketBuffer.readLayer(default: Int): Layer {
             toNbtInputStream().use { stream ->
                 repeat(paletteSize) {
                     add(stream.readTag()?.asCompoundTag()?.let {
-                        blockStates.getKey(StringBuilder().apply {
+                        blockStates.getId(StringBuilder().apply {
                             append(it.getString("name"))
                             val properties = it.getCompoundTag("states").toMap().mapValues {
                                 when (it.value.type) {

@@ -28,7 +28,7 @@ import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.util.ByteBufWrapper
-import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
+import com.valaphee.tesseract.util.Registry
 import com.valaphee.tesseract.util.LittleEndianByteBufInputStream
 import com.valaphee.tesseract.util.LittleEndianByteBufOutputStream
 import com.valaphee.tesseract.util.LittleEndianVarIntByteBufInputStream
@@ -47,11 +47,11 @@ import java.util.UUID
 class PacketBuffer(
     buffer: ByteBuf,
     private val local: Boolean = false,
-    blockStates: Int2ObjectOpenHashBiMap<String>? = null,
-    items: Int2ObjectOpenHashBiMap<String>? = null
+    blockStates: Registry<String>? = null,
+    items: Registry<String>? = null
 ) : ByteBufWrapper(buffer) {
-    lateinit var blockStates: Int2ObjectOpenHashBiMap<String>
-    lateinit var items: Int2ObjectOpenHashBiMap<String>
+    lateinit var blockStates: Registry<String>
+    lateinit var items: Registry<String>
 
     init {
         blockStates?.let { this.blockStates = it }

@@ -29,7 +29,7 @@ import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
-import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
+import com.valaphee.tesseract.util.Registry
 
 /**
  * @author Kevin Ludwig
@@ -102,7 +102,7 @@ class EntityEventPacket(
 
     override fun write(buffer: PacketBuffer, version: Int) {
         buffer.writeVarULong(runtimeEntityId)
-        buffer.writeByte(events.getKey(event))
+        buffer.writeByte(events.getId(event))
         buffer.writeVarInt(data)
     }
 
@@ -111,7 +111,7 @@ class EntityEventPacket(
     override fun toString() = "EntityEventPacket(runtimeEntityId=$runtimeEntityId, event=$event, data=$data)"
 
     companion object {
-        internal val events = Int2ObjectOpenHashBiMap<Event>().apply {
+        internal val events = Registry<Event>().apply {
             this[0x01] = Event.JumpAnimation
             this[0x02] = Event.HurtAnimation
             this[0x03] = Event.DeathAnimation

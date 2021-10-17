@@ -27,6 +27,7 @@ package com.valaphee.tesseract.entity.metadata
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.net.PacketBuffer
+import com.valaphee.tesseract.util.Registry
 import com.valaphee.tesseract.util.nbt.Tag
 
 /**
@@ -38,6 +39,20 @@ interface MetadataType<T> {
     fun write(buffer: PacketBuffer, value: T)
 
     companion object {
+        val registry = Registry<MetadataType<*>>().apply {
+            this[0] = Byte
+            this[1] = Short
+            this[2] = Int
+            this[3] = Float
+            this[4] = String
+            this[5] = Tag
+            this[6] = Int3
+            this[7] = Long
+            this[7] = Flags
+            this[7] = Flags2
+            this[8] = Float3
+        }
+
         val Byte = object : MetadataType<Number> {
             override fun read(buffer: PacketBuffer) = buffer.readByte()
 

@@ -95,7 +95,7 @@ object ChunkPacketReader : PacketReader {
             ChunkPacket(position, subChunkCount, emptyArray(), blobIds)
         } else {
             buffer.readVarUInt() // data length
-            val blockStorage = BlockStorage(buffer.blockStates.getKey(airKey), Array(subChunkCount) { buffer.readSubChunk(buffer.blockStates.getKey(airKey)) })
+            val blockStorage = BlockStorage(buffer.blockStates.getId(airKey), Array(subChunkCount) { buffer.readSubChunk(buffer.blockStates.getId(airKey)) })
             val biomes = ByteArray(BlockStorage.XZSize * BlockStorage.XZSize) // TODO caves_and_cliffs
             buffer.readBytes(biomes)
             buffer.readByte() // border blocks

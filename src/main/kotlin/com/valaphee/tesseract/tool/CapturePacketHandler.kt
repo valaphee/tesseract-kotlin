@@ -42,6 +42,8 @@ import com.valaphee.tesseract.inventory.CreativeInventoryPacket
 import com.valaphee.tesseract.inventory.item.craft.Recipe
 import com.valaphee.tesseract.inventory.item.craft.RecipesPacket
 import com.valaphee.tesseract.inventory.item.stack.Stack
+import com.valaphee.tesseract.latestProtocolVersion
+import com.valaphee.tesseract.latestVersion
 import com.valaphee.tesseract.net.Connection
 import com.valaphee.tesseract.net.EncryptionInitializer
 import com.valaphee.tesseract.net.Packet
@@ -56,7 +58,7 @@ import com.valaphee.tesseract.net.base.ServerToClientHandshakePacket
 import com.valaphee.tesseract.pack.PacksPacket
 import com.valaphee.tesseract.pack.PacksResponsePacket
 import com.valaphee.tesseract.pack.PacksStackPacket
-import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
+import com.valaphee.tesseract.util.Registry
 import com.valaphee.tesseract.util.generateKeyPair
 import com.valaphee.tesseract.world.WorldPacket
 import io.netty.buffer.Unpooled
@@ -79,54 +81,11 @@ class CapturePacketHandler(
     override fun initialize() {
         connection.write(
             LoginPacket(
-                465,
+                latestProtocolVersion,
                 keyPair.public,
                 keyPair.private,
-                AuthExtra(
-                    UUID.randomUUID(),
-                    "0",
-                    "Tesseract"
-                ),
-                User(
-                    UUID.randomUUID(),
-                    0L,
-                    "Tesseract",
-                    false,
-                    Appearance(
-                        "Custom",
-                        "",
-                        mapOf("geometry" to ("default" to "geometry.humanoid.customSlim")),
-                        this::class.java.getResourceAsStream("/default_skin.png")!!.readAppearanceImage(),
-                        emptyList(),
-                        AppearanceImage.Empty,
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "#0",
-                        emptyList(),
-                        emptyList(),
-                        false,
-                        false,
-                        false,
-                        false,
-                        false
-                    ),
-                    "",
-                    "",
-                    UUID.randomUUID().toString(),
-                    "",
-                    User.OperatingSystem.Unknown,
-                    "1.17.30",
-                    Locale.US,
-                    User.InputMode.KeyboardAndMouse,
-                    User.InputMode.KeyboardAndMouse,
-                    0,
-                    User.UiProfile.Classic,
-                    InetSocketAddress("127.0.0.1", 19132)
-                ),
+                AuthExtra(UUID.randomUUID(), "0", "Tesseract"),
+                User(UUID.randomUUID(), 0L, "Tesseract", false, Appearance("Custom", "", mapOf("geometry" to ("default" to "geometry.humanoid.customSlim")), this::class.java.getResourceAsStream("/default_skin.png")!!.readAppearanceImage(), emptyList(), AppearanceImage.Empty, "", "", "", "", "", "", "#0", emptyList(), emptyList(), false, false, false, false, false), "", "", UUID.randomUUID().toString(), "", User.OperatingSystem.Unknown, latestVersion, Locale.getDefault(), User.InputMode.KeyboardAndMouse, User.InputMode.KeyboardAndMouse, 0, User.UiProfile.Classic, InetSocketAddress("127.0.0.1", 19132)),
                 false
             )
         )
@@ -149,14 +108,14 @@ class CapturePacketHandler(
     }
 
     override fun world(packet: WorldPacket) {
-        val blockStates = Int2ObjectOpenHashBiMap<String>()
+        val blockStates = Registry<String>()
         var runtimeId = 0
         blocks.values.sortedWith(compareBy { it.key.split(":", limit = 2)[1].lowercase() }).forEach {
-            if (it.states.size != 1) blockStates.reverse[it.key] = runtimeId
+            if (it.states.size != 1) blockStates.valueToId[it.key] = runtimeId
             it.states.forEach { blockStates[runtimeId++] = it.toString() }
         }
         connection.blockStates = blockStates
-        val items = Int2ObjectOpenHashBiMap<String>()
+        val items = Registry<String>()
         packet.items!!.forEach { items[it.key] = it.value.key }
         connection.items = items
 

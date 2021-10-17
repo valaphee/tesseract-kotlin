@@ -25,7 +25,7 @@
 package com.valaphee.tesseract.net
 
 import com.valaphee.tesseract.latestProtocolVersion
-import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
+import com.valaphee.tesseract.util.Registry
 import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.MessageToByteEncoder
@@ -36,8 +36,8 @@ import io.netty.handler.codec.MessageToByteEncoder
 class PacketEncoder(
     private val server: Boolean,
     var version: Int = latestProtocolVersion,
-    var blockStates: Int2ObjectOpenHashBiMap<String>? = null,
-    var items: Int2ObjectOpenHashBiMap<String>? = null
+    var blockStates: Registry<String>? = null,
+    var items: Registry<String>? = null
 ) : MessageToByteEncoder<Packet>() {
     override fun encode(context: ChannelHandlerContext, message: Packet, out: ByteBuf) {
         val packetBuffer = PacketBuffer(out, false, blockStates, items)

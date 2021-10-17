@@ -25,7 +25,6 @@
 package com.valaphee.tesseract.entity.metadata
 
 import com.valaphee.tesseract.net.PacketBuffer
-import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 
 /**
@@ -61,7 +60,7 @@ class Metadata {
     fun readFromBuffer(buffer: PacketBuffer) {
         repeat(buffer.readVarUInt()) {
             val fieldId = buffer.readVarUInt()
-            val type = types[buffer.readVarUInt()]
+            val type = MetadataType.registry[buffer.readVarUInt()]
             @Suppress("UNCHECKED_CAST")
             values[fieldId] = MetadataValue(type, type.read(buffer)) as MetadataValue<Any?>?
         }
@@ -73,7 +72,7 @@ class Metadata {
         modifiedValues.forEach { (fieldId, value) ->
             buffer.writeVarUInt(fieldId)
             val type = value.type
-            buffer.writeVarUInt(types.getKey(type))
+            buffer.writeVarUInt(MetadataType.registry.getId(type))
             type.write(buffer, value.value)
         }
     }
@@ -83,20 +82,4 @@ class Metadata {
         modifiedValues.forEach { (fieldId, value) -> append(fieldId).append('=').append(value.value).append(',') }
         if (modifiedValues.isEmpty()) append(')') else setCharAt(length - 1, ')')
     }.toString()
-
-    companion object {
-        private val types = Int2ObjectOpenHashBiMap<MetadataType<*>>().apply {
-            this[0] = MetadataType.Byte
-            this[1] = MetadataType.Short
-            this[2] = MetadataType.Int
-            this[3] = MetadataType.Float
-            this[4] = MetadataType.String
-            this[5] = MetadataType.Tag
-            this[6] = MetadataType.Int3
-            this[7] = MetadataType.Long
-            this[7] = MetadataType.Flags
-            this[7] = MetadataType.Flags2
-            this[8] = MetadataType.Float3
-        }
-    }
 }

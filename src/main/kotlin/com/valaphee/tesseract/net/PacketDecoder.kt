@@ -138,7 +138,7 @@ import com.valaphee.tesseract.pack.PackDataPacketReader
 import com.valaphee.tesseract.pack.PacksPacketReader
 import com.valaphee.tesseract.pack.PacksResponsePacketReader
 import com.valaphee.tesseract.pack.PacksStackPacketReader
-import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
+import com.valaphee.tesseract.util.Registry
 import com.valaphee.tesseract.world.BossBarPacketReader
 import com.valaphee.tesseract.world.CameraShakePacketReader
 import com.valaphee.tesseract.world.DefaultGameModePacketReader
@@ -199,8 +199,8 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 class PacketDecoder(
     private val server: Boolean,
     var version: Int = latestProtocolVersion,
-    var blockStates: Int2ObjectOpenHashBiMap<String>? = null,
-    var items: Int2ObjectOpenHashBiMap<String>? = null
+    var blockStates: Registry<String>? = null,
+    var items: Registry<String>? = null
 ) : MessageToMessageDecoder<ByteBuf>() {
     public override fun decode(context: ChannelHandlerContext, `in`: ByteBuf, out: MutableList<Any>) {
         val packetBuffer = PacketBuffer(`in`, false, blockStates, items)
@@ -383,6 +383,7 @@ class PacketDecoder(
             //this[0xAA] =
             this[0xAB] = PhotoItemPacketReader
             this[0xAC] = BlockUpdatesSyncedPacketReader
+            //this[0xAD] =
             this[0xAE] = SubChunkPacketReader
             this[0xAF] = SubChunkRequestPacketReader
         }

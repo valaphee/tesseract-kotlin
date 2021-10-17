@@ -30,7 +30,7 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
-import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
+import com.valaphee.tesseract.util.Registry
 
 /**
  * @author Kevin Ludwig
@@ -108,7 +108,7 @@ class CommandsPacket(
     override fun toString() = "CommandsPacket(commands=${commands.contentToString()}, constraints=${constraints.contentToString()})"
 
     companion object {
-        internal val parameterTypesPre419 = Int2ObjectOpenHashBiMap<Parameter.Type>().apply {
+        internal val parameterTypesPre419 = Registry<Parameter.Type>().apply {
             this[0x01] = Parameter.Type.Integer
             this[0x02] = Parameter.Type.Float
             this[0x03] = Parameter.Type.Value
@@ -125,7 +125,7 @@ class CommandsPacket(
             this[0x2F] = Parameter.Type.Json
             this[0x36] = Parameter.Type.Command
         }
-        internal val parameterTypes = Int2ObjectOpenHashBiMap<Parameter.Type>().apply {
+        internal val parameterTypes = Registry<Parameter.Type>().apply {
             this[0x01] = Parameter.Type.Integer
             this[0x02] = Parameter.Type.Float
             /*this[0x03] = Parameter.Type.Float*/

@@ -44,7 +44,7 @@ class SoundEventPacketV2(
     override val id get() = 0x18
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeByte(SoundEventPacket.soundEvents.getKey(soundEvent))
+        buffer.writeByte(SoundEvent.registry.getId(soundEvent))
         buffer.writeFloat3(position)
         buffer.writeVarInt(extraData)
         buffer.writeString(identifier)
@@ -61,5 +61,5 @@ class SoundEventPacketV2(
  * @author Kevin Ludwig
  */
 object SoundEventPacketV2Reader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = SoundEventPacketV2(SoundEventPacket.soundEvents[buffer.readUnsignedByte().toInt()], buffer.readFloat3(), buffer.readVarInt(), buffer.readString(), buffer.readBoolean(), buffer.readBoolean())
+    override fun read(buffer: PacketBuffer, version: Int) = SoundEventPacketV2(SoundEvent.registry[buffer.readUnsignedByte().toInt()], buffer.readFloat3(), buffer.readVarInt(), buffer.readString(), buffer.readBoolean(), buffer.readBoolean())
 }

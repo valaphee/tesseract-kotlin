@@ -100,23 +100,23 @@ class RecipesPacket(
         }
         buffer.writeVarUInt(potionMixRecipes.size)
         potionMixRecipes.forEach {
-            buffer.writeVarInt(buffer.items.getKey(it.inputKey))
+            buffer.writeVarInt(buffer.items.getId(it.inputKey))
             if (version >= 407) buffer.writeVarInt(it.inputSubId)
-            buffer.writeVarInt(buffer.items.getKey(it.reagentKey))
+            buffer.writeVarInt(buffer.items.getId(it.reagentKey))
             if (version >= 407) buffer.writeVarInt(it.reagentSubId)
-            buffer.writeVarInt(buffer.items.getKey(it.outputKey))
+            buffer.writeVarInt(buffer.items.getId(it.outputKey))
             if (version >= 407) buffer.writeVarInt(it.outputSubId)
         }
         buffer.writeVarUInt(containerMixRecipes.size)
         containerMixRecipes.forEach {
-            buffer.writeVarInt(buffer.items.getKey(it.inputKey))
-            buffer.writeVarInt(buffer.items.getKey(it.reagentKey))
-            buffer.writeVarInt(buffer.items.getKey(it.outputKey))
+            buffer.writeVarInt(buffer.items.getId(it.inputKey))
+            buffer.writeVarInt(buffer.items.getId(it.reagentKey))
+            buffer.writeVarInt(buffer.items.getId(it.outputKey))
         }
         if (version >= 465) {
             buffer.writeVarUInt(materialReducers.size)
             materialReducers.forEach {
-                buffer.writeVarInt(buffer.items.getKey(it.inputKey))
+                buffer.writeVarInt(buffer.items.getId(it.inputKey))
                 buffer.writeVarUInt(it.itemCounts.size)
                 it.itemCounts.forEach {
                     buffer.writeVarInt(it.key)

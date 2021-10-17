@@ -28,7 +28,7 @@ import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
-import com.valaphee.tesseract.util.Int2ObjectOpenHashBiMap
+import com.valaphee.tesseract.util.Registry
 
 /**
  * @author Kevin Ludwig
@@ -39,13 +39,25 @@ class EntityAnimationPacket(
     val rowingTime: Float = 0.0f
 ) : Packet {
     enum class Animation {
-        NoAction, SwingArm, WakeUp, CriticalHit, MagicCriticalHit, RowRight, RowLeft
+        NoAction, SwingArm, WakeUp, CriticalHit, MagicCriticalHit, RowRight, RowLeft;
+
+        companion object {
+            val registry = Registry<Animation>().apply {
+                this[0x00] = NoAction
+                this[0x01] = SwingArm
+                this[0x03] = WakeUp
+                this[0x04] = CriticalHit
+                this[0x05] = MagicCriticalHit
+                this[0x80] = RowRight
+                this[0x81] = RowLeft
+            }
+        }
     }
 
     override val id get() = 0x2C
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarInt(animations.getKey(animation))
+        buffer.writeVarInt(Animation.registry.getId(animation))
         buffer.writeVarULong(runtimeEntityId)
         if (animation == Animation.RowRight || animation == Animation.RowLeft) buffer.writeFloatLE(rowingTime)
     }
@@ -55,15 +67,7 @@ class EntityAnimationPacket(
     override fun toString() = "EntityAnimationPacket(animation=$animation, runtimeEntityId=$runtimeEntityId, rowingTime=$rowingTime)"
 
     companion object {
-        internal val animations = Int2ObjectOpenHashBiMap<Animation>().apply {
-            this[0x00] = Animation.NoAction
-            this[0x01] = Animation.SwingArm
-            this[0x03] = Animation.WakeUp
-            this[0x04] = Animation.CriticalHit
-            this[0x05] = Animation.MagicCriticalHit
-            this[0x80] = Animation.RowRight
-            this[0x81] = Animation.RowLeft
-        }
+
     }
 }
 
@@ -72,7 +76,7 @@ class EntityAnimationPacket(
  */
 object EntityAnimationPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int): EntityAnimationPacket {
-        val animation = EntityAnimationPacket.animations[buffer.readVarInt()]
+        val animation = EntityAnimationPacket.Animation.registry[buffer.readVarInt()]
         val runtimeEntityId = buffer.readVarULong()
         val rowingTime = if (animation == EntityAnimationPacket.Animation.RowRight || animation == EntityAnimationPacket.Animation.RowLeft) buffer.readFloatLE() else 0.0f
         return EntityAnimationPacket(animation, runtimeEntityId, rowingTime)
