@@ -42,7 +42,6 @@ import com.google.inject.binder.AnnotatedBindingBuilder
 import com.google.inject.util.Types
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
-import com.valaphee.tesseract.Argument
 import com.valaphee.tesseract.data.block.Block
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.util.getCompoundTag
@@ -67,7 +66,6 @@ import kotlin.reflect.jvm.jvmName
  * @author Kevin Ludwig
  */
 class DataModule(
-    private val argument: Argument? = null,
     private val path: File = File("data"),
 ) : AbstractModule() {
     override fun configure() {
@@ -115,8 +113,6 @@ class DataModule(
             }
         }
 
-
-
         ClassGraph().acceptPaths("data").scan().use {
             val (keyed, other) = (it.allResources.map { it.url } + path.walk().filter { it.isFile }.map { it.toURI().toURL() })
                 .map {
@@ -143,11 +139,6 @@ class DataModule(
                 (bind(it::class.java) as AnnotatedBindingBuilder<Any>).toInstance(it)
                 log.info("Bound {}", it::class.findAnnotation<DataType>()!!.value)
             }
-        }
-
-        argument?.let {
-            bind(Argument::class.java).toInstance(argument)
-            bind(Config::class.java).toInstance((if (argument.config.exists()) objectMapper.readValue(argument.config) else Config()).also { objectMapper.writeValue(argument.config, it) })
         }
     }
 

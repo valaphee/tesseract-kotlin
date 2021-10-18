@@ -24,6 +24,12 @@
 
 package com.valaphee.tesseract
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import com.google.inject.AbstractModule
+import com.google.inject.Provides
+import com.google.inject.Singleton
+import com.valaphee.tesseract.data.Config
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Option
@@ -58,4 +64,19 @@ class Argument {
             false
         }
     }
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+class ArgumentModule(
+    private val argument: Argument
+) : AbstractModule() {
+    @Singleton
+    @Provides
+    fun argument() = argument
+
+    @Singleton
+    @Provides
+    fun config(objectMapper: ObjectMapper) = (if (argument.config.exists()) objectMapper.readValue(argument.config) else Config()).also { objectMapper.writeValue(argument.config, it) }
 }

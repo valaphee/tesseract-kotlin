@@ -22,29 +22,21 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.data
+package com.valaphee.tesseract.dev
 
+import com.valaphee.tesseract.data.Data
+import com.valaphee.tesseract.data.DataType
 import java.net.InetSocketAddress
-import java.util.regex.Pattern
 
 /**
  * @author Kevin Ludwig
  */
-@DataType("tesseract:config")
-class Config(
-    val listener: Listener = Listener(),
-    val maximumPlayers: Int = 10,
-    val maximumViewDistance: Int = 32
-) : Data {
-    class Listener(
-        val address: InetSocketAddress = InetSocketAddress("0.0.0.0", 19132),
-        val maximumQueuedBytes: Int = 8 * 1024 * 1024,
-        val serverName: String = "Tesseract",
-        val timeout: Int = 30_000,
-        val compressionLevel: Int = 7,
-        val verification: Boolean = true,
-        val userNamePattern: Pattern = Pattern.compile("^[a-zA-Z0-9_-]{3,16}\$"),
-        val encryption: Boolean = true,
-        val caching: Boolean = false
-    )
-}
+@DataType("tesseract:extract_config")
+class ExtractConfig(
+    val address: InetSocketAddress = InetSocketAddress("127.0.0.1", 19132),
+    val creativeItems: Boolean = true,
+    val biomeDefinitions: Boolean = true,
+    val entityIdentifiers: Boolean = true,
+    val recipes: Boolean = true,
+    val commands: Boolean = true
+) : Data

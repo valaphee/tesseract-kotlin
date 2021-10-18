@@ -22,29 +22,30 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.data
+package com.valaphee.tesseract.dev
 
-import java.net.InetSocketAddress
-import java.util.regex.Pattern
+import io.netty.channel.EventLoopGroup
+import io.netty.channel.epoll.EpollDatagramChannel
+import io.netty.channel.epoll.EpollEventLoopGroup
+import io.netty.channel.nio.NioEventLoopGroup
+import io.netty.channel.socket.DatagramChannel
+import io.netty.channel.socket.nio.NioDatagramChannel
+import java.util.concurrent.ThreadFactory
 
 /**
  * @author Kevin Ludwig
  */
-@DataType("tesseract:config")
-class Config(
-    val listener: Listener = Listener(),
-    val maximumPlayers: Int = 10,
-    val maximumViewDistance: Int = 32
-) : Data {
-    class Listener(
-        val address: InetSocketAddress = InetSocketAddress("0.0.0.0", 19132),
-        val maximumQueuedBytes: Int = 8 * 1024 * 1024,
-        val serverName: String = "Tesseract",
-        val timeout: Int = 30_000,
-        val compressionLevel: Int = 7,
-        val verification: Boolean = true,
-        val userNamePattern: Pattern = Pattern.compile("^[a-zA-Z0-9_-]{3,16}\$"),
-        val encryption: Boolean = true,
-        val caching: Boolean = false
-    )
+interface Tool {
+    fun run()
+
+    fun destroy()
+
+    enum class UnderlyingNetworking(
+        val groupFactory: (Int, ThreadFactory) -> EventLoopGroup,
+        val datagramChannel: Class<out DatagramChannel>
+    ) {
+        Epoll({ threadCount, threadFactory -> EpollEventLoopGroup(threadCount, threadFactory) }, EpollDatagramChannel::class.java),
+        /*Kqueue({ threadCount, threadFactory -> KQueueEventLoopGroup(threadCount, threadFactory) }, KQueueDatagramChannel::class.java),*/
+        Nio({ threadCount, threadFactory -> NioEventLoopGroup(threadCount, threadFactory) }, NioDatagramChannel::class.java)
+    }
 }

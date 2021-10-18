@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.tool
+package com.valaphee.tesseract.dev
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -71,11 +71,12 @@ import java.util.UUID
 /**
  * @author Kevin Ludwig
  */
-class CapturePacketHandler(
+class ExtractPacketHandler(
     private val connection: Connection
 ) : PacketHandler {
-    @Inject private lateinit var blocks: Map<String, @JvmSuppressWildcards Block>
     @Inject private lateinit var objectMapper: ObjectMapper
+    @Inject private lateinit var config: ExtractConfig
+    @Inject private lateinit var blocks: Map<String, @JvmSuppressWildcards Block>
     private val keyPair = generateKeyPair()
 
     override fun initialize() {
@@ -123,13 +124,13 @@ class CapturePacketHandler(
     }
 
     override fun creativeInventory(packet: CreativeInventoryPacket) {
-        return
+        if (!config.creativeItems) return
 
         objectMapper.writeValue(File("creative_items.json"), packet.content)
     }
 
     override fun biomeDefinitions(packet: BiomeDefinitionsPacket) {
-        return
+        if (!config.biomeDefinitions) return
 
         var buffer: PacketBuffer? = null
         try {
@@ -143,7 +144,7 @@ class CapturePacketHandler(
     }
 
     override fun entityIdentifiers(packet: EntityIdentifiersPacket) {
-        return
+        if (!config.entityIdentifiers) return
 
         var buffer: PacketBuffer? = null
         try {
@@ -157,8 +158,7 @@ class CapturePacketHandler(
     }
 
     override fun recipes(packet: RecipesPacket) {
-        packet.recipes.forEach { if (it.type == Recipe.Type.Multi) println(it.id) }
-        return
+        if (!config.recipes) return
 
         File("data/minecraft/recipes").mkdirs()
         packet.recipes.forEach { recipe ->
@@ -204,13 +204,12 @@ class CapturePacketHandler(
                 }
             }
         }
-
         objectMapper.writeValue(File("potion_mix_recipes.json"), packet.potionMixRecipes)
         objectMapper.writeValue(File("container_mix_recipes.json"), packet.containerMixRecipes)
     }
 
     override fun commands(packet: CommandsPacket) {
-        return
+        if (!config.commands) return
 
         val objectMapper = jacksonObjectMapper()
         objectMapper.writeValue(File("commands.json"), packet.commands)

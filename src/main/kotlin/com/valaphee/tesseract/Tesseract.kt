@@ -130,7 +130,7 @@ fun main(arguments: Array<String>) {
     initializeConsole()
     initializeLogging()
 
-    val injector = Guice.createInjector(DataModule(argument))
+    val injector = Guice.createInjector(DataModule(), ArgumentModule(argument))
 
     val commandManager = injector.getInstance(CommandManager::class.java)
     if (ansi) reader.prompt = "tesseract> "
