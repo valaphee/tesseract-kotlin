@@ -24,6 +24,7 @@
 
 package com.valaphee.tesseract.net
 
+import com.valaphee.tesseract.latestProtocolVersion
 import com.valaphee.tesseract.util.Registry
 import com.valaphee.tesseract.util.lazyToString
 import io.netty.channel.ChannelFutureListener
@@ -93,7 +94,7 @@ class Connection : SimpleChannelInboundHandler<Packet>() {
         } else this.handler = handler
     }
 
-    var version: Int = -1
+    var version: Int = latestProtocolVersion
         set(value) {
             val channelPipeline = context.pipeline()
             channelPipeline[PacketEncoder::class.java].version = value

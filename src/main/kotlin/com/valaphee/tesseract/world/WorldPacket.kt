@@ -129,7 +129,7 @@ class WorldPacket(
     }
 
     enum class AuthoritativeMovement {
-        Client, Server, ServerWithRewind
+        Client, Server, ServerWithRewind, Unknown3
     }
 
     override val id get() = 0x0B

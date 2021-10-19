@@ -33,5 +33,6 @@ import java.net.InetSocketAddress
  */
 @DataType("tesseract:sniff_config")
 class SniffConfig(
-    val address: InetSocketAddress = InetSocketAddress("127.0.0.1", 19132)
+    val serverAddress: InetSocketAddress = InetSocketAddress("127.0.0.1", 19134),
+    val clientAddress: InetSocketAddress = InetSocketAddress("127.0.0.1", 19132)
 ) : Data

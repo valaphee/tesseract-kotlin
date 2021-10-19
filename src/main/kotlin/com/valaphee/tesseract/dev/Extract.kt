@@ -72,7 +72,7 @@ class Extract @Inject constructor(
                 }
             })
         bootstrap.connect(config.address).addListener(ChannelFutureListener {
-            if (it.isSuccess) log.info("Connecting to {}", it.channel().remoteAddress())
+            if (it.isSuccess) log.info("Connected to {}", it.channel().remoteAddress())
             else log.error("Failed to connect to ${config.address}", it.cause())
         })
     }

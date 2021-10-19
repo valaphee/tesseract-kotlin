@@ -28,6 +28,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.google.inject.Inject
 import com.google.inject.Injector
 import com.valaphee.tesseract.net.Compressor
+import com.valaphee.tesseract.net.Connection
 import com.valaphee.tesseract.net.Decompressor
 import com.valaphee.tesseract.net.PacketDecoder
 import com.valaphee.tesseract.net.PacketEncoder
@@ -66,6 +67,8 @@ class Sniff @Inject constructor(
             .handler(object : ChannelInitializer<Channel>() {
                 override fun initChannel(channel: Channel) {
                     channel.config().writeBufferWaterMark = writeBufferWaterMark
+
+                    channel.pipeline().addLast(UnconnectedPingHandler())
                 }
             })
             .childHandler(object : ChannelInitializer<Channel>() {
@@ -77,12 +80,15 @@ class Sniff @Inject constructor(
                     }
                     config.setAllocator(PooledByteBufAllocator.DEFAULT).writeBufferWaterMark = childWriteBufferWaterMark
 
+                    val connection = Connection()
+                    connection.setHandler(SniffServerPacketHandler(connection).apply { injector.injectMembers(this) })
                     channel.pipeline()
                         .addLast(UserDataCodec.NAME, userDataCodec)
                         .addLast(Compressor.NAME, Compressor())
                         .addLast(Decompressor.NAME, Decompressor())
                         .addLast(PacketEncoder.NAME, PacketEncoder(true))
                         .addLast(PacketDecoder.NAME, PacketDecoder(true))
+                        .addLast(connection)
                 }
             })
         val channelFutureListener = ChannelFutureListener {
@@ -90,7 +96,7 @@ class Sniff @Inject constructor(
                 channel = it.channel()
 
                 log.info("Listening on {}", channel.localAddress())
-            } else log.warn("Failed to bind to ${config.address}", it.cause())
+            } else log.warn("Failed to bind to ${config.serverAddress}", it.cause())
         }
         if (underlyingNetworking == Tool.UnderlyingNetworking.Epoll) {
             serverBootstrap
@@ -99,10 +105,10 @@ class Sniff @Inject constructor(
             repeat(Runtime.getRuntime().availableProcessors()) {
                 serverBootstrap.clone()
                     .option(ChannelOption.RCVBUF_ALLOCATOR, AdaptiveRecvByteBufAllocator(4 * 1024, 64 * 1024, 256 * 1024))
-                    .bind(config.address)
+                    .bind(config.serverAddress)
                     .addListener(channelFutureListener)
             }
-        } else serverBootstrap.bind(config.address).addListener(channelFutureListener)
+        } else serverBootstrap.bind(config.serverAddress).addListener(channelFutureListener)
     }
 
     override fun destroy() {
@@ -114,12 +120,12 @@ class Sniff @Inject constructor(
     }
 
     companion object {
-        private val log: Logger = LogManager.getLogger(Sniff::class.java)
-        private val underlyingNetworking = if (Epoll.isAvailable()) Tool.UnderlyingNetworking.Epoll/* else if (KQueue.isAvailable()) UnderlyingNetworking.Kqueue*/ else Tool.UnderlyingNetworking.Nio
+        internal val log: Logger = LogManager.getLogger(Sniff::class.java)
+        internal val underlyingNetworking = if (Epoll.isAvailable()) Tool.UnderlyingNetworking.Epoll/* else if (KQueue.isAvailable()) UnderlyingNetworking.Kqueue*/ else Tool.UnderlyingNetworking.Nio
         private val parentGroup = underlyingNetworking.groupFactory(0, ThreadFactoryBuilder().setNameFormat("server-%d").build())
         private val childGroup = underlyingNetworking.groupFactory(0, ThreadFactoryBuilder().setNameFormat("server-c-%d").build())
         private val writeBufferWaterMark = WriteBufferWaterMark(5 * 1024 * 1024, 10 * 1024 * 1024)
         private val childWriteBufferWaterMark = WriteBufferWaterMark(512 * 1024, 2 * 1024 * 1024)
-        private val userDataCodec = UserDataCodec(0xFE)
+        internal val userDataCodec = UserDataCodec(0xFE)
     }
 }

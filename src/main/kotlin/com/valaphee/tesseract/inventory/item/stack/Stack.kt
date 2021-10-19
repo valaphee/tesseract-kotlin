@@ -216,7 +216,7 @@ fun PacketBuffer.readStack(): Stack? {
         readIntLE().let { if (it == 0) null else Array(it) { readString16() } },
         if (itemKey == shieldKey) readLongLE() else 0,
         netId,
-        if (blockRuntimeId != 0) blockStates[blockRuntimeId].toString() else null
+        if (blockRuntimeId != 0) blockStates[blockRuntimeId] else null
     )
 }
 
@@ -243,7 +243,7 @@ fun PacketBuffer.readStackInstance(): Stack? {
         readIntLE().let { if (it == 0) null else Array(it) { readString16() } },
         if (itemKey == shieldKey) readLongLE() else 0,
         0,
-        if (blockRuntimeId != 0) blockStates[blockRuntimeId].toString() else null
+        if (blockRuntimeId != 0) blockStates[blockRuntimeId] else null
     )
 }
 

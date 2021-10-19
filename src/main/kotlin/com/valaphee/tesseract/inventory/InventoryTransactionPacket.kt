@@ -44,20 +44,21 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
  */
 @Restrict(Restriction.ToServer)
 class InventoryTransactionPacket(
+    val legacyRequestId: Int,
     val legacySlots: Array<LegacySlot>?,
     val type: Type,
     val usingNetIds: Boolean,
     val actions: Array<Action>,
     val actionId: Int,
     val runtimeEntityId: Long,
-    val position: Int3?,
-    val auxInt: Int,
+    val blockPosition: Int3?,
+    val blockFace: Int,
     val hotbarSlot: Int,
     val stackInHand: Stack?,
     val fromPosition: Float3?,
     val clickPosition: Float3?,
     val headPosition: Float3?,
-    val blockRuntimeId: Int
+    val blockStateKey: String?
 ) : Packet {
     data class LegacySlot(
         val windowId: Int,
@@ -135,24 +136,33 @@ class InventoryTransactionPacket(
     override val id get() = 0x1E
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        if (version >= 407) TODO()
+        if (version >= 407) {
+            buffer.writeVarInt(legacyRequestId)
+            if (legacyRequestId < -1 && (legacyRequestId and 1) == 0) {
+                legacySlots!!.let {
+                    buffer.writeVarUInt(it.size)
+                    it.forEach {
+                        buffer.writeByte(it.windowId)
+                        buffer.writeByteArray(it.slotIds)
+                    }
+                }
+            }
+        }
         buffer.writeVarUInt(type.ordinal)
         if (version in 407 until 431) buffer.writeBoolean(usingNetIds)
-        actions.let {
-            buffer.writeVarUInt(it.size)
-            it.forEach { if (version >= 431) buffer.writeAction(it) else if (usingNetIds && version >= 407) buffer.writeActionPre431(it) else buffer.writeActionPre407(it) }
-        }
+        buffer.writeVarUInt(actions.size)
+        actions.forEach { if (version >= 431) buffer.writeAction(it) else if (usingNetIds && version >= 407) buffer.writeActionPre431(it) else buffer.writeActionPre407(it) }
         @Suppress("NON_EXHAUSTIVE_WHEN")
         when (type) {
             Type.ItemUse -> {
                 buffer.writeVarUInt(actionId)
-                buffer.writeInt3UnsignedY(position!!)
-                buffer.writeVarInt(auxInt)
+                buffer.writeInt3UnsignedY(blockPosition!!)
+                buffer.writeVarInt(blockFace)
                 buffer.writeVarInt(hotbarSlot)
                 if (version >= 431) buffer.writeStack(stackInHand) else buffer.writeStackPre431(stackInHand)
                 buffer.writeFloat3(fromPosition!!)
                 buffer.writeFloat3(clickPosition!!)
-                if (version < 407) buffer.writeVarUInt(blockRuntimeId)
+                buffer.writeVarUInt(buffer.blockStates.getId(blockStateKey!!))
             }
             Type.ItemUseOnEntity -> {
                 buffer.writeVarULong(runtimeEntityId)
@@ -160,20 +170,20 @@ class InventoryTransactionPacket(
                 buffer.writeVarInt(hotbarSlot)
                 if (version >= 431) buffer.writeStack(stackInHand) else buffer.writeStackPre431(stackInHand)
                 buffer.writeFloat3(fromPosition!!)
-                if (version < 407) buffer.writeFloat3(clickPosition!!)
+                buffer.writeFloat3(clickPosition!!)
             }
             Type.ItemRelease -> {
                 buffer.writeVarUInt(actionId)
                 buffer.writeVarInt(hotbarSlot)
                 if (version >= 431) buffer.writeStack(stackInHand) else buffer.writeStackPre431(stackInHand)
-                if (version >= 407) buffer.writeFloat3(fromPosition!!) else buffer.writeFloat3(headPosition!!)
+                buffer.writeFloat3(headPosition!!)
             }
         }
     }
 
     override fun handle(handler: PacketHandler) = handler.inventoryTransaction(this)
 
-    override fun toString() = "InventoryTransactionPacket(legacySlots=${legacySlots?.contentToString()}, type=$type, usingNetIds=$usingNetIds, actions=${actions.contentToString()}, actionId=$actionId, runtimeEntityId=$runtimeEntityId, position=$position, auxInt=$auxInt, hotbarSlot=$hotbarSlot, stackInHand=$stackInHand, fromPosition=$fromPosition, clickPosition=$clickPosition, headPosition=$headPosition, blockRuntimeId=$blockRuntimeId)"
+    override fun toString() = "InventoryTransactionPacket(legacyRequestId=$legacyRequestId, legacySlots=${legacySlots?.contentToString()}, type=$type, usingNetIds=$usingNetIds, actions=${actions.contentToString()}, actionId=$actionId, runtimeEntityId=$runtimeEntityId, blockPosition=$blockPosition, blockFace=$blockFace, hotbarSlot=$hotbarSlot, stackInHand=$stackInHand, fromPosition=$fromPosition, clickPosition=$clickPosition, headPosition=$headPosition, blockStateKey='$blockStateKey')"
 }
 
 /**
@@ -181,74 +191,79 @@ class InventoryTransactionPacket(
  */
 object InventoryTransactionPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int): InventoryTransactionPacket {
-        val legacySlots = if (version >= 407) {
-            val legacyRequestId = buffer.readVarInt()
-            if (legacyRequestId < -1 && (legacyRequestId and 1) == 0) Array(buffer.readVarUInt()) { InventoryTransactionPacket.LegacySlot(buffer.readByte().toInt(), buffer.readByteArray()) } else null
-        } else null
+        val legacyRequestId: Int
+        val legacySlots: Array<InventoryTransactionPacket.LegacySlot>?
+        if (version >= 407) {
+            legacyRequestId = buffer.readVarInt()
+            legacySlots = if (legacyRequestId < -1 && (legacyRequestId and 1) == 0) Array(buffer.readVarUInt()) { InventoryTransactionPacket.LegacySlot(buffer.readByte().toInt(), buffer.readByteArray()) } else null
+        } else {
+            legacyRequestId = 0
+            legacySlots = null
+        }
         val type = InventoryTransactionPacket.Type.values()[buffer.readVarUInt()]
         val usingNetIds = if (version in 407 until 431) buffer.readBoolean() else false
         val actions = Array(buffer.readVarUInt()) { if (version >= 431) buffer.readAction() else if (usingNetIds) buffer.readActionPre431() else buffer.readActionPre407() }
         val actionId: Int
         val runtimeEntityId: Long
         val position: Int3?
-        val auxInt: Int
+        val blockFace: Int
         val hotbarSlot: Int
         val stackInHand: Stack?
         val fromPosition: Float3?
         val clickPosition: Float3?
         val headPosition: Float3?
-        val blockRuntimeId: Int
+        val blockStateKey: String?
         when (type) {
             InventoryTransactionPacket.Type.ItemUse -> {
                 actionId = buffer.readVarUInt()
                 runtimeEntityId = 0
                 position = buffer.readInt3UnsignedY()
-                auxInt = buffer.readVarInt()
+                blockFace = buffer.readVarInt()
                 hotbarSlot = buffer.readVarInt()
                 stackInHand = if (version >= 431) buffer.readStack() else buffer.readStackPre431()
                 fromPosition = buffer.readFloat3()
                 clickPosition = buffer.readFloat3()
                 headPosition = null
-                blockRuntimeId = buffer.readVarUInt()
+                blockStateKey = buffer.blockStates[buffer.readVarUInt()]
             }
             InventoryTransactionPacket.Type.ItemUseOnEntity -> {
                 runtimeEntityId = buffer.readVarULong()
                 actionId = buffer.readVarUInt()
                 position = null
-                auxInt = 0
+                blockFace = 0
                 hotbarSlot = buffer.readVarInt()
                 stackInHand = if (version >= 431) buffer.readStack() else buffer.readStackPre431()
                 fromPosition = buffer.readFloat3()
                 clickPosition = buffer.readFloat3()
                 headPosition = null
-                blockRuntimeId = 0
+                blockStateKey = null
             }
             InventoryTransactionPacket.Type.ItemRelease -> {
                 actionId = buffer.readVarUInt()
                 runtimeEntityId = 0
                 position = null
-                auxInt = 0
+                blockFace = 0
                 hotbarSlot = buffer.readVarInt()
                 stackInHand = if (version >= 431) buffer.readStack() else buffer.readStackPre431()
                 fromPosition = null
                 clickPosition = null
                 headPosition = buffer.readFloat3()
-                blockRuntimeId = 0
+                blockStateKey = null
             }
             else -> {
                 actionId = 0
                 runtimeEntityId = 0
                 position = null
-                auxInt = 0
+                blockFace = 0
                 hotbarSlot = 0
                 stackInHand = null
                 fromPosition = null
                 clickPosition = null
                 headPosition = null
-                blockRuntimeId = 0
+                blockStateKey = null
             }
         }
-        return InventoryTransactionPacket(legacySlots, type, usingNetIds, actions, actionId, runtimeEntityId, position, auxInt, hotbarSlot, stackInHand, fromPosition, clickPosition, headPosition, blockRuntimeId)
+        return InventoryTransactionPacket(legacyRequestId, legacySlots, type, usingNetIds, actions, actionId, runtimeEntityId, position, blockFace, hotbarSlot, stackInHand, fromPosition, clickPosition, headPosition, blockStateKey)
     }
 }
 

@@ -34,4 +34,6 @@ fun main() {
     initializeLogging()
 
     val injector = Guice.createInjector(DataModule())
+    val tool: Tool = injector.getInstance(Sniff::class.java)
+    tool.run()
 }
