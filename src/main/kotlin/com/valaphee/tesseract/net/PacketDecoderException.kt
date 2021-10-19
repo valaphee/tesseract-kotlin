@@ -24,33 +24,19 @@
 
 package com.valaphee.tesseract.net
 
-import com.valaphee.tesseract.latestProtocolVersion
-import com.valaphee.tesseract.util.Registry
-import io.netty.buffer.ByteBuf
-import io.netty.channel.ChannelHandlerContext
-import io.netty.handler.codec.MessageToByteEncoder
+import io.netty.handler.codec.DecoderException
 
 /**
  * @author Kevin Ludwig
  */
-class PacketEncoder(
-    private val client: Boolean,
-    var version: Int = latestProtocolVersion,
-    var blockStates: Registry<String>? = null,
-    var items: Registry<String>? = null
-) : MessageToByteEncoder<Packet>() {
-    /*override fun acceptOutboundMessage(message: Any): Boolean {
-        val restrictions = message::class.findAnnotation<Restrict>()?.value ?: return true
-        return client && restrictions.contains(Restriction.ToServer) || !client && restrictions.contains(Restriction.ToClient)
-    }*/
+class PacketDecoderException : DecoderException {
+    val buffer: PacketBuffer
 
-    override fun encode(context: ChannelHandlerContext, message: Packet, out: ByteBuf) {
-        val packetBuffer = PacketBuffer(out, false, blockStates, items)
-        packetBuffer.writeVarUInt(message.id and Packet.idMask)
-        message.write(packetBuffer, version)
+    constructor(message: String, buffer: PacketBuffer) : super(message) {
+        this.buffer = buffer
     }
 
-    companion object {
-        const val NAME = "ta-packet-encoder"
+    constructor(message: String, cause: Throwable, buffer: PacketBuffer) : super(message, cause) {
+        this.buffer = buffer
     }
 }

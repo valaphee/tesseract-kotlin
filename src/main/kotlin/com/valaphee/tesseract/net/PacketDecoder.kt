@@ -189,30 +189,35 @@ import com.valaphee.tesseract.world.scoreboard.ScoreboardIdentityPacketReader
 import com.valaphee.tesseract.world.scoreboard.ScoresPacketReader
 import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
-import io.netty.handler.codec.DecoderException
 import io.netty.handler.codec.MessageToMessageDecoder
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
+import kotlin.reflect.full.findAnnotation
 
 /**
  * @author Kevin Ludwig
  */
 class PacketDecoder(
-    private val server: Boolean,
+    private val client: Boolean,
     var version: Int = latestProtocolVersion,
     var blockStates: Registry<String>? = null,
     var items: Registry<String>? = null
 ) : MessageToMessageDecoder<ByteBuf>() {
     public override fun decode(context: ChannelHandlerContext, `in`: ByteBuf, out: MutableList<Any>) {
-        val packetBuffer = PacketBuffer(`in`, false, blockStates, items)
-        val header = packetBuffer.readVarUInt()
+        val buffer = PacketBuffer(`in`, false, blockStates, items)
+        val header = buffer.readVarUInt()
         val id = header and Packet.idMask
-        readers[id]?.let {
-            out.add(it.read(packetBuffer, version))
-            if (packetBuffer.readableBytes() > 0) throw DecoderException("Packet 0x${id.toString(16).uppercase()} not fully read")
-        } ?: UnknownPacket(id, packetBuffer)
+        (if (client) clientReaders else serverReaders)[id]?.let {
+            try {
+                out.add(it.read(buffer, version))
+            } catch (ex: Exception) {
+                throw PacketDecoderException("Packet 0x${id.toString(16).uppercase()} problematic at 0x${buffer.readerIndex().toString(16).uppercase()}", buffer)
+            }
+            if (buffer.readableBytes() > 0) throw PacketDecoderException("Packet 0x${id.toString(16).uppercase()} not fully read", buffer)
+        } ?: UnknownPacket(id, buffer)
     }
 
     companion object {
+        const val NAME = "ta-packet-decoder"
         private val readers = Int2ObjectOpenHashMap<PacketReader>().apply {
             this[0x01] = LoginPacketReader
             this[0x02] = StatusPacketReader
@@ -389,7 +394,7 @@ class PacketDecoder(
             this[0xAE] = SubChunkPacketReader
             this[0xAF] = SubChunkRequestPacketReader
         }
-
-        const val NAME = "ta-packet-decoder"
+        private val clientReaders = readers.filterValues { it::class.java.getMethod("read", PacketBuffer::class.java, Int::class.java).returnType.kotlin.findAnnotation<Restrict>()?.value?.contains(Restriction.ToClient) ?: true }
+        private val serverReaders = readers.filterValues { it::class.java.getMethod("read", PacketBuffer::class.java, Int::class.java).returnType.kotlin.findAnnotation<Restrict>()?.value?.contains(Restriction.ToServer) ?: true }
     }
 }

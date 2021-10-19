@@ -86,8 +86,8 @@ class Sniff @Inject constructor(
                         .addLast(UserDataCodec.NAME, userDataCodec)
                         .addLast(Compressor.NAME, Compressor())
                         .addLast(Decompressor.NAME, Decompressor())
-                        .addLast(PacketEncoder.NAME, PacketEncoder(true))
-                        .addLast(PacketDecoder.NAME, PacketDecoder(true))
+                        .addLast(PacketEncoder.NAME, PacketEncoder(false))
+                        .addLast(PacketDecoder.NAME, PacketDecoder(false))
                         .addLast(connection)
                 }
             })

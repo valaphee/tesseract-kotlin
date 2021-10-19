@@ -32,7 +32,8 @@ import com.valaphee.tesseract.world.chunk.ReadWriteBlockAccess
  */
 class BlockStorage(
     val default: Int,
-    val subChunks: Array<out SubChunk>
+    val subChunks: Array<out SubChunk>,
+    val biomes: Array<Layer>?
 ) : ReadWriteBlockAccess {
     val subChunkCount: Int get() {
         var subChunkCount = subChunks.size - 1
@@ -40,7 +41,7 @@ class BlockStorage(
         return ++subChunkCount
     }
 
-    constructor(default: Int, subChunkCount: Int = 16) : this(default, Array(subChunkCount) { CompactSubChunk(default, BitArray.Version.V1) })
+    constructor(default: Int, subChunkCount: Int = 16) : this(default, Array(subChunkCount) { CompactSubChunk(default, BitArray.Version.V1) }, Array(subChunkCount) { Layer(0, BitArray.Version.V1) })
 
     override operator fun get(x: Int, y: Int, z: Int) = if (x in 0 until XZSize && y in 0 until subChunks.size * SubChunk.YSize && z in 0 until XZSize) subChunks[y shr YShift][x, y and YMask, z] else default
 

@@ -30,12 +30,14 @@ import com.valaphee.tesseract.entity.EventPacket
 import com.valaphee.tesseract.net.Connection
 import com.valaphee.tesseract.net.EncryptionInitializer
 import com.valaphee.tesseract.net.Packet
+import com.valaphee.tesseract.net.PacketDecoderException
 import com.valaphee.tesseract.net.PacketHandler
-import com.valaphee.tesseract.net.base.ClientToServerHandshakePacket
 import com.valaphee.tesseract.net.base.LoginPacket
 import com.valaphee.tesseract.net.base.ServerToClientHandshakePacket
 import com.valaphee.tesseract.util.Registry
+import com.valaphee.tesseract.util.dump
 import com.valaphee.tesseract.util.generateKeyPair
+import com.valaphee.tesseract.util.lazyToString
 import com.valaphee.tesseract.world.WorldPacket
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -53,6 +55,16 @@ class SniffClientPacketHandler(
 
     override fun initialize() {
         serverConnection.write(LoginPacket(serverConnection.version, keyPair.public, keyPair.private, loginPacket.authExtra, loginPacket.user))
+    }
+
+    override fun exceptionCaught(cause: Throwable) {
+        when (cause) {
+            is PacketDecoderException -> packetLog.debug("{}", lazyToString { cause.buffer.dump(cause.buffer.readerIndex().toLong(), cause.buffer.readerIndex(), cause.buffer.readableBytes()) })
+        }
+    }
+
+    override fun destroy() {
+        clientConnection.close()
     }
 
     override fun other(packet: Packet) {
@@ -80,10 +92,10 @@ class SniffClientPacketHandler(
     }
 
     override fun serverToClientHandshake(packet: ServerToClientHandshakePacket) {
-        if (!ignoringPackets.contains(packet.id)) packetLog.info("{}", packet.toString())
-
-        serverConnection.context.pipeline().addLast(EncryptionInitializer(keyPair, packet.serverPublicKey, true, packet.salt))
-        serverConnection.write(ClientToServerHandshakePacket)
+        val encryptionInitializer = EncryptionInitializer(keyPair, loginPacket.publicKey, clientConnection.version >= 431, packet.salt)
+        clientConnection.write(encryptionInitializer.serverToClientHandshakePacket)
+        clientConnection.context.pipeline().addLast(encryptionInitializer)
+        serverConnection.context.pipeline().addLast(EncryptionInitializer(keyPair, packet.serverPublicKey, serverConnection.version >= 431, packet.salt))
     }
 
     companion object {
@@ -91,7 +103,7 @@ class SniffClientPacketHandler(
         private val ignoringPackets = setOf(
             0x28, // EntityVelocityPacket
             0x34, // RecipesPacket
-            0x3A, // ChunkPacket
+            //0x3A, // ChunkPacket
             0x4C, // CommandsPacket
             0x6F, // EntityMoveRotatePacket
             0x87, // CacheBlobsPacket

@@ -65,8 +65,8 @@ class Extract @Inject constructor(
                         .addLast(UserDataCodec.NAME, userDataCodec)
                         .addLast(Compressor.NAME, Compressor())
                         .addLast(Decompressor.NAME, Decompressor())
-                        .addLast(PacketEncoder.NAME, PacketEncoder(false, connection.version))
-                        .addLast(PacketDecoder.NAME, PacketDecoder(false, connection.version))
+                        .addLast(PacketEncoder.NAME, PacketEncoder(true, connection.version))
+                        .addLast(PacketDecoder.NAME, PacketDecoder(true, connection.version))
                         .addLast(connection)
                 }
             })

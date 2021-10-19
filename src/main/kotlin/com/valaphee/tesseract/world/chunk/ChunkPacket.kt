@@ -34,6 +34,7 @@ import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 import com.valaphee.tesseract.util.nbt.CompoundTag
 import com.valaphee.tesseract.world.chunk.storage.BlockStorage
+import com.valaphee.tesseract.world.chunk.storage.readLayer
 import com.valaphee.tesseract.world.chunk.storage.readSubChunk
 
 /**
@@ -52,7 +53,7 @@ class ChunkPacket private constructor(
 ) : Packet {
     override val id get() = 0x3A
 
-    constructor(position: Int2, blockStorage: BlockStorage, biomes: ByteArray, blockEntities: Array<CompoundTag>, borderBlocks: Array<Int2>) : this(position, blockStorage.subChunkCount, blockStorage, biomes, blockEntities, borderBlocks, false, null)
+    constructor(position: Int2, blockStorage: BlockStorage, biomes: ByteArray?, blockEntities: Array<CompoundTag>, borderBlocks: Array<Int2>) : this(position, blockStorage.subChunkCount, blockStorage, biomes, blockEntities, borderBlocks, false, null)
 
     constructor(position: Int2, subChunkCount: Int, blockEntities: Array<CompoundTag>, borderBlocks: Array<Int2>, blobIds: LongArray) : this(position, subChunkCount, null, null, blockEntities, borderBlocks, true, blobIds)
 
@@ -68,15 +69,14 @@ class ChunkPacket private constructor(
         }
         val dataLengthIndex = buffer.writerIndex()
         buffer.writeZero(PacketBuffer.MaximumVarUIntLength)
-        if (!cache) {
-            blockStorage!!.let { repeat(subChunkCount) { i -> it.subChunks[i].writeToBuffer(buffer) } }
-            buffer.writeBytes(biomes!!)
+        if (!cache) blockStorage!!.let {
+            repeat(subChunkCount) { i -> it.subChunks[i].writeToBuffer(buffer) }
+            if (cavesAndCliffs) /*it.biomes!!.forEach { it.writeToBuffer(buffer, true) }*/
+            else buffer.writeBytes(biomes!!)
         }
-        buffer.writeByte(borderBlocks.size)
-        borderBlocks.forEach {
-            buffer.writeByte((it.x and 0xF) or ((it.y and 0xF) shl 4))
-        }
-        buffer.toNbtOutputStream().use { stream -> blockEntities.forEach { stream.writeTag(it) } }
+        /*buffer.writeByte(borderBlocks.size)
+        borderBlocks.forEach { buffer.writeByte((it.x and 0xF) or ((it.y and 0xF) shl 4)) }
+        buffer.toNbtOutputStream().use { stream -> blockEntities.forEach { stream.writeTag(it) } }*/
         buffer.setMaximumLengthVarUInt(dataLengthIndex, buffer.writerIndex() - (dataLengthIndex + PacketBuffer.MaximumVarUIntLength))
     }
 
@@ -94,7 +94,7 @@ object ChunkPacketReader : PacketReader {
         val subChunkCount = buffer.readVarUInt()
         return if (buffer.readBoolean()) {
             val blobIds = LongArray(buffer.readVarUInt()) { buffer.readLongLE() }
-            buffer.readVarUInt() // data length
+            buffer.readVarUInt()
             val borderBlocks = Array(buffer.readUnsignedByte().toInt()) {
                 val borderBlock = buffer.readUnsignedByte().toInt()
                 Int2(borderBlock and 0xF, borderBlock shr 4)
@@ -103,19 +103,27 @@ object ChunkPacketReader : PacketReader {
             buffer.toNbtInputStream().use { while (buffer.isReadable) blockEntities.add(it.readTag()?.asCompoundTag()!!) }
             ChunkPacket(position, subChunkCount, blockEntities.toTypedArray(), borderBlocks, blobIds)
         } else {
-            buffer.readVarUInt() // data length
-            val blockStorage = BlockStorage(buffer.blockStates.getId(airKey), Array(subChunkCount) { buffer.readSubChunk(buffer.blockStates.getId(airKey)) })
-            val biomes = ByteArray(BlockStorage.XZSize * BlockStorage.XZSize) // TODO caves_and_cliffs
-            buffer.readBytes(biomes)
-            val borderBlocks = Array(buffer.readUnsignedByte().toInt()) {
+            buffer.readVarUInt()
+            val blockStorage: BlockStorage
+            val biomes: ByteArray?
+            if (cavesAndCliffs) {
+                blockStorage = BlockStorage(buffer.blockStates.getId(airKey), Array(subChunkCount) { buffer.readSubChunk(buffer.blockStates.getId(airKey)) }, Array(subChunkCount) { buffer.readLayer(0) })
+                biomes = null
+            } else {
+                blockStorage = BlockStorage(buffer.blockStates.getId(airKey), Array(subChunkCount) { buffer.readSubChunk(buffer.blockStates.getId(airKey)) }, null)
+                biomes = ByteArray(BlockStorage.XZSize * BlockStorage.XZSize).also { buffer.readBytes(it) }
+            }
+            /*val borderBlocks = Array(buffer.readUnsignedByte().toInt()) {
                 val borderBlock = buffer.readUnsignedByte().toInt()
                 Int2(borderBlock and 0xF, borderBlock shr 4)
             }
             val blockEntities = mutableListOf<CompoundTag>()
-            buffer.toNbtInputStream().use { while (buffer.isReadable) blockEntities.add(it.readTag()?.asCompoundTag()!!) }
-            ChunkPacket(position, blockStorage, biomes, blockEntities.toTypedArray(), borderBlocks)
+            buffer.toNbtInputStream().use { while (buffer.isReadable) blockEntities.add(it.readTag()?.asCompoundTag()!!) }*/
+            ChunkPacket(position, blockStorage, biomes, /*blockEntities.toTypedArray(), borderBlocks*/emptyArray(), emptyArray())
         }
     }
 
     private const val airKey = "minecraft:air"
 }
+
+private const val cavesAndCliffs = true // TODO

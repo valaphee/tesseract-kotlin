@@ -43,7 +43,7 @@ fun generatePublicKey(base64: String?) = keyFactory.generatePublic(X509EncodedKe
 
 fun generateKeyPair(): KeyPair = keyPairGenerator.apply { initialize(ECGenParameterSpec("secp384r1")) }.generateKeyPair()
 
-fun generateSecret(serverPrivateKey: Key, clientPublicKey: Key): ByteArray = KeyAgreement.getInstance("ECDH").apply {
-    init(serverPrivateKey)
-    doPhase(clientPublicKey, true)
+fun generateSecret(privateKey: Key, otherPublicKey: Key): ByteArray = KeyAgreement.getInstance("ECDH").apply {
+    init(privateKey)
+    doPhase(otherPublicKey, true)
 }.generateSecret()

@@ -116,7 +116,7 @@ class RecipesPacket(
         if (version >= 465) {
             buffer.writeVarUInt(materialReducers.size)
             materialReducers.forEach {
-                buffer.writeVarInt(buffer.items.getId(it.inputKey))
+                buffer.writeVarInt(it.inputId)
                 buffer.writeVarUInt(it.itemCounts.size)
                 it.itemCounts.forEach {
                     buffer.writeVarInt(it.key)
@@ -159,7 +159,7 @@ object RecipesPacketReader : PacketReader {
         },
         Array(buffer.readVarUInt()) { PotionMixRecipe(buffer.items[buffer.readVarInt()], if (version >= 407) buffer.readVarInt() else 0, buffer.items[buffer.readVarInt()], if (version >= 407) buffer.readVarInt() else 0, buffer.items[buffer.readVarInt()], if (version >= 407) buffer.readVarInt() else 0) },
         Array(buffer.readVarUInt()) { ContainerMixRecipe(buffer.items[buffer.readVarInt()], buffer.items[buffer.readVarInt()], buffer.items[buffer.readVarInt()]) },
-        if (version >= 465) Array(buffer.readVarUInt()) { MaterialReducer(buffer.items[buffer.readVarInt()], Int2IntOpenHashMap().apply { repeat(buffer.readVarUInt()) { this[buffer.readVarInt()] = buffer.readVarInt() } }) } else emptyArray(),
+        if (version >= 465) Array(buffer.readVarUInt()) { MaterialReducer(buffer.readVarInt(), Int2IntOpenHashMap().apply { repeat(buffer.readVarUInt()) { this[buffer.readVarInt()] = buffer.readVarInt() } }) } else emptyArray(),
         buffer.readBoolean()
     )
 }
