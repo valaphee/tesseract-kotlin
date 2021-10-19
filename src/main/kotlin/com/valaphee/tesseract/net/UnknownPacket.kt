@@ -22,23 +22,18 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.dev
-
-import com.valaphee.tesseract.data.Data
-import com.valaphee.tesseract.data.DataType
-import java.net.InetSocketAddress
+package com.valaphee.tesseract.net
 
 /**
  * @author Kevin Ludwig
  */
-@DataType("tesseract:extract_config")
-class ExtractConfig(
-    val address: InetSocketAddress = InetSocketAddress("127.0.0.1", 19132),
-    val mtu: Int = 1_464/*1_172*/,
-    val version: Int = 465,
-    val creativeItems: Boolean = true,
-    val biomeDefinitions: Boolean = true,
-    val entityIdentifiers: Boolean = true,
-    val recipes: Boolean = true,
-    val commands: Boolean = true
-) : Data
+data class UnknownPacket(
+    override val id: Int,
+    val buffer: PacketBuffer
+) : Packet {
+    override fun write(buffer: PacketBuffer, version: Int) {
+        buffer.writeBytes(this.buffer)
+    }
+
+    override fun handle(handler: PacketHandler) = handler.unknown(this)
+}

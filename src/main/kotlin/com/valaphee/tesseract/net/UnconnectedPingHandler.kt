@@ -25,6 +25,8 @@
 package com.valaphee.tesseract.net
 
 import com.valaphee.tesseract.data.Config
+import com.valaphee.tesseract.latestProtocolVersion
+import com.valaphee.tesseract.latestVersion
 import com.valaphee.tesseract.world.GameMode
 import io.netty.channel.ChannelFutureListener
 import io.netty.channel.ChannelHandlerContext
@@ -44,7 +46,7 @@ class UnconnectedPingHandler(
 ) : UdpPacketHandler<UnconnectedPing>(UnconnectedPing::class.java) {
     override fun handle(context: ChannelHandlerContext, address: InetSocketAddress, packet: UnconnectedPing) {
         val rakNetConfig = context.channel().config() as RakNet.Config
-        val unconnectedPongPacket = UnconnectedPong(packet.clientTime, rakNetConfig.serverId, rakNetConfig.magic, Pong(rakNetConfig.serverId, config.listener.serverName, "1.17.30", 465, "MCPE", false, GameMode.Survival, 0 /* TODO */, config.maximumPlayers, 19132, 19133, config.listener.serverName).toString())
+        val unconnectedPongPacket = UnconnectedPong(packet.clientTime, rakNetConfig.serverId, rakNetConfig.magic, Pong(rakNetConfig.serverId, config.listener.serverName, latestVersion, latestProtocolVersion, "MCPE", false, GameMode.Survival, 0 /* TODO */, config.maximumPlayers, config.listener.address.port, config.listener.address.port, config.listener.serverName).toString())
         val unconnectedPongBuffer = context.alloc().directBuffer(unconnectedPongPacket.sizeHint())
         try {
             rakNetConfig.codec.encode(unconnectedPongPacket, unconnectedPongBuffer)

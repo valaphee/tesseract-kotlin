@@ -27,8 +27,6 @@ package com.valaphee.tesseract.dev
 import com.google.inject.Inject
 import com.valaphee.tesseract.data.block.Block
 import com.valaphee.tesseract.entity.EventPacket
-import com.valaphee.tesseract.entity.player.AuthExtra
-import com.valaphee.tesseract.entity.player.User
 import com.valaphee.tesseract.net.Connection
 import com.valaphee.tesseract.net.EncryptionInitializer
 import com.valaphee.tesseract.net.Packet
@@ -48,15 +46,13 @@ import org.apache.logging.log4j.Logger
 class SniffClientPacketHandler(
     private val clientConnection: Connection,
     private val serverConnection: Connection,
-    private val protocolVersion: Int,
-    private val authExtra: AuthExtra,
-    private val user: User
+    private val loginPacket: LoginPacket,
 ) : PacketHandler {
     @Inject private lateinit var blocks: Map<String, @JvmSuppressWildcards Block>
     private val keyPair = generateKeyPair()
 
     override fun initialize() {
-        serverConnection.write(LoginPacket(protocolVersion, keyPair.public, keyPair.private, authExtra, user, false))
+        serverConnection.write(LoginPacket(serverConnection.version, keyPair.public, keyPair.private, loginPacket.authExtra, loginPacket.user))
     }
 
     override fun other(packet: Packet) {
@@ -84,6 +80,8 @@ class SniffClientPacketHandler(
     }
 
     override fun serverToClientHandshake(packet: ServerToClientHandshakePacket) {
+        if (!ignoringPackets.contains(packet.id)) packetLog.info("{}", packet.toString())
+
         serverConnection.context.pipeline().addLast(EncryptionInitializer(keyPair, packet.serverPublicKey, true, packet.salt))
         serverConnection.write(ClientToServerHandshakePacket)
     }
@@ -93,7 +91,7 @@ class SniffClientPacketHandler(
         private val ignoringPackets = setOf(
             0x28, // EntityVelocityPacket
             0x34, // RecipesPacket
-            //0x3A, // ChunkPacket
+            0x3A, // ChunkPacket
             0x4C, // CommandsPacket
             0x6F, // EntityMoveRotatePacket
             0x87, // CacheBlobsPacket

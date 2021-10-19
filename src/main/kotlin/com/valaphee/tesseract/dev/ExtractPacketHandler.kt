@@ -42,7 +42,6 @@ import com.valaphee.tesseract.inventory.CreativeInventoryPacket
 import com.valaphee.tesseract.inventory.item.craft.Recipe
 import com.valaphee.tesseract.inventory.item.craft.RecipesPacket
 import com.valaphee.tesseract.inventory.item.stack.Stack
-import com.valaphee.tesseract.latestProtocolVersion
 import com.valaphee.tesseract.latestVersion
 import com.valaphee.tesseract.net.Connection
 import com.valaphee.tesseract.net.EncryptionInitializer
@@ -64,7 +63,6 @@ import com.valaphee.tesseract.world.WorldPacket
 import io.netty.buffer.Unpooled
 import java.io.File
 import java.io.FileOutputStream
-import java.net.InetSocketAddress
 import java.util.Locale
 import java.util.UUID
 
@@ -80,19 +78,10 @@ class ExtractPacketHandler(
     private val keyPair = generateKeyPair()
 
     override fun initialize() {
-        connection.write(
-            LoginPacket(
-                latestProtocolVersion,
-                keyPair.public,
-                keyPair.private,
-                AuthExtra(UUID.randomUUID(), "0", "Tesseract"),
-                User(UUID.randomUUID(), 0L, "Tesseract", false, Appearance("Custom", "", mapOf("geometry" to ("default" to "geometry.humanoid.customSlim")), this::class.java.getResourceAsStream("/default_skin.png")!!.readAppearanceImage(), emptyList(), AppearanceImage.Empty, "", "", "", "", "", "", "#0", emptyList(), emptyList(), false, false, false, false, false), "", "", UUID.randomUUID().toString(), "", User.OperatingSystem.Unknown, latestVersion, Locale.getDefault(), User.InputMode.KeyboardAndMouse, User.InputMode.KeyboardAndMouse, 0, User.UiProfile.Classic, InetSocketAddress("127.0.0.1", 19132)),
-                false
-            )
-        )
+        connection.write(LoginPacket(connection.version, keyPair.public, keyPair.private, AuthExtra(UUID.randomUUID(), "0", "Tesseract"), User(UUID.randomUUID(), 0L, "Tesseract", false, Appearance("Custom", "", mapOf("geometry" to ("default" to "geometry.humanoid.customSlim")), this::class.java.getResourceAsStream("/default_skin.png")!!.readAppearanceImage(), emptyList(), AppearanceImage.Empty, "", "", "", "", "", "", "#0", emptyList(), emptyList(), false, false, false, false, false), "", "", UUID.randomUUID().toString(), "", User.OperatingSystem.Unknown, latestVersion, Locale.getDefault(), User.InputMode.KeyboardAndMouse, User.InputMode.KeyboardAndMouse, 0, User.UiProfile.Classic, config.address),))
     }
 
-    override fun other(packet: Packet) {}
+    override fun other(packet: Packet) = Unit
 
     override fun serverToClientHandshake(packet: ServerToClientHandshakePacket) {
         connection.context.pipeline().addLast(EncryptionInitializer(keyPair, packet.serverPublicKey, true, packet.salt))

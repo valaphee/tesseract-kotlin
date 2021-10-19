@@ -194,6 +194,8 @@ import com.valaphee.tesseract.world.scoreboard.ScoresPacket
 interface PacketHandler : ProtocolHandler {
     fun other(packet: Packet)
 
+    fun unknown(packet: UnknownPacket) = other(packet)
+
     fun login(packet: LoginPacket) = other(packet)
 
     fun status(packet: StatusPacket) = other(packet)

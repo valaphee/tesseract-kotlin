@@ -55,12 +55,12 @@ class ServerToClientHandshakePacket(
     override val id get() = 0x03
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        val jws = JsonWebSignature()
-        jws.setHeader("alg", "ES384")
-        jws.setHeader("x5u", base64Encoder.encodeToString(serverPublicKey.encoded))
-        jws.payload = JsonObject().apply { addProperty("salt", base64Encoder.encodeToString(salt)) }.toString()
-        jws.key = serverPrivateKey
-        buffer.writeString(jws.compactSerialization)
+        buffer.writeString(JsonWebSignature().apply {
+            setHeader("alg", "ES384")
+            setHeader("x5u", base64Encoder.encodeToString(serverPublicKey.encoded))
+            payload = JsonObject().apply { addProperty("salt", base64Encoder.encodeToString(salt)) }.toString()
+            key = serverPrivateKey
+        }.compactSerialization)
     }
 
     override fun handle(handler: PacketHandler) = handler.serverToClientHandshake(this)

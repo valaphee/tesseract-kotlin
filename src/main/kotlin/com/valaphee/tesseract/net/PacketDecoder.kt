@@ -206,8 +206,10 @@ class PacketDecoder(
         val packetBuffer = PacketBuffer(`in`, false, blockStates, items)
         val header = packetBuffer.readVarUInt()
         val id = header and Packet.idMask
-        readers[id]?.let { out.add(it.read(packetBuffer, version)) } ?: throw DecoderException("No such packet: 0x${id.toString(16).uppercase()}")
-        if (packetBuffer.readableBytes() > 0) throw DecoderException("Packet 0x${id.toString(16).uppercase()} not fully read")
+        readers[id]?.let {
+            out.add(it.read(packetBuffer, version))
+            if (packetBuffer.readableBytes() > 0) throw DecoderException("Packet 0x${id.toString(16).uppercase()} not fully read")
+        } ?: UnknownPacket(id, packetBuffer)
     }
 
     companion object {

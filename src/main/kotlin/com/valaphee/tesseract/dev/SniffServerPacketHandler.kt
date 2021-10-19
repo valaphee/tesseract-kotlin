@@ -48,23 +48,24 @@ class SniffServerPacketHandler(
     }
 
     override fun login(packet: LoginPacket) {
+        if (!ignoringPackets.contains(packet.id)) packetLog.info("{}", packet.toString())
+
         clientConnection.version = packet.protocolVersion
 
         val bootstrap = Bootstrap()
             .group(clientConnection.context.channel().eventLoop())
             .channelFactory(ChannelFactory { RakNetClientChannel(Sniff.underlyingNetworking.datagramChannel) })
-            .option(RakNet.MTU, 1_464)
+            .option(RakNet.MTU, config.clientMtu)
             .option(RakNet.PROTOCOL_VERSION, 10)
             .handler(object : ChannelInitializer<Channel>() {
                 override fun initChannel(channel: Channel) {
-                    serverConnection = Connection()
-                    serverConnection.setHandler(SniffClientPacketHandler(clientConnection, serverConnection, packet.protocolVersion, packet.authExtra, packet.user).apply { injector.injectMembers(this) })
+                    serverConnection = Connection(clientConnection.version).apply { setHandler(SniffClientPacketHandler(clientConnection, this, /*packet.authExtra, packet.user*/packet).apply { injector.injectMembers(this) }) }
                     channel.pipeline()
                         .addLast(UserDataCodec.NAME, Sniff.userDataCodec)
                         .addLast(Compressor.NAME, Compressor())
                         .addLast(Decompressor.NAME, Decompressor())
-                        .addLast(PacketEncoder.NAME, PacketEncoder(false))
-                        .addLast(PacketDecoder.NAME, PacketDecoder(false))
+                        .addLast(PacketEncoder.NAME, PacketEncoder(false, serverConnection.version))
+                        .addLast(PacketDecoder.NAME, PacketDecoder(false, serverConnection.version))
                         .addLast(serverConnection)
                 }
             })
@@ -83,12 +84,14 @@ class SniffServerPacketHandler(
         })
     }
 
-    override fun clientToServerHandshake(packet: ClientToServerHandshakePacket) = Unit
+    override fun clientToServerHandshake(packet: ClientToServerHandshakePacket) {
+        if (!ignoringPackets.contains(packet.id)) packetLog.info("{}", packet.toString())
+    }
 
     companion object {
-
         private val packetLog: Logger = LogManager.getLogger("Packet (ToServer)")
         private val ignoringPackets = setOf(
+            0x01, // LoginPacket
             0x88, // CacheBlobStatusPacket
             0x90, // InputPacket
         )

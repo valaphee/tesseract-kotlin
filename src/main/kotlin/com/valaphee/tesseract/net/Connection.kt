@@ -37,7 +37,9 @@ import java.net.InetSocketAddress
 /**
  * @author Kevin Ludwig
  */
-class Connection : SimpleChannelInboundHandler<Packet>() {
+class Connection(
+    version: Int = latestProtocolVersion
+) : SimpleChannelInboundHandler<Packet>() {
     lateinit var context: ChannelHandlerContext
         private set
     lateinit var handler: PacketHandler
@@ -94,7 +96,7 @@ class Connection : SimpleChannelInboundHandler<Packet>() {
         } else this.handler = handler
     }
 
-    var version: Int = latestProtocolVersion
+    var version = version
         set(value) {
             val channelPipeline = context.pipeline()
             channelPipeline[PacketEncoder::class.java].version = value

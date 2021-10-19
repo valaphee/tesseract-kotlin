@@ -60,45 +60,49 @@ import java.util.Base64
 @Restrict(Restriction.ToServer)
 class LoginPacket(
     val protocolVersion: Int,
+    val authJws: String?,
     val publicKey: PublicKey,
-    val privateKey: PrivateKey?,
     val authExtra: AuthExtra,
+    val userJws: String?,
     val user: User,
+    val privateKey: PrivateKey?,
     val verified: Boolean
 ) : Packet {
     override val id get() = 0x01
+
+    constructor(protocolVersion: Int, publicKey: PublicKey, privateKey: PrivateKey?, authExtra: AuthExtra, user: User) : this(protocolVersion, null, publicKey, authExtra, null, user, privateKey, false)
 
     override fun write(buffer: PacketBuffer, version: Int) {
         buffer.writeInt(protocolVersion)
         val jwtLengthIndex = buffer.writerIndex()
         buffer.writeZero(PacketBuffer.MaximumVarUIntLength)
-        buffer.writeAsciiStringLe(AsciiString(JsonObject().apply {
+        buffer.writeAsciiStringLe(authJws?.let { AsciiString(it) } ?: AsciiString(JsonObject().apply {
             add("chain", JsonArray().apply {
-                val authJws = JsonWebSignature()
-                authJws.setHeader("alg", "ES384")
-                authJws.setHeader("x5u", base64Encoder.encodeToString(publicKey.encoded))
-                authJws.payload = JsonObject().apply {
-                    addProperty("exp", (System.currentTimeMillis() / 1_000L) + 31_536L)
-                    add("extraData", JsonObject().apply(authExtra::toJson))
-                    addProperty("identityPublicKey", base64Encoder.encodeToString(publicKey.encoded))
-                    addProperty("nbf", (System.currentTimeMillis() / 1_000L) - 86_400L)
-                }.toString()
-                authJws.key = privateKey
-                add(authJws.compactSerialization)
+                add(JsonWebSignature().apply {
+                    setHeader("alg", "ES384")
+                    setHeader("x5u", base64Encoder.encodeToString(publicKey.encoded))
+                    payload = JsonObject().apply {
+                        addProperty("exp", (System.currentTimeMillis() / 1_000L) + 31_536L)
+                        add("extraData", JsonObject().apply(authExtra::toJson))
+                        addProperty("identityPublicKey", base64Encoder.encodeToString(publicKey.encoded))
+                        addProperty("nbf", (System.currentTimeMillis() / 1_000L) - 86_400L)
+                    }.toString()
+                    key = privateKey
+                }.compactSerialization)
             })
         }.toString()))
-        val userJws = JsonWebSignature()
-        userJws.setHeader("alg", "ES384")
-        userJws.setHeader("x5u", base64Encoder.encodeToString(publicKey.encoded))
-        userJws.payload = JsonObject().apply(user::toJson).toString()
-        userJws.key = privateKey
-        buffer.writeAsciiStringLe(AsciiString(userJws.compactSerialization))
+        buffer.writeAsciiStringLe(userJws?.let { AsciiString(it) } ?: AsciiString(JsonWebSignature().apply {
+            setHeader("alg", "ES384")
+            setHeader("x5u", base64Encoder.encodeToString(publicKey.encoded))
+            payload = JsonObject().apply(user::toJson).toString()
+            key = privateKey
+        }.compactSerialization))
         buffer.setMaximumLengthVarUInt(jwtLengthIndex, buffer.writerIndex() - (jwtLengthIndex + PacketBuffer.MaximumVarUIntLength))
     }
 
     override fun handle(handler: PacketHandler) = handler.login(this)
 
-    override fun toString() = "LoginPacket(protocolVersion=$protocolVersion, publicKey=$publicKey, privateKey=$privateKey, authExtra=$authExtra, user=$user, verified=$verified)"
+    override fun toString() = "LoginPacket(protocolVersion=$protocolVersion, authJws=$authJws, publicKey=$publicKey, authExtra=$authExtra, userJws=$userJws, user=$user, privateKey=$privateKey, verified=$verified)"
 
     companion object {
         private val base64Encoder: Base64.Encoder = Base64.getEncoder()
@@ -119,7 +123,8 @@ object LoginPacketReader : PacketReader {
         buffer.readVarUInt()
         var verified = true
         var mojangKeyVerified = false
-        val authJsonJwsChain = Streams.parse(JsonReader(StringReader(buffer.readAsciiStringLe().toString()))).asJsonObject.getJsonArray("chain")
+        val authExtraJws = buffer.readAsciiStringLe().toString()
+        val authJsonJwsChain = Streams.parse(JsonReader(StringReader(authExtraJws))).asJsonObject.getJsonArray("chain")
         var verificationKey: PublicKey? = null
         var authJwsJsonPayload: JsonObject? = null
         for (authJsonJws in authJsonJwsChain) {
@@ -157,10 +162,12 @@ object LoginPacketReader : PacketReader {
         }
         return LoginPacket(
             protocolVersion,
+            authExtraJws,
             verificationKey!!,
-            null,
             authJwsJsonPayload!!.getJsonObject("extraData").asAuthExtra,
+            userJws,
             Streams.parse(JsonReader(StringReader(userJwtClaims.rawJson))).asJsonObject.asUser,
+            null,
             verified && mojangKeyVerified
         )
     }
