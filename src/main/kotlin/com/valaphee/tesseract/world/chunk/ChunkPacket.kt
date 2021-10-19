@@ -74,7 +74,6 @@ class ChunkPacket private constructor(
         }
         buffer.writeByte(borderBlocks.size)
         borderBlocks.forEach {
-            println((it.x and 0xF) or (it.y and 0xF) shl 4)
             buffer.writeByte((it.x and 0xF) or ((it.y and 0xF) shl 4))
         }
         buffer.toNbtOutputStream().use { stream -> blockEntities.forEach { stream.writeTag(it) } }
@@ -101,7 +100,7 @@ object ChunkPacketReader : PacketReader {
                 Int2(borderBlock and 0xF, borderBlock shr 4)
             }
             val blockEntities = mutableListOf<CompoundTag>()
-            buffer.toNbtInputStream().use { buffer.toNbtInputStream().use { while (buffer.isReadable) blockEntities.add(it.readTag()?.asCompoundTag()!!) } }
+            buffer.toNbtInputStream().use { while (buffer.isReadable) blockEntities.add(it.readTag()?.asCompoundTag()!!) }
             ChunkPacket(position, subChunkCount, blockEntities.toTypedArray(), borderBlocks, blobIds)
         } else {
             buffer.readVarUInt() // data length
@@ -110,7 +109,6 @@ object ChunkPacketReader : PacketReader {
             buffer.readBytes(biomes)
             val borderBlocks = Array(buffer.readUnsignedByte().toInt()) {
                 val borderBlock = buffer.readUnsignedByte().toInt()
-                println(borderBlock)
                 Int2(borderBlock and 0xF, borderBlock shr 4)
             }
             val blockEntities = mutableListOf<CompoundTag>()
