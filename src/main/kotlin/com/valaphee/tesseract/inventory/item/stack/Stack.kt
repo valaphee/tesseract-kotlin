@@ -166,7 +166,7 @@ fun CompoundTag.asStack() = Stack(getString("Name"), getIntOrNull("Damage") ?: 0
 fun PacketBuffer.readStackPre431(): Stack? {
     val id = readVarInt()
     if (id == 0) return null
-    val itemKey = checkNotNull(items[id])
+    val itemKey = items[id]
     val countAndSubId = readVarInt()
     return Stack(
         itemKey,
@@ -195,7 +195,7 @@ fun PacketBuffer.readStackWithNetIdPre431(): Stack? {
 fun PacketBuffer.readStack(): Stack? {
     val id = readVarInt()
     if (id == 0) return null
-    val itemKey = checkNotNull(items[id])
+    val itemKey = items[id]
     val count = readUnsignedShortLE()
     val subId = readVarUInt()
     val netId = if (readBoolean()) readVarInt() else 0
@@ -223,7 +223,7 @@ fun PacketBuffer.readStack(): Stack? {
 fun PacketBuffer.readStackInstance(): Stack? {
     val id = readVarInt()
     if (id == 0) return null
-    val itemKey = checkNotNull(items[id])
+    val itemKey = items[id]
     val count = readUnsignedShortLE()
     val subId = readVarUInt()
     val blockRuntimeId = readVarInt()
@@ -263,13 +263,13 @@ fun PacketBuffer.writeStackPre431(value: Stack?) {
             NbtOutputStream(LittleEndianVarIntByteBufOutputStream(this)).use { stream -> stream.writeTag(it) }
         } ?: writeShortLE(0)
         it.canPlaceOn?.let {
-            writeVarInt(it.size)
+            writeIntLE(it.size)
             it.forEach { writeString(it) }
-        } ?: writeVarInt(0)
+        } ?: writeIntLE(0)
         it.canDestroy?.let {
-            writeVarInt(it.size)
+            writeIntLE(it.size)
             it.forEach { writeString(it) }
-        } ?: writeVarInt(0)
+        } ?: writeIntLE(0)
         if (it.itemKey == shieldKey) writeVarLong(it.blockingTicks)
     } ?: writeVarInt(0)
 }
@@ -323,16 +323,16 @@ fun PacketBuffer.writeStackInstance(value: Stack?) {
             NbtOutputStream(LittleEndianVarIntByteBufOutputStream(this)).use { stream -> stream.writeTag(it) }
         } ?: writeShortLE(0)
         it.canPlaceOn?.let {
-            writeVarInt(it.size)
+            writeIntLE(it.size)
             it.forEach { writeString(it) }
-        } ?: writeVarInt(0)
+        } ?: writeIntLE(0)
         it.canDestroy?.let {
-            writeVarInt(it.size)
+            writeIntLE(it.size)
             it.forEach { writeString(it) }
-        } ?: writeVarInt(0)
+        } ?: writeIntLE(0)
         if (it.itemKey == shieldKey) writeVarLong(it.blockingTicks)
         setMaximumLengthVarUInt(dataLengthIndex, writerIndex() - (dataLengthIndex + PacketBuffer.MaximumVarUIntLength))
-    } ?: writeVarInt(0)
+    } ?: writeIntLE(0)
 }
 
 fun PacketBuffer.writeIngredient(value: Stack?) {

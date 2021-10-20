@@ -46,7 +46,7 @@ class ParticlePacket(
 
     constructor(dimension: Dimension, uniqueEntityId: Long, particleName: String) : this(dimension, uniqueEntityId, Float3.Zero, particleName)
 
-    constructor(dimension: Dimension, position: Float3, particleName: String) : this(dimension, 0, position, particleName)
+    constructor(dimension: Dimension, position: Float3, particleName: String) : this(dimension, -1, position, particleName)
 
     override fun write(buffer: PacketBuffer, version: Int) {
         buffer.writeByte(dimension.ordinal)

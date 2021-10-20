@@ -50,11 +50,12 @@ class SniffClientPacketHandler(
     private val serverConnection: Connection,
     private val loginPacket: LoginPacket,
 ) : PacketHandler {
+    @Inject private lateinit var config: SniffConfig
     @Inject private lateinit var blocks: Map<String, @JvmSuppressWildcards Block>
     private val keyPair = generateKeyPair()
 
     override fun initialize() {
-        serverConnection.write(LoginPacket(serverConnection.version, keyPair.public, keyPair.private, loginPacket.authExtra, loginPacket.user))
+        serverConnection.write(if (config.forward) loginPacket else LoginPacket(serverConnection.version, keyPair.public, keyPair.private, loginPacket.authExtra, loginPacket.user))
     }
 
     override fun exceptionCaught(cause: Throwable) {
