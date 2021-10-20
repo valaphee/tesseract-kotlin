@@ -78,6 +78,8 @@ class SniffServerPacketHandler(
     override fun login(packet: LoginPacket) {
         clientConnection.version = packet.protocolVersion
 
+        clientConnection.context.pipeline()[PacketDecoder::class.java].verified = true
+
         val bootstrap = Bootstrap()
             .group(clientConnection.context.channel().eventLoop())
             .channelFactory(ChannelFactory { RakNetClientChannel(Sniff.underlyingNetworking.datagramChannel) })

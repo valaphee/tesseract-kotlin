@@ -36,9 +36,10 @@ import io.netty.handler.codec.MessageToByteEncoder
 class PacketEncoder(
     private val client: Boolean,
     var version: Int = latestProtocolVersion,
-    var blockStates: Registry<String>? = null,
-    var items: Registry<String>? = null
 ) : MessageToByteEncoder<Packet>() {
+    var blockStates: Registry<String>? = null
+    var items: Registry<String>? = null
+
     /*override fun acceptOutboundMessage(message: Any): Boolean {
         val restrictions = message::class.findAnnotation<Restrict>()?.value ?: return true
         return client && restrictions.contains(Restriction.ToServer) || !client && restrictions.contains(Restriction.ToClient)

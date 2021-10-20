@@ -28,11 +28,11 @@ import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.util.ByteBufWrapper
-import com.valaphee.tesseract.util.Registry
 import com.valaphee.tesseract.util.LittleEndianByteBufInputStream
 import com.valaphee.tesseract.util.LittleEndianByteBufOutputStream
 import com.valaphee.tesseract.util.LittleEndianVarIntByteBufInputStream
 import com.valaphee.tesseract.util.LittleEndianVarIntByteBufOutputStream
+import com.valaphee.tesseract.util.Registry
 import com.valaphee.tesseract.util.nbt.NbtInputStream
 import com.valaphee.tesseract.util.nbt.NbtOutputStream
 import io.netty.buffer.ByteBuf
@@ -81,7 +81,7 @@ class PacketBuffer(
 
     fun readString16(): String {
         val length = readUnsignedShortLE()
-        check(length <= Short.MAX_VALUE) { "Maximum length of ${Short.MAX_VALUE} exceeded" }
+        check(length <= readableBytes()) { "Length of $length exceeds ${readableBytes()}" }
         val bytes = ByteArray(length)
         readBytes(bytes)
         return String(bytes, StandardCharsets.UTF_8)
@@ -93,9 +93,9 @@ class PacketBuffer(
         writeBytes(bytes)
     }
 
-    fun readAsciiStringLe(maximumLength: Int = Int.MAX_VALUE): AsciiString {
+    fun readAsciiStringLe(): AsciiString {
         val length = readIntLE()
-        check(length <= maximumLength) { "Maximum length of $maximumLength exceeded" }
+        check(length <= readableBytes()) { "Length of $length exceeds ${readableBytes()}" }
         val bytes = ByteArray(length)
         readBytes(bytes)
         return AsciiString(bytes)
@@ -207,9 +207,9 @@ class PacketBuffer(
 
     fun <T : Enum<T>> writeVarLongFlags(flags: Collection<T>) = writeVarLong(flags.map { 1L shl it.ordinal }.fold(0) { flagsValue, flagValue -> flagsValue or flagValue })
 
-    fun readByteArray(maximumLength: Int = Short.MAX_VALUE.toInt()): ByteArray {
+    fun readByteArray(): ByteArray {
         val length = readVarUInt()
-        check(length <= maximumLength) { "Maximum length of $maximumLength exceeded" }
+        check(length <= readableBytes()) { "Length of $length exceeds ${readableBytes()}" }
         val bytes = ByteArray(length)
         readBytes(bytes)
         return bytes
@@ -228,7 +228,7 @@ class PacketBuffer(
         writeBytes(value)
     }
 
-    fun readString(maximumLength: Int = Int.MAX_VALUE) = String(readByteArray(maximumLength), StandardCharsets.UTF_8)
+    fun readString() = String(readByteArray(), StandardCharsets.UTF_8)
 
     fun writeString(value: String) {
         writeByteArray(value.toByteArray(StandardCharsets.UTF_8))
