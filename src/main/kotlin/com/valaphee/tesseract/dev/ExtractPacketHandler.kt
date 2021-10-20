@@ -78,7 +78,7 @@ class ExtractPacketHandler(
     private val keyPair = generateKeyPair()
 
     override fun initialize() {
-        connection.write(LoginPacket(connection.version, keyPair.public, keyPair.private, AuthExtra(UUID.randomUUID(), "0", "Tesseract"), User(UUID.randomUUID(), 0L, "Tesseract", false, Appearance("Custom", "", mapOf("geometry" to ("default" to "geometry.humanoid.customSlim")), this::class.java.getResourceAsStream("/default_skin.png")!!.readAppearanceImage(), emptyList(), AppearanceImage.Empty, "", "", "", "", "", "", "#0", emptyList(), emptyList(), false, false, false, false, false), "", "", UUID.randomUUID().toString(), "", User.OperatingSystem.Unknown, latestVersion, Locale.getDefault(), User.InputMode.KeyboardAndMouse, User.InputMode.KeyboardAndMouse, 0, User.UiProfile.Classic, config.address),))
+        connection.write(LoginPacket(connection.version, keyPair.public, keyPair.private, AuthExtra(UUID.randomUUID(), "0", "Tesseract"), User(UUID.randomUUID(), 0L, "Tesseract", false, Appearance("Custom", "", mapOf("geometry" to ("default" to "geometry.humanoid.customSlim")), this::class.java.getResourceAsStream("/default_skin.png")!!.readAppearanceImage(), emptyList(), AppearanceImage.Empty, "", "", "", "", "", "", "#0", emptyList(), emptyList(), false, false, false, false, false), "", "", UUID.randomUUID().toString(), "", User.OperatingSystem.Unknown, latestVersion, Locale.getDefault(), User.InputMode.KeyboardAndMouse, User.InputMode.KeyboardAndMouse, 0, User.UiProfile.Classic, config.address)))
     }
 
     override fun other(packet: Packet) = Unit

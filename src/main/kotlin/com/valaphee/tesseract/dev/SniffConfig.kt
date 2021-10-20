@@ -35,5 +35,5 @@ import java.net.InetSocketAddress
 class SniffConfig(
     val serverAddress: InetSocketAddress = InetSocketAddress("127.0.0.1", 19134),
     val clientAddress: InetSocketAddress = InetSocketAddress("127.0.0.1", 19132),
-    val clientMtu: Int = 1_464/*1_172*/,
+    val clientMtu: Int = 1_464,/*1_172*/
 ) : Data

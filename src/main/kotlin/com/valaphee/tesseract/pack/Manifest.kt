@@ -20,7 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
 package com.valaphee.tesseract.pack
@@ -70,22 +69,14 @@ class Manifest(
         @get:JsonProperty("type") val type: Type?,
     ) {
         enum class Type {
-            @JsonProperty("invalid")
-            Invalid,
-            @JsonProperty("resources")
-            Resource,
-            @JsonProperty("data")
-            Data,
-            @JsonProperty("plugin")
-            Plugin,
-            @JsonProperty("client_data")
-            ClientData,
-            @JsonProperty("interface")
-            Interface,
-            @JsonProperty("mandatory")
-            Mandatory,
-            @JsonProperty("world_template")
-            WorldTemplate
+            @JsonProperty("invalid") Invalid,
+            @JsonProperty("resources") Resource,
+            @JsonProperty("data") Data,
+            @JsonProperty("plugin") Plugin,
+            @JsonProperty("client_data") ClientData,
+            @JsonProperty("interface") Interface,
+            @JsonProperty("mandatory") Mandatory,
+            @JsonProperty("world_template") WorldTemplate
         }
     }
 

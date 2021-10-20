@@ -20,7 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
 package com.valaphee.tesseract.world.chunk
@@ -71,8 +70,9 @@ class ChunkPacket private constructor(
         buffer.writeZero(PacketBuffer.MaximumVarUIntLength)
         if (!cache) blockStorage!!.let {
             repeat(subChunkCount) { i -> it.subChunks[i].writeToBuffer(buffer) }
-            if (cavesAndCliffs) { it.biomes!!.forEach { it.writeToBuffer(buffer, true) }; TODO() }
-            else buffer.writeBytes(biomes!!)
+            if (cavesAndCliffs) {
+                it.biomes!!.forEach { it.writeToBuffer(buffer, true) }; TODO()
+            } else buffer.writeBytes(biomes!!)
         }
         buffer.writeByte(borderBlocks.size)
         borderBlocks.forEach { buffer.writeByte((it.x and 0xF) or ((it.y and 0xF) shl 4)) }

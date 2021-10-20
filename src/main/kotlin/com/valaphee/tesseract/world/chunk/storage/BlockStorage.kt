@@ -20,7 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
  */
 
 package com.valaphee.tesseract.world.chunk.storage
@@ -35,11 +34,12 @@ class BlockStorage(
     val subChunks: Array<out SubChunk>,
     val biomes: Array<Layer>?
 ) : ReadWriteBlockAccess {
-    val subChunkCount: Int get() {
-        var subChunkCount = subChunks.size - 1
-        while (subChunkCount >= 0 && subChunks[subChunkCount].empty) subChunkCount--
-        return ++subChunkCount
-    }
+    val subChunkCount: Int
+        get() {
+            var subChunkCount = subChunks.size - 1
+            while (subChunkCount >= 0 && subChunks[subChunkCount].empty) subChunkCount--
+            return ++subChunkCount
+        }
 
     constructor(default: Int, subChunkCount: Int = 16) : this(default, Array(subChunkCount) { CompactSubChunk(default, BitArray.Version.V1) }, Array(subChunkCount) { Layer(0, BitArray.Version.V1) })
 
