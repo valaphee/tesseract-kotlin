@@ -263,13 +263,13 @@ fun PacketBuffer.writeStackPre431(value: Stack?) {
             NbtOutputStream(LittleEndianVarIntByteBufOutputStream(this)).use { stream -> stream.writeTag(it) }
         } ?: writeShortLE(0)
         it.canPlaceOn?.let {
-            writeIntLE(it.size)
+            writeVarInt(it.size)
             it.forEach { writeString(it) }
-        } ?: writeIntLE(0)
+        } ?: writeVarInt(0)
         it.canDestroy?.let {
-            writeIntLE(it.size)
+            writeVarInt(it.size)
             it.forEach { writeString(it) }
-        } ?: writeIntLE(0)
+        } ?: writeVarInt(0)
         if (it.itemKey == shieldKey) writeVarLong(it.blockingTicks)
     } ?: writeVarInt(0)
 }
@@ -324,11 +324,11 @@ fun PacketBuffer.writeStackInstance(value: Stack?) {
         } ?: writeShortLE(0)
         it.canPlaceOn?.let {
             writeIntLE(it.size)
-            it.forEach { writeString(it) }
+            it.forEach { writeString16(it) }
         } ?: writeIntLE(0)
         it.canDestroy?.let {
             writeIntLE(it.size)
-            it.forEach { writeString(it) }
+            it.forEach { writeString16(it) }
         } ?: writeIntLE(0)
         if (it.itemKey == shieldKey) writeVarLong(it.blockingTicks)
         setMaximumLengthVarUInt(dataLengthIndex, writerIndex() - (dataLengthIndex + PacketBuffer.MaximumVarUIntLength))
