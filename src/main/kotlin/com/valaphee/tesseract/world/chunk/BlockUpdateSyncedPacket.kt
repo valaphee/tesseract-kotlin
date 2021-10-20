@@ -41,7 +41,7 @@ class BlockUpdateSyncedPacket(
     val position: Int3,
     val runtimeId: Int,
     val flags: Collection<BlockUpdatePacket.Flag>,
-    val layerId: Int,
+    val layer: Int,
     val runtimeEntityId: Long,
     val type: Type
 ) : Packet {
@@ -49,20 +49,22 @@ class BlockUpdateSyncedPacket(
         None, Create, Destroy
     }
 
+    constructor(position: Int3, runtimeId: Int, flags: Collection<BlockUpdatePacket.Flag>, layer: Int) : this(position, runtimeId, flags, layer, -1, Type.None)
+
     override val id get() = 0x6E
 
     override fun write(buffer: PacketBuffer, version: Int) {
         buffer.writeInt3UnsignedY(position)
         buffer.writeVarUInt(runtimeId)
         buffer.writeVarUIntFlags(flags)
-        buffer.writeVarUInt(layerId)
+        buffer.writeVarUInt(layer)
         buffer.writeVarULong(runtimeEntityId)
         buffer.writeVarULong(type.ordinal.toLong())
     }
 
     override fun handle(handler: PacketHandler) = handler.blockUpdateSynced(this)
 
-    override fun toString() = "BlockUpdateSyncedPacket(position=$position, runtimeId=$runtimeId, flags=$flags, layerId=$layerId, runtimeEntityId=$runtimeEntityId, type=$type)"
+    override fun toString() = "BlockUpdateSyncedPacket(position=$position, runtimeId=$runtimeId, flags=$flags, layer=$layer, runtimeEntityId=$runtimeEntityId, type=$type)"
 }
 
 /**

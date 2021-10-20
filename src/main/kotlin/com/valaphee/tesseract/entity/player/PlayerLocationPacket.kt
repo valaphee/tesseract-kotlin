@@ -44,7 +44,7 @@ class PlayerLocationPacket(
     val drivingRuntimeEntityId: Long,
     val teleportationCause: TeleportationCause = TeleportationCause.Unknown,
     val entityTypeId: Int,
-    val tick: Long
+    val tick: Long = 0
 ) : Packet {
     enum class Mode {
         Normal, Reset, Teleport, Vehicle

@@ -129,7 +129,7 @@ class WorldPacket(
     }
 
     enum class AuthoritativeMovement {
-        Client, Server, ServerWithRewind, Unknown3
+        Client, Server, ServerWithRewind
     }
 
     override val id get() = 0x0B
@@ -206,7 +206,7 @@ class WorldPacket(
         buffer.writeString(worldName)
         buffer.writeString(premiumWorldTemplateId)
         buffer.writeBoolean(trial)
-        if (version >= 419) buffer.writeVarUInt(movementAuthoritative.ordinal) else buffer.writeBoolean(movementAuthoritative == AuthoritativeMovement.Server)
+        if (version >= 419) buffer.writeVarInt(movementAuthoritative.ordinal) else buffer.writeBoolean(movementAuthoritative == AuthoritativeMovement.Server)
         if (version >= 428) {
             buffer.writeVarInt(movementRewindHistory)
             buffer.writeBoolean(blockBreakingServerAuthoritative)
@@ -341,7 +341,7 @@ object WorldPacketReader : PacketReader {
         val premiumWorldTemplateId = buffer.readString()
         val trial = buffer.readBoolean()
         val movementAuthoritative = when {
-            version >= 419 -> WorldPacket.AuthoritativeMovement.values()[buffer.readVarUInt()]
+            version >= 419 -> WorldPacket.AuthoritativeMovement.values()[buffer.readVarInt()]
             buffer.readBoolean() -> WorldPacket.AuthoritativeMovement.Server
             else -> WorldPacket.AuthoritativeMovement.Client
         }

@@ -135,9 +135,9 @@ interface MetadataType<T> {
             this[4] = String
             this[5] = Tag
             this[6] = Int3
-            this[7] = Long
             this[7] = Flags
             this[7] = Flags2
+            this[7] = Long
             this[8] = Float3
         }
     }

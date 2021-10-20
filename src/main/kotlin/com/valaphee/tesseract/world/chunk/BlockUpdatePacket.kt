@@ -42,7 +42,7 @@ class BlockUpdatePacket(
     val position: Int3,
     val runtimeId: Int,
     val flags: Collection<Flag>,
-    val layerId: Int
+    val layer: Int
 ) : Packet {
     enum class Flag {
         Neighbors, Network, NonVisual, Priority;
@@ -59,12 +59,12 @@ class BlockUpdatePacket(
         buffer.writeInt3UnsignedY(position)
         buffer.writeVarUInt(runtimeId)
         buffer.writeVarUIntFlags(flags)
-        buffer.writeVarUInt(layerId)
+        buffer.writeVarUInt(layer)
     }
 
     override fun handle(handler: PacketHandler) = handler.blockUpdate(this)
 
-    override fun toString() = "BlockUpdatePacket(position=$position, runtimeId=$runtimeId, flags=$flags, layerId=$layerId)"
+    override fun toString() = "BlockUpdatePacket(position=$position, runtimeId=$runtimeId, flags=$flags, layer=$layer)"
 }
 
 /**

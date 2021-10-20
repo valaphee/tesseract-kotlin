@@ -210,7 +210,7 @@ class PacketDecoder(
             try {
                 out.add(it.read(buffer, version))
             } catch (ex: Exception) {
-                throw PacketDecoderException("Packet 0x${id.toString(16).uppercase()} problematic at 0x${buffer.readerIndex().toString(16).uppercase()}", buffer)
+                throw PacketDecoderException("Packet 0x${id.toString(16).uppercase()} problematic at 0x${buffer.readerIndex().toString(16).uppercase()}", ex, buffer)
             }
             if (buffer.readableBytes() > 0) throw PacketDecoderException("Packet 0x${id.toString(16).uppercase()} not fully read", buffer)
         } ?: UnknownPacket(id, buffer)

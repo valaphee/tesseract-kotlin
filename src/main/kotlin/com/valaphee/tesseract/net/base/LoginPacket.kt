@@ -68,9 +68,9 @@ class LoginPacket(
     val privateKey: PrivateKey?,
     val verified: Boolean
 ) : Packet {
-    override val id get() = 0x01
-
     constructor(protocolVersion: Int, publicKey: PublicKey, privateKey: PrivateKey?, authExtra: AuthExtra, user: User) : this(protocolVersion, null, publicKey, authExtra, null, user, privateKey, false)
+
+    override val id get() = 0x01
 
     override fun write(buffer: PacketBuffer, version: Int) {
         buffer.writeInt(protocolVersion)

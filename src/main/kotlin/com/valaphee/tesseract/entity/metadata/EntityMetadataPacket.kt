@@ -38,7 +38,7 @@ import com.valaphee.tesseract.net.Restriction
 class EntityMetadataPacket(
     val runtimeEntityId: Long,
     val metadata: Metadata,
-    val tick: Long
+    val tick: Long = 0
 ) : Packet {
     override val id get() = 0x27
 

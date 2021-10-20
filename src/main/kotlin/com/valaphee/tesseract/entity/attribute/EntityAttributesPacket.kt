@@ -38,7 +38,7 @@ import com.valaphee.tesseract.net.Restriction
 class EntityAttributesPacket(
     val runtimeEntityId: Long,
     val attributes: Attributes,
-    val tick: Long
+    val tick: Long = 0
 ) : Packet {
     override val id get() = 0x1D
 

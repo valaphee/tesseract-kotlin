@@ -38,7 +38,7 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.ToClient)
 class BlockUpdatesSyncedPacket(
-    val subChunk: Int3,
+    val basePosition: Int3,
     val updates1: Array<Update>,
     val updates2: Array<Update>
 ) : Packet {
@@ -48,12 +48,14 @@ class BlockUpdatesSyncedPacket(
         val flags: Collection<BlockUpdatePacket.Flag>,
         val runtimeEntityId: Long,
         val type: BlockUpdateSyncedPacket.Type
-    )
+    ) {
+        constructor(position: Int3, runtimeId: Int, flags: Collection<BlockUpdatePacket.Flag>) : this(position, runtimeId, flags, -1, BlockUpdateSyncedPacket.Type.None)
+    }
 
     override val id get() = 0xAC
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeInt3UnsignedY(subChunk)
+        buffer.writeInt3UnsignedY(basePosition)
         buffer.writeVarUInt(updates1.size)
         updates1.forEach {
             buffer.writeInt3UnsignedY(it.position)
@@ -74,7 +76,7 @@ class BlockUpdatesSyncedPacket(
 
     override fun handle(handler: PacketHandler) = handler.blockUpdatesSynced(this)
 
-    override fun toString() = "BlockUpdatesSyncedPacket(subChunk=$subChunk, updates1=${updates1.contentToString()}, updates2=${updates2.contentToString()})"
+    override fun toString() = "BlockUpdatesSyncedPacket(basePosition=$basePosition, updates1=${updates1.contentToString()}, updates2=${updates2.contentToString()})"
 }
 
 /**

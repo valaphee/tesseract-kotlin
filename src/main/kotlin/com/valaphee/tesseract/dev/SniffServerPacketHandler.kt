@@ -34,7 +34,6 @@ import com.valaphee.tesseract.net.PacketDecoder
 import com.valaphee.tesseract.net.PacketDecoderException
 import com.valaphee.tesseract.net.PacketEncoder
 import com.valaphee.tesseract.net.PacketHandler
-import com.valaphee.tesseract.net.base.CacheStatusPacket
 import com.valaphee.tesseract.net.base.DisconnectPacket
 import com.valaphee.tesseract.net.base.LoginPacket
 import com.valaphee.tesseract.util.dump
@@ -62,7 +61,7 @@ class SniffServerPacketHandler(
 
     override fun exceptionCaught(cause: Throwable) {
         when (cause) {
-            is PacketDecoderException -> packetLog.debug("{}", lazyToString { cause.buffer.dump(cause.buffer.readerIndex().toLong(), cause.buffer.readerIndex(), cause.buffer.readableBytes()) })
+            is PacketDecoderException -> packetLog.info("{}", lazyToString { cause.buffer.dump(cause.buffer.readerIndex().toLong(), cause.buffer.readerIndex(), cause.buffer.readableBytes()) })
         }
     }
 
@@ -106,7 +105,7 @@ class SniffServerPacketHandler(
         })
     }
 
-    override fun cacheStatus(packet: CacheStatusPacket) = Unit
+    /*override fun cacheStatus(packet: CacheStatusPacket) = Unit*/
 
     companion object {
         private val packetLog: Logger = LogManager.getLogger("Packet (ToServer)")

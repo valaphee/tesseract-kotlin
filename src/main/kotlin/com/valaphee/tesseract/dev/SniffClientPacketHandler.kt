@@ -59,7 +59,7 @@ class SniffClientPacketHandler(
 
     override fun exceptionCaught(cause: Throwable) {
         when (cause) {
-            is PacketDecoderException -> packetLog.debug("{}", lazyToString { cause.buffer.dump(cause.buffer.readerIndex().toLong(), cause.buffer.readerIndex(), cause.buffer.readableBytes()) })
+            is PacketDecoderException -> packetLog.info("{}", lazyToString { cause.buffer.dump(cause.buffer.readerIndex().toLong(), cause.buffer.readerIndex(), cause.buffer.readableBytes()) })
         }
     }
 
