@@ -26,7 +26,12 @@ package com.valaphee.tesseract.data.block
 
 import com.valaphee.tesseract.data.DataType
 import com.valaphee.tesseract.data.KeyedData
+import com.valaphee.tesseract.util.getListTag
+import com.valaphee.tesseract.util.getListTagOrNull
+import com.valaphee.tesseract.util.getString
 import com.valaphee.tesseract.util.nbt.CompoundTag
+import com.valaphee.tesseract.util.nbt.TagType
+import com.valaphee.tesseract.pack.Block as PackBlock
 
 /**
  * @author Kevin Ludwig
@@ -36,17 +41,35 @@ class Block : KeyedData {
     override val key: String
     val properties: Map<String, Set<*>>
     val states: List<BlockState>
-    val component: CompoundTag? = null
+    val tag: CompoundTag?
 
-    constructor(key: String, properties: Map<String, Set<*>> = emptyMap()) {
-        this.key = key
-        this.properties = properties
-        this.states = mutableListOf<BlockState>().apply { properties.values.fold(listOf(listOf<Any?>())) { acc, set -> acc.flatMap { list -> set.map { list + it } } }.forEach { add(BlockState(this@Block, properties.keys.zip(it).toMap())) } }.toList()
+    constructor(pack: PackBlock) {
+        this.key = pack.description.key
+        this.properties = pack.description.properties ?: emptyMap()
+        states = mutableListOf<BlockState>().apply { properties.values.fold(listOf(listOf<Any?>())) { acc, set -> acc.flatMap { list -> set.map { list + it } } }.forEach { add(BlockState(this@Block, properties.keys.zip(it).toMap())) } }.toList()
+        tag = pack.toTag()
     }
 
     constructor(key: String, states: List<Map<String, Any>>) {
         this.key = key
-        this.properties = emptyMap()
+        properties = emptyMap()
         this.states = states.map { BlockState(this@Block, it) }
+        tag = null
+    }
+
+    constructor(key: String, tag: CompoundTag?) {
+        this.key = key
+        properties = (tag?.getListTagOrNull("properties")?.toList()?.associate {
+            val compoundTag = it.asCompoundTag()!!
+            compoundTag.getString("name") to compoundTag.getListTag("enum").let {
+                when (it.type) {
+                    TagType.Byte -> it.toList().map { it.asNumberTag()!!.toInt() == 1 }.toSet()
+                    TagType.String -> it.toList().map { it.asArrayTag()!!.valueToString() }.toSet()
+                    else -> TODO()
+                }
+            }
+        } ?: emptyMap())
+        states = mutableListOf<BlockState>().apply { properties.values.fold(listOf(listOf<Any?>())) { acc, set -> acc.flatMap { list -> set.map { list + it } } }.forEach { add(BlockState(this@Block, properties.keys.zip(it).toMap())) } }.toList()
+        this.tag = tag
     }
 }

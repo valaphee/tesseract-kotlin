@@ -24,6 +24,7 @@
 
 package com.valaphee.tesseract.util.nbt
 
+import com.valaphee.foundry.math.Float3
 import kotlin.collections.set
 
 private val falseTag = ByteTagImpl("", 0.toByte())
@@ -65,3 +66,26 @@ fun ofIntArray(value: IntArray): ArrayTag = IntArrayTagImpl("", value)
 fun ofLongArray(value: LongArray): ArrayTag = LongArrayTagImpl("", value)
 
 fun ofString(value: String): ArrayTag = StringTagImpl("", value)
+
+fun Any?.toTag(): Tag = when (this) {
+    is Boolean -> ofBool(this)
+    is Byte -> ofByte(this)
+    is Short -> ofShort(this)
+    is Int -> ofInt(this)
+    is Long -> ofLong(this)
+    is Float -> ofFloat(this)
+    is Double -> ofDouble(this)
+    is List<*> -> ofList(map { it.toTag() }.toMutableList())
+    is Map<*, *> -> ofMap(map { it.key as String to it.value.toTag() }.toMap().toMutableMap())
+    is ByteArray -> ofByteArray(this)
+    is IntArray -> ofIntArray(this)
+    is LongArray -> ofLongArray(this)
+    is String -> ofString(this)
+    is Float3 -> compoundTag().apply {
+        setFloat("x", x)
+        setFloat("y", y)
+        setFloat("z", z)
+    }
+    is CustomTag -> toTag()
+    else -> TODO("$this")
+}

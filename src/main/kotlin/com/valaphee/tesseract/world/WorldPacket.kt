@@ -218,7 +218,7 @@ class WorldPacket(
                 buffer.writeVarUInt(it.size)
                 it.forEach {
                     buffer.writeString(it.key)
-                    buffer.toNbtOutputStream().use { stream -> stream.writeTag(null) }
+                    buffer.toNbtOutputStream().use { stream -> stream.writeTag(it.tag) }
                 }
             }
         } else blocksData?.let { buffer.writeBytes(it) } ?: buffer.toNbtOutputStream().use { it.writeTag(blocksTag) }
@@ -360,7 +360,7 @@ object WorldPacketReader : PacketReader {
         val block2: Array<Block>?
         if (version >= 419) {
             blocks = null
-            block2 = buffer.toNbtInputStream().use { stream -> Array(buffer.readVarUInt()) { Block(buffer.readString()).also { stream.readTag()?.asCompoundTag() } } }
+            block2 = buffer.toNbtInputStream().use { stream -> Array(buffer.readVarUInt()) { Block(buffer.readString(), stream.readTag()?.asCompoundTag()) } }
         } else {
             blocks = buffer.toNbtInputStream().use { it.readTag()!!.asListTag()!! }
             block2 = null

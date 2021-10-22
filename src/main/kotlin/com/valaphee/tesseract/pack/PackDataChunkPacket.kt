@@ -47,7 +47,7 @@ class PackDataChunkPacket(
     override val id get() = 0x53
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeString("$packId${packVersion?.let { "_$packVersion" } ?: ""}")
+        buffer.writeString("$packId${packVersion?.let { "_$it" } ?: ""}")
         buffer.writeIntLE(chunkIndex.toInt())
         buffer.writeLongLE(progress)
         buffer.writeVarUInt(data.readableBytes())
@@ -69,7 +69,7 @@ object PackDataChunkPacketReader : PacketReader {
         val packVersion = if (pack.size == 2) pack[1] else null
         val chunkIndex = buffer.readUnsignedIntLE()
         val progress = buffer.readLongLE()
-        val data = buffer.readSlice(buffer.readVarUInt())
+        val data = buffer.readRetainedSlice(buffer.readVarUInt())
         return PackDataChunkPacket(packId, packVersion, chunkIndex, progress, data)
     }
 }

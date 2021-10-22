@@ -24,14 +24,16 @@
 
 package com.valaphee.tesseract.pack
 
+import com.fasterxml.jackson.annotation.JsonProperty
+
 /**
  * @author Kevin Ludwig
  */
 class Content(
-    val content: List<Entry>
+    @get:JsonProperty("content") val content: List<Entry>
 ) {
     class Entry(
-        val path: String,
-        val key: String?
+        @get:JsonProperty("path") val path: String,
+        @get:JsonProperty("key") val key: String?
     )
 }

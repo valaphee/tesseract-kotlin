@@ -38,7 +38,7 @@ import java.util.UUID
 @Restrict(Restriction.ToServer)
 class PacksResponsePacket(
     val status: Status,
-    val packIds: Array<UUID>
+    val packs: Array<Pair<UUID, String?>>
 ) : Packet {
     enum class Status {
         None, Refused, TransferPacks, HaveAllPacks, Completed
@@ -48,13 +48,13 @@ class PacksResponsePacket(
 
     override fun write(buffer: PacketBuffer, version: Int) {
         buffer.writeByte(status.ordinal)
-        buffer.writeShortLE(packIds.size)
-        packIds.forEach { buffer.writeString(it.toString()) }
+        buffer.writeShortLE(packs.size)
+        packs.forEach { buffer.writeString("${it.first}${it.second?.let { "_$it" } ?: ""}") }
     }
 
     override fun handle(handler: PacketHandler) = handler.packsResponse(this)
 
-    override fun toString() = "PacksResponsePacket(status=$status, packIds=${packIds.contentToString()})"
+    override fun toString() = "PacksResponsePacket(status=$status, packs=${packs.contentToString()})"
 }
 
 /**
@@ -63,6 +63,9 @@ class PacksResponsePacket(
 object PacksResponsePacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int) = PacksResponsePacket(
         PacksResponsePacket.Status.values()[buffer.readUnsignedByte().toInt()],
-        Array(buffer.readUnsignedShortLE()) { UUID.fromString(buffer.readString().split("_".toRegex(), 2).toTypedArray()[0]) }
+        Array(buffer.readUnsignedShortLE()) {
+            val pack = buffer.readString().split("_".toRegex(), 2).toTypedArray()
+            UUID.fromString(pack[0]) to if (pack.size == 2) pack[1] else null
+        }
     )
 }

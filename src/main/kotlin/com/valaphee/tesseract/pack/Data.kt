@@ -22,19 +22,16 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.dev
+package com.valaphee.tesseract.pack
 
-import com.valaphee.tesseract.data.Data
-import com.valaphee.tesseract.data.DataType
-import java.net.InetSocketAddress
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 
 /**
  * @author Kevin Ludwig
  */
-@DataType("tesseract:sniff_config")
-class SniffConfig(
-    val serverAddress: InetSocketAddress = InetSocketAddress("127.0.0.1", 19134),
-    val clientAddress: InetSocketAddress = InetSocketAddress("127.0.0.1", 19132),
-    val forward: Boolean = false,
-    val clientMtu: Int = 1_464,/*1_172*/
-) : Data
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
+@JsonSubTypes(
+    JsonSubTypes.Type(Block::class)
+)
+interface Data

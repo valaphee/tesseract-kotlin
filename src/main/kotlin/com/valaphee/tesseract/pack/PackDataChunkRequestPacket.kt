@@ -44,7 +44,7 @@ class PackDataChunkRequestPacket(
     override val id get() = 0x54
 
     override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeString("$packId${packVersion?.let { "_$packVersion" } ?: ""}")
+        buffer.writeString("$packId${packVersion?.let { "_$it" } ?: ""}")
         buffer.writeIntLE(chunkIndex.toInt())
     }
 

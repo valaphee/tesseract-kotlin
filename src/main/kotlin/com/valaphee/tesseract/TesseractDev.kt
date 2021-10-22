@@ -26,7 +26,7 @@ package com.valaphee.tesseract
 
 import com.google.inject.Guice
 import com.valaphee.tesseract.data.DataModule
-import com.valaphee.tesseract.dev.Extract
+import com.valaphee.tesseract.dev.Sniff
 import com.valaphee.tesseract.dev.Tool
 
 fun main() {
@@ -34,6 +34,6 @@ fun main() {
     initializeLogging()
 
     val injector = Guice.createInjector(DataModule())
-    val tool: Tool = injector.getInstance(Extract::class.java)
+    val tool: Tool = injector.getInstance(Sniff::class.java)
     tool.run()
 }
