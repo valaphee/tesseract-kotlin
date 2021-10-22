@@ -35,10 +35,10 @@ import java.net.InetSocketAddress
 class ExtractConfig(
     val address: InetSocketAddress = InetSocketAddress("127.0.0.1", 19132),
     val mtu: Int = 1_464/*1_172*/,
-    val version: Int = 465,
+    val version: Int = 471,
     val creativeItems: Boolean = true,
-    val biomeDefinitions: Boolean = true,
-    val entityIdentifiers: Boolean = true,
-    val recipes: Boolean = true,
-    val commands: Boolean = true
+    val biomeDefinitions: Boolean = false,
+    val entityIdentifiers: Boolean = false,
+    val recipes: Boolean = false,
+    val commands: Boolean = false
 ) : Data

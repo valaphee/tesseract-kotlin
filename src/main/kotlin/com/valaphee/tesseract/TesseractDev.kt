@@ -22,18 +22,18 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.dev
+package com.valaphee.tesseract
 
 import com.google.inject.Guice
 import com.valaphee.tesseract.data.DataModule
-import com.valaphee.tesseract.initializeConsole
-import com.valaphee.tesseract.initializeLogging
+import com.valaphee.tesseract.dev.Extract
+import com.valaphee.tesseract.dev.Tool
 
 fun main() {
     initializeConsole()
     initializeLogging()
 
     val injector = Guice.createInjector(DataModule())
-    val tool: Tool = injector.getInstance(Sniff::class.java)
+    val tool: Tool = injector.getInstance(Extract::class.java)
     tool.run()
 }

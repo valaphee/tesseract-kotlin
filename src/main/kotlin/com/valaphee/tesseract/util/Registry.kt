@@ -69,7 +69,7 @@ class Registry<T> : Cloneable {
         valueToId[value] = id
     }
 
-    operator fun get(id: Int): T = idToValue.get(id)
+    operator fun get(id: Int): T? = idToValue.get(id)
 
     fun getId(value: T) = valueToId.getInt(value)
 
