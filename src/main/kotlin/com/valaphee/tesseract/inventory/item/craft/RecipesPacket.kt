@@ -157,8 +157,8 @@ object RecipesPacketReader : PacketReader {
                 Recipe.Type.Multi -> multiRecipe(buffer.readUuid(), if (version >= 407) buffer.readVarUInt() else 0)
             }
         },
-        Array(buffer.readVarUInt()) { PotionMixRecipe(buffer.items[buffer.readVarInt()], if (version >= 407) buffer.readVarInt() else 0, buffer.items[buffer.readVarInt()], if (version >= 407) buffer.readVarInt() else 0, buffer.items[buffer.readVarInt()], if (version >= 407) buffer.readVarInt() else 0) },
-        Array(buffer.readVarUInt()) { ContainerMixRecipe(buffer.items[buffer.readVarInt()], buffer.items[buffer.readVarInt()], buffer.items[buffer.readVarInt()]) },
+        Array(buffer.readVarUInt()) { PotionMixRecipe(checkNotNull(buffer.items[buffer.readVarInt()]), if (version >= 407) buffer.readVarInt() else 0, checkNotNull(buffer.items[buffer.readVarInt()]), if (version >= 407) buffer.readVarInt() else 0, checkNotNull(buffer.items[buffer.readVarInt()]), if (version >= 407) buffer.readVarInt() else 0) },
+        Array(buffer.readVarUInt()) { ContainerMixRecipe(checkNotNull(buffer.items[buffer.readVarInt()]), checkNotNull(buffer.items[buffer.readVarInt()]), checkNotNull(buffer.items[buffer.readVarInt()])) },
         if (version >= 465) Array(buffer.readVarUInt()) { MaterialReducer(buffer.readVarInt(), Int2IntOpenHashMap().apply { repeat(buffer.readVarUInt()) { this[buffer.readVarInt()] = buffer.readVarInt() } }) } else emptyArray(),
         buffer.readBoolean()
     )

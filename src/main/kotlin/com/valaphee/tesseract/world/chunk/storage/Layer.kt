@@ -72,7 +72,7 @@ class Layer(
         if (runtime) palette.forEach { buffer.writeVarInt(it) } else buffer.toNbtOutputStream().use { stream ->
             palette.forEach {
                 stream.writeTag(compoundTag().apply {
-                    val keyWithProperties = buffer.blockStates[it]
+                    val keyWithProperties = checkNotNull(buffer.blockStates[it])
                     val propertiesBegin = keyWithProperties.indexOf('[')
                     val propertiesEnd = keyWithProperties.indexOf(']')
                     if (propertiesBegin == -1 && propertiesEnd == -1) {

@@ -76,7 +76,7 @@ class EntityAnimationPacket(
  */
 object EntityAnimationPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int): EntityAnimationPacket {
-        val animation = EntityAnimationPacket.Animation.registry[buffer.readVarInt()]
+        val animation = checkNotNull(EntityAnimationPacket.Animation.registry[buffer.readVarInt()])
         val runtimeEntityId = buffer.readVarULong()
         val rowingTime = if (animation == EntityAnimationPacket.Animation.RowRight || animation == EntityAnimationPacket.Animation.RowLeft) buffer.readFloatLE() else 0.0f
         return EntityAnimationPacket(animation, runtimeEntityId, rowingTime)

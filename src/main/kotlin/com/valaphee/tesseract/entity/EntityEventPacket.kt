@@ -175,5 +175,5 @@ class EntityEventPacket(
  * @author Kevin Ludwig
  */
 object EntityEventPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = EntityEventPacket(buffer.readVarULong(), EntityEventPacket.events[buffer.readUnsignedByte().toInt()], buffer.readVarInt())
+    override fun read(buffer: PacketBuffer, version: Int) = EntityEventPacket(buffer.readVarULong(), checkNotNull(EntityEventPacket.events[buffer.readUnsignedByte().toInt()]), buffer.readVarInt())
 }

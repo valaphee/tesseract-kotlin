@@ -591,5 +591,5 @@ class WorldEventPacket(
  * @author Kevin Ludwig
  */
 object WorldEventPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = WorldEventPacket(WorldEventPacket.Event.registryByVersion(version)[buffer.readVarInt()], buffer.readFloat3(), buffer.readVarInt())
+    override fun read(buffer: PacketBuffer, version: Int) = WorldEventPacket(checkNotNull(WorldEventPacket.Event.registryByVersion(version)[buffer.readVarInt()]), buffer.readFloat3(), buffer.readVarInt())
 }

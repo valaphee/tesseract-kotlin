@@ -166,7 +166,7 @@ fun CompoundTag.asStack() = Stack(getString("Name"), getIntOrNull("Damage") ?: 0
 fun PacketBuffer.readStackPre431(): Stack? {
     val id = readVarInt()
     if (id == 0) return null
-    val itemKey = items[id]
+    val itemKey = checkNotNull(items[id])
     val countAndSubId = readVarInt()
     return Stack(
         itemKey,
@@ -195,7 +195,7 @@ fun PacketBuffer.readStackWithNetIdPre431(): Stack? {
 fun PacketBuffer.readStack(): Stack? {
     val id = readVarInt()
     if (id == 0) return null
-    val itemKey = items[id]
+    val itemKey = checkNotNull(items[id])
     val count = readUnsignedShortLE()
     val subId = readVarUInt()
     val netId = if (readBoolean()) readVarInt() else 0
@@ -223,7 +223,7 @@ fun PacketBuffer.readStack(): Stack? {
 fun PacketBuffer.readStackInstance(): Stack? {
     val id = readVarInt()
     if (id == 0) return null
-    val itemKey = items[id]
+    val itemKey = checkNotNull(items[id])
     val count = readUnsignedShortLE()
     val subId = readVarUInt()
     val blockRuntimeId = readVarInt()
@@ -250,7 +250,7 @@ fun PacketBuffer.readStackInstance(): Stack? {
 fun PacketBuffer.readIngredient(): Stack? {
     val id = readVarInt()
     if (id == 0) return null
-    return Stack(items[id], readVarInt().let { if (it == Short.MAX_VALUE.toInt()) -1 else it }, readVarInt())
+    return Stack(checkNotNull(items[id]), readVarInt().let { if (it == Short.MAX_VALUE.toInt()) -1 else it }, readVarInt())
 }
 
 fun PacketBuffer.writeStackPre431(value: Stack?) {

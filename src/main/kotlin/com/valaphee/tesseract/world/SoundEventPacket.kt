@@ -61,5 +61,5 @@ class SoundEventPacket(
  * @author Kevin Ludwig
  */
 object SoundEventPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = SoundEventPacket(SoundEvent.registry[buffer.readVarUInt()], buffer.readFloat3(), buffer.readVarInt(), buffer.readString(), buffer.readBoolean(), buffer.readBoolean())
+    override fun read(buffer: PacketBuffer, version: Int) = SoundEventPacket(checkNotNull(SoundEvent.registry[buffer.readVarUInt()]), buffer.readFloat3(), buffer.readVarInt(), buffer.readString(), buffer.readBoolean(), buffer.readBoolean())
 }

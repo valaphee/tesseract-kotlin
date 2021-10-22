@@ -60,7 +60,7 @@ class Metadata {
     fun readFromBuffer(buffer: PacketBuffer) {
         repeat(buffer.readVarUInt()) {
             val fieldId = buffer.readVarUInt()
-            val type = MetadataType.registry[buffer.readVarUInt()]
+            val type = checkNotNull(MetadataType.registry[buffer.readVarUInt()])
             @Suppress("UNCHECKED_CAST")
             values[fieldId] = MetadataValue(type, type.read(buffer)) as MetadataValue<Any?>?
         }
