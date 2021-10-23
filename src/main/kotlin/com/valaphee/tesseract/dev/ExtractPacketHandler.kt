@@ -29,7 +29,6 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.google.common.collect.HashBiMap
 import com.google.inject.Inject
 import com.valaphee.tesseract.command.net.CommandsPacket
-import com.valaphee.tesseract.command.net.LocalPlayerAsInitializedPacket
 import com.valaphee.tesseract.data.block.Block
 import com.valaphee.tesseract.data.recipe.ShapedRecipeData
 import com.valaphee.tesseract.data.recipe.ShapelessRecipeData
@@ -109,7 +108,9 @@ class ExtractPacketHandler(
         packet.items!!.forEach { items[it.key] = it.value.key }
         connection.items = items
 
-        connection.write(LocalPlayerAsInitializedPacket(packet.runtimeEntityId))
+        if (!config.items) return
+
+        objectMapper.writeValue(File("runtime_item_states.json"), items.valueToId.toMap())
     }
 
     override fun creativeInventory(packet: CreativeInventoryPacket) {

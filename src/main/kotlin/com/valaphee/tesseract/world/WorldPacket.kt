@@ -228,7 +228,7 @@ class WorldPacket(
                 it.forEach { (id, item) ->
                     buffer.writeString(item.key)
                     buffer.writeShortLE(id)
-                    if (version >= 419) buffer.writeBoolean(item.component != null)
+                    if (version >= 419) buffer.writeBoolean(item.componentBased)
                 }
             }
         }
@@ -370,8 +370,7 @@ object WorldPacketReader : PacketReader {
             repeat(itemCount) {
                 val key = buffer.readString()
                 val id = buffer.readShortLE()
-                if (version >= 419 && buffer.readBoolean()) Unit
-                this[id.toInt()] = Item(key, null)
+                this[id.toInt()] = Item(key, version >= 419 && buffer.readBoolean())
             }
         }
         val multiplayerCorrelationId = buffer.readString()

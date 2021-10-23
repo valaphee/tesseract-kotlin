@@ -45,8 +45,8 @@ class Block : KeyedData {
 
     constructor(pack: PackBlock) {
         this.key = pack.description.key
-        this.properties = pack.description.properties ?: emptyMap()
-        states = mutableListOf<BlockState>().apply { properties.values.fold(listOf(listOf<Any?>())) { acc, set -> acc.flatMap { list -> set.map { list + it } } }.forEach { add(BlockState(this@Block, properties.keys.zip(it).toMap())) } }.toList()
+        properties = pack.description.properties ?: emptyMap()
+        states = properties.values.reversed().fold(listOf(listOf<Any?>())) { acc, set -> acc.flatMap { list -> set.map { list + it } } }.map { BlockState(this@Block, properties.keys.zip(it.reversed()).toMap()) }
         tag = pack.toTag()
     }
 
@@ -59,17 +59,19 @@ class Block : KeyedData {
 
     constructor(key: String, tag: CompoundTag?) {
         this.key = key
-        properties = (tag?.getListTagOrNull("properties")?.toList()?.associate {
-            val compoundTag = it.asCompoundTag()!!
-            compoundTag.getString("name") to compoundTag.getListTag("enum").let {
-                when (it.type) {
-                    TagType.Byte -> it.toList().map { it.asNumberTag()!!.toInt() == 1 }.toSet()
-                    TagType.String -> it.toList().map { it.asArrayTag()!!.valueToString() }.toSet()
-                    else -> TODO()
-                }
+        this.properties = linkedMapOf<String, LinkedHashSet<*>>().apply {
+            tag?.getListTagOrNull("properties")?.toList()?.forEach {
+                val compoundTag = it.asCompoundTag()!!
+                put(compoundTag.getString("name"), linkedSetOf(compoundTag.getListTag("enum").let {
+                    when (it.toList().first().type) {
+                        TagType.Byte -> it.toList().map { it.asNumberTag()!!.toInt() == 1 }
+                        TagType.String -> it.toList().map { it.asArrayTag()!!.valueToString() }
+                        else -> TODO("$it")
+                    }
+                }))
             }
-        } ?: emptyMap())
-        states = mutableListOf<BlockState>().apply { properties.values.fold(listOf(listOf<Any?>())) { acc, set -> acc.flatMap { list -> set.map { list + it } } }.forEach { add(BlockState(this@Block, properties.keys.zip(it).toMap())) } }.toList()
+        }
+        states = properties.values.reversed().fold(listOf(listOf<Any?>())) { acc, set -> acc.flatMap { list -> set.map { list + it } } }.map { BlockState(this@Block, properties.keys.zip(it.reversed()).toMap()) }
         this.tag = tag
     }
 }

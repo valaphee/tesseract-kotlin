@@ -26,7 +26,6 @@ package com.valaphee.tesseract.data.item
 
 import com.valaphee.tesseract.data.DataType
 import com.valaphee.tesseract.data.KeyedData
-import com.valaphee.tesseract.util.nbt.CompoundTag
 
 /**
  * @author Kevin Ludwig
@@ -34,5 +33,5 @@ import com.valaphee.tesseract.util.nbt.CompoundTag
 @DataType("tesseract:item")
 class Item(
     override val key: String,
-    val component: CompoundTag?
+    val componentBased: Boolean
 ) : KeyedData()

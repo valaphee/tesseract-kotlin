@@ -44,7 +44,7 @@ class Block(
 ) : Data, CustomTag {
     class Description(
         @get:JsonProperty("identifier") val key: String,
-        @get:JsonProperty("properties") val properties: Map<String, Set<*>>? = null
+        @get:JsonProperty("properties") val properties: LinkedHashMap<String, LinkedHashSet<*>>? = null
     )
 
     class Permutation(
@@ -53,10 +53,7 @@ class Block(
     ) : CustomTag {
         override fun toTag() = compoundTag().apply {
             setString("condition", condition)
-            this["components"] = ofMap(components.map {
-                val tag = it.value.toTag()
-                it.key to if (tag.isCompound) tag else compoundTag().apply { this["value"] = tag }
-            }.toMap().toMutableMap())
+            this["components"] = ofMap(components.map { it.key to it.asComponentToTag() }.toMap().toMutableMap())
         }
     }
 
@@ -79,12 +76,20 @@ class Block(
                 }
             }
         }
-        components?.let {
-            if (it.isNotEmpty()) this["components"] = ofMap(it.map {
-                val tag = it.value.toTag()
-                it.key to if (tag.isCompound) tag else compoundTag().apply { this["value"] = tag }
-            }.toMap().toMutableMap())
-        }
+        components?.let { if (it.isNotEmpty()) this["components"] = ofMap(it.map { it.key to it.asComponentToTag() }.toMap().toMutableMap()) }
         permutations?.let { if (permutations.isNotEmpty()) this["permutations"] = it.toTag() }
+    }
+
+    companion object {
+        fun Map.Entry<String, Any>.asComponentToTag() = when (key) {
+            "minecraft:material_instances" -> compoundTag().apply {
+                this["mappings"] = compoundTag()
+                this["materials"] = value.toTag().asCompoundTag()!!
+            }
+            else -> {
+                val tag = value.toTag()
+                if (tag.isCompound) tag else compoundTag().apply { this["value"] = tag }
+            }
+        }
     }
 }
