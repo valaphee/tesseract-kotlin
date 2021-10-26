@@ -30,6 +30,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
  * @author Kevin Ludwig
  */
 class Content(
+    @get:JsonProperty("version") val version: Int,
     @get:JsonProperty("content") val content: List<Entry>
 ) {
     class Entry(

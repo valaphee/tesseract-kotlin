@@ -39,6 +39,7 @@ import com.valaphee.tesseract.util.nbt.toTag
 @JsonTypeName("minecraft:block")
 class Block(
     @get:JsonProperty("description") val description: Description,
+    @get:JsonProperty("events") val events: Map<String, Map<String, Any>>? = null,
     @get:JsonProperty("components") val components: Map<String, Any>? = null,
     @get:JsonProperty("permutations") val permutations: List<Permutation>? = null
 ) : Data, CustomTag {
@@ -83,8 +84,15 @@ class Block(
     companion object {
         fun Map.Entry<String, Any>.asComponentToTag() = when (key) {
             "minecraft:material_instances" -> compoundTag().apply {
+                val mapValue = value as Map<*, *>
                 this["mappings"] = compoundTag()
-                this["materials"] = value.toTag().asCompoundTag()!!
+                this["materials"] = mapValue.toTag().asCompoundTag()!!
+            }
+            "minecraft:rotation" -> compoundTag().apply {
+                val listValue = value as List<*>
+                this["x"] = (listValue[0] as Number).toFloat().toTag()
+                this["y"] = (listValue[1] as Number).toFloat().toTag()
+                this["z"] = (listValue[2] as Number).toFloat().toTag()
             }
             else -> {
                 val tag = value.toTag()

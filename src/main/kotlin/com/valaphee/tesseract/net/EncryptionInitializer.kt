@@ -84,8 +84,8 @@ class EncryptionInitializer(
     override fun initChannel(channel: Channel) {
         keyBuffer = channel.alloc().directBuffer(32, 32).writeBytes(key)
         channel.pipeline()
-            .addBefore(Compressor.NAME, "va-encryptor", Encryptor())
-            .addBefore("va-encryptor", "va-decryptor", Decryptor())
+            .addBefore(Compressor.NAME, "ta-encryptor", Encryptor())
+            .addBefore("ta-encryptor", "ta-decryptor", Decryptor())
     }
 
     private inner class Encryptor : ChannelOutboundHandlerAdapter() {
