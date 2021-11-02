@@ -37,8 +37,9 @@ repositories {
 }
 
 group = "com.valaphee"
-val gitVersion: groovy.lang.Closure<String> by extra
-version = gitVersion()
+val versionDetails: groovy.lang.Closure<com.palantir.gradle.gitversion.VersionDetails> by extra
+val details = versionDetails()
+version = "${details.lastTag}.${details.commitDistance}${if (details.branchName != "master") "-${details.branchName.split('/').last()}" else ""}"
 
 dependencies {
     api("com.esotericsoftware:kryo:5.2.0")
@@ -50,7 +51,7 @@ dependencies {
     api("com.valaphee:foundry-databind:1.3.0.0")
     api("com.valaphee:foundry-math:1.3.0.0")
     api("commons-cli:commons-cli:1.4")
-    api("io.github.classgraph:classgraph:4.8.126")
+    api("io.github.classgraph:classgraph:4.8.128")
     api("io.netty:netty-all:4.1.69.Final")
     api("it.unimi.dsi:fastutil:8.5.6")
     api("jline:jline:2.14.6")
