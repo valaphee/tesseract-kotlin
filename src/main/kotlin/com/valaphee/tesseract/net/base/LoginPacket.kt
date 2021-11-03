@@ -67,7 +67,7 @@ class LoginPacket(
     val user: User,
     val privateKey: PrivateKey?,
     val verified: Boolean
-) : Packet {
+) : Packet() {
     constructor(protocolVersion: Int, publicKey: PublicKey, privateKey: PrivateKey?, authExtra: AuthExtra, user: User) : this(protocolVersion, null, publicKey, authExtra, null, user, privateKey, false)
 
     override val id get() = 0x01

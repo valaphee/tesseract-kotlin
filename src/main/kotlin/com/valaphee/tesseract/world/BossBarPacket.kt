@@ -41,7 +41,7 @@ class BossBarPacket(
     val darkenSky: Int,
     val color: Int,
     val overlay: Int
-) : Packet {
+) : Packet() {
     enum class Action {
         Show,
         RegisterPlayer,

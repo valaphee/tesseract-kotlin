@@ -51,7 +51,7 @@ class ServerToClientHandshakePacket(
     val serverPublicKey: PublicKey,
     val serverPrivateKey: PrivateKey?,
     val salt: ByteArray
-) : Packet {
+) : Packet() {
     override val id get() = 0x03
 
     override fun write(buffer: PacketBuffer, version: Int) {

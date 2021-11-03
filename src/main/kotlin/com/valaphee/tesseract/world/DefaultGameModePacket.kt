@@ -34,7 +34,7 @@ import com.valaphee.tesseract.net.PacketReader
  */
 class DefaultGameModePacket(
     val gameMode: GameMode
-) : Packet {
+) : Packet() {
     override val id get() = 0x69
 
     override fun write(buffer: PacketBuffer, version: Int) {

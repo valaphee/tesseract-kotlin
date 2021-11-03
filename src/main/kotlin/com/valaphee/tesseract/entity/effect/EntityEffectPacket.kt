@@ -42,7 +42,7 @@ class EntityEffectPacket(
     val amplifier: Int,
     val particles: Boolean,
     val duration: Int
-) : Packet {
+) : Packet() {
     enum class Action {
         Apply, Modify, Revoke
     }

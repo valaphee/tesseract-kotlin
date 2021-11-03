@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
 @Restrict(Restriction.ToServer)
 class LocalPlayerAsInitializedPacket(
     val runtimeEntityId: Long
-) : Packet {
+) : Packet() {
     override val id get() = 0x71
 
     override fun write(buffer: PacketBuffer, version: Int) {

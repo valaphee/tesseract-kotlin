@@ -40,7 +40,7 @@ class TextPacket(
     val arguments: Array<String>?,
     val xboxUserId: String,
     val platformChatId: String
-) : Packet {
+) : Packet() {
     enum class Type {
         Raw, Chat, Translation, PopUp, JukeboxPopUp, Tip, System, Whisper, Announcement, Object, ObjectWhisper
     }

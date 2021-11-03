@@ -38,7 +38,7 @@ import com.valaphee.tesseract.net.Restriction
 class DebugPacket(
     val uniqueEntityId: Long,
     val data: String
-) : Packet {
+) : Packet() {
     override val id get() = 0x9B
 
     override fun write(buffer: PacketBuffer, version: Int) {

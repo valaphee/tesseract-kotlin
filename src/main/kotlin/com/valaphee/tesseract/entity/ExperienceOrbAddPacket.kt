@@ -39,7 +39,7 @@ import com.valaphee.tesseract.net.Restriction
 class ExperienceOrbAddPacket(
     val position: Float3,
     val amount: Int
-) : Packet {
+) : Packet() {
     override val id get() = 0x42
 
     override fun write(buffer: PacketBuffer, version: Int) {

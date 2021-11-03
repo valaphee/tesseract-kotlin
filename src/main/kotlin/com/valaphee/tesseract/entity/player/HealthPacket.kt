@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
 @Restrict(Restriction.ToClient)
 class HealthPacket(
     val health: Int
-) : Packet {
+) : Packet() {
     override val id get() = 0x2A
 
     override fun write(buffer: PacketBuffer, version: Int) {

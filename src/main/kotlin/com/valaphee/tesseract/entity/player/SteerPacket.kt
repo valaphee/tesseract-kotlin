@@ -40,7 +40,7 @@ class SteerPacket(
     val move: Float2,
     val jumping: Boolean,
     val sneaking: Boolean
-) : Packet {
+) : Packet() {
     override val id get() = 0x39
 
     override fun write(buffer: PacketBuffer, version: Int) {

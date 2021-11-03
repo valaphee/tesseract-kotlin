@@ -40,7 +40,7 @@ class PhotoPacket(
     val sourceType: Type?,
     val ownerId: Long,
     val newName: String?
-) : Packet {
+) : Packet() {
     enum class Type {
         Portfolio, PhotoItem, Book
     }

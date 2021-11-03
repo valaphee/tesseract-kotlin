@@ -41,7 +41,7 @@ class WorldEventPacket(
     val eventOrParticleType: Event,
     val position: Float3,
     val data: Int = 0
-) : Packet {
+) : Packet() {
     enum class Event {
         Undefined,
 

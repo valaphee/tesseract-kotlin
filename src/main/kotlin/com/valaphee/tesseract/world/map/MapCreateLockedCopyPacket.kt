@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.PacketReader
 class MapCreateLockedCopyPacket(
     val mapId: Long,
     val newMapId: Long
-) : Packet {
+) : Packet() {
     override val id get() = 0x83
 
     override fun write(buffer: PacketBuffer, version: Int) {

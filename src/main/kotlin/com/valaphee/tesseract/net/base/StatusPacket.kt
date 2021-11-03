@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
 @Restrict(Restriction.ToClient)
 class StatusPacket(
     val status: Status
-) : Packet {
+) : Packet() {
     enum class Status {
         LoginSuccess,
         FailedClient,

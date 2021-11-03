@@ -47,7 +47,7 @@ class TradePacket(
     val v2: Boolean,
     val restock: Boolean,
     val tag: Tag?
-) : Packet {
+) : Packet() {
     override val id get() = 0x50
 
     override fun write(buffer: PacketBuffer, version: Int) {

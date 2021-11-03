@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.PacketReader
 class AnvilDamagePacket(
     val position: Int3,
     val damage: Int
-) : Packet {
+) : Packet() {
     override val id get() = 0x8D
 
     override fun write(buffer: PacketBuffer, version: Int) {

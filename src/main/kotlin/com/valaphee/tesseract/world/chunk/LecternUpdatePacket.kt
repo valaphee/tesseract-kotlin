@@ -41,7 +41,7 @@ class LecternUpdatePacket(
     val totalPages: Int,
     val position: Int3,
     val droppingBook: Boolean
-) : Packet {
+) : Packet() {
     override val id get() = 0x7D
 
     override fun write(buffer: PacketBuffer, version: Int) {

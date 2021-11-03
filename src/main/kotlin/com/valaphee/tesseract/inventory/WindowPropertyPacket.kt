@@ -39,7 +39,7 @@ class WindowPropertyPacket(
     val windowId: Int,
     val property: Int,
     val value: Int
-) : Packet {
+) : Packet() {
     override val id get() = 0x33
 
     override fun write(buffer: PacketBuffer, version: Int) {

@@ -46,7 +46,7 @@ class StructureBlockUpdatePacket(
     val settings: StructureSettings,
     val redstoneSaveMode: RedstoneSaveMode,
     val powered: Boolean
-) : Packet {
+) : Packet() {
     enum class Mode {
         Data, Save, Load, Corner, None, Export
     }

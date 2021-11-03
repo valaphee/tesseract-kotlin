@@ -41,7 +41,7 @@ class StructureTemplateDataExportResponsePacket(
     val save: Boolean,
     val tag: Tag?,
     val type: Type
-) : Packet {
+) : Packet() {
     enum class Type {
         None, Export, Query
     }

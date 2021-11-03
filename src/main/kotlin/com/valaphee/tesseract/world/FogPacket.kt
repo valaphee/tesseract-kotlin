@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
 @Restrict(Restriction.ToClient)
 class FogPacket(
     val effects: Array<String>
-) : Packet {
+) : Packet() {
     override val id get() = 0xA0
 
     override fun write(buffer: PacketBuffer, version: Int) {

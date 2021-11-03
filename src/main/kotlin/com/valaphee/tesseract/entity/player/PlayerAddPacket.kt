@@ -71,7 +71,7 @@ class PlayerAddPacket(
     val links: Array<Link>,
     val deviceId: String,
     val operatingSystem: User.OperatingSystem
-) : Packet {
+) : Packet() {
     override val id get() = 0x0C
 
     override fun write(buffer: PacketBuffer, version: Int) {

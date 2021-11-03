@@ -50,7 +50,7 @@ class EntityAddPacket(
     val attributes: Attributes,
     val metadata: Metadata,
     val links: Array<Link>
-) : Packet {
+) : Packet() {
     override val id get() = 0x0D
 
     override fun write(buffer: PacketBuffer, version: Int) {

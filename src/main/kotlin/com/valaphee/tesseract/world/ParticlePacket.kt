@@ -41,7 +41,7 @@ class ParticlePacket(
     val uniqueEntityId: Long,
     val position: Float3,
     val particleName: String
-) : Packet {
+) : Packet() {
     override val id get() = 0x76
 
     constructor(dimension: Dimension, uniqueEntityId: Long, particleName: String) : this(dimension, uniqueEntityId, Float3.Zero, particleName)

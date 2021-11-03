@@ -30,7 +30,7 @@ package com.valaphee.tesseract.net
 data class UnknownPacket(
     override val id: Int,
     val buffer: PacketBuffer
-) : Packet {
+) : Packet() {
     override fun write(buffer: PacketBuffer, version: Int) {
         buffer.writeBytes(this.buffer)
     }

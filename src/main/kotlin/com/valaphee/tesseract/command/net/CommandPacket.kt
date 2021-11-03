@@ -39,7 +39,7 @@ class CommandPacket(
     val command: String,
     val origin: Origin,
     val internal: Boolean
-) : Packet {
+) : Packet() {
     override val id get() = 0x4D
 
     override fun write(buffer: PacketBuffer, version: Int) {

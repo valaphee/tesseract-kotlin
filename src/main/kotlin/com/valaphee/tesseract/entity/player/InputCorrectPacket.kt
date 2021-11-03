@@ -38,7 +38,7 @@ class InputCorrectPacket(
     val positionDelta: Float3,
     val onGround: Boolean,
     val tick: Long
-) : Packet {
+) : Packet() {
     override val id get() = 0xA1
 
     override fun write(buffer: PacketBuffer, version: Int) {

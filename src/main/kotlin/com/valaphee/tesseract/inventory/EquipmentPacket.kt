@@ -42,7 +42,7 @@ class EquipmentPacket(
     val slotCount: Int,
     val uniqueEntityId: Long,
     val tag: Tag?
-) : Packet {
+) : Packet() {
     override val id get() = 0x51
 
     override fun write(buffer: PacketBuffer, version: Int) {

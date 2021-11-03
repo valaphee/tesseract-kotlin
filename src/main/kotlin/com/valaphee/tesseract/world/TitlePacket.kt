@@ -43,7 +43,7 @@ class TitlePacket(
     val fadeOutTime: Int,
     val xboxUserId: String,
     val platformChatId: String
-) : Packet {
+) : Packet() {
     enum class Action {
         ClearTitle, ResetTitle, SetTitle, SetSubTitle, SetActionBarMessage, SetTimings
     }

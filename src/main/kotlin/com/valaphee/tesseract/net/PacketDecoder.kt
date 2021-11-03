@@ -24,6 +24,7 @@
 
 package com.valaphee.tesseract.net
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.valaphee.tesseract.command.net.CommandPacketReader
 import com.valaphee.tesseract.command.net.CommandResponsePacketReader
 import com.valaphee.tesseract.command.net.CommandSettingsPacketReader
@@ -200,23 +201,24 @@ class PacketDecoder(
     private val client: Boolean,
     var version: Int = latestProtocolVersion
 ) : MessageToMessageDecoder<ByteBuf>() {
-    var verified = client
+    var objectMapper: ObjectMapper? = null
     var blockStates: Registry<String>? = null
     var items: Registry<String>? = null
 
     public override fun decode(context: ChannelHandlerContext, `in`: ByteBuf, out: MutableList<Any>) {
-        val buffer = PacketBuffer(`in`, false, blockStates, items)
+        val buffer = PacketBuffer(`in`, false, objectMapper, blockStates, items)
         val header = buffer.readVarUInt()
         val id = header and Packet.idMask
         (if (client) clientReaders else serverReaders)[id]?.let {
-            if (!(verified || id == 0x01)) out.add(UnknownPacket(id, buffer)) else {
-                try {
-                    out.add(it.read(buffer, version))
-                } catch (ex: Exception) {
-                    throw PacketDecoderException("Packet 0x${id.toString(16).uppercase()} problematic at 0x${buffer.readerIndex().toString(16).uppercase()}", ex, buffer)
-                }
-                if (buffer.readableBytes() > 0) throw PacketDecoderException("Packet 0x${id.toString(16).uppercase()} not fully read", buffer) else Unit
+            try {
+                out.add(it.read(buffer, version).apply {
+                    senderId = (header shr Packet.senderIdShift) and Packet.senderIdMask
+                    clientId = (header shr Packet.clientIdShift) and Packet.clientIdMask
+                })
+            } catch (ex: Exception) {
+                throw PacketDecoderException("Packet 0x${id.toString(16).uppercase()} problematic at 0x${buffer.readerIndex().toString(16).uppercase()}", ex, buffer)
             }
+            if (buffer.readableBytes() > 0) throw PacketDecoderException("Packet 0x${id.toString(16).uppercase()} not fully read", buffer) else Unit
         } ?: out.add(UnknownPacket(id, buffer))
     }
 

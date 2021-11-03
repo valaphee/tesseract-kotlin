@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.PacketReader
 class TickSyncPacket(
     val requestTicks: Long,
     val responseTicks: Long
-) : Packet {
+) : Packet() {
     override val id get() = 0x17
 
     override fun write(buffer: PacketBuffer, version: Int) {

@@ -45,7 +45,7 @@ import com.valaphee.tesseract.net.Restriction
 class InventoryContentPacket(
     val windowId: Int,
     val content: Array<Stack?>
-) : Packet {
+) : Packet() {
     override val id get() = 0x31
 
     override fun write(buffer: PacketBuffer, version: Int) {

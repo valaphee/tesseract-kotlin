@@ -51,7 +51,7 @@ import java.util.UUID
 class PlayerListPacket(
     val action: Action,
     val entries: Array<Entry>
-) : Packet {
+) : Packet() {
     enum class Action {
         Add, Remove
     }

@@ -45,7 +45,7 @@ class PackDataPacket(
     val hash: ByteArray,
     val premium: Boolean,
     val type: Type
-) : Packet {
+) : Packet() {
     enum class Type {
         Invalid,
         AddOn,

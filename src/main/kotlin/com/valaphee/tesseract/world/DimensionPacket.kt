@@ -40,7 +40,7 @@ class DimensionPacket(
     val dimension: Dimension? = null,
     val position: Float3? = null,
     val respawn: Boolean = false
-) : Packet {
+) : Packet() {
     override val id get() = 0x3D
 
     override fun write(buffer: PacketBuffer, version: Int) {

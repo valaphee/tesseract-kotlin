@@ -39,7 +39,7 @@ import com.valaphee.tesseract.util.Registry
 class CommandsPacket(
     val commands: Array<Command>,
     val constraints: Array<EnumerationConstraint>
-) : Packet {
+) : Packet() {
     override val id get() = 0x4C
 
     override fun write(buffer: PacketBuffer, version: Int) {

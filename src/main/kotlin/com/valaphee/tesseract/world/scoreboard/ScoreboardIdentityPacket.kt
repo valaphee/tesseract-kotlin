@@ -39,7 +39,7 @@ import java.util.UUID
 class ScoreboardIdentityPacket(
     val action: Action,
     val entries: Array<Entry>
-) : Packet {
+) : Packet() {
     enum class Action {
         Add, Remove
     }

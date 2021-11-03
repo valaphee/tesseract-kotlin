@@ -38,7 +38,7 @@ import com.valaphee.tesseract.net.Restriction
 class SoundStopPacket(
     val sound: Sound? = null,
     val soundKey: String? = null
-) : Packet {
+) : Packet() {
     constructor(sound: Sound) : this(sound, null)
 
     constructor(soundName: String) : this(null, soundName)

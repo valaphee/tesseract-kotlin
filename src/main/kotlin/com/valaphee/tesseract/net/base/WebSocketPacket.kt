@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
 @Restrict(Restriction.ToClient)
 class WebSocketPacket(
     val url: String
-) : Packet {
+) : Packet() {
     override val id get() = 0x5F
 
     override fun write(buffer: PacketBuffer, version: Int) {

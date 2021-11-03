@@ -41,7 +41,7 @@ class ObjectiveSetPacket(
     val displayName: String,
     val criteria: String,
     val sortOrder: SortOrder
-) : Packet {
+) : Packet() {
     enum class SortOrder {
         Ascending, Descending
     }

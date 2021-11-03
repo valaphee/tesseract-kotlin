@@ -39,7 +39,7 @@ import com.valaphee.tesseract.net.Restriction
 class SubChunkRequestPacket(
     val dimension: Int,
     val position: Int3,
-) : Packet {
+) : Packet() {
     override val id get() = 0xAF
 
     override fun write(buffer: PacketBuffer, version: Int) {

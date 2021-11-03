@@ -39,7 +39,7 @@ import com.valaphee.tesseract.util.nbt.Tag
 class WorldGenericEventPacket(
     val eventId: Int,
     val tag: Tag?
-) : Packet {
+) : Packet() {
     override val id get() = 0x7C
 
     override fun write(buffer: PacketBuffer, version: Int) {

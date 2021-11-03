@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-object ServerSettingsRequestPacket : Packet {
+object ServerSettingsRequestPacket : Packet() {
     override val id get() = 0x66
 
     override fun write(buffer: PacketBuffer, version: Int) = Unit

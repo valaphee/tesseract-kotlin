@@ -41,7 +41,7 @@ class EntityTeleportPacket(
     val headRotationYaw: Float,
     val onGround: Boolean,
     val immediate: Boolean
-) : Packet {
+) : Packet() {
     override val id get() = 0x12
 
     override fun write(buffer: PacketBuffer, version: Int) {

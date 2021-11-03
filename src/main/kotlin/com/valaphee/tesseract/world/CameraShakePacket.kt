@@ -40,7 +40,7 @@ class CameraShakePacket(
     val duration: Float,
     val type: Type,
     val action: Action
-) : Packet {
+) : Packet() {
     enum class Type {
         Positional, Rotational
     }

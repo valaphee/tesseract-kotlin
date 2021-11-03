@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
 @Restrict(Restriction.ToClient)
 class SimulationPacket(
     val type: Type
-) : Packet {
+) : Packet() {
     enum class Type {
         Game, Editor, Test
     }

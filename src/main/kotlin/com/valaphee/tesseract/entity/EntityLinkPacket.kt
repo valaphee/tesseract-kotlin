@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
 @Restrict(Restriction.ToClient)
 class EntityLinkPacket(
     val link: Link
-) : Packet {
+) : Packet() {
     override val id get() = 0x29
 
     override fun write(buffer: PacketBuffer, version: Int) {

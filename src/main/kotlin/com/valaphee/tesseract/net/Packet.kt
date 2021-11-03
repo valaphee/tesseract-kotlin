@@ -27,17 +27,20 @@ package com.valaphee.tesseract.net
 /**
  * @author Kevin Ludwig
  */
-interface Packet {
-    val id: Int
+abstract class Packet {
+    abstract val id: Int
+    var senderId = 0
+    var clientId = 0
 
-    fun write(buffer: PacketBuffer, version: Int)
+    abstract fun write(buffer: PacketBuffer, version: Int)
 
-    fun handle(handler: PacketHandler)
+    abstract fun handle(handler: PacketHandler)
 
     companion object {
         const val idMask = 0x3FF
         const val senderIdShift = 10
-        const val senderIdClientIdMask = 0x3
+        const val senderIdMask = 0x3
         const val clientIdShift = 12
+        const val clientIdMask = 0x3
     }
 }

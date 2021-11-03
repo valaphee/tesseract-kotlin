@@ -41,7 +41,7 @@ class CommandResponsePacket(
     val successCount: Int,
     val messages: Array<Message>,
     val data: String?
-) : Packet {
+) : Packet() {
     enum class Type {
         None, LastOutput, Silent, AllOutput, Data
     }

@@ -41,7 +41,7 @@ class NpcRequestPacket(
     val command: String,
     val actionType: Int,
     val scene: String
-) : Packet {
+) : Packet() {
     enum class Type {
         SetAction, ExecuteCommandAction, ExecuteClosingCommands, SetName, SetSkin, SetInteractionText, ExecuteOpeningCommands
     }

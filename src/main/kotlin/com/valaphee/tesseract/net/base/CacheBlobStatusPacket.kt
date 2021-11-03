@@ -38,7 +38,7 @@ import com.valaphee.tesseract.net.Restriction
 class CacheBlobStatusPacket(
     val misses: LongArray,
     val hits: LongArray
-) : Packet {
+) : Packet() {
     override val id get() = 0x87
 
     override fun write(buffer: PacketBuffer, version: Int) {

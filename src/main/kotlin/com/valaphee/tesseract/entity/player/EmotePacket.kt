@@ -36,7 +36,7 @@ class EmotePacket(
     val runtimeEntityId: Long,
     val emoteId: String,
     val flags: Collection<Flag>
-) : Packet {
+) : Packet() {
     enum class Flag {
         Serverside
     }

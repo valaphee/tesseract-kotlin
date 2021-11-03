@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.PacketReader
 class EntityVelocityPacket(
     val runtimeEntityId: Long,
     val velocity: Float3
-) : Packet {
+) : Packet() {
     override val id get() = 0x28
 
     override fun write(buffer: PacketBuffer, version: Int) {

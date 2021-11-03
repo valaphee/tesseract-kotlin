@@ -39,7 +39,7 @@ class NpcDialoguePacket(
     val sceneName: String,
     val npcName: String,
     val actionJson: String
-) : Packet {
+) : Packet() {
     enum class Action {
         Open,
         Close

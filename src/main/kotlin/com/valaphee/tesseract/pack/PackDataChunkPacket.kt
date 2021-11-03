@@ -43,7 +43,7 @@ class PackDataChunkPacket(
     val chunkIndex: Long,
     val progress: Long,
     val data: ByteBuf
-) : Packet {
+) : Packet() {
     override val id get() = 0x53
 
     override fun write(buffer: PacketBuffer, version: Int) {

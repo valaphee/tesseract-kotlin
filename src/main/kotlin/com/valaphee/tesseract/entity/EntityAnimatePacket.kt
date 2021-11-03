@@ -39,7 +39,7 @@ class EntityAnimatePacket(
     val controller: String,
     val blendOutTime: Float,
     val runtimeEntityIds: LongArray
-) : Packet {
+) : Packet() {
     override val id get() = 0x9E
 
     override fun write(buffer: PacketBuffer, version: Int) {

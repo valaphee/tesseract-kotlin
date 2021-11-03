@@ -43,7 +43,7 @@ class DebugRendererPacket(
     val markerPosition: Float3?,
     val markerColor: Float4?,
     val markerDuration: Long
-) : Packet {
+) : Packet() {
     enum class Type {
         None,
         ClearDebugMarkers,

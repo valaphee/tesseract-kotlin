@@ -39,7 +39,7 @@ import com.valaphee.tesseract.net.Restriction
 class ChunkPublishPacket(
     val position: Int3,
     val radius: Int
-) : Packet {
+) : Packet() {
     override val id get() = 0x79
 
     override fun write(buffer: PacketBuffer, version: Int) {

@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
 @Restrict(Restriction.ToClient)
 class EntityRemovePacket(
     val uniqueEntityId: Long = 0
-) : Packet {
+) : Packet() {
     override val id get() = 0x0E
 
     override fun write(buffer: PacketBuffer, version: Int) {

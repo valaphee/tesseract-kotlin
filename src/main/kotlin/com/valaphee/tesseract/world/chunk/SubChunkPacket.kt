@@ -41,7 +41,7 @@ class SubChunkPacket(
     val position: Int3,
     val result: Result,
     val heightMapStatus: HeightMapStatus
-) : Packet {
+) : Packet() {
     enum class Result {
         Undefined, Success, NotFound, InvalidDimension, PlayerNotFound, OutOfBounds
     }

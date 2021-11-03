@@ -39,7 +39,7 @@ class EntityFallPacket(
     val runtimeEntityId: Long,
     val fallDistance: Float,
     val inVoid: Boolean
-) : Packet {
+) : Packet() {
     override val id get() = 0x25
 
     override fun write(buffer: PacketBuffer, version: Int) {

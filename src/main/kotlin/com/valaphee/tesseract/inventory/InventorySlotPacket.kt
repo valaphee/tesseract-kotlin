@@ -46,7 +46,7 @@ class InventorySlotPacket(
     val windowId: Int,
     val slotId: Int,
     val stack: Stack?
-) : Packet {
+) : Packet() {
     override val id get() = 0x32
 
     override fun write(buffer: PacketBuffer, version: Int) {

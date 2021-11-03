@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.PacketReader
 class LatencyPacket(
     val timestamp: Long,
     val fromServer: Boolean
-) : Packet {
+) : Packet() {
     override val id get() = 0x73
 
     override fun write(buffer: PacketBuffer, version: Int) {

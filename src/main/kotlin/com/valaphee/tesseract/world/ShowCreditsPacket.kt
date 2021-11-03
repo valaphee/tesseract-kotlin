@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.PacketReader
 class ShowCreditsPacket(
     val runtimeEntityId: Long,
     val status: Status
-) : Packet {
+) : Packet() {
     enum class Status {
         Start, End
     }

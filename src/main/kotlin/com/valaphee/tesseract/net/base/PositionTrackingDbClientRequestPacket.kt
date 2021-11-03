@@ -38,7 +38,7 @@ import com.valaphee.tesseract.net.Restriction
 class PositionTrackingDbClientRequestPacket(
     val action: Action,
     val trackingId: Int
-) : Packet {
+) : Packet() {
     enum class Action {
         Query
     }

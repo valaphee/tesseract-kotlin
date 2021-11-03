@@ -34,7 +34,7 @@ import com.valaphee.tesseract.net.PacketReader
  */
 class NetworkSettingsPacket(
     val compressionThreshold: Int,
-) : Packet {
+) : Packet() {
     override val id get() = 0x8F
 
     override fun write(buffer: PacketBuffer, version: Int) {

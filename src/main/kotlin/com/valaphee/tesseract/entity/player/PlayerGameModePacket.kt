@@ -36,7 +36,7 @@ import com.valaphee.tesseract.world.GameMode
 class PlayerGameModePacket(
     val uniqueEntityId: Long,
     val gameMode: GameMode
-) : Packet {
+) : Packet() {
     override val id get() = 0x97
 
     override fun write(buffer: PacketBuffer, version: Int) {

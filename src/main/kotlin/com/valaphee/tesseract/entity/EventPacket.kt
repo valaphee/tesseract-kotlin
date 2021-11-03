@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.PacketReader
 class EventPacket(
     val uniqueEntityId: Long,
     val type: Int
-) : Packet {
+) : Packet() {
     override val id get() = 0x41
 
     override fun write(buffer: PacketBuffer, version: Int) {

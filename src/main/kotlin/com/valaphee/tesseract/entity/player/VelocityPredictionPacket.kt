@@ -37,7 +37,7 @@ class VelocityPredictionPacket(
     val runtimeEntityId: Long,
     val velocity: Float3,
     val onGround: Boolean,
-) : Packet {
+) : Packet() {
     override val id get() = 0x9D
 
     override fun write(buffer: PacketBuffer, version: Int) {

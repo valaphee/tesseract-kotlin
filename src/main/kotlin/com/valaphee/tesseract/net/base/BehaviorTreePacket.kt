@@ -41,7 +41,7 @@ import com.valaphee.tesseract.util.ByteBufStringReader
 @Restrict(Restriction.ToClient)
 class BehaviorTreePacket(
     val json: JsonElement
-) : Packet {
+) : Packet() {
     override val id get() = 0x59
 
     override fun write(buffer: PacketBuffer, version: Int) {

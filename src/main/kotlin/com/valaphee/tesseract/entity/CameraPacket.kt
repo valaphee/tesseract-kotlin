@@ -38,7 +38,7 @@ import com.valaphee.tesseract.net.Restriction
 class CameraPacket(
     val cameraUniqueEntityId: Long,
     val uniqueEntityId: Long
-) : Packet {
+) : Packet() {
     override val id get() = 0x49
 
     override fun write(buffer: PacketBuffer, version: Int) {

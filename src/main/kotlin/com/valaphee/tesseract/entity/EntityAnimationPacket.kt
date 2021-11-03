@@ -37,7 +37,7 @@ class EntityAnimationPacket(
     val animation: Animation,
     val runtimeEntityId: Long,
     val rowingTime: Float = 0.0f
-) : Packet {
+) : Packet() {
     enum class Animation {
         NoAction, SwingArm, WakeUp, CriticalHit, MagicCriticalHit, RowRight, RowLeft;
 

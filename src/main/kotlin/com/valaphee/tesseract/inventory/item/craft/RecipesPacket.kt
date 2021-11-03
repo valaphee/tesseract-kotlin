@@ -48,7 +48,7 @@ class RecipesPacket(
     val containerMixRecipes: Array<ContainerMixRecipe>,
     val materialReducers: Array<MaterialReducer>,
     val cleanRecipes: Boolean
-) : Packet {
+) : Packet() {
     override val id get() = 0x34
 
     override fun write(buffer: PacketBuffer, version: Int) {

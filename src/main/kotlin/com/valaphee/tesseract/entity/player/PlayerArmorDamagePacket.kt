@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
 @Restrict(Restriction.ToClient)
 class PlayerArmorDamagePacket(
     val damages: Array<Int?>
-) : Packet {
+) : Packet() {
     init {
         require(damages.size == 4)
     }

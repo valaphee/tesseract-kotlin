@@ -50,7 +50,7 @@ class StackAddPacket(
     val velocity: Float3,
     val metadata: Metadata,
     val fromFishing: Boolean
-) : Packet {
+) : Packet() {
     override val id get() = 0x0F
 
     override fun write(buffer: PacketBuffer, version: Int) {

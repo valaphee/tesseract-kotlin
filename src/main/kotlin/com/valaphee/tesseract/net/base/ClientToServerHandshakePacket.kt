@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.Restriction
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
-object ClientToServerHandshakePacket : Packet {
+object ClientToServerHandshakePacket : Packet() {
     override val id get() = 0x04
 
     override fun write(buffer: PacketBuffer, version: Int) = Unit

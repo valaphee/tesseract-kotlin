@@ -49,7 +49,7 @@ class CommandBlockUpdatePacket(
     val outputTracked: Boolean,
     val executeOnFirstTick: Boolean,
     val tickDelay: Long = 0
-) : Packet {
+) : Packet() {
     enum class Mode {
         Impulse, Repeat, Chain
     }

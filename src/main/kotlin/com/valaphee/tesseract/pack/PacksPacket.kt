@@ -42,7 +42,7 @@ class PacksPacket(
     val forcingServerPacksEnabled: Boolean,
     val behaviorPacks: Array<Pack>,
     val resourcePacks: Array<Pack>
-) : Packet {
+) : Packet() {
     data class Pack(
         val id: UUID,
         val version: String,

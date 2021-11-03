@@ -45,7 +45,7 @@ class PlayerLocationPacket(
     val teleportationCause: TeleportationCause = TeleportationCause.Unknown,
     val entityTypeId: Int,
     val tick: Long = 0
-) : Packet {
+) : Packet() {
     enum class Mode {
         Normal, Reset, Teleport, Vehicle
     }

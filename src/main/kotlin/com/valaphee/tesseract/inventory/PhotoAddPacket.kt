@@ -36,7 +36,7 @@ class PhotoItemPacket(
     val photoId: Long,
     val photoName: String,
     val photoItemName: String
-) : Packet {
+) : Packet() {
     override val id get() = 0xAB
 
     override fun write(buffer: PacketBuffer, version: Int) {

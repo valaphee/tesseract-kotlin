@@ -64,7 +64,7 @@ class SubLoginPacket(
     val authExtra: AuthExtra,
     val user: User,
     val verified: Boolean
-) : Packet {
+) : Packet() {
     override val id get() = 0x5E
 
     override fun write(buffer: PacketBuffer, version: Int) {

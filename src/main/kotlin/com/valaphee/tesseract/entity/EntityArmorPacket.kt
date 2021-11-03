@@ -43,7 +43,7 @@ class EntityArmorPacket(
     val chestplate: Stack?,
     val leggings: Stack?,
     val boots: Stack?
-) : Packet {
+) : Packet() {
     override val id get() = 0x20
 
     override fun write(buffer: PacketBuffer, version: Int) {

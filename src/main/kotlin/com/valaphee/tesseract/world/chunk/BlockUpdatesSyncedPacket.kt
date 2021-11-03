@@ -40,7 +40,7 @@ class BlockUpdatesSyncedPacket(
     val basePosition: Int3,
     val updates1: Array<Update>,
     val updates2: Array<Update>
-) : Packet {
+) : Packet() {
     data class Update(
         val position: Int3,
         val runtimeId: Int,

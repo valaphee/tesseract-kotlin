@@ -48,7 +48,7 @@ class InputPacket(
     val virtualRealityGazeDirection: Float3? = null,
     val tick: Long,
     val positionDelta: Float3
-) : Packet {
+) : Packet() {
     enum class PlayMode {
         Normal,
         Teaser,

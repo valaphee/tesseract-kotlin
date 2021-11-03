@@ -48,7 +48,7 @@ class MapPacket(
     val offsetX: Int,
     val offsetY: Int,
     val data: IntArray?
-) : Packet {
+) : Packet() {
     override val id get() = 0x43
 
     override fun write(buffer: PacketBuffer, version: Int) {

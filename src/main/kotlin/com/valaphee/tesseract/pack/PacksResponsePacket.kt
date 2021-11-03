@@ -39,7 +39,7 @@ import java.util.UUID
 class PacksResponsePacket(
     val status: Status,
     val packs: Array<Pair<UUID, String?>>
-) : Packet {
+) : Packet() {
     enum class Status {
         None, Refused, TransferPacks, HaveAllPacks, Completed
     }

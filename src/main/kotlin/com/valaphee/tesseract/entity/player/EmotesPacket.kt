@@ -36,7 +36,7 @@ import java.util.UUID
 class EmotesPacket(
     val runtimeEntityId: Long,
     val pieceIds: Array<UUID>
-) : Packet {
+) : Packet() {
     override val id get() = 0x98
 
     override fun write(buffer: PacketBuffer, version: Int) {

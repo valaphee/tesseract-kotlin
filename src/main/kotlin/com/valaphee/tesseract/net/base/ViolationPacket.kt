@@ -37,7 +37,7 @@ class ViolationPacket(
     val severity: Severity,
     val packetId: Int,
     val context: String
-) : Packet {
+) : Packet() {
     enum class Type {
         Unknown, MalformedPacket
     }

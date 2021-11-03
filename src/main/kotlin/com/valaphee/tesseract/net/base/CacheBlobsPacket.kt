@@ -39,7 +39,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap
 @Restrict(Restriction.ToClient)
 class CacheBlobsPacket(
     val blobs: Long2ObjectMap<ByteArray>
-) : Packet {
+) : Packet() {
     override val id get() = 0x88
 
     override fun write(buffer: PacketBuffer, version: Int) {

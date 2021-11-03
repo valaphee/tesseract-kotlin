@@ -41,7 +41,7 @@ class WindowOpenPacket(
     val type: WindowType,
     val blockPosition: Int3,
     val uniqueEntityId: Long
-) : Packet {
+) : Packet() {
     override val id get() = 0x2E
 
     override fun write(buffer: PacketBuffer, version: Int) {

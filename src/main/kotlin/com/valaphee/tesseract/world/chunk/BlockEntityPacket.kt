@@ -37,7 +37,7 @@ import com.valaphee.tesseract.util.nbt.CompoundTag
 class BlockEntityPacket(
     val position: Int3,
     val tag: CompoundTag?
-) : Packet {
+) : Packet() {
     override val id get() = 0x38
 
     override fun write(buffer: PacketBuffer, version: Int) {

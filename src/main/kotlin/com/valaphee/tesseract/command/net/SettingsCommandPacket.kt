@@ -38,7 +38,7 @@ import com.valaphee.tesseract.net.Restriction
 class SettingsCommandPacket(
     val command: String,
     val suppressingOutput: Boolean
-) : Packet {
+) : Packet() {
     override val id get() = 0x8C
 
     override fun write(buffer: PacketBuffer, version: Int) {

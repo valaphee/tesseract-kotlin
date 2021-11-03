@@ -38,7 +38,7 @@ import com.valaphee.tesseract.net.Restriction
 class CommandSoftEnumerationPacket(
     val action: Action,
     val softEnumeration: Enumeration
-) : Packet {
+) : Packet() {
     enum class Action {
         Add, Remove, Update
     }

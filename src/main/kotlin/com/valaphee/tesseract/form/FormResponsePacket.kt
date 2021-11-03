@@ -39,7 +39,7 @@ import com.valaphee.tesseract.util.ByteBufStringReader
 class FormResponsePacket(
     val formId: Int,
     val json: JsonElement
-) : Packet {
+) : Packet() {
     override val id get() = 0x65
 
     override fun write(buffer: PacketBuffer, version: Int) {

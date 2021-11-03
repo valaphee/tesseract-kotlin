@@ -43,7 +43,7 @@ class BlockUpdateSyncedPacket(
     val layer: Int,
     val runtimeEntityId: Long,
     val type: Type
-) : Packet {
+) : Packet() {
     enum class Type {
         None, Create, Destroy
     }

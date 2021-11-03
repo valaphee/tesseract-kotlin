@@ -37,7 +37,7 @@ class InteractPacket(
     val action: Action,
     val runtimeEntityId: Long,
     val mousePosition: Float3?
-) : Packet {
+) : Packet() {
     enum class Action {
         None, Interact, Damage, LeaveVehicle, Mouseover, NpcOpen, OpenInventory
     }

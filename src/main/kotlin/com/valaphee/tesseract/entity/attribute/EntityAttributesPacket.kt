@@ -39,7 +39,7 @@ class EntityAttributesPacket(
     val runtimeEntityId: Long,
     val attributes: Attributes,
     val tick: Long = 0
-) : Packet {
+) : Packet() {
     override val id get() = 0x1D
 
     override fun write(buffer: PacketBuffer, version: Int) {

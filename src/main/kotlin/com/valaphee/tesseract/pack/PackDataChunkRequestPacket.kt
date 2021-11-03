@@ -40,7 +40,7 @@ class PackDataChunkRequestPacket(
     val packId: UUID,
     val packVersion: String?,
     val chunkIndex: Long
-) : Packet {
+) : Packet() {
     override val id get() = 0x54
 
     override fun write(buffer: PacketBuffer, version: Int) {

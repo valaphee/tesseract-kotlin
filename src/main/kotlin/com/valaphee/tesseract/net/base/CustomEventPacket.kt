@@ -39,7 +39,7 @@ import com.valaphee.tesseract.util.ByteBufStringReader
 class CustomEventPacket(
     val eventName: String,
     val json: JsonElement
-) : Packet {
+) : Packet() {
     override val id get() = 0x75
 
     override fun write(buffer: PacketBuffer, version: Int) {

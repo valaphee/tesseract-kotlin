@@ -43,7 +43,7 @@ class PaintingAddPacket(
     val position: Float3,
     val direction: Direction,
     val painting: Painting
-) : Packet {
+) : Packet() {
     enum class Painting(
         val title: String,
         val width: Int,

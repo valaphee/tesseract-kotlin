@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.PacketReader
 class FilterPacket(
     val message: String,
     val fromServer: Boolean
-) : Packet {
+) : Packet() {
     override val id get() = 0xA3
 
     override fun write(buffer: PacketBuffer, version: Int) {

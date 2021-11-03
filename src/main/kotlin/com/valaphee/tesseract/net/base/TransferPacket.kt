@@ -38,7 +38,7 @@ import com.valaphee.tesseract.net.Restriction
 class TransferPacket(
     val host: String,
     val port: Int
-) : Packet {
+) : Packet() {
     override val id get() = 0x55
 
     override fun write(buffer: PacketBuffer, version: Int) {

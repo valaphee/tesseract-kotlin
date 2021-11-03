@@ -44,7 +44,7 @@ class EntityMoveRotatePacket(
     val onGround: Boolean,
     val immediate: Boolean,
     val force: Boolean
-) : Packet {
+) : Packet() {
     override val id get() = 0x6F
 
     override fun write(buffer: PacketBuffer, version: Int) {

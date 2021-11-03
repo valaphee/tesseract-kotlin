@@ -40,7 +40,7 @@ class BlockPickPacket(
     var position: Int3,
     var withEntity: Boolean,
     var hotbarSlot: Int
-) : Packet {
+) : Packet() {
     override val id get() = 0x22
 
     override fun write(buffer: PacketBuffer, version: Int) {

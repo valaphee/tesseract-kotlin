@@ -24,6 +24,7 @@
 
 package com.valaphee.tesseract.net
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
@@ -47,13 +48,16 @@ import java.util.UUID
 class PacketBuffer(
     buffer: ByteBuf,
     private val local: Boolean = false,
+    objectMapper: ObjectMapper? = null,
     blockStates: Registry<String>? = null,
     items: Registry<String>? = null
 ) : ByteBufWrapper(buffer) {
+    lateinit var objectMapper: ObjectMapper
     lateinit var blockStates: Registry<String>
     lateinit var items: Registry<String>
 
     init {
+        objectMapper?.let { this.objectMapper = it }
         blockStates?.let { this.blockStates = it }
         items?.let { this.items = it }
     }

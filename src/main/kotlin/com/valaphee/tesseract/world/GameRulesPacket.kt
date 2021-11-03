@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
 @Restrict(Restriction.ToClient)
 class GameRulesPacket(
     val gameRules: Array<GameRule<*>>
-) : Packet {
+) : Packet() {
     override val id get() = 0x48
 
     override fun write(buffer: PacketBuffer, version: Int) {

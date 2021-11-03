@@ -38,7 +38,7 @@ import com.valaphee.tesseract.util.nbt.CompoundTag
 @Restrict(Restriction.ToClient)
 class ItemComponentPacket(
     val entries: Array<Entry>
-) : Packet {
+) : Packet() {
     class Entry(
         val name: String,
         val tag: CompoundTag?

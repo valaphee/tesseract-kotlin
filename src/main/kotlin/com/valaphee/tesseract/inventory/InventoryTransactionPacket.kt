@@ -59,7 +59,7 @@ class InventoryTransactionPacket(
     val clickPosition: Float3?,
     val headPosition: Float3?,
     val blockStateKey: String?
-) : Packet {
+) : Packet() {
     data class LegacySlot(
         val windowId: Int,
         val slotIds: ByteArray

@@ -42,7 +42,7 @@ class BlockUpdatePacket(
     val runtimeId: Int,
     val flags: Collection<Flag>,
     val layer: Int
-) : Packet {
+) : Packet() {
     enum class Flag {
         Neighbors, Network, NonVisual, Priority;
 

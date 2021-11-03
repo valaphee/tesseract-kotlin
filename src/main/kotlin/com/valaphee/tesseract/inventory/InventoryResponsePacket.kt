@@ -36,7 +36,7 @@ import com.valaphee.tesseract.net.Restriction
 @Restrict(Restriction.ToClient)
 class InventoryResponsePacket(
     val responses: Array<Response>
-) : Packet {
+) : Packet() {
     class Response(
         val status: ResponseStatus,
         val requestId: Int,

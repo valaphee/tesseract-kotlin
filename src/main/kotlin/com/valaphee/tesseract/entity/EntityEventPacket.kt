@@ -37,7 +37,7 @@ class EntityEventPacket(
     val runtimeEntityId: Long,
     val event: Event,
     val data: Int = 0
-) : Packet {
+) : Packet() {
     enum class Event {
         JumpAnimation,
         HurtAnimation,

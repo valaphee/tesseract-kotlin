@@ -38,7 +38,7 @@ class PlayerActionPacket(
     val action: Action,
     val blockPosition: Int3,
     val data: Int
-) : Packet {
+) : Packet() {
     enum class Action {
         StartBreak,
         AbortBreak,

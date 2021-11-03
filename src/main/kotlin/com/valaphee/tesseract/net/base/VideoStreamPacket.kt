@@ -41,7 +41,7 @@ class VideoStreamPacket(
     val action: Action,
     val width: Int,
     val height: Int
-) : Packet {
+) : Packet() {
     enum class Action {
         Open, Close
     }

@@ -40,7 +40,7 @@ class SoundEventPacket(
     val identifier: String,
     val babySound: Boolean,
     val relativeVolumeDisabled: Boolean
-) : Packet {
+) : Packet() {
     override val id get() = 0x7B
 
     override fun write(buffer: PacketBuffer, version: Int) {

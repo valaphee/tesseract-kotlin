@@ -38,7 +38,7 @@ import com.valaphee.tesseract.net.Restriction
 class StoreOfferPacket(
     val offerId: String,
     val shownToAll: Boolean
-) : Packet {
+) : Packet() {
     override val id get() = 0x5B
 
     override fun write(buffer: PacketBuffer, version: Int) {

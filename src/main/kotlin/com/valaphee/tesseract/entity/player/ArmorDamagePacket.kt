@@ -39,7 +39,7 @@ class ArmorDamagePacket(
     val cause: Int,
     val damage: Int,
     val armorSlots: Long
-) : Packet {
+) : Packet() {
     override val id get() = 0x26
 
     override fun write(buffer: PacketBuffer, version: Int) {

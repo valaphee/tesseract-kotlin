@@ -30,7 +30,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.type.TypeFactory
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -42,17 +41,11 @@ import com.google.inject.Key
 import com.google.inject.TypeLiteral
 import com.google.inject.binder.AnnotatedBindingBuilder
 import com.google.inject.util.Types
-import com.valaphee.foundry.math.Float2
-import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.data.block.Block
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.util.getCompoundTag
 import com.valaphee.tesseract.util.getListTag
 import com.valaphee.tesseract.util.getString
-import com.valaphee.tesseract.util.jackson.Float2Deserializer
-import com.valaphee.tesseract.util.jackson.Float2Serializer
-import com.valaphee.tesseract.util.jackson.Float3Deserializer
-import com.valaphee.tesseract.util.jackson.Float3Serializer
 import com.valaphee.tesseract.util.nbt.NbtInputStream
 import com.valaphee.tesseract.util.nbt.TagType
 import io.github.classgraph.ClassGraph
@@ -76,13 +69,6 @@ class DataModule(
     override fun configure() {
         if (!::objectMapper.isInitialized) objectMapper = jacksonObjectMapper().apply {
             registerModule(AfterburnerModule())
-            registerModule(
-                SimpleModule()
-                    .addSerializer(Float2::class.java, Float2Serializer)
-                    .addDeserializer(Float2::class.java, Float2Deserializer)
-                    .addSerializer(Float3::class.java, Float3Serializer)
-                    .addDeserializer(Float3::class.java, Float3Deserializer)
-            )
             propertyNamingStrategy = PropertyNamingStrategies.SNAKE_CASE
             typeFactory = TypeFactory.defaultInstance().withClassLoader(classLoader)
             setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)

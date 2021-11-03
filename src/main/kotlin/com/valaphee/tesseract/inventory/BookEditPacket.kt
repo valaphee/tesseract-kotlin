@@ -45,7 +45,7 @@ class BookEditPacket(
     val photoName: String?,
     val author: String?,
     val xboxUserId: String?
-) : Packet {
+) : Packet() {
     enum class Action {
         ReplacePage, AddPage, DeletePage, SwapPages, SignBook
     }

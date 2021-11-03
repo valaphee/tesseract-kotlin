@@ -34,7 +34,7 @@ import com.valaphee.tesseract.net.PacketReader
  */
 class PurchaseReceiptPacket(
     val offerIds: Array<String>
-) : Packet {
+) : Packet() {
     override val id get() = 0x5C
 
     override fun write(buffer: PacketBuffer, version: Int) {

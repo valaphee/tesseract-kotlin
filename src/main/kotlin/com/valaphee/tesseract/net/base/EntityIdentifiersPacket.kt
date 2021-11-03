@@ -41,7 +41,7 @@ import com.valaphee.tesseract.util.nbt.NbtOutputStream
 class EntityIdentifiersPacket private constructor(
     val data: ByteArray?,
     val tag: CompoundTag?
-) : Packet {
+) : Packet() {
     override val id get() = 0x77
 
     constructor(data: ByteArray) : this(data, null)

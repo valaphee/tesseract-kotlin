@@ -39,7 +39,7 @@ import com.valaphee.tesseract.util.nbt.CompoundTag
 class BiomeDefinitionsPacket private constructor(
     val data: ByteArray?,
     val tag: CompoundTag?
-) : Packet {
+) : Packet() {
     override val id get() = 0x7A
 
     constructor(data: ByteArray) : this(data, null)

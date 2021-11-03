@@ -37,7 +37,7 @@ class BlockEventPacket(
     val position: Int3,
     val data1: Int,
     val data2: Int
-) : Packet {
+) : Packet() {
     override val id get() = 0x1A
 
     override fun write(buffer: PacketBuffer, version: Int) {

@@ -38,7 +38,7 @@ import com.valaphee.tesseract.net.Restriction
 @Restrict(Restriction.ToClient)
 class EnchantOptionsPacket(
     val options: Array<Option>
-) : Packet {
+) : Packet() {
     class Slot(
         val enchantment: Enchantment,
         val level: Short

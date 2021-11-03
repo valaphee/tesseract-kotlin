@@ -38,7 +38,7 @@ import com.valaphee.tesseract.net.Restriction
 class StackTakePacket(
     val runtimeEntityId: Long,
     val stackRuntimeEntityId: Long
-) : Packet {
+) : Packet() {
     override val id get() = 0x11
 
     override fun write(buffer: PacketBuffer, version: Int) {

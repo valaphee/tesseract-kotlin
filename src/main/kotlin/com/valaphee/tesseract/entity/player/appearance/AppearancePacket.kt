@@ -38,7 +38,7 @@ class AppearancePacket(
     val appearance: Appearance,
     val newName: String,
     val oldName: String
-) : Packet {
+) : Packet() {
     override val id get() = 0x5D
 
     override fun write(buffer: PacketBuffer, version: Int) {

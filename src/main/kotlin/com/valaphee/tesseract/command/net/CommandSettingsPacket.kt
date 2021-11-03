@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
 @Restrict(Restriction.ToClient)
 class CommandSettingsPacket(
     val enabled: Boolean
-) : Packet {
+) : Packet() {
     override val id get() = 0x3B
 
     override fun write(buffer: PacketBuffer, version: Int) {

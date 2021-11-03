@@ -36,7 +36,7 @@ class HotbarPacket(
     val hotbarSlot: Int,
     val windowId: Int,
     val selectHotbarSlot: Boolean
-) : Packet {
+) : Packet() {
     override val id get() = 0x30
 
     override fun write(buffer: PacketBuffer, version: Int) {

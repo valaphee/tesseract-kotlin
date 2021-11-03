@@ -34,7 +34,7 @@ import com.valaphee.tesseract.net.PacketReader
  */
 class SimpleEventPacket(
     val event: Event
-) : Packet {
+) : Packet() {
     enum class Event {
         EnableCommands, DisableCommands, UnlockWorldTemplateSettings
     }

@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
 @Restrict(Restriction.ToServer)
 class RiderJumpPacket(
     val jumpStrength: Int
-) : Packet {
+) : Packet() {
     override val id get() = 0x14
 
     override fun write(buffer: PacketBuffer, version: Int) {

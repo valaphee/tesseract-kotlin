@@ -34,7 +34,7 @@ import com.valaphee.tesseract.net.PacketReader
  */
 class MultiplayerSettingsPacket(
     val mode: Mode
-) : Packet {
+) : Packet() {
     enum class Mode {
         Enable, Disable, JoinCode
     }

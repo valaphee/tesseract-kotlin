@@ -42,7 +42,7 @@ class SpawnPositionPacket(
     val dimensionId: Int,
     val position: Int3,
     val forced: Boolean
-) : Packet {
+) : Packet() {
     enum class Type {
         PlayerSpawn, WorldSpawn
     }

@@ -40,7 +40,7 @@ class PositionTrackingDbServerBroadcastPacket(
     val action: Action,
     val trackingId: Int,
     val tag: CompoundTag? = null
-) : Packet {
+) : Packet() {
     enum class Action {
         Update, Destroy, NotFound
     }

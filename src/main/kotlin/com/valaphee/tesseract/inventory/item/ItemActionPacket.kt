@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.PacketReader
 class ItemActionPacket(
     val itemId: Short,
     val action: Action
-) : Packet {
+) : Packet() {
     enum class Action {
         None,
         Equip,

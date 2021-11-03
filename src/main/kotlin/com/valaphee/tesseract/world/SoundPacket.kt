@@ -42,7 +42,7 @@ class SoundPacket(
     val position: Float3,
     val volume: Float,
     val pitch: Float
-) : Packet {
+) : Packet() {
     override val id get() = 0x56
 
     override fun write(buffer: PacketBuffer, version: Int) {

@@ -42,7 +42,7 @@ import com.valaphee.tesseract.net.Restriction
 @Restrict(Restriction.ToClient)
 class CreativeInventoryPacket(
     val content: Array<Stack?>
-) : Packet {
+) : Packet() {
     override val id get() = 0x91
 
     override fun write(buffer: PacketBuffer, version: Int) {

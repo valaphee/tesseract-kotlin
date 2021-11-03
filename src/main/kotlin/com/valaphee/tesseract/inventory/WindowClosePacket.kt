@@ -35,7 +35,7 @@ import com.valaphee.tesseract.net.PacketReader
 class WindowClosePacket(
     val windowId: Int,
     val serverside: Boolean
-) : Packet {
+) : Packet() {
     override val id get() = 0x2F
 
     override fun write(buffer: PacketBuffer, version: Int) {

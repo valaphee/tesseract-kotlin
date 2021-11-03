@@ -49,7 +49,7 @@ class ChunkPacket private constructor(
     val borderBlocks: Array<Int2>,
     val cache: Boolean,
     val blobIds: LongArray? = null
-) : Packet {
+) : Packet() {
     override val id get() = 0x3A
 
     constructor(position: Int2, blockStorage: BlockStorage, biomes: ByteArray?, blockEntities: Array<CompoundTag>, borderBlocks: Array<Int2>) : this(position, blockStorage.subChunkCount, blockStorage, biomes, blockEntities, borderBlocks, false, null)

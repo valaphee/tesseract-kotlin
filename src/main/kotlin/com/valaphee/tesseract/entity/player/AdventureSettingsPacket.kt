@@ -41,7 +41,7 @@ class AdventureSettingsPacket(
     var worldFlags: Collection<WorldFlag>,
     var rank: Rank,
     var customFlags: Int
-) : Packet {
+) : Packet() {
     override val id get() = 0x37
 
     override fun write(buffer: PacketBuffer, version: Int) {

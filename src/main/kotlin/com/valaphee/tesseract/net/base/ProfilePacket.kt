@@ -37,7 +37,7 @@ import com.valaphee.tesseract.net.Restriction
 @Restrict(Restriction.ToClient)
 class ProfilePacket(
     val xboxUserId: String
-) : Packet {
+) : Packet() {
     override val id get() = 0x68
 
     override fun write(buffer: PacketBuffer, version: Int) {

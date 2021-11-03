@@ -41,7 +41,7 @@ class StructureTemplateDataExportRequestPacket(
     val position: Int3,
     val settings: StructureSettings,
     val operation: Operation
-) : Packet {
+) : Packet() {
     enum class Operation {
         None, ExportFromSaveMode, ExportFromLoadMode, QuerySavedStructure
     }

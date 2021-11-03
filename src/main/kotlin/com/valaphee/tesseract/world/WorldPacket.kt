@@ -111,7 +111,7 @@ class WorldPacket(
     val multiplayerCorrelationId: String,
     val inventoriesServerAuthoritative: Boolean,
     val engineVersion: String
-) : Packet {
+) : Packet() {
     enum class BiomeType {
         Default, UserDefined
     }

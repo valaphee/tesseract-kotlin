@@ -39,7 +39,7 @@ class EntityPickPacket(
     val runtimeEntityId: Long,
     val hotbarSlot: Int,
     val withMetadata: Boolean
-) : Packet {
+) : Packet() {
     override val id get() = 0x23
 
     override fun write(buffer: PacketBuffer, version: Int) {

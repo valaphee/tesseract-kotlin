@@ -39,7 +39,7 @@ class EntityMetadataPacket(
     val runtimeEntityId: Long,
     val metadata: Metadata,
     val tick: Long = 0
-) : Packet {
+) : Packet() {
     override val id get() = 0x27
 
     override fun write(buffer: PacketBuffer, version: Int) {

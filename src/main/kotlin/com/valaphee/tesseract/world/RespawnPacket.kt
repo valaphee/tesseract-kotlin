@@ -37,7 +37,7 @@ class RespawnPacket(
     val runtimeEntityId: Long,
     val state: State,
     val position: Float3
-) : Packet {
+) : Packet() {
     enum class State {
         ServerSearching, ServerReady, ClientReady
     }

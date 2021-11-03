@@ -47,7 +47,7 @@ class PacksStackPacket(
     val version: String,
     val experiments: Array<Experiment>,
     val experimentsPreviouslyToggled: Boolean
-) : Packet {
+) : Packet() {
     data class Pack(
         val id: UUID,
         val version: String,

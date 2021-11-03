@@ -43,7 +43,7 @@ class EntityEquipmentPacket(
     val slotId: Int,
     val hotbarSlot: Int,
     val windowId: Int
-) : Packet {
+) : Packet() {
     override val id get() = 0x1F
 
     override fun write(buffer: PacketBuffer, version: Int) {

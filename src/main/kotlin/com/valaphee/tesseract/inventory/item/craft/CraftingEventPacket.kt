@@ -44,7 +44,7 @@ class CraftingEventPacket(
     val recipeId: UUID,
     val inputs: Array<Stack?>,
     val outputs: Array<Stack?>,
-) : Packet {
+) : Packet() {
     enum class Type {
         Inventory, Crafting, Workbench
     }

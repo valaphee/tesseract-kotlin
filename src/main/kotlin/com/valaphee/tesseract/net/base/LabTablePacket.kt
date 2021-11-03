@@ -37,7 +37,7 @@ class LabTablePacket(
     val action: Action,
     val position: Int3,
     val reactionType: ReactionType
-) : Packet {
+) : Packet() {
     enum class Action {
         Combine, React, Reset
     }

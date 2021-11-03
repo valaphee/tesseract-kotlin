@@ -24,6 +24,7 @@
 
 package com.valaphee.tesseract.net
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.valaphee.tesseract.latestProtocolVersion
 import com.valaphee.tesseract.util.Registry
 import io.netty.buffer.ByteBuf
@@ -37,6 +38,7 @@ class PacketEncoder(
     private val client: Boolean,
     var version: Int = latestProtocolVersion,
 ) : MessageToByteEncoder<Packet>() {
+    var objectMapper: ObjectMapper? = null
     var blockStates: Registry<String>? = null
     var items: Registry<String>? = null
 
@@ -46,8 +48,8 @@ class PacketEncoder(
     }*/
 
     override fun encode(context: ChannelHandlerContext, message: Packet, out: ByteBuf) {
-        val packetBuffer = PacketBuffer(out, false, blockStates, items)
-        packetBuffer.writeVarUInt(message.id and Packet.idMask)
+        val packetBuffer = PacketBuffer(out, false, objectMapper, blockStates, items)
+        packetBuffer.writeVarUInt(message.id and Packet.idMask or ((message.senderId and Packet.senderIdMask) shl Packet.senderIdShift) or ((message.clientId and Packet.clientIdMask) shl Packet.clientIdShift))
         message.write(packetBuffer, version)
     }
 

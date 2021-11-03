@@ -38,7 +38,7 @@ import com.valaphee.tesseract.net.Restriction
 class ScoresPacket(
     val action: Action,
     val scores: Array<Score>
-) : Packet {
+) : Packet() {
     enum class Action {
         Set, Remove
     }
