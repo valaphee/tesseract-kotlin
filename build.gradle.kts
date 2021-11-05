@@ -34,6 +34,7 @@ plugins {
 repositories {
     mavenCentral()
     maven("https://repo.codemc.org/repository/maven-public")
+    mavenLocal()
 }
 
 group = "com.valaphee"
@@ -45,13 +46,13 @@ dependencies {
     api("com.esotericsoftware:kryo:5.2.0")
     api("com.fasterxml.jackson.module:jackson-module-afterburner:2.13.0")
     api("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
-    api("com.google.code.gson:gson:2.8.8")
+    api("com.google.code.gson:gson:2.8.9")
     api("com.google.inject:guice:5.0.1")
     api("com.hazelcast:hazelcast-all:4.2.2")
     api("com.valaphee:foundry-databind:1.3.0.0")
     api("com.valaphee:foundry-math:1.3.0.0")
     api("commons-cli:commons-cli:1.4")
-    api("io.github.classgraph:classgraph:4.8.128")
+    api("io.github.classgraph:classgraph:4.8.129")
     api("io.netty:netty-all:4.1.69.Final")
     api("it.unimi.dsi:fastutil:8.5.6")
     api("jline:jline:2.14.6")
@@ -76,9 +77,10 @@ tasks {
         targetCompatibility = "16"
     }
 
-    withType<KotlinCompile>().configureEach { kotlinOptions { jvmTarget = "16" } }
+    withType<KotlinCompile> { kotlinOptions { jvmTarget = "16" } }
 
     withType<Test> { useJUnitPlatform() }
+
 }
 
 signing {

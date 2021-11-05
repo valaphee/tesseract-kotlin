@@ -82,7 +82,7 @@ class DataModule(
             classByType.putAll(it.getClassesWithAnnotation(dataType).associate { it.getAnnotationInfo(dataType).parameterValues.getValue("value") as String to classLoader.loadClass(it.name).kotlin })
         }
 
-        classLoader.getResource("/runtime_block_states.dat")?.let {
+        classLoader.getResourceAsStream("/runtime_block_states.dat")?.let {
             var buffer: PacketBuffer? = null
             try {
                 buffer = PacketBuffer(Unpooled.wrappedBuffer(it.readBytes()))
