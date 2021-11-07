@@ -96,7 +96,7 @@ class PlayerAddPacket(
         buffer.writeVarUInt(links.size)
         if (version >= 407) links.forEach(buffer::writeLink) else links.forEach(buffer::writeLinkPre407)
         buffer.writeString(deviceId)
-        buffer.writeIntLE(operatingSystem.ordinal)
+        buffer.writeIntLE(operatingSystem.ordinal - 1)
     }
 
     override fun handle(handler: PacketHandler) = handler.playerAdd(this)
@@ -127,6 +127,6 @@ object PlayerAddPacketReader : PacketReader {
         buffer.readVarUInt().also { buffer.readLongLE() },
         safeList(buffer.readVarUInt()) { if (version >= 407) buffer.readLink() else buffer.readLinkPre407() },
         buffer.readString(),
-        User.OperatingSystem.values()[buffer.readIntLE()],
+        User.OperatingSystem.values()[buffer.readIntLE() + 1],
     )
 }

@@ -27,6 +27,7 @@ package com.valaphee.tesseract.pack
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.valaphee.tesseract.util.Version
 import java.util.UUID
 
 /**
@@ -48,11 +49,11 @@ class Manifest(
     class Header(
         @get:JsonProperty("uuid") val id: UUID,
         @get:JsonProperty("name") val name: String,
-        @get:JsonProperty("version") val version: SemanticVersion,
+        @get:JsonProperty("version") val version: Version,
         @get:JsonProperty("description") val description: String?,
         @get:JsonProperty("platform_locked") val platformLocked: Boolean?,
-        @get:JsonProperty("min_engine_version") val minimumEngineVersion: SemanticVersion?,
-        @get:JsonProperty("max_engine_version") val maximumEngineVersion: SemanticVersion?,
+        @get:JsonProperty("min_engine_version") val minimumEngineVersion: Version?,
+        @get:JsonProperty("max_engine_version") val maximumEngineVersion: Version?,
         @get:JsonProperty("pack_scope") val scope: String?,
         @get:JsonProperty("directory_load") val directoryLoad: Boolean?,
         @get:JsonProperty("load_before_game") val loadBeforeGame: Boolean?,
@@ -64,7 +65,7 @@ class Manifest(
     @JsonIgnoreProperties(ignoreUnknown = true)
     class Module(
         @get:JsonProperty("uuid") val id: UUID,
-        @get:JsonProperty("version") val version: SemanticVersion,
+        @get:JsonProperty("version") val version: Version,
         @get:JsonProperty("description") val description: String?,
         @get:JsonProperty("type") val type: Type?,
     ) {
@@ -92,7 +93,7 @@ class Manifest(
     @JsonIgnoreProperties(ignoreUnknown = true)
     class Dependency(
         @get:JsonProperty("uuid") val id: UUID,
-        @get:JsonProperty("version") val version: SemanticVersion
+        @get:JsonProperty("version") val version: Version
     )
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

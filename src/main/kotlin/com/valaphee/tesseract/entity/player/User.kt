@@ -27,12 +27,10 @@ package com.valaphee.tesseract.entity.player
 import com.google.gson.JsonObject
 import com.valaphee.tesseract.entity.player.appearance.Appearance
 import com.valaphee.tesseract.entity.player.appearance.asAppearance
-import com.valaphee.tesseract.util.address
 import com.valaphee.tesseract.util.getBoolOrNull
 import com.valaphee.tesseract.util.getIntOrNull
 import com.valaphee.tesseract.util.getLong
 import com.valaphee.tesseract.util.getString
-import java.net.InetSocketAddress
 import java.util.Locale
 import java.util.UUID
 
@@ -56,7 +54,7 @@ data class User constructor(
     val currentInputMode: InputMode,
     val guiScale: Int,
     val uiProfile: UiProfile,
-    val serverAddress: InetSocketAddress?
+    val serverAddress: String
 ) {
     enum class OperatingSystem {
         Unknown,
@@ -101,7 +99,7 @@ data class User constructor(
         json.addProperty("CurrentInputMode", currentInputMode.ordinal)
         json.addProperty("GuiScale", guiScale)
         json.addProperty("UIProfile", uiProfile.ordinal)
-        json.addProperty("ServerAddress", serverAddress.toString())
+        json.addProperty("ServerAddress", serverAddress)
     }
 }
 
@@ -123,5 +121,5 @@ val JsonObject.asUser
         User.InputMode.values()[getIntOrNull("CurrentInputMode") ?: 0],
         getIntOrNull("GuiScale") ?: 0,
         User.UiProfile.values()[getIntOrNull("UIProfile") ?: 0],
-        address(getString("ServerAddress"), 19132)
+        getString("ServerAddress")
     )

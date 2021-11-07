@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.pack
+package com.valaphee.tesseract.util
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
@@ -36,16 +36,15 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer
 /**
  * @author Kevin Ludwig
  */
-@JsonSerialize(using = SemanticVersion.Serializer::class)
-@JsonDeserialize(using = SemanticVersion.Deserializer::class)
-data class SemanticVersion(
+@JsonSerialize(using = Version.Serializer::class)
+@JsonDeserialize(using = Version.Deserializer::class)
+data class Version(
     val major: Int,
     val minor: Int,
-    val patch: Int
-) : Comparable<SemanticVersion> {
-    constructor(version: IntArray) : this(version[0], version[1], version[2])
-
-    override fun compareTo(other: SemanticVersion): Int {
+    val patch: Int,
+    val build: Int = 0
+) : Comparable<Version> {
+    override fun compareTo(other: Version): Int {
         var result = Integer.compareUnsigned(major, other.major)
         if (result == 0) {
             result = Integer.compareUnsigned(minor, other.minor)
@@ -54,19 +53,22 @@ data class SemanticVersion(
         return result
     }
 
-    override fun toString() = "$major.$minor.$patch"
+    override fun toString() = "$major.$minor.$patch${if (build != 0) ".$build" else ""}"
 
     internal class Serializer(
-        `class`: Class<SemanticVersion>? = null
-    ) : StdSerializer<SemanticVersion>(`class`) {
-        override fun serialize(value: SemanticVersion, generator: JsonGenerator, provider: SerializerProvider) {
+        `class`: Class<Version>? = null
+    ) : StdSerializer<Version>(`class`) {
+        override fun serialize(value: Version, generator: JsonGenerator, provider: SerializerProvider) {
             generator.writeArray(intArrayOf(value.major, value.minor, value.patch), 0, 3)
         }
     }
 
     internal class Deserializer(
         `class`: Class<*>? = null
-    ) : StdDeserializer<SemanticVersion>(`class`) {
-        override fun deserialize(parser: JsonParser, context: DeserializationContext) = SemanticVersion(parser.codec.readValue(parser, IntArray::class.java))
+    ) : StdDeserializer<Version>(`class`) {
+        override fun deserialize(parser: JsonParser, context: DeserializationContext): Version {
+            val array = parser.codec.readValue(parser, IntArray::class.java)
+            return Version(array[0], array[1], array[2], if (array.size >= 4) array[3] else 0)
+        }
     }
 }

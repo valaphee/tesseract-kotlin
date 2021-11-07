@@ -83,7 +83,7 @@ class PlayerListPacket(
                 buffer.writeString(it.userName!!)
                 buffer.writeString(it.xboxUserId!!)
                 buffer.writeString(it.platformChatId!!)
-                buffer.writeIntLE(it.operatingSystem!!.ordinal)
+                buffer.writeIntLE(it.operatingSystem!!.ordinal - 1)
                 if (version >= 465) buffer.writeAppearance(it.appearance!!) else if (version >= 428) buffer.writeAppearancePre465(it.appearance!!) else if (version >= 419) buffer.writeAppearancePre428(it.appearance!!) else if (version >= 390) buffer.writeAppearancePre419(it.appearance!!) else buffer.writeAppearancePre390(it.appearance!!)
                 buffer.writeBoolean(it.teacher)
                 buffer.writeBoolean(it.host)
@@ -111,7 +111,7 @@ object PlayerListPacketReader : PacketReader {
                     buffer.readString(),
                     buffer.readString(),
                     buffer.readString(),
-                    User.OperatingSystem.values()[buffer.readIntLE()],
+                    User.OperatingSystem.values()[buffer.readIntLE() + 1],
                     if (version >= 465) buffer.readAppearance() else if (version >= 428) buffer.readAppearancePre465() else if (version >= 419) buffer.readAppearancePre428() else if (version >= 390) buffer.readAppearancePre419() else buffer.readAppearancePre390(),
                     buffer.readBoolean(),
                     buffer.readBoolean()

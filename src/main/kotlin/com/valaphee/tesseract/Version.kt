@@ -24,20 +24,5 @@
 
 package com.valaphee.tesseract
 
-val versionByProtocolVersion = mapOf(
-    388 to "1.13.0",
-    389 to "1.14.0",
-    390 to "1.14.60",
-    407 to "1.16.0",
-    408 to "1.16.20",
-    419 to "1.16.100.60",
-    422 to "1.16.200.5",
-    428 to "1.16.210",
-    431 to "1.16.220",
-    440 to "1.17.0",
-    448 to "1.17.10",
-    465 to "1.17.30",
-    471 to "1.17.40"
-)
-const val latestVersion = "1.17.40"
+const val latestVersion = "1.17.41"
 const val latestProtocolVersion = 471
