@@ -34,6 +34,7 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import com.valaphee.tesseract.util.safeList
 
 /**
  * @author Kevin Ludwig
@@ -49,7 +50,7 @@ class EntityAddPacket(
     val headRotationYaw: Float,
     val attributes: Attributes,
     val metadata: Metadata,
-    val links: Array<Link>
+    val links: List<Link>
 ) : Packet() {
     override val id get() = 0x0D
 
@@ -69,7 +70,7 @@ class EntityAddPacket(
 
     override fun handle(handler: PacketHandler) = handler.entityAdd(this)
 
-    override fun toString() = "EntityAddPacket(uniqueEntityId=$uniqueEntityId, runtimeEntityId=$runtimeEntityId, type='$type', position=$position, velocity=$velocity, rotation=$rotation, headRotationYaw=$headRotationYaw, attributes=$attributes, metadata=$metadata, links=${links.contentToString()})"
+    override fun toString() = "EntityAddPacket(uniqueEntityId=$uniqueEntityId, runtimeEntityId=$runtimeEntityId, type='$type', position=$position, velocity=$velocity, rotation=$rotation, headRotationYaw=$headRotationYaw, attributes=$attributes, metadata=$metadata, links=$links)"
 }
 
 /**
@@ -86,6 +87,6 @@ object EntityAddPacketReader : PacketReader {
         buffer.readFloatLE(),
         Attributes().apply { readFromBuffer(buffer, false) },
         Metadata().apply { readFromBuffer(buffer) },
-        Array(buffer.readVarUInt()) { if (version >= 407) buffer.readLink() else buffer.readLinkPre407() }
+        safeList(buffer.readVarUInt()) { if (version >= 407) buffer.readLink() else buffer.readLinkPre407() }
     )
 }

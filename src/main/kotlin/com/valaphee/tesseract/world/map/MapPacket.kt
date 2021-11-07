@@ -41,8 +41,8 @@ class MapPacket(
     val locked: Boolean,
     val trackedUniqueEntityIds: LongArray?,
     val scale: Int = 0,
-    val trackedObjects: Array<TrackedObject>?,
-    val decorations: Array<Decoration>?,
+    val trackedObjects: List<TrackedObject>?,
+    val decorations: List<Decoration>?,
     val width: Int,
     val height: Int,
     val offsetX: Int,
@@ -104,7 +104,7 @@ class MapPacket(
 
     override fun handle(handler: PacketHandler) = handler.map(this)
 
-    override fun toString() = "MapPacket(mapId=$mapId, dimension=$dimension, locked=$locked, trackedUniqueEntityIds=${trackedUniqueEntityIds?.contentToString()}, scale=$scale, trackedObjects=${trackedObjects?.contentToString()}, decorations=${decorations?.contentToString()}, width=$width, height=$height, offsetX=$offsetX, offsetY=$offsetY, data=${data?.contentToString()})"
+    override fun toString() = "MapPacket(mapId=$mapId, dimension=$dimension, locked=$locked, trackedUniqueEntityIds=${trackedUniqueEntityIds?.contentToString()}, scale=$scale, trackedObjects=$trackedObjects, decorations=$decorations, width=$width, height=$height, offsetX=$offsetX, offsetY=$offsetY, data=${data?.contentToString()})"
 
     companion object {
         internal const val flagHasColor = 1 shl 1

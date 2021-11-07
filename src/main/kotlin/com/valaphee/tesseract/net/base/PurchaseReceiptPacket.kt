@@ -28,12 +28,13 @@ import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
+import com.valaphee.tesseract.util.safeList
 
 /**
  * @author Kevin Ludwig
  */
 class PurchaseReceiptPacket(
-    val offerIds: Array<String>
+    val offerIds: List<String>
 ) : Packet() {
     override val id get() = 0x5C
 
@@ -44,12 +45,12 @@ class PurchaseReceiptPacket(
 
     override fun handle(handler: PacketHandler) = handler.purchaseReceipt(this)
 
-    override fun toString() = "PurchaseReceiptPacket(offerIds=${offerIds.contentToString()})"
+    override fun toString() = "PurchaseReceiptPacket(offerIds=$offerIds)"
 }
 
 /**
  * @author Kevin Ludwig
  */
 object PurchaseReceiptPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = PurchaseReceiptPacket(Array(buffer.readVarUInt()) { buffer.readString() })
+    override fun read(buffer: PacketBuffer, version: Int) = PurchaseReceiptPacket(safeList(buffer.readVarUInt()) { buffer.readString() })
 }

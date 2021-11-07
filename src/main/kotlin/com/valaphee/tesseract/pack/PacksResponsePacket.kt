@@ -30,6 +30,7 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import com.valaphee.tesseract.util.safeList
 import java.util.UUID
 
 /**
@@ -38,7 +39,7 @@ import java.util.UUID
 @Restrict(Restriction.ToServer)
 class PacksResponsePacket(
     val status: Status,
-    val packs: Array<Pair<UUID, String?>>
+    val packs: List<Pair<UUID, String?>>
 ) : Packet() {
     enum class Status {
         None, Refused, TransferPacks, HaveAllPacks, Completed
@@ -54,7 +55,7 @@ class PacksResponsePacket(
 
     override fun handle(handler: PacketHandler) = handler.packsResponse(this)
 
-    override fun toString() = "PacksResponsePacket(status=$status, packs=${packs.contentToString()})"
+    override fun toString() = "PacksResponsePacket(status=$status, packs=$packs)"
 }
 
 /**
@@ -63,7 +64,7 @@ class PacksResponsePacket(
 object PacksResponsePacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int) = PacksResponsePacket(
         PacksResponsePacket.Status.values()[buffer.readUnsignedByte().toInt()],
-        Array(buffer.readUnsignedShortLE()) {
+        safeList(buffer.readUnsignedShortLE()) {
             val pack = buffer.readString().split("_".toRegex(), 2).toTypedArray()
             UUID.fromString(pack[0]) to if (pack.size == 2) pack[1] else null
         }

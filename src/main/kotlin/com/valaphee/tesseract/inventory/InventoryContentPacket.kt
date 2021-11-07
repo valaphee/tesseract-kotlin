@@ -37,6 +37,7 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import com.valaphee.tesseract.util.safeList
 
 /**
  * @author Kevin Ludwig
@@ -44,7 +45,7 @@ import com.valaphee.tesseract.net.Restriction
 @Restrict(Restriction.ToClient)
 class InventoryContentPacket(
     val windowId: Int,
-    val content: Array<Stack?>
+    val content: List<Stack?>
 ) : Packet() {
     override val id get() = 0x31
 
@@ -56,12 +57,12 @@ class InventoryContentPacket(
 
     override fun handle(handler: PacketHandler) = handler.inventoryContent(this)
 
-    override fun toString() = "InventoryContentPacket(windowId=$windowId, content=${content.contentToString()})"
+    override fun toString() = "InventoryContentPacket(windowId=$windowId, content=$content)"
 }
 
 /**
  * @author Kevin Ludwig
  */
 object InventoryContentPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = InventoryContentPacket(buffer.readVarUInt(), Array(buffer.readVarUInt()) { if (version >= 431) buffer.readStack() else if (version >= 407) buffer.readStackWithNetIdPre431() else buffer.readStackPre431() })
+    override fun read(buffer: PacketBuffer, version: Int) = InventoryContentPacket(buffer.readVarUInt(), safeList(buffer.readVarUInt()) { if (version >= 431) buffer.readStack() else if (version >= 407) buffer.readStackWithNetIdPre431() else buffer.readStackPre431() })
 }

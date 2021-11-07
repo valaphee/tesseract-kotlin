@@ -30,6 +30,7 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import com.valaphee.tesseract.util.safeList
 import com.valaphee.tesseract.world.Experiment
 import com.valaphee.tesseract.world.readExperiment
 import com.valaphee.tesseract.world.writeExperiment
@@ -41,11 +42,11 @@ import java.util.UUID
 @Restrict(Restriction.ToClient)
 class PacksStackPacket(
     val forcedToAccept: Boolean,
-    val behaviorPacks: Array<Pack>,
-    val resourcePacks: Array<Pack>,
+    val behaviorPacks: List<Pack>,
+    val resourcePacks: List<Pack>,
     val experimental: Boolean,
     val version: String,
-    val experiments: Array<Experiment>,
+    val experiments: List<Experiment>,
     val experimentsPreviouslyToggled: Boolean
 ) : Packet() {
     data class Pack(
@@ -81,7 +82,7 @@ class PacksStackPacket(
 
     override fun handle(handler: PacketHandler) = handler.packsStack(this)
 
-    override fun toString() = "PacksStackPacket(forcedToAccept=$forcedToAccept, behaviorPacks=${behaviorPacks.contentToString()}, resourcePacks=${resourcePacks.contentToString()}, experimental=$experimental, version='$version', experiments=${experiments.contentToString()}, experimentsPreviouslyToggled=$experimentsPreviouslyToggled)"
+    override fun toString() = "PacksStackPacket(forcedToAccept=$forcedToAccept, behaviorPacks=$behaviorPacks, resourcePacks=$resourcePacks, experimental=$experimental, version='$version', experiments=$experiments, experimentsPreviouslyToggled=$experimentsPreviouslyToggled)"
 }
 
 /**
@@ -90,11 +91,11 @@ class PacksStackPacket(
 object PacksStackPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int) = PacksStackPacket(
         buffer.readBoolean(),
-        Array(buffer.readVarUInt()) { PacksStackPacket.Pack(UUID.fromString(buffer.readString()), buffer.readString(), buffer.readString()) },
-        Array(buffer.readVarUInt()) { PacksStackPacket.Pack(UUID.fromString(buffer.readString()), buffer.readString(), buffer.readString()) },
+        safeList(buffer.readVarUInt()) { PacksStackPacket.Pack(UUID.fromString(buffer.readString()), buffer.readString(), buffer.readString()) },
+        safeList(buffer.readVarUInt()) { PacksStackPacket.Pack(UUID.fromString(buffer.readString()), buffer.readString(), buffer.readString()) },
         if (version < 419) buffer.readBoolean() else false,
         buffer.readString(),
-        if (version >= 419) Array(buffer.readIntLE()) { buffer.readExperiment() } else emptyArray(),
+        if (version >= 419) safeList(buffer.readIntLE()) { buffer.readExperiment() } else emptyList(),
         if (version >= 419) buffer.readBoolean() else false
     )
 }

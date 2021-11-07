@@ -30,6 +30,7 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import com.valaphee.tesseract.util.safeList
 import com.valaphee.tesseract.util.Registry
 
 /**
@@ -37,8 +38,8 @@ import com.valaphee.tesseract.util.Registry
  */
 @Restrict(Restriction.ToClient)
 class CommandsPacket(
-    val commands: Array<Command>,
-    val constraints: Array<EnumerationConstraint>
+    val commands: List<Command>,
+    val constraints: List<EnumerationConstraint>
 ) : Packet() {
     override val id get() = 0x4C
 
@@ -105,7 +106,7 @@ class CommandsPacket(
 
     override fun handle(handler: PacketHandler) = handler.commands(this)
 
-    override fun toString() = "CommandsPacket(commands=${commands.contentToString()}, constraints=${constraints.contentToString()})"
+    override fun toString() = "CommandsPacket(commands=$commands, constraints=$constraints)"
 
     companion object {
         internal val parameterTypesPre419 = Registry<Parameter.Type>().apply {
@@ -156,8 +157,8 @@ class CommandsPacket(
  */
 object CommandsPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int): CommandsPacket {
-        val values = Array(buffer.readVarUInt()) { buffer.readString() }
-        val postfixes = Array(buffer.readVarUInt()) { buffer.readString() }
+        val values = safeList(buffer.readVarUInt()) { buffer.readString() }
+        val postfixes = safeList(buffer.readVarUInt()) { buffer.readString() }
         val indexReader: () -> Int = when {
             values.size <= 0xFF -> {
                 { buffer.readUnsignedByte().toInt() }
@@ -169,15 +170,15 @@ object CommandsPacketReader : PacketReader {
                 { buffer.readIntLE() }
             }
         }
-        val enumerations = Array(buffer.readVarUInt()) { Enumeration(buffer.readString(), Array(buffer.readVarUInt()) { values[indexReader()] }, false) }
-        val commandStructures = Array(buffer.readVarUInt()) {
+        val enumerations = safeList(buffer.readVarUInt()) { Enumeration(buffer.readString(), safeList(buffer.readVarUInt()) { values[indexReader()] }, false) }
+        val commandStructures = safeList(buffer.readVarUInt()) {
             val name = buffer.readString()
             val description = buffer.readString()
             val flags = if (version >= 448) buffer.readShortLEFlags<Command.Flag>() else buffer.readByteFlags()
             val permission = Permission.values()[buffer.readByte().toInt()]
             val aliasesIndex = buffer.readIntLE()
-            val overloadStructures = Array(buffer.readVarUInt()) {
-                Array(buffer.readVarUInt()) {
+            val overloadStructures = safeList(buffer.readVarUInt()) {
+                safeList(buffer.readVarUInt()) {
                     val parameterName = buffer.readString()
                     val type = buffer.readIntLE()
                     val optional = buffer.readBoolean()
@@ -195,29 +196,24 @@ object CommandsPacketReader : PacketReader {
             }
             Command.Structure(name, description, flags, permission, aliasesIndex, overloadStructures)
         }
-        val softEnumerations = Array(buffer.readVarUInt()) { buffer.readEnumeration(true) }
-        val constraints = Array(buffer.readVarUInt()) { buffer.readEnumerationConstraint(values, enumerations) }
-        return CommandsPacket(Array(commandStructures.size) {
-            val commandStructure = commandStructures[it]
-            val aliasesIndex = commandStructure.aliasesIndex
-            val aliases = if (aliasesIndex == -1) null else enumerations[aliasesIndex]
-            val overloadStructures = commandStructure.overloadStructures
-            val overloads: Array<Array<Parameter>> = Array(overloadStructures.size) { i ->
-                Array(overloadStructures[i].size) { j ->
-                    val overloadStructure = overloadStructures[i][j]
+        val softEnumerations = safeList(buffer.readVarUInt()) { buffer.readEnumeration(true) }
+        val constraints = safeList(buffer.readVarUInt()) { buffer.readEnumerationConstraint(values, enumerations) }
+        return CommandsPacket(commandStructures.map {
+            val aliasesIndex = it.aliasesIndex
+            Command(it.name, it.description, it.flags, it.permission, if (aliasesIndex == -1) null else enumerations[aliasesIndex], it.overloadStructures.map {
+                it.map {
                     var postfix: String? = null
                     var enumeration: Enumeration? = null
                     var type: Int? = null
                     when {
-                        overloadStructure.postfix -> postfix = postfixes[overloadStructure.index]
-                        overloadStructure.enumeration -> enumeration = enumerations[overloadStructure.index]
-                        overloadStructure.softEnumeration -> enumeration = softEnumerations[overloadStructure.index]
-                        else -> type = overloadStructure.index/*if (version >= 419) CommandsPacket.parameterTypes[overloadStructure.index] else CommandsPacket.parameterTypesPre419[overloadStructure.index]*/
+                        it.postfix -> postfix = postfixes[it.index]
+                        it.enumeration -> enumeration = enumerations[it.index]
+                        it.softEnumeration -> enumeration = softEnumerations[it.index]
+                        else -> type = it.index/*if (version >= 419) CommandsPacket.parameterTypes[overloadStructure.index] else CommandsPacket.parameterTypesPre419[overloadStructure.index]*/
                     }
-                    Parameter(overloadStructure.name, overloadStructure.optional, overloadStructure.options, enumeration, postfix, type)
+                    Parameter(it.name, it.optional, it.options, enumeration, postfix, type)
                 }
-            }
-            Command(commandStructure.name, commandStructure.description, commandStructure.flags, commandStructure.permission, aliases, overloads)
+            })
         }, constraints)
     }
 }

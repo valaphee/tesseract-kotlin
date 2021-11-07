@@ -38,6 +38,8 @@ import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
 import com.valaphee.tesseract.util.nbt.ListTag
+import com.valaphee.tesseract.util.safeGet
+import com.valaphee.tesseract.util.safeList
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 
@@ -74,8 +76,8 @@ class WorldPacket(
     val platformBroadcastMode: GamePublishMode,
     val commandsEnabled: Boolean,
     val resourcePacksRequired: Boolean,
-    val gameRules: Array<GameRule<*>>,
-    val experiments: Array<Experiment>,
+    val gameRules: List<GameRule<*>>,
+    val experiments: List<Experiment>,
     val experimentsPreviouslyToggled: Boolean,
     val bonusChestEnabled: Boolean,
     val startingWithMap: Boolean,
@@ -105,7 +107,7 @@ class WorldPacket(
     private val blocksData: ByteArray?,
     val blocksTag: ListTag?,
     private val blocks2Data: ByteArray?,
-    val blocks2: Array<Block>?,
+    val blocks2: List<Block>?,
     private val itemsData: ByteArray?,
     val items: Int2ObjectMap<Item>?,
     val multiplayerCorrelationId: String,
@@ -239,7 +241,7 @@ class WorldPacket(
 
     override fun handle(handler: PacketHandler) = handler.world(this)
 
-    override fun toString() = "WorldPacket(uniqueEntityId=$uniqueEntityId, runtimeEntityId=$runtimeEntityId, gameMode=$gameMode, position=$position, rotation=$rotation, seed=$seed, biomeType=$biomeType, biomeName='$biomeName', dimension=$dimension, generatorId=$generatorId, defaultGameMode=$defaultGameMode, difficulty=$difficulty, defaultSpawn=$defaultSpawn, achievementsDisabled=$achievementsDisabled, time=$time, educationEditionOffer=$educationEditionOffer, educationModeId=$educationModeId, educationFeaturesEnabled=$educationFeaturesEnabled, educationProductId='$educationProductId', rainLevel=$rainLevel, thunderLevel=$thunderLevel, platformLockedContentConfirmed=$platformLockedContentConfirmed, multiplayerGame=$multiplayerGame, broadcastingToLan=$broadcastingToLan, xboxLiveBroadcastMode=$xboxLiveBroadcastMode, platformBroadcastMode=$platformBroadcastMode, commandsEnabled=$commandsEnabled, resourcePacksRequired=$resourcePacksRequired, gameRules=${gameRules.contentToString()}, experiments=${experiments.contentToString()}, experimentsPreviouslyToggled=$experimentsPreviouslyToggled, bonusChestEnabled=$bonusChestEnabled, startingWithMap=$startingWithMap, defaultRank=$defaultRank, serverChunkTickRange=$serverChunkTickRange, behaviorPackLocked=$behaviorPackLocked, resourcePackLocked=$resourcePackLocked, fromLockedWorldTemplate=$fromLockedWorldTemplate, usingMsaGamerTagsOnly=$usingMsaGamerTagsOnly, fromWorldTemplate=$fromWorldTemplate, worldTemplateOptionLocked=$worldTemplateOptionLocked, onlySpawningV1Villagers=$onlySpawningV1Villagers, version='$version', limitedWorldRadius=$limitedWorldRadius, limitedWorldHeight=$limitedWorldHeight, v2Nether=$v2Nether, experimentalGameplay=$experimentalGameplay, worldId='$worldId', worldName='$worldName', premiumWorldTemplateId='$premiumWorldTemplateId', trial=$trial, movementAuthoritative=$movementAuthoritative, movementRewindHistory=$movementRewindHistory, blockBreakingServerAuthoritative=$blockBreakingServerAuthoritative, tick=$tick, enchantmentSeed=$enchantmentSeed, blocksData=${blocksData?.contentToString()}, blocksTag=$blocksTag, blocks2Data=${blocks2Data?.contentToString()}, blocks2=${blocks2?.contentToString()}, itemsData=${itemsData?.contentToString()}, items=$items, multiplayerCorrelationId='$multiplayerCorrelationId', inventoriesServerAuthoritative=$inventoriesServerAuthoritative, engine='$engineVersion')"
+    override fun toString() = "WorldPacket(uniqueEntityId=$uniqueEntityId, runtimeEntityId=$runtimeEntityId, gameMode=$gameMode, position=$position, rotation=$rotation, seed=$seed, biomeType=$biomeType, biomeName='$biomeName', dimension=$dimension, generatorId=$generatorId, defaultGameMode=$defaultGameMode, difficulty=$difficulty, defaultSpawn=$defaultSpawn, achievementsDisabled=$achievementsDisabled, time=$time, educationEditionOffer=$educationEditionOffer, educationModeId=$educationModeId, educationFeaturesEnabled=$educationFeaturesEnabled, educationProductId='$educationProductId', rainLevel=$rainLevel, thunderLevel=$thunderLevel, platformLockedContentConfirmed=$platformLockedContentConfirmed, multiplayerGame=$multiplayerGame, broadcastingToLan=$broadcastingToLan, xboxLiveBroadcastMode=$xboxLiveBroadcastMode, platformBroadcastMode=$platformBroadcastMode, commandsEnabled=$commandsEnabled, resourcePacksRequired=$resourcePacksRequired, gameRules=$gameRules, experiments=$experiments, experimentsPreviouslyToggled=$experimentsPreviouslyToggled, bonusChestEnabled=$bonusChestEnabled, startingWithMap=$startingWithMap, defaultRank=$defaultRank, serverChunkTickRange=$serverChunkTickRange, behaviorPackLocked=$behaviorPackLocked, resourcePackLocked=$resourcePackLocked, fromLockedWorldTemplate=$fromLockedWorldTemplate, usingMsaGamerTagsOnly=$usingMsaGamerTagsOnly, fromWorldTemplate=$fromWorldTemplate, worldTemplateOptionLocked=$worldTemplateOptionLocked, onlySpawningV1Villagers=$onlySpawningV1Villagers, version='$version', limitedWorldRadius=$limitedWorldRadius, limitedWorldHeight=$limitedWorldHeight, v2Nether=$v2Nether, experimentalGameplay=$experimentalGameplay, worldId='$worldId', worldName='$worldName', premiumWorldTemplateId='$premiumWorldTemplateId', trial=$trial, movementAuthoritative=$movementAuthoritative, movementRewindHistory=$movementRewindHistory, blockBreakingServerAuthoritative=$blockBreakingServerAuthoritative, tick=$tick, enchantmentSeed=$enchantmentSeed, blocksData=${blocksData?.contentToString()}, blocksTag=$blocksTag, blocks2Data=${blocks2Data?.contentToString()}, blocks2=$blocks2, itemsData=${itemsData?.contentToString()}, items=$items, multiplayerCorrelationId='$multiplayerCorrelationId', inventoriesServerAuthoritative=$inventoriesServerAuthoritative, engineVersion='$engineVersion')"
 }
 
 /**
@@ -293,14 +295,14 @@ object WorldPacketReader : PacketReader {
         val platformBroadcastMode = GamePublishMode.values()[buffer.readVarInt()]
         val commandsEnabled = buffer.readBoolean()
         val resourcePacksRequired = buffer.readBoolean()
-        val gameRules = if (version >= 440) Array(buffer.readVarUInt()) { buffer.readGameRule() } else Array(buffer.readVarUInt()) { buffer.readGameRulePre440() }
-        val experiments: Array<Experiment>
+        val gameRules = if (version >= 440) safeList(buffer.readVarUInt()) { buffer.readGameRule() } else safeList(buffer.readVarUInt()) { buffer.readGameRulePre440() }
+        val experiments: List<Experiment>
         val experimentsPreviouslyToggled: Boolean
         if (version >= 419) {
-            experiments = Array(buffer.readIntLE()) { buffer.readExperiment() }
+            experiments = safeList(buffer.readIntLE()) { buffer.readExperiment() }
             experimentsPreviouslyToggled = buffer.readBoolean()
         } else {
-            experiments = emptyArray()
+            experiments = emptyList()
             experimentsPreviouslyToggled = false
         }
         val bonusChestEnabled = buffer.readBoolean()
@@ -341,7 +343,7 @@ object WorldPacketReader : PacketReader {
         val premiumWorldTemplateId = buffer.readString()
         val trial = buffer.readBoolean()
         val movementAuthoritative = when {
-            version >= 419 -> WorldPacket.AuthoritativeMovement.values()[buffer.readVarInt()]
+            version >= 419 -> WorldPacket.AuthoritativeMovement.values().safeGet(buffer.readVarInt())
             buffer.readBoolean() -> WorldPacket.AuthoritativeMovement.Server
             else -> WorldPacket.AuthoritativeMovement.Client
         }
@@ -357,16 +359,16 @@ object WorldPacketReader : PacketReader {
         val tick = buffer.readLongLE()
         val enchantmentSeed = buffer.readVarInt()
         val blocks: ListTag?
-        val block2: Array<Block>?
+        val block2: List<Block>?
         if (version >= 419) {
             blocks = null
-            block2 = buffer.toNbtInputStream().use { stream -> Array(buffer.readVarUInt()) { Block(buffer.readString(), stream.readTag()?.asCompoundTag()) } }
+            block2 = buffer.toNbtInputStream().use { stream -> safeList(buffer.readVarUInt()) { Block(buffer.readString(), stream.readTag()?.asCompoundTag()) } }
         } else {
             blocks = buffer.toNbtInputStream().use { it.readTag()!!.asListTag()!! }
             block2 = null
         }
         val itemCount = buffer.readVarUInt()
-        val items = Int2ObjectOpenHashMap<Item>(itemCount).apply {
+        val items = Int2ObjectOpenHashMap<Item>().apply {
             repeat(itemCount) {
                 val key = buffer.readString()
                 val id = buffer.readShortLE()

@@ -30,6 +30,7 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import com.valaphee.tesseract.util.safeList
 import com.valaphee.tesseract.util.nbt.CompoundTag
 
 /**
@@ -37,7 +38,7 @@ import com.valaphee.tesseract.util.nbt.CompoundTag
  */
 @Restrict(Restriction.ToClient)
 class ItemComponentPacket(
-    val entries: Array<Entry>
+    val entries: List<Entry>
 ) : Packet() {
     class Entry(
         val name: String,
@@ -56,12 +57,12 @@ class ItemComponentPacket(
 
     override fun handle(handler: PacketHandler) = handler.itemComponent(this)
 
-    override fun toString() = "ItemComponentPacket(entries=${entries.contentToString()})"
+    override fun toString() = "ItemComponentPacket(entries=$entries)"
 }
 
 /**
  * @author Kevin Ludwig
  */
 object ItemComponentPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = ItemComponentPacket(Array(buffer.readVarUInt()) { ItemComponentPacket.Entry(buffer.readString(), buffer.toNbtInputStream().use { it.readTag()?.asCompoundTag() }) })
+    override fun read(buffer: PacketBuffer, version: Int) = ItemComponentPacket(safeList(buffer.readVarUInt()) { ItemComponentPacket.Entry(buffer.readString(), buffer.toNbtInputStream().use { it.readTag()?.asCompoundTag() }) })
 }

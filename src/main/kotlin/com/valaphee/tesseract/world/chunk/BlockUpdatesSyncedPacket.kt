@@ -31,6 +31,7 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import com.valaphee.tesseract.util.safeList
 
 /**
  * @author Kevin Ludwig
@@ -38,8 +39,8 @@ import com.valaphee.tesseract.net.Restriction
 @Restrict(Restriction.ToClient)
 class BlockUpdatesSyncedPacket(
     val basePosition: Int3,
-    val updates1: Array<Update>,
-    val updates2: Array<Update>
+    val updates1: List<Update>,
+    val updates2: List<Update>
 ) : Packet() {
     data class Update(
         val position: Int3,
@@ -75,7 +76,7 @@ class BlockUpdatesSyncedPacket(
 
     override fun handle(handler: PacketHandler) = handler.blockUpdatesSynced(this)
 
-    override fun toString() = "BlockUpdatesSyncedPacket(basePosition=$basePosition, updates1=${updates1.contentToString()}, updates2=${updates2.contentToString()})"
+    override fun toString() = "BlockUpdatesSyncedPacket(basePosition=$basePosition, updates1=$updates1, updates2=$updates2)"
 }
 
 /**
@@ -84,7 +85,7 @@ class BlockUpdatesSyncedPacket(
 object BlockUpdatesSyncedPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int) = BlockUpdatesSyncedPacket(
         buffer.readInt3UnsignedY(),
-        Array(buffer.readVarUInt()) { BlockUpdatesSyncedPacket.Update(buffer.readInt3UnsignedY(), buffer.readVarUInt(), buffer.readVarUIntFlags(), buffer.readVarULong(), BlockUpdateSyncedPacket.Type.values()[buffer.readVarULong().toInt()]) },
-        Array(buffer.readVarUInt()) { BlockUpdatesSyncedPacket.Update(buffer.readInt3UnsignedY(), buffer.readVarUInt(), buffer.readVarUIntFlags(), buffer.readVarULong(), BlockUpdateSyncedPacket.Type.values()[buffer.readVarULong().toInt()]) }
+        safeList(buffer.readVarUInt()) { BlockUpdatesSyncedPacket.Update(buffer.readInt3UnsignedY(), buffer.readVarUInt(), buffer.readVarUIntFlags(), buffer.readVarULong(), BlockUpdateSyncedPacket.Type.values()[buffer.readVarULong().toInt()]) },
+        safeList(buffer.readVarUInt()) { BlockUpdatesSyncedPacket.Update(buffer.readInt3UnsignedY(), buffer.readVarUInt(), buffer.readVarUIntFlags(), buffer.readVarULong(), BlockUpdateSyncedPacket.Type.values()[buffer.readVarULong().toInt()]) }
     )
 }

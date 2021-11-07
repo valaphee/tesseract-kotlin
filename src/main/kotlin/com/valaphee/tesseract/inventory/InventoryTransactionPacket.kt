@@ -37,6 +37,7 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import com.valaphee.tesseract.util.safeList
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 
 /**
@@ -45,10 +46,10 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 @Restrict(Restriction.ToServer)
 class InventoryTransactionPacket(
     val legacyRequestId: Int,
-    val legacySlots: Array<LegacySlot>?,
+    val legacySlots: List<LegacySlot>?,
     val type: Type,
     val usingNetIds: Boolean,
-    val actions: Array<Action>,
+    val actions: List<Action>,
     val actionId: Int,
     val runtimeEntityId: Long,
     val blockPosition: Int3?,
@@ -183,7 +184,7 @@ class InventoryTransactionPacket(
 
     override fun handle(handler: PacketHandler) = handler.inventoryTransaction(this)
 
-    override fun toString() = "InventoryTransactionPacket(legacyRequestId=$legacyRequestId, legacySlots=${legacySlots?.contentToString()}, type=$type, usingNetIds=$usingNetIds, actions=${actions.contentToString()}, actionId=$actionId, runtimeEntityId=$runtimeEntityId, blockPosition=$blockPosition, blockFace=$blockFace, hotbarSlot=$hotbarSlot, stackInHand=$stackInHand, fromPosition=$fromPosition, clickPosition=$clickPosition, headPosition=$headPosition, blockStateKey='$blockStateKey')"
+    override fun toString() = "InventoryTransactionPacket(legacyRequestId=$legacyRequestId, legacySlots=$legacySlots, type=$type, usingNetIds=$usingNetIds, actions=$actions, actionId=$actionId, runtimeEntityId=$runtimeEntityId, blockPosition=$blockPosition, blockFace=$blockFace, hotbarSlot=$hotbarSlot, stackInHand=$stackInHand, fromPosition=$fromPosition, clickPosition=$clickPosition, headPosition=$headPosition, blockStateKey='$blockStateKey')"
 }
 
 /**
@@ -192,17 +193,17 @@ class InventoryTransactionPacket(
 object InventoryTransactionPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int): InventoryTransactionPacket {
         val legacyRequestId: Int
-        val legacySlots: Array<InventoryTransactionPacket.LegacySlot>?
+        val legacySlots: List<InventoryTransactionPacket.LegacySlot>?
         if (version >= 407) {
             legacyRequestId = buffer.readVarInt()
-            legacySlots = if (legacyRequestId < -1 && (legacyRequestId and 1) == 0) Array(buffer.readVarUInt()) { InventoryTransactionPacket.LegacySlot(buffer.readByte().toInt(), buffer.readByteArray()) } else null
+            legacySlots = if (legacyRequestId < -1 && (legacyRequestId and 1) == 0) safeList(buffer.readVarUInt()) { InventoryTransactionPacket.LegacySlot(buffer.readByte().toInt(), buffer.readByteArray()) } else null
         } else {
             legacyRequestId = 0
             legacySlots = null
         }
         val type = InventoryTransactionPacket.Type.values()[buffer.readVarUInt()]
         val usingNetIds = if (version in 407 until 431) buffer.readBoolean() else false
-        val actions = Array(buffer.readVarUInt()) { if (version >= 431) buffer.readAction() else if (usingNetIds) buffer.readActionPre431() else buffer.readActionPre407() }
+        val actions = safeList(buffer.readVarUInt()) { if (version >= 431) buffer.readAction() else if (usingNetIds) buffer.readActionPre431() else buffer.readActionPre407() }
         val actionId: Int
         val runtimeEntityId: Long
         val position: Int3?

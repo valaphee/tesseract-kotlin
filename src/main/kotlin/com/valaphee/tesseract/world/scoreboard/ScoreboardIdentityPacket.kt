@@ -30,6 +30,7 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import com.valaphee.tesseract.util.safeList
 import java.util.UUID
 
 /**
@@ -38,7 +39,7 @@ import java.util.UUID
 @Restrict(Restriction.ToClient)
 class ScoreboardIdentityPacket(
     val action: Action,
-    val entries: Array<Entry>
+    val entries: List<Entry>
 ) : Packet() {
     enum class Action {
         Add, Remove
@@ -62,7 +63,7 @@ class ScoreboardIdentityPacket(
 
     override fun handle(handler: PacketHandler) = handler.scoreboardIdentity(this)
 
-    override fun toString() = "ScoreboardIdentityPacket(action=$action, entries=${entries.contentToString()})"
+    override fun toString() = "ScoreboardIdentityPacket(action=$action, entries=$entries)"
 }
 
 /**
@@ -71,7 +72,7 @@ class ScoreboardIdentityPacket(
 object ScoreboardIdentityPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int): ScoreboardIdentityPacket {
         val action = ScoreboardIdentityPacket.Action.values()[buffer.readUnsignedByte().toInt()]
-        val entries = Array(buffer.readVarUInt()) { ScoreboardIdentityPacket.Entry(buffer.readVarLong(), if (action == ScoreboardIdentityPacket.Action.Add) buffer.readUuid() else null) }
+        val entries = safeList(buffer.readVarUInt()) { ScoreboardIdentityPacket.Entry(buffer.readVarLong(), if (action == ScoreboardIdentityPacket.Action.Add) buffer.readUuid() else null) }
         return ScoreboardIdentityPacket(action, entries)
     }
 }

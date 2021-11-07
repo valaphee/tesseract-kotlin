@@ -42,6 +42,7 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import com.valaphee.tesseract.util.safeList
 import java.util.UUID
 
 /**
@@ -50,7 +51,7 @@ import java.util.UUID
 @Restrict(Restriction.ToClient)
 class PlayerListPacket(
     val action: Action,
-    val entries: Array<Entry>
+    val entries: List<Entry>
 ) : Packet() {
     enum class Action {
         Add, Remove
@@ -93,7 +94,7 @@ class PlayerListPacket(
 
     override fun handle(handler: PacketHandler) = handler.playerList(this)
 
-    override fun toString() = "PlayerListPacket(action=$action, entries=${entries.contentToString()})"
+    override fun toString() = "PlayerListPacket(action=$action, entries=$entries)"
 }
 
 /**
@@ -102,7 +103,7 @@ class PlayerListPacket(
 object PlayerListPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int): PlayerListPacket {
         val action = PlayerListPacket.Action.values()[buffer.readUnsignedByte().toInt()]
-        val entries = Array(buffer.readVarUInt()) {
+        val entries = safeList(buffer.readVarUInt()) {
             when (action) {
                 PlayerListPacket.Action.Add -> PlayerListPacket.Entry(
                     buffer.readUuid(),

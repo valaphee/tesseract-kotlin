@@ -30,6 +30,7 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import com.valaphee.tesseract.util.safeList
 
 /**
  * @author Kevin Ludwig
@@ -39,7 +40,7 @@ class CommandResponsePacket(
     val origin: Origin,
     val type: Type,
     val successCount: Int,
-    val messages: Array<Message>,
+    val messages: List<Message>,
     val data: String?
 ) : Packet() {
     enum class Type {
@@ -61,7 +62,7 @@ class CommandResponsePacket(
 
     override fun handle(handler: PacketHandler) = handler.commandResponse(this)
 
-    override fun toString() = "CommandResponsePacket(origin=$origin, type=$type, successCount=$successCount, messages=${messages.contentToString()}, data=$data)"
+    override fun toString() = "CommandResponsePacket(origin=$origin, type=$type, successCount=$successCount, messages=$messages, data=$data)"
 }
 
 /**
@@ -72,7 +73,7 @@ object CommandResponsePacketReader : PacketReader {
         val origin = buffer.readOrigin()
         val type = CommandResponsePacket.Type.values()[buffer.readByte().toInt()]
         val successCount = buffer.readVarUInt()
-        val messages = Array(buffer.readVarUInt()) { buffer.readMessage() }
+        val messages = safeList(buffer.readVarUInt()) { buffer.readMessage() }
         val data = if (type == CommandResponsePacket.Type.Data) buffer.readString() else null
         return CommandResponsePacket(origin, type, successCount, messages, data)
     }

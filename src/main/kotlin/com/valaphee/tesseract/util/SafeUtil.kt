@@ -22,38 +22,8 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world
+package com.valaphee.tesseract.util
 
-import com.valaphee.tesseract.net.Packet
-import com.valaphee.tesseract.net.PacketBuffer
-import com.valaphee.tesseract.net.PacketHandler
-import com.valaphee.tesseract.net.PacketReader
-import com.valaphee.tesseract.net.Restrict
-import com.valaphee.tesseract.net.Restriction
-import com.valaphee.tesseract.util.safeList
+fun <T> Array<T>.safeGet(index: Int) = if (index in 0..lastIndex) get(index) else first()
 
-/**
- * @author Kevin Ludwig
- */
-@Restrict(Restriction.ToClient)
-class FogPacket(
-    val effects: List<String>
-) : Packet() {
-    override val id get() = 0xA0
-
-    override fun write(buffer: PacketBuffer, version: Int) {
-        buffer.writeVarUInt(effects.size)
-        effects.forEach { buffer.writeString(it) }
-    }
-
-    override fun handle(handler: PacketHandler) = handler.fog(this)
-
-    override fun toString() = "FogPacket(effects=$effects)"
-}
-
-/**
- * @author Kevin Ludwig
- */
-object FogPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = FogPacket(safeList(buffer.readVarUInt()) { buffer.readString() })
-}
+inline fun <T> safeList(size: Int, init: (index: Int) -> T) = ArrayList<T>().apply { repeat(size) { add(init(it)) } }

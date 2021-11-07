@@ -28,6 +28,7 @@ import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
+import com.valaphee.tesseract.util.safeList
 import java.util.UUID
 
 /**
@@ -35,7 +36,7 @@ import java.util.UUID
  */
 class EmotesPacket(
     val runtimeEntityId: Long,
-    val pieceIds: Array<UUID>
+    val pieceIds: List<UUID>
 ) : Packet() {
     override val id get() = 0x98
 
@@ -47,12 +48,12 @@ class EmotesPacket(
 
     override fun handle(handler: PacketHandler) = handler.emotes(this)
 
-    override fun toString() = "EmotesPacket(runtimeEntityId=$runtimeEntityId, pieceIds=${pieceIds.contentToString()})"
+    override fun toString() = "EmotesPacket(runtimeEntityId=$runtimeEntityId, pieceIds=$pieceIds)"
 }
 
 /**
  * @author Kevin Ludwig
  */
 object EmotesPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = EmotesPacket(buffer.readVarULong(), Array(buffer.readVarUInt()) { buffer.readUuid() })
+    override fun read(buffer: PacketBuffer, version: Int) = EmotesPacket(buffer.readVarULong(), safeList(buffer.readVarUInt()) { buffer.readUuid() })
 }

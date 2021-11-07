@@ -44,6 +44,7 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import com.valaphee.tesseract.util.safeList
 import com.valaphee.tesseract.world.WorldFlag
 import java.util.UUID
 
@@ -68,7 +69,7 @@ class PlayerAddPacket(
     val worldFlags: Collection<WorldFlag>,
     val rank: Rank,
     val customFlags: Int,
-    val links: Array<Link>,
+    val links: List<Link>,
     val deviceId: String,
     val operatingSystem: User.OperatingSystem
 ) : Packet() {
@@ -100,7 +101,7 @@ class PlayerAddPacket(
 
     override fun handle(handler: PacketHandler) = handler.playerAdd(this)
 
-    override fun toString() = "PlayerAddPacket(userId=$userId, userName='$userName', uniqueEntityId=$uniqueEntityId, runtimeEntityId=$runtimeEntityId, platformChatId='$platformChatId', position=$position, velocity=$velocity, rotation=$rotation, headRotationYaw=$headRotationYaw, stackInHand=$stackInHand, metadata=$metadata, playerFlags=$playerFlags, permission=$permission, worldFlags=$worldFlags, rank=$rank, customFlags=$customFlags, links=${links.contentToString()}, deviceId='$deviceId', operatingSystem=$operatingSystem)"
+    override fun toString() = "PlayerAddPacket(userId=$userId, userName='$userName', uniqueEntityId=$uniqueEntityId, runtimeEntityId=$runtimeEntityId, platformChatId='$platformChatId', position=$position, velocity=$velocity, rotation=$rotation, headRotationYaw=$headRotationYaw, stackInHand=$stackInHand, metadata=$metadata, playerFlags=$playerFlags, permission=$permission, worldFlags=$worldFlags, rank=$rank, customFlags=$customFlags, links=$links, deviceId='$deviceId', operatingSystem=$operatingSystem)"
 }
 
 /**
@@ -124,7 +125,7 @@ object PlayerAddPacketReader : PacketReader {
         buffer.readVarUIntFlags(),
         Rank.values()[buffer.readVarUInt()],
         buffer.readVarUInt().also { buffer.readLongLE() },
-        Array(buffer.readVarUInt()) { if (version >= 407) buffer.readLink() else buffer.readLinkPre407() },
+        safeList(buffer.readVarUInt()) { if (version >= 407) buffer.readLink() else buffer.readLinkPre407() },
         buffer.readString(),
         User.OperatingSystem.values()[buffer.readIntLE()],
     )

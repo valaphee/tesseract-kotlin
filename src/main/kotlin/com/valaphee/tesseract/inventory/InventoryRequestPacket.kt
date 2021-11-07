@@ -35,20 +35,21 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import com.valaphee.tesseract.util.safeList
 
 /**
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToServer)
 class InventoryRequestPacket(
-    val requests: Array<Request>
+    val requests: List<Request>
 ) : Packet() {
     enum class ActionType {
         Move, Place, Swap, Drop, Destroy, Consume, Create, LabTableCombine, BeaconPayment, MineBlock, CraftRecipe, CraftRecipeAuto, CraftCreative, CraftRecipeOptional, CraftNonImplementedDeprecated, CraftResultsDeprecated
     }
 
     class Action(
-        val result: Array<Stack?>?,
+        val result: List<Stack?>?,
         val type: ActionType,
         val count: Int,
         val sourceSlotType: WindowSlotType?,
@@ -62,15 +63,15 @@ class InventoryRequestPacket(
         val auxInt: Int,
         val auxInt2: Int
     ) {
-        override fun toString() = "Action(result=${result?.contentToString()}, type=$type, count=$count, sourceSlotType=$sourceSlotType, sourceSlotId=$sourceSlotId, sourceNetId=$sourceNetId, random=$random, destinationSlotType=$destinationSlotType, destinationSlotId=$destinationSlotId, destinationNetId=$destinationNetId, slotId=$slotId, auxInt=$auxInt, auxInt2=$auxInt2)"
+        override fun toString() = "Action(result=$result, type=$type, count=$count, sourceSlotType=$sourceSlotType, sourceSlotId=$sourceSlotId, sourceNetId=$sourceNetId, random=$random, destinationSlotType=$destinationSlotType, destinationSlotId=$destinationSlotId, destinationNetId=$destinationNetId, slotId=$slotId, auxInt=$auxInt, auxInt2=$auxInt2)"
     }
 
     class Request(
         val requestId: Int,
-        val actions: Array<Action>,
-        val filteredTexts: Array<String>
+        val actions: List<Action>,
+        val filteredTexts: List<String>
     ) {
-        override fun toString() = "Request(requestId=$requestId, actions=${actions.contentToString()}, filteredTexts=${filteredTexts.contentToString()})"
+        override fun toString() = "Request(requestId=$requestId, actions=$actions, filteredTexts=$filteredTexts)"
     }
 
     override val id get() = 0x93
@@ -144,15 +145,15 @@ class InventoryRequestPacket(
 
     override fun handle(handler: PacketHandler) = handler.inventoryRequest(this)
 
-    override fun toString() = "InventoryRequestPacket(requests=${requests.contentToString()})"
+    override fun toString() = "InventoryRequestPacket(requests=$requests)"
 }
 
 /**
  * @author Kevin Ludwig
  */
 object InventoryRequestPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = InventoryRequestPacket(Array(buffer.readVarUInt()) {
-        InventoryRequestPacket.Request(buffer.readVarInt(), Array(buffer.readVarUInt()) {
+    override fun read(buffer: PacketBuffer, version: Int) = InventoryRequestPacket(safeList(buffer.readVarUInt()) {
+        InventoryRequestPacket.Request(buffer.readVarInt(), safeList(buffer.readVarUInt()) {
             when (val actionType = InventoryRequestPacket.ActionType.values()[buffer.readByte().toInt()]) {
                 InventoryRequestPacket.ActionType.Move, InventoryRequestPacket.ActionType.Place -> InventoryRequestPacket.Action(null, actionType, buffer.readByte().toInt(), WindowSlotType.values()[buffer.readByte().toInt()], buffer.readByte().toInt(), buffer.readVarInt(), false, WindowSlotType.values()[buffer.readByte().toInt()], buffer.readByte().toInt(), buffer.readVarInt(), 0, 0, 0)
                 InventoryRequestPacket.ActionType.Swap -> InventoryRequestPacket.Action(null, actionType, 0, WindowSlotType.values()[buffer.readByte().toInt()], buffer.readByte().toInt(), buffer.readVarInt(), false, WindowSlotType.values()[buffer.readByte().toInt()], buffer.readByte().toInt(), buffer.readVarInt(), 0, 0, 0)
@@ -163,9 +164,9 @@ object InventoryRequestPacketReader : PacketReader {
                 InventoryRequestPacket.ActionType.CraftRecipe, InventoryRequestPacket.ActionType.CraftCreative -> InventoryRequestPacket.Action(null, actionType, 0, null, 0, 0, false, null, 0, 0, 0, buffer.readVarInt(), 0)
                 InventoryRequestPacket.ActionType.CraftRecipeAuto -> InventoryRequestPacket.Action(null, actionType, 0, null, 0, 0, false, null, 0, 0, 0, buffer.readVarInt(), if (version >= 448) buffer.readByte().toInt() else 0)
                 InventoryRequestPacket.ActionType.CraftRecipeOptional -> InventoryRequestPacket.Action(null, actionType, 0, null, 0, 0, false, null, 0, 0, 0, buffer.readVarUInt(), buffer.readIntLE())
-                InventoryRequestPacket.ActionType.CraftResultsDeprecated -> InventoryRequestPacket.Action(Array(buffer.readVarUInt()) { if (version >= 431) buffer.readStackInstance() else buffer.readStackPre431() }, actionType, 0, null, 0, 0, false, null, 0, 0, 0, buffer.readByte().toInt(), 0)
+                InventoryRequestPacket.ActionType.CraftResultsDeprecated -> InventoryRequestPacket.Action(safeList(buffer.readVarUInt()) { if (version >= 431) buffer.readStackInstance() else buffer.readStackPre431() }, actionType, 0, null, 0, 0, false, null, 0, 0, 0, buffer.readByte().toInt(), 0)
                 else -> TODO()
             }
-        }, if (version >= 422) Array(buffer.readVarUInt()) { buffer.readString() } else emptyArray())
+        }, if (version >= 422) safeList(buffer.readVarUInt()) { buffer.readString() } else emptyList())
     })
 }

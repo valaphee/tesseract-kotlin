@@ -35,13 +35,14 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import com.valaphee.tesseract.util.safeList
 
 /**
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
 class CreativeInventoryPacket(
-    val content: Array<Stack?>
+    val content: List<Stack?>
 ) : Packet() {
     override val id get() = 0x91
 
@@ -57,27 +58,14 @@ class CreativeInventoryPacket(
 
     override fun handle(handler: PacketHandler) = handler.creativeInventory(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as CreativeInventoryPacket
-
-        if (!content.contentEquals(other.content)) return false
-
-        return true
-    }
-
-    override fun hashCode() = content.contentHashCode()
-
-    override fun toString() = "CreativeInventoryPacket(content=${content.contentToString()})"
+    override fun toString() = "CreativeInventoryPacket(content=$content)"
 }
 
 /**
  * @author Kevin Ludwig
  */
 object CreativeInventoryPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = CreativeInventoryPacket(Array(buffer.readVarUInt()) {
+    override fun read(buffer: PacketBuffer, version: Int) = CreativeInventoryPacket(safeList(buffer.readVarUInt()) {
         if (version >= 431) {
             val netId = buffer.readVarUInt()
             buffer.readStackInstance().also { it?.let { it.netId = netId } }

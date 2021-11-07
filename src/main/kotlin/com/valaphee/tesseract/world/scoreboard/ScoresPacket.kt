@@ -30,6 +30,7 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import com.valaphee.tesseract.util.safeList
 
 /**
  * @author Kevin Ludwig
@@ -37,7 +38,7 @@ import com.valaphee.tesseract.net.Restriction
 @Restrict(Restriction.ToClient)
 class ScoresPacket(
     val action: Action,
-    val scores: Array<Score>
+    val scores: List<Score>
 ) : Packet() {
     enum class Action {
         Set, Remove
@@ -65,7 +66,7 @@ class ScoresPacket(
 
     override fun handle(handler: PacketHandler) = handler.scores(this)
 
-    override fun toString() = "ScoresPacket(action=$action, scores=${scores.contentToString()})"
+    override fun toString() = "ScoresPacket(action=$action, scores=$scores)"
 }
 
 /**
@@ -74,14 +75,14 @@ class ScoresPacket(
 object ScoresPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int): ScoresPacket {
         val action = ScoresPacket.Action.values()[buffer.readUnsignedByte().toInt()]
-        val entries = Array(buffer.readVarUInt()) {
+        val entries = safeList(buffer.readVarUInt()) {
             val scoreboardId = buffer.readVarLong()
             val objectiveId = buffer.readString()
             val score = buffer.readIntLE()
             if (action == ScoresPacket.Action.Set) {
                 when (val scorerType = Score.ScorerType.values()[buffer.readUnsignedByte().toInt()]) {
-                    Score.ScorerType.Entity, Score.ScorerType.Player -> return@Array Score(scoreboardId, objectiveId, score, scorerType, buffer.readVarLong())
-                    Score.ScorerType.Fake -> return@Array Score(scoreboardId, objectiveId, score, buffer.readString())
+                    Score.ScorerType.Entity, Score.ScorerType.Player -> return@safeList Score(scoreboardId, objectiveId, score, scorerType, buffer.readVarLong())
+                    Score.ScorerType.Fake -> return@safeList Score(scoreboardId, objectiveId, score, buffer.readString())
                 }
             }
             Score(scoreboardId, objectiveId, score)

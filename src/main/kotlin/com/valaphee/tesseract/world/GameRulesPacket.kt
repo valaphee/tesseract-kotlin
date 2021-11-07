@@ -30,13 +30,14 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import com.valaphee.tesseract.util.safeList
 
 /**
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
 class GameRulesPacket(
-    val gameRules: Array<GameRule<*>>
+    val gameRules: List<GameRule<*>>
 ) : Packet() {
     override val id get() = 0x48
 
@@ -47,12 +48,12 @@ class GameRulesPacket(
 
     override fun handle(handler: PacketHandler) = handler.gameRules(this)
 
-    override fun toString() = "GameRulesPacket(gameRules=${gameRules.contentToString()})"
+    override fun toString() = "GameRulesPacket(gameRules=$gameRules)"
 }
 
 /**
  * @author Kevin Ludwig
  */
 object GameRulesPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = GameRulesPacket(if (version >= 440) Array(buffer.readVarUInt()) { buffer.readGameRule() } else Array(buffer.readVarUInt()) { buffer.readGameRulePre440() })
+    override fun read(buffer: PacketBuffer, version: Int) = GameRulesPacket(if (version >= 440) safeList(buffer.readVarUInt()) { buffer.readGameRule() } else safeList(buffer.readVarUInt()) { buffer.readGameRulePre440() })
 }

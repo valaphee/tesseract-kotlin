@@ -36,6 +36,7 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import com.valaphee.tesseract.util.safeList
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap
 
 /**
@@ -43,10 +44,10 @@ import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap
  */
 @Restrict(Restriction.ToClient)
 class RecipesPacket(
-    val recipes: Array<Recipe>,
-    val potionMixRecipes: Array<PotionMixRecipe>,
-    val containerMixRecipes: Array<ContainerMixRecipe>,
-    val materialReducers: Array<MaterialReducer>,
+    val recipes: List<Recipe>,
+    val potionMixRecipes: List<PotionMixRecipe>,
+    val containerMixRecipes: List<ContainerMixRecipe>,
+    val materialReducers: List<MaterialReducer>,
     val cleanRecipes: Boolean
 ) : Packet() {
     override val id get() = 0x34
@@ -129,7 +130,7 @@ class RecipesPacket(
 
     override fun handle(handler: PacketHandler) = handler.recipes(this)
 
-    override fun toString() = "RecipesPacket(recipes=${recipes.contentToString()}, potionMixRecipes=${potionMixRecipes.contentToString()}, containerMixRecipes=${containerMixRecipes.contentToString()}, materialReducers=${materialReducers.contentToString()}, cleanRecipes=$cleanRecipes)"
+    override fun toString() = "RecipesPacket(recipes=$recipes, potionMixRecipes=$potionMixRecipes, containerMixRecipes=$containerMixRecipes, materialReducers=$materialReducers, cleanRecipes=$cleanRecipes)"
 }
 
 /**
@@ -137,7 +138,7 @@ class RecipesPacket(
  */
 object RecipesPacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int) = RecipesPacket(
-        Array(buffer.readVarUInt()) {
+        safeList(buffer.readVarUInt()) {
             when (val type = Recipe.Type.values()[buffer.readVarInt()]) {
                 Recipe.Type.Shapeless, Recipe.Type.ShulkerBox, Recipe.Type.ShapelessChemistry -> {
                     val name = buffer.readString()
@@ -157,9 +158,9 @@ object RecipesPacketReader : PacketReader {
                 Recipe.Type.Multi -> multiRecipe(buffer.readUuid(), if (version >= 407) buffer.readVarUInt() else 0)
             }
         },
-        Array(buffer.readVarUInt()) { PotionMixRecipe(checkNotNull(buffer.items[buffer.readVarInt()]), if (version >= 407) buffer.readVarInt() else 0, checkNotNull(buffer.items[buffer.readVarInt()]), if (version >= 407) buffer.readVarInt() else 0, checkNotNull(buffer.items[buffer.readVarInt()]), if (version >= 407) buffer.readVarInt() else 0) },
-        Array(buffer.readVarUInt()) { ContainerMixRecipe(checkNotNull(buffer.items[buffer.readVarInt()]), checkNotNull(buffer.items[buffer.readVarInt()]), checkNotNull(buffer.items[buffer.readVarInt()])) },
-        if (version >= 465) Array(buffer.readVarUInt()) { MaterialReducer(buffer.readVarInt(), Int2IntOpenHashMap().apply { repeat(buffer.readVarUInt()) { this[buffer.readVarInt()] = buffer.readVarInt() } }) } else emptyArray(),
+        safeList(buffer.readVarUInt()) { PotionMixRecipe(checkNotNull(buffer.items[buffer.readVarInt()]), if (version >= 407) buffer.readVarInt() else 0, checkNotNull(buffer.items[buffer.readVarInt()]), if (version >= 407) buffer.readVarInt() else 0, checkNotNull(buffer.items[buffer.readVarInt()]), if (version >= 407) buffer.readVarInt() else 0) },
+        safeList(buffer.readVarUInt()) { ContainerMixRecipe(checkNotNull(buffer.items[buffer.readVarInt()]), checkNotNull(buffer.items[buffer.readVarInt()]), checkNotNull(buffer.items[buffer.readVarInt()])) },
+        if (version >= 465) safeList(buffer.readVarUInt()) { MaterialReducer(buffer.readVarInt(), Int2IntOpenHashMap().apply { repeat(buffer.readVarUInt()) { this[buffer.readVarInt()] = buffer.readVarInt() } }) } else emptyList(),
         buffer.readBoolean()
     )
 }

@@ -28,6 +28,7 @@ import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
+import com.valaphee.tesseract.util.safeList
 
 /**
  * @author Kevin Ludwig
@@ -37,7 +38,7 @@ class TextPacket(
     val needsTranslation: Boolean,
     val sourceName: String?,
     val message: String,
-    val arguments: Array<String>?,
+    val arguments: List<String>?,
     val xboxUserId: String,
     val platformChatId: String
 ) : Packet() {
@@ -70,7 +71,7 @@ class TextPacket(
 
     override fun handle(handler: PacketHandler) = handler.text(this)
 
-    override fun toString() = "TextPacket(type=$type, needsTranslation=$needsTranslation, sourceName=$sourceName, message='$message', arguments=${arguments?.contentToString()}, xboxUserId='$xboxUserId', platformChatId='$platformChatId')"
+    override fun toString() = "TextPacket(type=$type, needsTranslation=$needsTranslation, sourceName=$sourceName, message='$message', arguments=$arguments, xboxUserId='$xboxUserId', platformChatId='$platformChatId')"
 }
 
 /**
@@ -82,7 +83,7 @@ object TextPacketReader : PacketReader {
         val needsTranslation = buffer.readBoolean()
         var sourceName: String? = null
         val message: String
-        var arguments: Array<String>? = null
+        var arguments: List<String>? = null
         when (type) {
             TextPacket.Type.Chat, TextPacket.Type.Whisper, TextPacket.Type.Announcement -> {
                 sourceName = buffer.readString()
@@ -91,7 +92,7 @@ object TextPacketReader : PacketReader {
             TextPacket.Type.Raw, TextPacket.Type.Tip, TextPacket.Type.System, TextPacket.Type.Object, TextPacket.Type.ObjectWhisper -> message = buffer.readString()
             TextPacket.Type.Translation, TextPacket.Type.PopUp, TextPacket.Type.JukeboxPopUp -> {
                 message = buffer.readString()
-                arguments = Array(buffer.readVarUInt()) { buffer.readString() }
+                arguments = safeList(buffer.readVarUInt()) { buffer.readString() }
             }
         }
         val xboxUserId = buffer.readString()

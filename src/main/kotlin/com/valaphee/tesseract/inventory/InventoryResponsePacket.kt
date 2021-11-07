@@ -35,12 +35,12 @@ import com.valaphee.tesseract.net.Restriction
  */
 @Restrict(Restriction.ToClient)
 class InventoryResponsePacket(
-    val responses: Array<Response>
+    val responses: List<Response>
 ) : Packet() {
     class Response(
         val status: ResponseStatus,
         val requestId: Int,
-        val windows: Array<ResponseWindow>
+        val windows: List<ResponseWindow>
     )
 
     enum class ResponseStatus {
@@ -115,7 +115,7 @@ class InventoryResponsePacket(
 
     class ResponseWindow(
         val windowId: Int,
-        val slots: Array<ResponseWindowSlot>
+        val slots: List<ResponseWindowSlot>
     )
 
     class ResponseWindowSlot(
@@ -161,5 +161,5 @@ class InventoryResponsePacket(
 
     override fun handle(handler: PacketHandler) = handler.inventoryResponse(this)
 
-    override fun toString() = "InventoryResponsePacket(responses=${responses.contentToString()})"
+    override fun toString() = "InventoryResponsePacket(responses=$responses)"
 }

@@ -31,13 +31,14 @@ import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
 import com.valaphee.tesseract.net.Restrict
 import com.valaphee.tesseract.net.Restriction
+import com.valaphee.tesseract.util.safeList
 
 /**
  * @author Kevin Ludwig
  */
 @Restrict(Restriction.ToClient)
 class EnchantOptionsPacket(
-    val options: Array<Option>
+    val options: List<Option>
 ) : Packet() {
     class Slot(
         val enchantment: Enchantment,
@@ -47,40 +48,12 @@ class EnchantOptionsPacket(
     class Option(
         val cost: Int,
         val primarySlotId: Int,
-        val slots1: Array<Slot>,
-        val slots2: Array<Slot>,
-        val slots3: Array<Slot>,
+        val slots1: List<Slot>,
+        val slots2: List<Slot>,
+        val slots3: List<Slot>,
         val description: String,
         val netId: Int
-    ) {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as Option
-
-            if (cost != other.cost) return false
-            if (primarySlotId != other.primarySlotId) return false
-            if (!slots1.contentEquals(other.slots1)) return false
-            if (!slots2.contentEquals(other.slots2)) return false
-            if (!slots3.contentEquals(other.slots3)) return false
-            if (description != other.description) return false
-            if (netId != other.netId) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            var result = cost
-            result = 31 * result + primarySlotId
-            result = 31 * result + slots1.contentHashCode()
-            result = 31 * result + slots2.contentHashCode()
-            result = 31 * result + slots3.contentHashCode()
-            result = 31 * result + description.hashCode()
-            result = 31 * result + netId
-            return result
-        }
-    }
+    )
 
     override val id get() = 0x92
 
@@ -111,20 +84,20 @@ class EnchantOptionsPacket(
 
     override fun handle(handler: PacketHandler) = handler.enchantOptions(this)
 
-    override fun toString() = "EnchantOptionsPacket(options=${options.contentToString()})"
+    override fun toString() = "EnchantOptionsPacket(options=$options)"
 }
 
 /**
  * @author Kevin Ludwig
  */
 object EnchantOptionsPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = EnchantOptionsPacket(Array(buffer.readVarUInt()) {
+    override fun read(buffer: PacketBuffer, version: Int) = EnchantOptionsPacket(safeList(buffer.readVarUInt()) {
         EnchantOptionsPacket.Option(
             buffer.readVarUInt(),
             buffer.readIntLE(),
-            Array(buffer.readVarUInt()) { EnchantOptionsPacket.Slot(Enchantment.values()[buffer.readUnsignedByte().toInt()], buffer.readUnsignedByte()) },
-            Array(buffer.readVarUInt()) { EnchantOptionsPacket.Slot(Enchantment.values()[buffer.readUnsignedByte().toInt()], buffer.readUnsignedByte()) },
-            Array(buffer.readVarUInt()) { EnchantOptionsPacket.Slot(Enchantment.values()[buffer.readUnsignedByte().toInt()], buffer.readUnsignedByte()) },
+            safeList(buffer.readVarUInt()) { EnchantOptionsPacket.Slot(Enchantment.values()[buffer.readUnsignedByte().toInt()], buffer.readUnsignedByte()) },
+            safeList(buffer.readVarUInt()) { EnchantOptionsPacket.Slot(Enchantment.values()[buffer.readUnsignedByte().toInt()], buffer.readUnsignedByte()) },
+            safeList(buffer.readVarUInt()) { EnchantOptionsPacket.Slot(Enchantment.values()[buffer.readUnsignedByte().toInt()], buffer.readUnsignedByte()) },
             buffer.readString(),
             buffer.readVarUInt()
         )

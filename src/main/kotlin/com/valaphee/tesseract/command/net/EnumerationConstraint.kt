@@ -25,6 +25,7 @@
 package com.valaphee.tesseract.command.net
 
 import com.valaphee.tesseract.net.PacketBuffer
+import com.valaphee.tesseract.util.safeList
 
 /**
  * @author Kevin Ludwig
@@ -32,34 +33,14 @@ import com.valaphee.tesseract.net.PacketBuffer
 data class EnumerationConstraint(
     val value: String,
     val enumeration: Enumeration,
-    val constraints: Array<Constraint>
+    val constraints: List<Constraint>
 ) {
     enum class Constraint {
         CheatsEnabled, OperatorPermissions, HostPermissions, Unknown3
     }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as EnumerationConstraint
-
-        if (value != other.value) return false
-        if (enumeration != other.enumeration) return false
-        if (!constraints.contentEquals(other.constraints)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = value.hashCode()
-        result = 31 * result + enumeration.hashCode()
-        result = 31 * result + constraints.contentHashCode()
-        return result
-    }
 }
 
-fun PacketBuffer.readEnumerationConstraint(values: Array<String>, enumerations: Array<Enumeration>) = EnumerationConstraint(values[buffer.readIntLE()], enumerations[buffer.readIntLE()], Array(readVarUInt()) { EnumerationConstraint.Constraint.values()[buffer.readByte().toInt()] })
+fun PacketBuffer.readEnumerationConstraint(values: List<String>, enumerations: List<Enumeration>) = EnumerationConstraint(values[buffer.readIntLE()], enumerations[buffer.readIntLE()], safeList(readVarUInt()) { EnumerationConstraint.Constraint.values()[buffer.readByte().toInt()] })
 
 fun PacketBuffer.writeEnumerationConstraint(value: EnumerationConstraint, values: Collection<String>, enumerations: Collection<Enumeration>) {
     writeIntLE(values.indexOf(value.value))

@@ -33,6 +33,7 @@ import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
 import com.valaphee.tesseract.net.PacketHandler
 import com.valaphee.tesseract.net.PacketReader
+import com.valaphee.tesseract.util.safeList
 import java.util.UUID
 
 /**
@@ -42,8 +43,8 @@ class CraftingEventPacket(
     val windowId: Int,
     val type: Type,
     val recipeId: UUID,
-    val inputs: Array<Stack?>,
-    val outputs: Array<Stack?>,
+    val inputs: List<Stack?>,
+    val outputs: List<Stack?>,
 ) : Packet() {
     enum class Type {
         Inventory, Crafting, Workbench
@@ -63,12 +64,12 @@ class CraftingEventPacket(
 
     override fun handle(handler: PacketHandler) = handler.craftingEvent(this)
 
-    override fun toString() = "CraftingEventPacket(windowId=$windowId, type=$type, recipeId=$recipeId, inputs=${inputs.contentToString()}, outputs=${outputs.contentToString()})"
+    override fun toString() = "CraftingEventPacket(windowId=$windowId, type=$type, recipeId=$recipeId, inputs=$inputs, outputs=$outputs)"
 }
 
 /**
  * @author Kevin Ludwig
  */
 object CraftingEventPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = CraftingEventPacket(buffer.readUnsignedByte().toInt(), CraftingEventPacket.Type.values()[buffer.readVarInt()], buffer.readUuid(), Array(buffer.readVarUInt()) { if (version >= 431) buffer.readStack() else buffer.readStackPre431() }, Array(buffer.readVarUInt()) { if (version >= 431) buffer.readStack() else buffer.readStackPre431() })
+    override fun read(buffer: PacketBuffer, version: Int) = CraftingEventPacket(buffer.readUnsignedByte().toInt(), CraftingEventPacket.Type.values()[buffer.readVarInt()], buffer.readUuid(), safeList(buffer.readVarUInt()) { if (version >= 431) buffer.readStack() else buffer.readStackPre431() }, safeList(buffer.readVarUInt()) { if (version >= 431) buffer.readStack() else buffer.readStackPre431() })
 }
