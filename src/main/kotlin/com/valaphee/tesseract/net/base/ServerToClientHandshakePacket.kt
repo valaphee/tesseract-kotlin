@@ -77,10 +77,9 @@ class ServerToClientHandshakePacket(
  */
 object ServerToClientHandshakePacketReader : PacketReader {
     override fun read(buffer: PacketBuffer, version: Int): ServerToClientHandshakePacket {
-        val jws = buffer.readString()
-        val jwtConsumerBuilder = JwtConsumerBuilder().setJwsAlgorithmConstraints(AlgorithmConstraints.ConstraintType.PERMIT, "ES384")
-        jwtConsumerBuilder.setSkipSignatureVerification()
-        val jwtContext = jwtConsumerBuilder.build().process(jws)
+        val jwtContext = JwtConsumerBuilder().setJwsAlgorithmConstraints(AlgorithmConstraints.ConstraintType.PERMIT, "ES384").apply {
+            setSkipSignatureVerification()
+        }.build().process(buffer.readString())
         return ServerToClientHandshakePacket(generatePublicKey(jwtContext.joseObjects.first().headers.getStringHeaderValue("x5u")), null, base64Decoder.decode(Streams.parse(JsonReader(StringReader(jwtContext.jwtClaims.rawJson))).asJsonObject.getString("salt")))
     }
 
