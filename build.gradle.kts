@@ -40,7 +40,7 @@ repositories {
 group = "com.valaphee"
 val versionDetails: groovy.lang.Closure<com.palantir.gradle.gitversion.VersionDetails> by extra
 val details = versionDetails()
-version = "${details.lastTag}.${details.commitDistance}${if (details.branchName != "master") "-${details.branchName.split('/').last()}" else ""}"
+version = "${details.lastTag}.${details.commitDistance}"
 
 dependencies {
     api("com.esotericsoftware:kryo:5.2.0")
