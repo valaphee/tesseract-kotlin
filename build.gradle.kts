@@ -83,6 +83,11 @@ tasks {
 
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
 signing {
     useGpgCmd()
     sign(publishing.publications)

@@ -27,7 +27,6 @@ package com.valaphee.tesseract.net
 import com.valaphee.tesseract.net.base.ServerToClientHandshakePacket
 import com.valaphee.tesseract.util.MbedTlsAesCipher
 import com.valaphee.tesseract.util.aesCipher
-import com.valaphee.tesseract.util.generateSecret
 import com.valaphee.tesseract.util.sha256Hasher
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.PooledByteBufAllocator
@@ -43,6 +42,7 @@ import io.netty.util.ReferenceCountUtil
 import java.security.Key
 import java.security.KeyPair
 import java.security.SecureRandom
+import javax.crypto.KeyAgreement
 
 /**
  * @author Kevin Ludwig
@@ -59,7 +59,10 @@ class EncryptionInitializer(
     private lateinit var keyBuffer: ByteBuf
 
     init {
-        val secret = generateSecret(keyPair.private, otherPublicKey)
+        val secret = KeyAgreement.getInstance("ECDH").apply {
+            init(keyPair.private)
+            doPhase(otherPublicKey, true)
+        }.generateSecret()
         val hasher = hasherLocal.get()
         val buffer = PooledByteBufAllocator.DEFAULT.directBuffer(salt.size + secret.size)
         try {
