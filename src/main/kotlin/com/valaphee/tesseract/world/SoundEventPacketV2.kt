@@ -37,7 +37,7 @@ class SoundEventPacketV2(
     val soundEvent: SoundEvent,
     val position: Float3,
     val extraData: Int,
-    val identifier: String,
+    val entityTypeKey: String,
     val babySound: Boolean,
     val relativeVolumeDisabled: Boolean
 ) : Packet() {
@@ -47,14 +47,14 @@ class SoundEventPacketV2(
         buffer.writeByte(SoundEvent.registry.getId(soundEvent))
         buffer.writeFloat3(position)
         buffer.writeVarInt(extraData)
-        buffer.writeString(identifier)
+        buffer.writeString(entityTypeKey)
         buffer.writeBoolean(babySound)
         buffer.writeBoolean(relativeVolumeDisabled)
     }
 
     override fun handle(handler: PacketHandler) = handler.soundEventV2(this)
 
-    override fun toString() = "SoundEventPacketV2(soundEvent=$soundEvent, position=$position, extraData=$extraData, identifier='$identifier', babySound=$babySound, relativeVolumeDisabled=$relativeVolumeDisabled)"
+    override fun toString() = "SoundEventPacketV2(soundEvent=$soundEvent, position=$position, extraData=$extraData, entityTypeKey='$entityTypeKey', babySound=$babySound, relativeVolumeDisabled=$relativeVolumeDisabled)"
 }
 
 /**

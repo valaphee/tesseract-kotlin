@@ -44,7 +44,7 @@ class WorldGenericEventPacket(
 
     override fun write(buffer: PacketBuffer, version: Int) {
         buffer.writeVarInt(eventId)
-        buffer.toNbtOutputStream().use { it.writeTag(tag) }
+        // TODO
     }
 
     override fun handle(handler: PacketHandler) = handler.worldGenericEvent(this)
@@ -56,5 +56,5 @@ class WorldGenericEventPacket(
  * @author Kevin Ludwig
  */
 object WorldGenericEventPacketReader : PacketReader {
-    override fun read(buffer: PacketBuffer, version: Int) = WorldGenericEventPacket(buffer.readVarInt(), buffer.toNbtInputStream().use { it.readTag() })
+    override fun read(buffer: PacketBuffer, version: Int) = WorldGenericEventPacket(buffer.readVarInt(), null)
 }

@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.world
+package com.valaphee.tesseract.net.base
 
 import com.valaphee.tesseract.net.Packet
 import com.valaphee.tesseract.net.PacketBuffer
@@ -52,11 +52,11 @@ class TextPacket(
         buffer.writeByte(type.ordinal)
         buffer.writeBoolean(needsTranslation)
         when (type) {
-            Type.Chat, Type.Whisper, Type.Announcement, Type.ObjectWhisper -> {
+            Type.Chat, Type.Whisper, Type.Announcement -> {
                 buffer.writeString(sourceName!!)
                 buffer.writeString(message)
             }
-            Type.Raw, Type.Tip, Type.System, Type.Object -> buffer.writeString(message)
+            Type.Raw, Type.Tip, Type.System, Type.Object, Type.ObjectWhisper -> buffer.writeString(message)
             Type.Translation, Type.PopUp, Type.JukeboxPopUp -> {
                 buffer.writeString(message)
                 arguments!!.let {

@@ -72,12 +72,12 @@ data class Appearance constructor(
         val id: String,
         val type: String,
         val packId: String,
-        val defaultPersonaPiece: Boolean,
+        val default: Boolean,
         val productId: String
     )
 
     class PersonaPieceTint(
-        val pieceType: String,
+        val type: String,
         val colors: Array<String>
     ) {
         override fun equals(other: Any?): Boolean {
@@ -86,14 +86,14 @@ data class Appearance constructor(
 
             other as PersonaPieceTint
 
-            if (pieceType != other.pieceType) return false
+            if (type != other.type) return false
             if (!colors.contentEquals(other.colors)) return false
 
             return true
         }
 
         override fun hashCode(): Int {
-            var result = pieceType.hashCode()
+            var result = type.hashCode()
             result = 31 * result + colors.contentHashCode()
             return result
         }
@@ -143,7 +143,7 @@ data class Appearance constructor(
             jsonPersonaPiece.addProperty("PieceId", it.id)
             jsonPersonaPiece.addProperty("PieceType", it.type)
             jsonPersonaPiece.addProperty("PackId", it.packId)
-            jsonPersonaPiece.addProperty("IsDefault", it.defaultPersonaPiece)
+            jsonPersonaPiece.addProperty("IsDefault", it.default)
             jsonPersonaPiece.addProperty("ProductId", it.productId)
             jsonPersonaPieces.add(jsonPersonaPiece)
         }
@@ -151,7 +151,7 @@ data class Appearance constructor(
         val jsonPersonaPieceTints = JsonArray()
         personaPieceTints.forEach {
             val jsonPersonaPieceTint = JsonObject()
-            jsonPersonaPieceTint.addProperty("PieceType", it.pieceType)
+            jsonPersonaPieceTint.addProperty("PieceType", it.type)
             val jsonPersonaPieceTintColors = JsonArray()
             it.colors.forEach { jsonPersonaPieceTintColors.add(it) }
             jsonPersonaPieceTint.add("Colors", jsonPersonaPieceTintColors)
@@ -349,12 +349,12 @@ fun PacketBuffer.writeAppearancePre419(value: Appearance) {
         writeString(it.id)
         writeString(it.type)
         writeString(it.packId)
-        writeBoolean(it.defaultPersonaPiece)
+        writeBoolean(it.default)
         writeString(it.productId)
     }
     writeIntLE(value.personaPieceTints.size)
     value.personaPieceTints.forEach {
-        writeString(it.pieceType)
+        writeString(it.type)
         val personaPieceTintColors = it.colors
         writeIntLE(personaPieceTintColors.size)
         personaPieceTintColors.forEach { writeString(it) }
@@ -387,12 +387,12 @@ fun PacketBuffer.writeAppearancePre428(value: Appearance) {
         writeString(it.id)
         writeString(it.type)
         writeString(it.packId)
-        writeBoolean(it.defaultPersonaPiece)
+        writeBoolean(it.default)
         writeString(it.productId)
     }
     writeIntLE(value.personaPieceTints.size)
     value.personaPieceTints.forEach {
-        writeString(it.pieceType)
+        writeString(it.type)
         val personaPieceTintColors = it.colors
         writeIntLE(personaPieceTintColors.size)
         personaPieceTintColors.forEach { writeString(it) }
@@ -426,12 +426,12 @@ fun PacketBuffer.writeAppearancePre465(value: Appearance) {
         writeString(it.id)
         writeString(it.type)
         writeString(it.packId)
-        writeBoolean(it.defaultPersonaPiece)
+        writeBoolean(it.default)
         writeString(it.productId)
     }
     writeIntLE(value.personaPieceTints.size)
     value.personaPieceTints.forEach {
-        writeString(it.pieceType)
+        writeString(it.type)
         val personaPieceTintColors = it.colors
         writeIntLE(personaPieceTintColors.size)
         personaPieceTintColors.forEach { writeString(it) }
@@ -463,12 +463,12 @@ fun PacketBuffer.writeAppearance(value: Appearance) {
         writeString(it.id)
         writeString(it.type)
         writeString(it.packId)
-        writeBoolean(it.defaultPersonaPiece)
+        writeBoolean(it.default)
         writeString(it.productId)
     }
     writeIntLE(value.personaPieceTints.size)
     value.personaPieceTints.forEach {
-        writeString(it.pieceType)
+        writeString(it.type)
         val personaPieceTintColors = it.colors
         writeIntLE(personaPieceTintColors.size)
         personaPieceTintColors.forEach { writeString(it) }

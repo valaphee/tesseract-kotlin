@@ -320,7 +320,7 @@ fun PacketBuffer.writeStackInstance(value: Stack?) {
         it.tag?.let {
             writeShortLE(-1)
             writeVarUInt(1)
-            NbtOutputStream(LittleEndianVarIntByteBufOutputStream(this)).use { stream -> stream.writeTag(it) }
+            NbtOutputStream(LittleEndianByteBufOutputStream(this)).use { stream -> stream.writeTag(it) }
         } ?: writeShortLE(0)
         it.canPlaceOn?.let {
             writeIntLE(it.size)

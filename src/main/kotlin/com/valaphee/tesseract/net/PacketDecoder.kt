@@ -42,7 +42,6 @@ import com.valaphee.tesseract.entity.EntityEventPacketReader
 import com.valaphee.tesseract.entity.EntityFallPacketReader
 import com.valaphee.tesseract.entity.EntityLinkPacketReader
 import com.valaphee.tesseract.entity.EntityRemovePacketReader
-import com.valaphee.tesseract.entity.EventPacketReader
 import com.valaphee.tesseract.entity.ExperienceOrbAddPacketReader
 import com.valaphee.tesseract.entity.NpcDialoguePacketReader
 import com.valaphee.tesseract.entity.NpcRequestPacketReader
@@ -87,7 +86,6 @@ import com.valaphee.tesseract.inventory.EnchantOptionsPacketReader
 import com.valaphee.tesseract.inventory.EquipmentPacketReader
 import com.valaphee.tesseract.inventory.HotbarPacketReader
 import com.valaphee.tesseract.inventory.InventoryContentPacketReader
-import com.valaphee.tesseract.inventory.InventoryRequestPacketReader
 import com.valaphee.tesseract.inventory.InventorySlotPacketReader
 import com.valaphee.tesseract.inventory.InventoryTransactionPacketReader
 import com.valaphee.tesseract.inventory.PhotoItemPacketReader
@@ -129,6 +127,8 @@ import com.valaphee.tesseract.net.base.SimulationPacketReader
 import com.valaphee.tesseract.net.base.StatusPacketReader
 import com.valaphee.tesseract.net.base.StoreOfferPacketReader
 import com.valaphee.tesseract.net.base.SubLoginPacketReader
+import com.valaphee.tesseract.net.base.TextPacketReader
+import com.valaphee.tesseract.net.base.TitlePacketReader
 import com.valaphee.tesseract.net.base.TransferPacketReader
 import com.valaphee.tesseract.net.base.VideoStreamPacketReader
 import com.valaphee.tesseract.net.base.ViolationPacketReader
@@ -159,12 +159,9 @@ import com.valaphee.tesseract.world.SoundEventPacketV2Reader
 import com.valaphee.tesseract.world.SoundPacketReader
 import com.valaphee.tesseract.world.SoundStopPacketReader
 import com.valaphee.tesseract.world.SpawnPositionPacketReader
-import com.valaphee.tesseract.world.TextPacketReader
 import com.valaphee.tesseract.world.TickSyncPacketReader
 import com.valaphee.tesseract.world.TimePacketReader
-import com.valaphee.tesseract.world.TitlePacketReader
 import com.valaphee.tesseract.world.WorldEventPacketReader
-import com.valaphee.tesseract.world.WorldGenericEventPacketReader
 import com.valaphee.tesseract.world.WorldPacketReader
 import com.valaphee.tesseract.world.chunk.AnvilDamagePacketReader
 import com.valaphee.tesseract.world.chunk.BlockEntityPacketReader
@@ -289,7 +286,7 @@ class PacketDecoder(
             this[0x3E] = GameModePacketReader
             this[0x3F] = PlayerListPacketReader
             this[0x40] = SimpleEventPacketReader
-            this[0x41] = EventPacketReader
+            //this[0x41] = EventPacketReader
             this[0x42] = ExperienceOrbAddPacketReader
             //this[0x43] = MapPacketReader
             this[0x44] = MapRequestPacketReader
@@ -348,7 +345,7 @@ class PacketDecoder(
             this[0x79] = ChunkPublishPacketReader
             this[0x7A] = BiomeDefinitionsPacketReader
             this[0x7B] = SoundEventPacketReader
-            this[0x7C] = WorldGenericEventPacketReader
+            //this[0x7C] = WorldGenericEventPacketReader
             this[0x7D] = LecternUpdatePacketReader
             this[0x7E] = VideoStreamPacketReader
             //this[0x7F] =
@@ -371,7 +368,7 @@ class PacketDecoder(
             this[0x90] = InputPacketReader
             this[0x91] = CreativeInventoryPacketReader
             this[0x92] = EnchantOptionsPacketReader
-            this[0x93] = InventoryRequestPacketReader
+            //this[0x93] = InventoryRequestPacketReader
             //this[0x94] = InventoryResponsePacketReader
             this[0x95] = PlayerArmorDamagePacketReader
             //this[0x96] =

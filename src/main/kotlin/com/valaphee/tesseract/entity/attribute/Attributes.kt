@@ -82,8 +82,7 @@ class Attributes {
     }
 
     override fun toString() = StringBuilder("Attributes(").apply {
-        val modifiedAttributes = attributes.filter { it.value.modified }
-        modifiedAttributes.forEach { (field, value) -> append(field).append('=').append(value.value).append(',') }
-        if (modifiedAttributes.isEmpty()) append(')') else setCharAt(length - 1, ')')
+        attributes.forEach { (field, value) -> append(field).append('=').append(value.value).append(',') }
+        if (attributes.isEmpty()) append(')') else setCharAt(length - 1, ')')
     }.toString()
 }

@@ -78,8 +78,7 @@ class Metadata {
     }
 
     override fun toString() = StringBuilder("Metadata(").apply {
-        val modifiedValues = values.filter { it.value.modified }
-        modifiedValues.forEach { (fieldId, value) -> append(fieldId).append('=').append(value.value).append(',') }
-        if (modifiedValues.isEmpty()) append(')') else setCharAt(length - 1, ')')
+        values.forEach { (fieldId, value) -> append(fieldId).append('=').append(value.value).append(',') }
+        if (values.isEmpty()) append(')') else setCharAt(length - 1, ')')
     }.toString()
 }

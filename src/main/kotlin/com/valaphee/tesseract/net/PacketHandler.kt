@@ -41,7 +41,6 @@ import com.valaphee.tesseract.entity.EntityEventPacket
 import com.valaphee.tesseract.entity.EntityFallPacket
 import com.valaphee.tesseract.entity.EntityLinkPacket
 import com.valaphee.tesseract.entity.EntityRemovePacket
-import com.valaphee.tesseract.entity.EventPacket
 import com.valaphee.tesseract.entity.ExperienceOrbAddPacket
 import com.valaphee.tesseract.entity.NpcDialoguePacket
 import com.valaphee.tesseract.entity.NpcRequestPacket
@@ -157,10 +156,10 @@ import com.valaphee.tesseract.world.SoundEventPacketV2
 import com.valaphee.tesseract.world.SoundPacket
 import com.valaphee.tesseract.world.SoundStopPacket
 import com.valaphee.tesseract.world.SpawnPositionPacket
-import com.valaphee.tesseract.world.TextPacket
+import com.valaphee.tesseract.net.base.TextPacket
 import com.valaphee.tesseract.world.TickSyncPacket
 import com.valaphee.tesseract.world.TimePacket
-import com.valaphee.tesseract.world.TitlePacket
+import com.valaphee.tesseract.net.base.TitlePacket
 import com.valaphee.tesseract.world.WorldEventPacket
 import com.valaphee.tesseract.world.WorldGenericEventPacket
 import com.valaphee.tesseract.world.WorldPacket
@@ -319,8 +318,6 @@ interface PacketHandler : ProtocolHandler {
     fun playerList(packet: PlayerListPacket) = other(packet)
 
     fun simpleEvent(packet: SimpleEventPacket) = other(packet)
-
-    fun event(packet: EventPacket) = other(packet)
 
     fun experienceOrbAdd(packet: ExperienceOrbAddPacket) = other(packet)
 
