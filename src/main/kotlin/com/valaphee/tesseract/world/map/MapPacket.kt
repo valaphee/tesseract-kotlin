@@ -53,11 +53,10 @@ class MapPacket(
 
     override fun write(buffer: PacketBuffer, version: Int) {
         buffer.writeVarLong(mapId)
-        val flagsIndex = buffer.writerIndex()
-        buffer.writeZero(PacketBuffer.MaximumVarUIntLength)
+        var flagsValue = if (data?.isNotEmpty() == true) flagHasColor else 0 or if (decorations?.isNotEmpty() == true && trackedObjects?.isNotEmpty() == true) flagHasDecorationAndTrackedObjects else 0
+        buffer.writeVarUInt(flagsValue)
         buffer.writeByte(dimension.ordinal)
         buffer.writeBoolean(locked)
-        var flagsValue = if (data?.isNotEmpty() == true) flagHasColor else 0 or if (decorations?.isNotEmpty() == true && trackedObjects?.isNotEmpty() == true) flagHasDecorationAndTrackedObjects else 0
         trackedUniqueEntityIds?.let {
             if (it.isNotEmpty()) {
                 buffer.writeVarUInt(it.size)
@@ -89,17 +88,14 @@ class MapPacket(
                 }
             } ?: buffer.writeVarUInt(0)
         }
-        if (flagsValue and flagHasColor != 0) {
-            data!!.let {
-                buffer.writeVarInt(width)
-                buffer.writeVarInt(height)
-                buffer.writeVarInt(offsetX)
-                buffer.writeVarInt(offsetY)
-                buffer.writeVarUInt(it.size)
-                it.forEach { buffer.writeVarUInt(it) }
-            }
+        if (flagsValue and flagHasColor != 0) data!!.let {
+            buffer.writeVarInt(width)
+            buffer.writeVarInt(height)
+            buffer.writeVarInt(offsetX)
+            buffer.writeVarInt(offsetY)
+            buffer.writeVarUInt(it.size)
+            it.forEach(buffer::writeVarUInt)
         }
-        buffer.setMaximumLengthVarUInt(flagsIndex, flagsValue)
     }
 
     override fun handle(handler: PacketHandler) = handler.map(this)

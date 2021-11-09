@@ -25,39 +25,40 @@
 package com.valaphee.tesseract.util
 
 import io.netty.buffer.ByteBuf
+import io.netty.buffer.ByteBufUtil
 import java.util.Formatter
 
-fun ByteBuf.dump(displayedOffset: Long, offset: Int, length: Int) = if (isDirect) ByteArray(length).also { getBytes(offset, it, 0, length) }.dump(displayedOffset + offset, 0, length) else array().dump(displayedOffset, offset, length)
+fun ByteBuf.dump(displayedOffset: Long, offset: Int, length: Int) = ByteBufUtil.getBytes(this).dump(displayedOffset, offset, length)
 
 fun ByteArray.dump(displayedOffset: Long, offset: Int, length: Int): String {
-    var displayedOffset = displayedOffset
-    val string = StringBuilder()
-    Formatter(string).use {
-        string.appendLine("  Offset: 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F")
-        var i = offset
-        while (i < length) {
-            it.format("%08X", displayedOffset)
-            string.append(": ")
-            run {
-                var j = i
-                val k = i + 16
-                while (j < k) {
-                    if (j < length) it.format("%02X", this[j]) else string.append("  ")
-                    string.append(' ')
-                    j++
+    var _displayedOffset = displayedOffset
+    return StringBuilder().apply {
+        Formatter(this).use {
+            appendLine("  Offset: 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F")
+            var i = offset
+            while (i < length) {
+                it.format("%08X", _displayedOffset)
+                append(": ")
+                run {
+                    var j = i
+                    val k = i + 16
+                    while (j < k) {
+                        if (j < length) it.format("%02X", this[j]) else append("  ")
+                        append(' ')
+                        j++
+                    }
                 }
+                append(' ')
+                for (j in i until i + 16) {
+                    if (j < length) {
+                        val char = this[j]
+                        if (!char.isISOControl()) append(char) else append('.')
+                    } else append(" ")
+                }
+                appendLine()
+                i += 16
+                _displayedOffset += 16
             }
-            string.append(' ')
-            for (j in i until i + 16) {
-                if (j < length) {
-                    val char = this[j].toChar()
-                    if (!char.isISOControl()) string.append(char) else string.append('.')
-                } else string.append(" ")
-            }
-            string.appendLine()
-            i += 16
-            displayedOffset += 16
         }
-    }
-    return string.toString()
+    }.toString()
 }

@@ -289,7 +289,7 @@ fun PacketBuffer.writeStack(value: Stack?) {
             writeVarInt(it.netId)
         } else writeBoolean(false)
         writeVarInt(it.blockStateKey?.let { blockStates.getId(it) } ?: 0)
-        val dataLengthIndex = buffer.writerIndex()
+        val dataIndex = buffer.writerIndex()
         writeZero(PacketBuffer.MaximumVarUIntLength)
         it.tag?.let {
             writeShortLE(-1)
@@ -305,7 +305,7 @@ fun PacketBuffer.writeStack(value: Stack?) {
             it.forEach { writeString16(it) }
         } ?: writeIntLE(0)
         if (it.itemKey == shieldKey) writeLongLE(it.blockingTicks)
-        setMaximumLengthVarUInt(dataLengthIndex, writerIndex() - (dataLengthIndex + PacketBuffer.MaximumVarUIntLength))
+        setMaximumLengthVarUInt(dataIndex, writerIndex() - (dataIndex + PacketBuffer.MaximumVarUIntLength))
     } ?: writeVarInt(0)
 }
 
@@ -315,7 +315,7 @@ fun PacketBuffer.writeStackInstance(value: Stack?) {
         writeShortLE(it.count)
         writeVarUInt(it.subId)
         writeVarInt(it.blockStateKey?.let { blockStates.getId(it) } ?: 0)
-        val dataLengthIndex = buffer.writerIndex()
+        val dataIndex = buffer.writerIndex()
         writeZero(PacketBuffer.MaximumVarUIntLength)
         it.tag?.let {
             writeShortLE(-1)
@@ -331,7 +331,7 @@ fun PacketBuffer.writeStackInstance(value: Stack?) {
             it.forEach { writeString16(it) }
         } ?: writeIntLE(0)
         if (it.itemKey == shieldKey) writeVarLong(it.blockingTicks)
-        setMaximumLengthVarUInt(dataLengthIndex, writerIndex() - (dataLengthIndex + PacketBuffer.MaximumVarUIntLength))
+        setMaximumLengthVarUInt(dataIndex, writerIndex() - (dataIndex + PacketBuffer.MaximumVarUIntLength))
     } ?: writeIntLE(0)
 }
 

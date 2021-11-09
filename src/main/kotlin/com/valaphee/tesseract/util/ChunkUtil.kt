@@ -24,52 +24,25 @@
 
 package com.valaphee.tesseract.util
 
-import io.netty.buffer.ByteBuf
+import com.valaphee.foundry.math.Int2
+import com.valaphee.tesseract.net.PacketBuffer
+import com.valaphee.tesseract.util.nbt.Tag
+import com.valaphee.tesseract.world.chunk.storage.BlockStorage
 import io.netty.buffer.ByteBufUtil
-import java.io.Closeable
-import java.security.MessageDigest
+import io.netty.buffer.Unpooled
 
-/**
- * @author Kevin Ludwig
- */
-interface Hasher : Closeable {
-    fun update(buffer: ByteBuf)
-
-    fun digest(): ByteArray
+fun chunkData(borderBlocks: List<Int2>, blockEntities: List<Tag>): ByteArray = PacketBuffer(Unpooled.buffer()).use { buffer ->
+    buffer.writeByte(borderBlocks.size)
+    borderBlocks.forEach { buffer.writeByte((it.x and 0xF) or ((it.y and 0xF) shl 4)) }
+    buffer.toNbtOutputStream().use { stream -> blockEntities.forEach { stream.writeTag(it) } }
+    ByteBufUtil.getBytes(buffer)
 }
 
-fun sha256Hasher(): Hasher = JavaSha256Hasher()
-
-/**
- * @author Kevin Ludwig
- */
-private class JavaSha256Hasher : Hasher {
-    private var digest = MessageDigest.getInstance("SHA-256")
-
-    override fun update(buffer: ByteBuf) {
-        digest.update(ByteBufUtil.getBytes(buffer))
-    }
-
-    override fun digest() = digest.digest()
-
-    override fun close() {}
-}
-
-/**
- * @author Kevin Ludwig
- */
-private class MbedTlsSha256Hasher : Hasher {
-    private var mbedTlsSha256Context = MbedTlsSha256HasherImpl.init()
-
-    override fun update(buffer: ByteBuf) {
-        MbedTlsSha256HasherImpl.update(mbedTlsSha256Context, buffer.memoryAddress() + buffer.readerIndex(), buffer.readableBytes())
-        buffer.readerIndex(buffer.writerIndex())
-    }
-
-    override fun digest() = MbedTlsSha256HasherImpl.digest(mbedTlsSha256Context)
-
-    override fun close() {
-        MbedTlsSha256HasherImpl.free(mbedTlsSha256Context)
-        mbedTlsSha256Context = 0
-    }
+fun chunkData(blockStorage: BlockStorage, biomes: ByteArray, borderBlocks: List<Int2>, blockEntities: List<Tag>): ByteArray = PacketBuffer(Unpooled.buffer()).use { buffer ->
+    repeat(blockStorage.subChunkCount) { i -> blockStorage.subChunks[i].writeToBuffer(buffer) }
+    buffer.writeBytes(biomes)
+    buffer.writeByte(borderBlocks.size)
+    borderBlocks.forEach { buffer.writeByte((it.x and 0xF) or ((it.y and 0xF) shl 4)) }
+    buffer.toNbtOutputStream().use { stream -> blockEntities.forEach { stream.writeTag(it) } }
+    ByteBufUtil.getBytes(buffer)
 }
