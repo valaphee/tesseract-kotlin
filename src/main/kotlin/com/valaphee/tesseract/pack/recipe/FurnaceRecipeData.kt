@@ -22,22 +22,26 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.data.recipe
+package com.valaphee.tesseract.pack.recipe
 
-import com.valaphee.tesseract.data.DataType
-import com.valaphee.tesseract.data.KeyedData
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonTypeName
 import com.valaphee.tesseract.inventory.item.craft.furnaceRecipe
 import com.valaphee.tesseract.inventory.item.stack.Stack
 
 /**
  * @author Kevin Ludwig
  */
-@DataType("tesseract:recipe_furnace")
+@JsonTypeName("minecraft:recipe_furnace")
 class FurnaceRecipeData(
-    override val key: String,
-    val tags: Array<String>,
-    val input: Stack,
-    val output: Stack
-) : RecipeData, KeyedData() {
+    @get:JsonProperty("description") val description: Description,
+    @get:JsonProperty("tags") val tags: Array<String>,
+    @get:JsonProperty("input") val input: Stack,
+    @get:JsonProperty("output") val output: Stack
+) : RecipeData {
+    class Description(
+        @get:JsonProperty("identifier") val key: String
+    )
+
     override fun toRecipe(netId: Int) = furnaceRecipe(input, output, tags.first())
 }

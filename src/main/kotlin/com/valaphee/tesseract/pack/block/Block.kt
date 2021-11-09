@@ -22,10 +22,11 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.pack
+package com.valaphee.tesseract.pack.block
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonTypeName
+import com.valaphee.tesseract.pack.Data
 import com.valaphee.tesseract.util.nbt.CustomTag
 import com.valaphee.tesseract.util.nbt.compoundTag
 import com.valaphee.tesseract.util.nbt.listTag

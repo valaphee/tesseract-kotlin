@@ -24,6 +24,7 @@
 
 package com.valaphee.tesseract.inventory.item.craft
 
+import com.valaphee.tesseract.inventory.item.stack.Stack
 import com.valaphee.tesseract.inventory.item.stack.readIngredient
 import com.valaphee.tesseract.inventory.item.stack.readStackInstance
 import com.valaphee.tesseract.inventory.item.stack.readStackPre431
@@ -88,8 +89,9 @@ class RecipesPacket(
                     if (version >= 407) buffer.writeVarUInt(it.netId)
                 }
                 Recipe.Type.Furnace, Recipe.Type.FurnaceData -> {
-                    buffer.writeVarInt(it.inputId)
-                    if (type == Recipe.Type.FurnaceData) buffer.writeVarInt(it.inputSubId)
+                    val input = it.inputs!!.first()!!
+                    buffer.writeVarInt(buffer.items.getId(input.itemKey))
+                    if (type == Recipe.Type.FurnaceData) buffer.writeVarInt(input.subId)
                     if (version >= 431) buffer.writeStackInstance(it.outputs!![0]) else buffer.writeStackPre431(it.outputs!![0])
                     buffer.writeString(it.tag!!)
                 }
@@ -142,19 +144,19 @@ object RecipesPacketReader : PacketReader {
             when (val type = Recipe.Type.values()[buffer.readVarInt()]) {
                 Recipe.Type.Shapeless, Recipe.Type.ShulkerBox, Recipe.Type.ShapelessChemistry -> {
                     val name = buffer.readString()
-                    val inputs = Array(buffer.readVarUInt()) { buffer.readIngredient() }
-                    val outputs = Array(buffer.readVarUInt()) { if (version >= 431) buffer.readStackInstance() else buffer.readStackPre431() }
+                    val inputs = safeList(buffer.readVarUInt()) { buffer.readIngredient() }
+                    val outputs = safeList(buffer.readVarUInt()) { if (version >= 431) buffer.readStackInstance() else buffer.readStackPre431() }
                     shapelessRecipe(type, buffer.readUuid(), name, inputs, outputs, buffer.readString(), buffer.readVarInt(), if (version >= 407) buffer.readVarUInt() else 0)
                 }
                 Recipe.Type.Shaped, Recipe.Type.ShapedChemistry -> {
                     val name = buffer.readString()
                     val width = buffer.readVarInt()
                     val height = buffer.readVarInt()
-                    val inputs = Array(width * height) { buffer.readIngredient() }
-                    val outputs = Array(buffer.readVarUInt()) { if (version >= 431) buffer.readStackInstance() else buffer.readStackPre431() }
+                    val inputs = safeList(width * height) { buffer.readIngredient() }
+                    val outputs = safeList(buffer.readVarUInt()) { if (version >= 431) buffer.readStackInstance() else buffer.readStackPre431() }
                     shapedRecipe(type, buffer.readUuid(), name, width, height, inputs, outputs, buffer.readString(), buffer.readVarInt(), if (version >= 407) buffer.readVarUInt() else 0)
                 }
-                Recipe.Type.Furnace, Recipe.Type.FurnaceData -> furnaceRecipe(buffer.readVarInt(), if (type == Recipe.Type.FurnaceData) buffer.readVarInt() else -1, if (version >= 431) buffer.readStackInstance() else buffer.readStackPre431(), buffer.readString())
+                Recipe.Type.Furnace, Recipe.Type.FurnaceData -> furnaceRecipe(Stack(buffer.items[buffer.readVarInt()]!!, if (type == Recipe.Type.FurnaceData) buffer.readVarInt() else -1), if (version >= 431) buffer.readStackInstance() else buffer.readStackPre431(), buffer.readString())
                 Recipe.Type.Multi -> multiRecipe(buffer.readUuid(), if (version >= 407) buffer.readVarUInt() else 0)
             }
         },

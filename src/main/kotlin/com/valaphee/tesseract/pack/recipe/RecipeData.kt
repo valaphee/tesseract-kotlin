@@ -22,22 +22,14 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.data.recipe
+package com.valaphee.tesseract.pack.recipe
 
-import com.valaphee.tesseract.data.DataType
-import com.valaphee.tesseract.data.KeyedData
-import com.valaphee.tesseract.inventory.item.craft.furnaceRecipe
-import com.valaphee.tesseract.inventory.item.stack.Stack
+import com.valaphee.tesseract.inventory.item.craft.Recipe
+import com.valaphee.tesseract.pack.Data
 
 /**
  * @author Kevin Ludwig
  */
-@DataType("tesseract:recipe_furnace")
-class FurnaceRecipeData(
-    override val key: String,
-    val tags: Array<String>,
-    val input: Stack,
-    val output: Stack
-) : RecipeData, KeyedData() {
-    override fun toRecipe(netId: Int) = furnaceRecipe(input, output, tags.first())
+interface RecipeData : Data {
+    fun toRecipe(netId: Int): Recipe
 }

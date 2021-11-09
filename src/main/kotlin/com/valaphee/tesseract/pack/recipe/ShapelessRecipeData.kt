@@ -22,22 +22,29 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.data.recipe
+package com.valaphee.tesseract.pack.recipe
 
-import com.valaphee.tesseract.data.DataType
-import com.valaphee.tesseract.data.KeyedData
-import com.valaphee.tesseract.inventory.item.craft.furnaceRecipe
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonTypeName
+import com.valaphee.tesseract.inventory.item.craft.Recipe
+import com.valaphee.tesseract.inventory.item.craft.shapelessRecipe
 import com.valaphee.tesseract.inventory.item.stack.Stack
+import java.util.UUID
 
 /**
  * @author Kevin Ludwig
  */
-@DataType("tesseract:recipe_furnace")
-class FurnaceRecipeData(
-    override val key: String,
-    val tags: Array<String>,
-    val input: Stack,
-    val output: Stack
-) : RecipeData, KeyedData() {
-    override fun toRecipe(netId: Int) = furnaceRecipe(input, output, tags.first())
+@JsonTypeName("minecraft:recipe_shapeless")
+class ShapelessRecipeData(
+    @get:JsonProperty("description") val description: Description,
+    @get:JsonProperty("tags") val tags: List<String>,
+    @get:JsonProperty("ingredients") val ingredients: List<Stack>,
+    @get:JsonProperty("priority") val priority: Int = 0,
+    @get:JsonProperty("result") val result: Stack
+) : RecipeData {
+    class Description(
+        @get:JsonProperty("identifier") val key: String
+    )
+
+    override fun toRecipe(netId: Int) = shapelessRecipe(Recipe.Type.Shapeless, UUID.nameUUIDFromBytes(description.key.toByteArray()), description.key, ingredients, listOf(result), tags.first(), priority, netId)
 }

@@ -22,28 +22,31 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.data.recipe
+package com.valaphee.tesseract.pack.recipe
 
-import com.valaphee.tesseract.data.DataType
-import com.valaphee.tesseract.data.KeyedData
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonTypeName
 import com.valaphee.tesseract.inventory.item.craft.Recipe
 import com.valaphee.tesseract.inventory.item.craft.shapedRecipe
 import com.valaphee.tesseract.inventory.item.stack.Stack
-import com.valaphee.tesseract.pack.recipe.RecipeData
 import java.util.UUID
 
 /**
  * @author Kevin Ludwig
  */
-@DataType("tesseract:recipe_shaped")
+@JsonTypeName("minecraft:recipe_shaped")
 class ShapedRecipeData(
-    override val key: String,
-    val tags: List<String>,
-    val map: Map<Char, Stack>,
-    val pattern: List<String>,
-    val priority: Int = 0,
-    val result: Stack
-) : RecipeData, KeyedData() {
+    @get:JsonProperty("description") val description: Description,
+    @get:JsonProperty("tags") val tags: List<String>,
+    @get:JsonProperty("key") val key: Map<Char, Stack>,
+    @get:JsonProperty("pattern") val pattern: List<String>,
+    @get:JsonProperty("priority") val priority: Int = 0,
+    @get:JsonProperty("result") val result: Stack
+) : RecipeData {
+    class Description(
+        @get:JsonProperty("identifier") val key: String
+    )
+
     override fun toRecipe(netId: Int): Recipe {
         val height = pattern.size
         var width = 0
@@ -52,7 +55,7 @@ class ShapedRecipeData(
             if (patternRowWidth > width) width = patternRowWidth
         }
         val inputs = arrayOfNulls<Stack?>(width * height)
-        pattern.forEachIndexed { i, patternRow -> patternRow.forEachIndexed { j, patternColumn -> inputs[i * width + j] = map[patternColumn] } }
-        return shapedRecipe(Recipe.Type.Shaped, UUID.nameUUIDFromBytes(key.toByteArray()), key, width, height, inputs.toList(), listOf(result), tags.first(), priority, netId)
+        pattern.forEachIndexed { i, patternRow -> patternRow.forEachIndexed { j, patternColumn -> inputs[i * width + j] = key[patternColumn] } }
+        return shapedRecipe(Recipe.Type.Shaped, UUID.nameUUIDFromBytes(description.key.toByteArray()), description.key, width, height, inputs.toList(), listOf(result), tags.first(), priority, netId)
     }
 }

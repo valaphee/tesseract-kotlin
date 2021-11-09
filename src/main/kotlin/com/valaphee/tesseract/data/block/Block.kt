@@ -31,7 +31,6 @@ import com.valaphee.tesseract.util.getListTagOrNull
 import com.valaphee.tesseract.util.getString
 import com.valaphee.tesseract.util.nbt.CompoundTag
 import com.valaphee.tesseract.util.nbt.TagType
-import com.valaphee.tesseract.pack.Block as PackBlock
 
 /**
  * @author Kevin Ludwig
@@ -43,11 +42,11 @@ class Block : KeyedData {
     val states: List<BlockState>
     val tag: CompoundTag?
 
-    constructor(pack: PackBlock) {
-        this.key = pack.description.key
-        properties = pack.description.properties ?: emptyMap()
+    constructor(block: com.valaphee.tesseract.pack.block.Block) {
+        this.key = block.description.key
+        properties = block.description.properties ?: emptyMap()
         states = properties.values.reversed().fold(listOf(listOf<Any?>())) { acc, set -> acc.flatMap { list -> set.map { list + it } } }.map { BlockState(this@Block, properties.keys.zip(it.reversed()).toMap()) }
-        tag = pack.toTag()
+        tag = block.toTag()
     }
 
     constructor(key: String, states: List<Map<String, Any>>) {
