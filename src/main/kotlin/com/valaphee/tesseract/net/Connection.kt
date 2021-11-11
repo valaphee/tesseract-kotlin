@@ -24,6 +24,7 @@
 
 package com.valaphee.tesseract.net
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.valaphee.tesseract.latestProtocolVersion
 import com.valaphee.tesseract.util.Registry
 import com.valaphee.tesseract.util.lazyToString
@@ -104,6 +105,13 @@ class Connection(
             field = value
         }
 
+    var objectMapper: ObjectMapper? = null
+        set(value) {
+            val channelPipeline = context.pipeline()
+            channelPipeline[PacketEncoder::class.java].objectMapper = value
+            channelPipeline[PacketDecoder::class.java].objectMapper = value
+            field = value
+        }
     var blockStates: Registry<String>? = null
         set(value) {
             val channelPipeline = context.pipeline()

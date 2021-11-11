@@ -64,6 +64,7 @@ class Block : KeyedData {
                 put(compoundTag.getString("name"), linkedSetOf(compoundTag.getListTag("enum").let {
                     when (it.toList().first().type) {
                         TagType.Byte -> it.toList().map { it.asNumberTag()!!.toInt() == 1 }
+                        TagType.Int -> it.toList().map { it.asNumberTag()!!.toInt() }
                         TagType.String -> it.toList().map { it.asArrayTag()!!.valueToString() }
                         else -> TODO("$it")
                     }
