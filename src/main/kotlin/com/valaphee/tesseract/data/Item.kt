@@ -22,10 +22,7 @@
  * SOFTWARE.
  */
 
-package com.valaphee.tesseract.data.item
-
-import com.valaphee.tesseract.data.DataType
-import com.valaphee.tesseract.data.KeyedData
+package com.valaphee.tesseract.data
 
 /**
  * @author Kevin Ludwig

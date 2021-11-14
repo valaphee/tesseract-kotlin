@@ -30,7 +30,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.valaphee.tesseract.pack.block.Block
 import com.valaphee.tesseract.pack.recipe.FurnaceRecipeData
 import com.valaphee.tesseract.pack.recipe.ShapedRecipeData
 import com.valaphee.tesseract.pack.recipe.ShapelessRecipeData
@@ -44,7 +43,8 @@ import java.io.File
     JsonSubTypes.Type(Block::class),
     JsonSubTypes.Type(FurnaceRecipeData::class),
     JsonSubTypes.Type(ShapedRecipeData::class),
-    JsonSubTypes.Type(ShapelessRecipeData::class)
+    JsonSubTypes.Type(ShapelessRecipeData::class)/*,
+    JsonSubTypes.Type(Model::class)*/
 )
 interface Data
 

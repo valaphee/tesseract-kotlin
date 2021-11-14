@@ -62,7 +62,7 @@ import kotlin.reflect.jvm.jvmName
  */
 class DataModule(
     private val path: File = File("data"),
-    private val classLoader: ClassLoader = DataModule::class.java.classLoader
+    private vararg val classLoader: ClassLoader = arrayOf(DataModule::class.java.classLoader)
 ) : AbstractModule() {
     @Inject lateinit var objectMapper: ObjectMapper
 
@@ -70,19 +70,22 @@ class DataModule(
         if (!::objectMapper.isInitialized) objectMapper = jacksonObjectMapper().apply {
             registerModule(AfterburnerModule())
             propertyNamingStrategy = PropertyNamingStrategies.SNAKE_CASE
-            typeFactory = TypeFactory.defaultInstance().withClassLoader(classLoader)
+            typeFactory = TypeFactory.defaultInstance().withClassLoader(classLoader.first())
             setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)
             enable(SerializationFeature.INDENT_OUTPUT)
+            enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
             disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
             enable(JsonParser.Feature.ALLOW_COMMENTS)
         }.also { bind(ObjectMapper::class.java).toInstance(it) }
 
-        ClassGraph().overrideClassLoaders(classLoader).enableClassInfo().enableAnnotationInfo().scan().use {
-            val dataType = DataType::class.jvmName
-            classByType.putAll(it.getClassesWithAnnotation(dataType).associate { it.getAnnotationInfo(dataType).parameterValues.getValue("value") as String to classLoader.loadClass(it.name).kotlin })
+        classLoader.forEach { classLoader ->
+            ClassGraph().overrideClassLoaders(classLoader).enableClassInfo().enableAnnotationInfo().scan().use {
+                val dataType = DataType::class.jvmName
+                classByType.putAll(it.getClassesWithAnnotation(dataType).associate { it.getAnnotationInfo(dataType).parameterValues.getValue("value") as String to classLoader.loadClass(it.name).kotlin })
+            }
         }
 
-        classLoader.getResourceAsStream("/runtime_block_states.dat")?.let {
+        classLoader.first().getResourceAsStream("/runtime_block_states.dat")?.let {
             var buffer: PacketBuffer? = null
             try {
                 buffer = PacketBuffer(Unpooled.wrappedBuffer(it.readBytes()))
@@ -104,7 +107,7 @@ class DataModule(
             }
         }
 
-        ClassGraph().overrideClassLoaders(classLoader).acceptPaths("data").scan().use {
+        ClassGraph().overrideClassLoaders(*classLoader).acceptPaths("data").scan().use {
             val (keyed, other) = (it.allResources.map { it.url } + path.walk().filter { it.isFile }.map { it.toURI().toURL() })
                 .map {
                     when (val extension = it.file.substring(it.file.lastIndexOf('.') + 1)) {

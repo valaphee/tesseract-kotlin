@@ -28,7 +28,7 @@ import com.valaphee.foundry.math.Float2
 import com.valaphee.foundry.math.Float3
 import com.valaphee.foundry.math.Int3
 import com.valaphee.tesseract.data.block.Block
-import com.valaphee.tesseract.data.item.Item
+import com.valaphee.tesseract.data.Item
 import com.valaphee.tesseract.entity.player.Rank
 import com.valaphee.tesseract.net.GamePublishMode
 import com.valaphee.tesseract.net.Packet
