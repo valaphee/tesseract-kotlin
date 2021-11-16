@@ -25,14 +25,14 @@
 package com.valaphee.tesseract.pack.recipe
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonTypeName
+import com.valaphee.tesseract.data.DataType
 import com.valaphee.tesseract.inventory.item.craft.furnaceRecipe
 import com.valaphee.tesseract.inventory.item.stack.Stack
 
 /**
  * @author Kevin Ludwig
  */
-@JsonTypeName("minecraft:recipe_furnace")
+@DataType("minecraft:recipe_furnace")
 class FurnaceRecipeData(
     @get:JsonProperty("description") val description: Description,
     @get:JsonProperty("tags") val tags: Array<String>,

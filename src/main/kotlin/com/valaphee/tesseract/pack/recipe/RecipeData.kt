@@ -24,8 +24,8 @@
 
 package com.valaphee.tesseract.pack.recipe
 
+import com.valaphee.tesseract.data.Data
 import com.valaphee.tesseract.inventory.item.craft.Recipe
-import com.valaphee.tesseract.pack.Data
 
 /**
  * @author Kevin Ludwig

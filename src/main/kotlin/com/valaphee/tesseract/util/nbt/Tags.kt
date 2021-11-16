@@ -80,6 +80,6 @@ fun Any?.toTag(): Tag = when (this) {
     is IntArray -> ofIntArray(this)
     is LongArray -> ofLongArray(this)
     is String -> ofString(this)
-    is CustomTag -> toTag()
+    is Nbt -> toTag()
     else -> TODO("$this")
 }

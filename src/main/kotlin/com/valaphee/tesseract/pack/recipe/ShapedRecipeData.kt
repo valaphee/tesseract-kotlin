@@ -25,7 +25,7 @@
 package com.valaphee.tesseract.pack.recipe
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonTypeName
+import com.valaphee.tesseract.data.DataType
 import com.valaphee.tesseract.inventory.item.craft.Recipe
 import com.valaphee.tesseract.inventory.item.craft.shapedRecipe
 import com.valaphee.tesseract.inventory.item.stack.Stack
@@ -34,7 +34,7 @@ import java.util.UUID
 /**
  * @author Kevin Ludwig
  */
-@JsonTypeName("minecraft:recipe_shaped")
+@DataType("minecraft:recipe_shaped")
 class ShapedRecipeData(
     @get:JsonProperty("description") val description: Description,
     @get:JsonProperty("tags") val tags: List<String>,

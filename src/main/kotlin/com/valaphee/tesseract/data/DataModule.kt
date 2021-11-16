@@ -96,7 +96,7 @@ class DataModule(
                             TagType.Byte -> it.value.asNumberTag()!!.toByte() != 0.toByte()
                             TagType.Int -> it.value.asNumberTag()!!.toInt()
                             TagType.String -> it.value.asArrayTag()!!.valueToString()
-                            else -> TODO()
+                            else -> TODO(it.value.type::class.jvmName)
                         }
                     })
                 }
@@ -120,13 +120,11 @@ class DataModule(
                 }
                 .partition { it is KeyedData }
             keyed.filterIsInstance<KeyedData>()
-                .groupBy { typeByClassOrNull(it::class) }
-                .forEach { (key, value) ->
-                    key?.let {
-                        @Suppress("UNCHECKED_CAST")
-                        (bind(TypeLiteral.get(Types.mapOf(String::class.java, value.first()::class.java))) as AnnotatedBindingBuilder<Any>).toInstance(value.associateBy { it.key })
-                        log.info("Bound {}, with {} entries", it, value.size)
-                    }
+                .groupBy { typeByClass(it::class) }
+                .forEach { (_, value) ->
+                    @Suppress("UNCHECKED_CAST")
+                    (bind(TypeLiteral.get(Types.mapOf(String::class.java, value.first()::class.java))) as AnnotatedBindingBuilder<Any>).toInstance(value.associateBy { it.key })
+                    log.info("Bound {}, with {} entries", it, value.size)
                 }
             other.forEach {
                 @Suppress("UNCHECKED_CAST")
@@ -140,8 +138,8 @@ class DataModule(
         private val log = LogManager.getLogger(DataModule::class.java)
         internal val classByType = HashBiMap.create<String, KClass<*>>()
 
-        fun classByTypeOrNull(key: String) = classByType[key]
+        fun classByType(type: String) = classByType[type] ?: throw UnknownDataTypeException(type)
 
-        fun typeByClassOrNull(value: KClass<*>) = classByType.inverse()[value]
+        fun typeByClass(`class`: KClass<*>) = classByType.inverse()[`class`] ?: throw UnknownDataTypeException(`class`.jvmName)
     }
 }

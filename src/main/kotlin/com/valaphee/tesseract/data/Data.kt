@@ -28,7 +28,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.databind.DatabindContext
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase
-import kotlin.reflect.jvm.jvmName
 
 /**
  * @author Kevin Ludwig
@@ -44,11 +43,11 @@ interface Data
  * @author Kevin Ludwig
  */
 object DataTypeResolver : TypeIdResolverBase() {
-    override fun idFromValue(value: Any) = DataModule.typeByClassOrNull(value::class) ?: throw UnknownDataTypeException(value::class.jvmName)
+    override fun idFromValue(value: Any) = DataModule.typeByClass(value::class)
 
     override fun idFromValueAndType(value: Any, suggestedType: Class<*>) = idFromValue(value)
 
-    override fun typeFromId(context: DatabindContext, key: String) = DataModule.classByTypeOrNull(key)?.let { context.constructType(it.java) } ?: throw UnknownDataTypeException(key)
+    override fun typeFromId(context: DatabindContext, key: String) = context.constructType(DataModule.classByType(key).java)
 
     override fun getMechanism() = JsonTypeInfo.Id.NAME
 }

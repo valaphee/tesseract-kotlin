@@ -27,6 +27,6 @@ package com.valaphee.tesseract.util.nbt
 /**
  * @author Kevin Ludwig
  */
-interface CustomTag {
+interface Nbt {
     fun toTag(): Tag
 }

@@ -24,34 +24,18 @@
 
 package com.valaphee.tesseract.pack
 
-import com.fasterxml.jackson.annotation.JsonSubTypes
-import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
+import com.fasterxml.jackson.module.kotlin.convertValue
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.valaphee.tesseract.pack.recipe.FurnaceRecipeData
-import com.valaphee.tesseract.pack.recipe.ShapedRecipeData
-import com.valaphee.tesseract.pack.recipe.ShapelessRecipeData
+import com.valaphee.tesseract.data.Data
 import java.io.File
-
-/**
- * @author Kevin Ludwig
- */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
-@JsonSubTypes(
-    JsonSubTypes.Type(Block::class),
-    JsonSubTypes.Type(FurnaceRecipeData::class),
-    JsonSubTypes.Type(ShapedRecipeData::class),
-    JsonSubTypes.Type(ShapelessRecipeData::class)/*,
-    JsonSubTypes.Type(Model::class)*/
-)
-interface Data
 
 inline fun <reified T : Data> ObjectMapper.readData(file: File): Pair<T, String?> {
     val data = readValue<MutableMap<*, *>>(file)
     val version = data.remove("format_version") as? String
-    return convertValue(data, T::class.java) to version
+    return convertValue<T>(data) to version
 }
 
 fun ObjectMapper.writeData(file: File, data: Data, version: String) {

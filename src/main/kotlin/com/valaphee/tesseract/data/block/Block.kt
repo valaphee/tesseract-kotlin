@@ -26,7 +26,7 @@ package com.valaphee.tesseract.data.block
 
 import com.valaphee.tesseract.data.DataType
 import com.valaphee.tesseract.data.KeyedData
-import com.valaphee.tesseract.pack.Block
+import com.valaphee.tesseract.pack.block.Block
 import com.valaphee.tesseract.util.getListTag
 import com.valaphee.tesseract.util.getListTagOrNull
 import com.valaphee.tesseract.util.getString
