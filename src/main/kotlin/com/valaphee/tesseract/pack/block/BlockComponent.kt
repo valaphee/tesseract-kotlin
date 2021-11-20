@@ -25,6 +25,7 @@
 package com.valaphee.tesseract.pack.block
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonValue
 import com.valaphee.foundry.math.Float3
 import com.valaphee.tesseract.data.DataType
 import com.valaphee.tesseract.pack.Component
@@ -44,6 +45,16 @@ interface BlockComponent : Component
  */
 @DataType("minecraft:block_light_absorption")
 class BlockLightAbsorptionComponent(
+    value: Float
+) : BlockComponent, WrapperComponent<Float>(value), Nbt {
+    override fun toTag() = compoundTag().apply { setFloat("value", value) }
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+@DataType("minecraft:block_light_emission")
+class BlockLightEmissionComponent(
     value: Float
 ) : BlockComponent, WrapperComponent<Float>(value), Nbt {
     override fun toTag() = compoundTag().apply { setFloat("value", value) }
@@ -101,8 +112,28 @@ class ExplosionResistanceComponent(
 /**
  * @author Kevin Ludwig
  */
+@DataType("minecraft:friction")
+class FrictionComponent(
+    value: Float
+) : BlockComponent, WrapperComponent<Float>(value), Nbt {
+    override fun toTag() = compoundTag().apply { setFloat("value", value) }
+}
+
+/**
+ * @author Kevin Ludwig
+ */
 @DataType("minecraft:geometry")
 class GeometryComponent(
+    value: String
+) : BlockComponent, WrapperComponent<String>(value), Nbt {
+    override fun toTag() = compoundTag().apply { setString("value", value) }
+}
+
+/**
+ * @author Kevin Ludwig
+ */
+@DataType("minecraft:map_color")
+class MapColorComponent(
     value: String
 ) : BlockComponent, WrapperComponent<String>(value), Nbt {
     override fun toTag() = compoundTag().apply { setString("value", value) }
@@ -117,11 +148,23 @@ class MaterialInstancesComponent(
 ) : BlockComponent, WrapperComponent<Map<String, MaterialInstancesComponent.Material>>(value), Nbt {
     class Material(
         @get:JsonProperty("texture") val texture: String,
-        @get:JsonProperty("render_method") val renderMethod: String
+        @get:JsonProperty("render_method") val renderMethod: RenderMethod,
+        @get:JsonProperty("face_dimming") val faceDimming: Boolean = true,
+        @get:JsonProperty("ambient_occlusion") val ambientOcclusion: Boolean = true
     ) : Nbt {
+        enum class RenderMethod(
+            @get:JsonValue val key: String
+        ) {
+            AlphaTest("alpha_test"),
+            Blend("blend"),
+            Opaque("opaque")
+        }
+
         override fun toTag() = compoundTag().apply {
             setString("texture", texture)
-            setString("render_method", renderMethod)
+            setString("render_method", renderMethod.key)
+            setBool("face_dimming", faceDimming)
+            setBool("ambient_occlusion", ambientOcclusion)
         }
     }
 

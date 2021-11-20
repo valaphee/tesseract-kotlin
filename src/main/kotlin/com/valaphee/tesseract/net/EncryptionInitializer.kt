@@ -27,6 +27,7 @@ package com.valaphee.tesseract.net
 import com.valaphee.tesseract.net.base.ServerToClientHandshakePacket
 import com.valaphee.tesseract.util.MbedTlsAesCipher
 import com.valaphee.tesseract.util.aesCipher
+import com.valaphee.tesseract.util.serverToClientHandshakeJws
 import com.valaphee.tesseract.util.sha256Hasher
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.PooledByteBufAllocator
@@ -72,7 +73,7 @@ class EncryptionInitializer(
         } finally {
             buffer.release()
         }
-        serverToClientHandshakePacket = ServerToClientHandshakePacket(keyPair.public, keyPair.private, salt)
+        serverToClientHandshakePacket = ServerToClientHandshakePacket(serverToClientHandshakeJws(keyPair, salt))
         key = hasher.digest()
         if (gcm) {
             iv = ByteArray(16)

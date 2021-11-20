@@ -114,11 +114,13 @@ data class Appearance constructor(
 
     fun toJson(json: JsonObject): JsonObject {
         json.addProperty("SkinId", skinId)
+        json.addProperty("PlayFabId", playFabId)
         val jsonSkinResourcePatch = JsonObject()
         skinResourcePatch.forEach { jsonSkinResourcePatch.add(it.key, gson.toJsonTree(it.value)) }
         json.addProperty("SkinResourcePatch", base64Encoder.encodeToString(jsonSkinResourcePatch.toString().toByteArray(StandardCharsets.UTF_8)))
         skinImage.toJson(json, "Skin")
         json.addProperty("SkinGeometryData", base64Encoder.encodeToString(geometryData.toByteArray(StandardCharsets.UTF_8)))
+        json.addProperty("SkinGeometryDataEngineVersion", geometryDataEngineVersion)
         json.addProperty("SkinAnimationData", base64Encoder.encodeToString(animationData.toByteArray(StandardCharsets.UTF_8)))
         json.addProperty("CapeId", capeId)
         capeImage.toJson(json, "Cape")
@@ -165,7 +167,7 @@ data class Appearance constructor(
 val JsonObject.asAppearance
     get() = Appearance(
         getString("SkinId"),
-        "",
+        getStringOrNull("PlayFabId") ?: "",
         getStringOrNull("SkinResourcePatch")?.let {
             val jsonSkinResourcePatch = Streams.parse(JsonReader(StringReader(String(base64Decoder.decode(it), StandardCharsets.UTF_8))))
             if (jsonSkinResourcePatch.isJsonObject) jsonSkinResourcePatch.asJsonObject.entrySet().associate { it.key to gson.fromJson(it.value, Any::class.java) } else emptyMap()
@@ -182,7 +184,7 @@ val JsonObject.asAppearance
         },
         getAsAppearanceImage("Cape"),
         String(base64Decoder.decode(getString("SkinGeometryData")), StandardCharsets.UTF_8),
-        "",
+        getStringOrNull("SkinGeometryDataEngineVersion") ?: "",
         String(base64Decoder.decode(getString("SkinAnimationData")), StandardCharsets.UTF_8),
         getString("CapeId"),
         "",
